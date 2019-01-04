@@ -53,7 +53,7 @@
           <FormItem label="维修费用：" prop="repairMoney">
             <Row>
               <Col span="19">
-              <TagNumberInput :min="0" v-model="validate.repairMoney" :precision="2" placeholder="必填" @on-blur="repairMoneyChange"></TagNumberInput>
+              <TagNumberInput :min="0" v-model="validate.repairMoney" :precision="$numberPrecesion.fee" placeholder="必填" @on-blur="repairMoneyChange"></TagNumberInput>
               </Col>
               <Col span="4" offset="1">
               <span>元</span>
@@ -65,7 +65,7 @@
           <FormItem label="已支付费用：" prop="payMoney">
             <Row>
               <Col span="19">
-              <TagNumberInput :min="0" :max="validate.repairMoney" :precision="2" v-model="validate.payMoney" placeholder="必填" @on-blur="payMoneyChange"></TagNumberInput>
+              <TagNumberInput :min="0" :max="validate.repairMoney" :precision="$numberPrecesion.fee" v-model="validate.payMoney" placeholder="必填" @on-blur="payMoneyChange"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -77,7 +77,7 @@
           <FormItem label="未支付费用：" prop="waitPayMoney">
             <Row>
               <Col span="19">
-              <TagNumberInput :min="0" v-model="validate.waitPayMoney" :precision="2" disabled></TagNumberInput>
+              <TagNumberInput :min="0" v-model="validate.waitPayMoney" :precision="$numberPrecesion.fee" disabled></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>元</span>
@@ -100,7 +100,7 @@
           <FormItem label="送修公里数：" prop="repairMile">
             <Row>
               <Col span="19">
-              <TagNumberInput :min="0" v-model="validate.repairMile" :show-chinese="false" placeholder="必填"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" v-model="validate.repairMile" :show-chinese="false" placeholder="必填"></TagNumberInput>
               <!-- <Input v-model="validate.repairMile" :maxlength="9" placeholder="必填"></Input> -->
               </Col>
               <Col span="4" offset="1">
