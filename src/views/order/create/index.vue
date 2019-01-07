@@ -310,7 +310,7 @@
       <FormItem v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" label="开票税率:" prop="invoiceRate">
         <Row>
           <Col span="12">
-          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100" clearable>
+          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="1" :min="0" :max="100" clearable>
           </TagNumberInput>
           </Col>
           <Col span="12" class="order-create__input-unit">
@@ -332,7 +332,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col v-if="OrderSet.OrderRemark == 1" span="18">
+      <Col v-if="OrderSet.orderRemarkOption == 1" span="18">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" clearable></Input>
       </FormItem>
@@ -708,15 +708,17 @@ export default {
     }
     // focus到结算方式和提货方式等下拉框时要弹出下拉框
     ['pickupSelector', 'settlementSelector'].forEach((selector) => {
-      vm.$refs[selector].$refs.reference.onfocus = (e) => {
-        vm.$refs[selector].toggleHeaderFocus(e)
-        vm.$nextTick(() => {
-          setTimeout(() => {
-            if (!vm.$refs[selector].visible) {
-              vm.$refs[selector].toggleMenu(e)
-            }
-          }, 200)
-        })
+      if (vm.$refs[selector]) {
+        vm.$refs[selector].$refs.reference.onfocus = (e) => {
+          vm.$refs[selector].toggleHeaderFocus(e)
+          vm.$nextTick(() => {
+            setTimeout(() => {
+              if (!vm.$refs[selector].visible) {
+                vm.$refs[selector].toggleMenu(e)
+              }
+            }, 200)
+          })
+        }
       }
     })
     this.initBusineList()

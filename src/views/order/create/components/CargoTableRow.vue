@@ -33,7 +33,7 @@
         v-for="(el, index) in col.children"
         :key="index"
         v-model="record[col.key][el.key]"
-        :length="maxLen"
+        :length="el.maxLen"
         :show-chinese="false"
         :style="`width: 31%`"
         :placeholder="el.title"

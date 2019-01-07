@@ -87,7 +87,7 @@ const state = {
     // 代收货款
     collectionMoneyOption: 1,
     // 订单备注
-    OrderRemark: 1
+    orderRemarkOption: 1
   }
 }
 

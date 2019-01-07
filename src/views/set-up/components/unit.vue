@@ -108,7 +108,7 @@
       <Checkbox v-model="form.collectionMoneyOption">代收货款</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.OrderRemark">订单备注</Checkbox>
+      <Checkbox v-model="form.orderRemarkOption">订单备注</Checkbox>
       </Col>
     </Row>
     <div class="order-set-footer">
@@ -180,7 +180,7 @@ const ORDER_SET = {
   // 代收货款
   collectionMoneyOption: true,
   // 订单备注
-  OrderRemark: true
+  orderRemarkOption: true
 }
 export default {
   name: 'order-set',
