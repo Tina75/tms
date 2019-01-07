@@ -93,8 +93,7 @@
         <TabPane :label="tabPaneLabe2">
           <div class="add">
             <Button v-if="hasPower(130107)" type="primary"  @click="_consignerConsigneeAdd">新增</Button>
-            <!-- 权限待加 -->
-            <Button type="default"  @click="_consignerConsigneeAddAll">批量导入</Button>
+            <Button v-if="hasPower(130116)" type="default" @click="_consignerConsigneeAddAll">批量导入</Button>
           </div>
           <template>
             <page-table
@@ -107,6 +106,8 @@
         <TabPane :label="tabPaneLabe3">
           <div class="add">
             <Button v-if="hasPower(130110)" type="primary" @click="_consignerCargoAdd">新增</Button>
+            <!-- 权限待加 -->
+            <Button type="default" @click="_consignerCargoAddAll">批量导入</Button>
           </div>
           <template>
             <page-table
@@ -564,7 +565,8 @@ export default {
       pageNo3: 1,
       totalCount4: 0,
       isShow: false,
-      downLoadUrl: ''
+      ConsigneeDownLoadUrl: '',
+      CargoDownLoadUrl: ''
     }
   },
   computed: {
@@ -621,7 +623,9 @@ export default {
           this.totalCount2 = data.consigneeList.totalCount
           this.data3 = data.cargoList.list
           this.totalCount3 = data.cargoList.totalCount
-          this.downLoadUrl = data.importConsigneeTemplet
+          this.ConsigneeDownLoadUrl = data.importConsigneeTemplet
+          // 临时 undefied 时 ''
+          this.CargoDownLoadUrl = data.importCargoTemplet || ''
         }
       })
     },
@@ -694,14 +698,15 @@ export default {
         }
       })
     },
-    // 批量导入
+    // 收货方批量导入
     _consignerConsigneeAddAll () {
       const self = this
       this.openDialog({
         name: 'client/dialog/batch-import',
         data: {
           title: '批量导入',
-          downLoadUrl: this.downLoadUrl
+          downLoadUrl: this.ConsigneeDownLoadUrl,
+          notifyRequestUrl: 'consigner/consignee/importList'
         },
         methods: {
           ok: () => {
@@ -745,6 +750,23 @@ export default {
         methods: {
           ok () {
             _this._consignerCargoList() // 刷新页面
+          }
+        }
+      })
+    },
+    // 常发货物批量导入
+    _consignerCargoAddAll () {
+      const self = this
+      this.openDialog({
+        name: 'client/dialog/batch-import',
+        data: {
+          title: '导入常发货物',
+          downLoadUrl: this.CargoDownLoadUrl,
+          notifyRequestUrl: 'consigner/cargo/importList'
+        },
+        methods: {
+          ok: () => {
+            self._consignerCargoList()
           }
         }
       })

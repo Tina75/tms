@@ -1,5 +1,31 @@
 <template>
   <div class="order-set">
+    <p class="order-set-title">客户信息</p>
+    <Row :gutter="16" class="order-set-row">
+      <Col span="4">
+      <Checkbox v-model="form.customerOrderNoOption">客户订单号</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.customerWaybillNoOption">客户运单号</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.salesmanIdOption">对接业务员</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.startCityOption">发货城市</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.endCityOption">到货城市</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.deliveryTimeOption">发货时间</Checkbox>
+      </Col>
+    </Row>
+    <Row :gutter="16" class="order-set-row">
+      <Col span="4">
+      <Checkbox v-model="form.arriveTimeOption">到货时间</Checkbox>
+      </Col>
+    </Row>
     <p class="order-set-title">收货人</p>
     <Row :gutter="16" class="order-set-row">
       <Col span="4">
@@ -44,6 +70,12 @@
     <p class="order-set-title">应收费用</p>
     <Row :gutter="16" class="order-set-row">
       <Col span="4">
+      <Checkbox v-model="form.mileageOption">计费里程</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.freightFeeOption">运输费</Checkbox>
+      </Col>
+      <Col span="4">
       <Checkbox v-model="form.pickupFeeOption">提货费用</Checkbox>
       </Col>
       <Col span="4">
@@ -55,8 +87,28 @@
       <Col span="4">
       <Checkbox v-model="form.insuranceFeeOption">保险费用</Checkbox>
       </Col>
+    </Row>
+    <Row :gutter="16" class="order-set-row">
       <Col span="4">
       <Checkbox v-model="form.otherFeeOption">其他费用</Checkbox>
+      </Col>
+    </Row>
+    <p class="order-set-title">其他</p>
+    <Row :gutter="16" class="order-set-row">
+      <Col span="4">
+      <Checkbox v-model="form.pickupOption">提货方式</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.receiptCountOption">回单数量</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.isInvoiceOption">是否开票</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.collectionMoneyOption">代收货款</Checkbox>
+      </Col>
+      <Col span="4">
+      <Checkbox v-model="form.orderRemarkOption">订单备注</Checkbox>
       </Col>
     </Row>
     <div class="order-set-footer">
@@ -70,6 +122,20 @@
 import Server from '@/libs/js/server'
 import { mapGetters, mapMutations } from 'vuex'
 const ORDER_SET = {
+  // 客户订单号
+  customerOrderNoOption: true,
+  // 客户运单号
+  customerWaybillNoOption: true,
+  // 对接业务员
+  salesmanIdOption: true,
+  // 发货城市
+  startCityOption: true,
+  // 到货城市
+  endCityOption: true,
+  // 发货时间
+  deliveryTimeOption: true,
+  // 到货时间
+  arriveTimeOption: true,
   // 收货人单位
   consigneeCompanyNameOption: false,
   // 货物编号
@@ -91,6 +157,10 @@ const ORDER_SET = {
   // 备注
   remark1Option: true,
   remark2Option: true,
+  // 计费里程
+  mileageOption: true,
+  // 运输费
+  freightFeeOption: true,
   // 提货费
   pickupFeeOption: true,
   // 装货费
@@ -100,7 +170,17 @@ const ORDER_SET = {
   // 保险费
   insuranceFeeOption: true,
   // 其他费用
-  otherFeeOption: true
+  otherFeeOption: true,
+  // 提货方式
+  pickupOption: true,
+  // 回单数量
+  receiptCountOption: true,
+  // 是否开票
+  isInvoiceOption: true,
+  // 代收货款
+  collectionMoneyOption: true,
+  // 订单备注
+  orderRemarkOption: true
 }
 export default {
   name: 'order-set',
