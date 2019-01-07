@@ -4,7 +4,7 @@
       <Col :style="styleHeight" class="vertical-tabs__menu" span="4">
       <Menu ref="menu" :active-name="activeKey" width="180" @on-select="handleSelect">
         <template v-for="(tab, index) in tabList" >
-          <MenuItem :key="index" :name="tab.name" class="vertical-tabs__menu-item">
+          <MenuItem :key="index" :name="tab.name" class="vertical-tabs__menu-item" @click.native="clickMenu(index, tab.name)">
           <FontIcon v-if="!!tab.icon" :key="index" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
           {{tab.label}}
             </MenuItem>
@@ -31,6 +31,9 @@ export default {
   props: {
     value: {
       type: [String, Number]
+    },
+    clickLeftMenu: {
+      type: Function
     }
   },
   data () {
@@ -92,6 +95,9 @@ export default {
     },
     handleSelect (name) {
       this.activeKey = name
+    },
+    clickMenu (id, name) {
+      this.$emit('clickLeftMenu', { id, name })
     }
   }
 }

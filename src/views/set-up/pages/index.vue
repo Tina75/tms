@@ -1,15 +1,28 @@
 <template>
   <div id="set-up-container" class="set-up-container temAll">
     <Row id="temAll" :style="styleHeight">
-      <Col span="1" style="width:160px;height:100%;background-color:#f3f5f9;">
-      <Menu :active-name="rightKey != 4 ? rightTitle : '系统设置'" class="menuList" style="width:160px">
+      <Col span="1" class="menuCol">
+      <!-- <Menu :active-name="rightKey != 4 ? rightTitle : '系统设置'" class="menuList" style="width:160px">
         <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
         <p class="menuTitle">{{menu.name}}</p>
         </MenuItem>
-      </Menu>
+      </Menu> -->
+      <!-- <VerticalTabs value="11">
+        <VerticalTabItem key="1" :icon="{type:'ico-discovery',color:'#00a4bd'}" label="test1" name="11">123</VerticalTabItem>
+        <VerticalTabItem key="2" label="test2" name="22">456</VerticalTabItem>
+      </VerticalTabs> -->
+      <VerticalTabs :value="rightKey != 3 ? rightTitle : '系统设置'" @clickLeftMenu="clickMenu">
+        <VerticalTabItem
+          v-for="menu in setUpMenu"
+          v-if="hasPower(menu.code)"
+          :key="menu.id"
+          :name="menu.name"
+          :label="menu.name">
+        </VerticalTabItem>
+      </VerticalTabs>
       </Col>
       <Col span="20" class="contentDiv">
-      <div v-if="4 != rightKey" class="borderBottomLine">
+      <div v-if="3 != rightKey" class="borderBottomLine">
         <span class="iconRightTitle"></span>
         <span class="iconRightTitleP">{{rightTitle}}</span>
       </div>
@@ -18,7 +31,7 @@
         <TabPane label="开单设置" name="order"></TabPane>
       </Tabs>
       <!--密码设置-->
-      <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
+      <div v-if="0 === this.rightKey" key="1" class="divSetContent">
         <Col span="10" class="setConf">
         <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="100" label-position="right">
           <FormItem label="原始密码：" prop="oldPassword" class="labelClassSty">
@@ -37,7 +50,7 @@
           </Col>
       </div>
       <!--个人设置-->
-      <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
+      <div v-else-if="1 === this.rightKey" key="2" class="divSetContent">
         <Col span="10" class="setConf">
         <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="100" label-position="right">
           <FormItem label="账号：" class="labelClassSty">
@@ -56,7 +69,7 @@
           </Col>
       </div>
       <!--短信设置-->
-      <div v-else-if="'3' === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
+      <div v-else-if="2 === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
         <Col span="20" class="setConf">
         <Card dis-hover>
           <div solt="title" class="msgCardTitle">
@@ -83,7 +96,7 @@
         </Col>
       </div>
       <!--系统设置-->
-      <div v-else-if="'4' === this.rightKey" key="4" class="system-set">
+      <div v-else-if="3 === this.rightKey" key="4" class="system-set">
         <div v-if="tabName != 'order'" class="setup-allocation">
           <allocation-strategy ref="orderAllocation" allocation-label="订单：" source="order"></allocation-strategy>
           <div class="allocation-tips">选择以后订单拆单将默认选择此运费分摊策略</div>
@@ -110,13 +123,16 @@ import { mapGetters, mapMutations } from 'vuex'
 import CitySelect from '@/components/SelectInputForCity'
 import Unit from '../components/unit.vue'
 import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
+import VerticalTabs from '@/components/vertical-tabs/index'
 export default {
   name: 'set-up',
   components: {
     AreaInput,
     CitySelect,
     Unit,
-    AllocationStrategy
+    AllocationStrategy,
+    VerticalTabs,
+    VerticalTabItem: VerticalTabs.TabItem
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -157,7 +173,7 @@ export default {
         code: '150300'
       }],
       rightTitle: '修改密码',
-      rightKey: '1',
+      rightKey: 0,
       // 密码
       formPwd: {
         oldPassword: '',
@@ -279,7 +295,7 @@ export default {
     }
     // 受理开单来的
     if (this.isFromOrder) {
-      this.rightKey = '4'
+      this.rightKey = 4
       this.tabName = 'order'
     }
   },
@@ -297,33 +313,15 @@ export default {
           }
         })
       }
-      // Server({
-      //   url: 'set/smsInfo',
-      //   method: 'get'
-      // }).then(({ data }) => {
-      //   this.switchMsg = false
-      //   if (data.data.smsCode) {
-      //     this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
-      //     this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
-      //     for (const checkList of this.messageList) {
-      //       checkList.checkBox.forEach(element => {
-      //         if (this.msgCheckBoxList.includes(element.model)) {
-      //           element.model = true
-      //           this.switchMsg = true
-      //         }
-      //       })
-      //     }
-      //   }
-      // })
     },
-    clickLeftMenu (id, menuName) {
-      this.rightTitle = menuName
-      this.rightKey = id
-      switch (id) {
-        case '2':
+    clickMenu (param) {
+      this.rightTitle = param.name
+      this.rightKey = param.id
+      switch (this.rightKey) {
+        case 1:
           this.formPersonal = _.cloneDeep(this.UserInfo)
           break
-        case '3':
+        case 2:
           this.smsInfo()
           break
       }
@@ -440,16 +438,16 @@ export default {
 <style lang='stylus' scoped>
 .set-up-container
   overflow auto
->>> .ivu-menu-vertical.ivu-menu-light:after
-  background: #fff;
->>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
-    background: #fff;
-    color: #333333;
-    font-weight: bold;
->>> .ivu-form-item-label
->>> .ivu-form-item-content
-  font-size: 14px
-  font-weight: 400
+// >>> .ivu-menu-vertical.ivu-menu-light:after
+//   background: #fff;
+// >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
+//     background: #fff;
+//     color: #333333;
+//     font-weight: bold;
+// >>> .ivu-form-item-label
+// >>> .ivu-form-item-content
+//   font-size: 14px
+//   font-weight: 400
 .temAll
   background: #fff
   margin: -20px -15px;
@@ -461,6 +459,12 @@ export default {
       width:300px;
     .labelClassSty
       font-weight: bold;
+.menuCol
+  width:160px
+  height:100%
+  background-color:#f3f5f9
+  overflow:hidden
+  padding-top: 20px
 .menuList
   background:rgba(243,245,249,1);
   color: #333;
@@ -470,7 +474,7 @@ export default {
   height: 100%;
 .borderBottomLine
   border-bottom: 1px solid #e9e9e9;
-  padding-bottom: 18px;
+  padding-bottom: 12px;
   margin-top: 18px;
   margin-right: 20px;
   .iconRightTitle
@@ -557,7 +561,6 @@ export default {
     position absolute
     top 24%
     left 50%
-    margin-top 50px
     transform translate(-50%, -50%)
     .ivu-form-item-label
       width 110px !important
