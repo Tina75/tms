@@ -45,6 +45,7 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import Export from '@/libs/js/export'
 import { mapActions } from 'vuex'
+import { divideFee } from '@/libs/js/config'
 export default {
   name: 'owner-tyre',
   components: {
@@ -141,7 +142,7 @@ export default {
           title: '金额（元）',
           key: 'cost',
           render: (h, params) => {
-            return h('div', Number(params.row.cost) / 100)
+            return h('div', divideFee(params.row.cost))
           }
         },
         {

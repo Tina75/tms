@@ -130,6 +130,7 @@ import ruleForClient from './ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
 import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
+import { divideFee } from '@/libs/js/config'
 // 是否包含省市
 const hasCity = (val, cityName) => {
   return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
@@ -392,7 +393,7 @@ export default {
                           ...params.row,
                           cargoName: params.row.cargoName,
                           unit: params.row.unit,
-                          cargoCost: (params.row.cargoCost / 100).toFixed(2),
+                          cargoCost: divideFee(params.row.cargoCost),
                           weight: String(params.row.weight),
                           volume: String(params.row.volume),
                           remark1: params.row.remark1,
@@ -461,7 +462,7 @@ export default {
           title: '货值',
           key: 'cargoCost',
           render (h, params) {
-            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
+            return h('div', {}, divideFee(params.row.cargoCost))
           }
         },
         {

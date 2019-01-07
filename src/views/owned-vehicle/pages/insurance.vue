@@ -45,6 +45,7 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import Export from '@/libs/js/export'
 import { mapActions } from 'vuex'
+import { divideFee } from '@/libs/js/config'
 export default {
   name: 'owned-insurance',
   components: {
@@ -162,7 +163,7 @@ export default {
           title: '总金额（元）',
           key: 'totalFee',
           render: (h, params) => {
-            return h('div', Number(params.row.totalFee) / 100)
+            return h('div', divideFee(params.row.totalFee))
           }
         },
         {
@@ -193,14 +194,14 @@ export default {
           title: '交强险金额（元）',
           key: 'trafficFee',
           render: (h, params) => {
-            return h('div', Number(params.row.trafficFee) / 100)
+            return h('div', divideFee(params.row.trafficFee))
           }
         },
         {
           title: '商业险金额（元）',
           key: 'businessFee',
           render: (h, params) => {
-            return h('div', Number(params.row.businessFee) / 100)
+            return h('div', divideFee(params.row.businessFee))
           }
         },
         {

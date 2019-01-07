@@ -48,19 +48,19 @@
           <Col span="6">
           <div>
             <span class="label">维修费用：</span>
-            {{infoData.repairMoney / 100}}<span>元</span>
+            {{ divideFee(infoData.repairMoney) }}<span>元</span>
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">已支付费用：</span>
-            {{infoData.payMoney / 100}}<span>元</span>
+            {{ divideFee(infoData.payMoney) }}<span>元</span>
           </div>
           </Col>
           <Col span="6">
           <div>
             <span class="label">未支付费用：</span>
-            {{infoData.waitPayMoney / 100}}<span>元</span>
+            {{divideFee(infoData.waitPayMoney)}}<span>元</span>
           </div>
           </Col>
         </Row>
@@ -111,6 +111,7 @@
 import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import { deleteRepairById, queryRepairById } from './client'
+import { divideFee } from '@/libs/js/config'
 export default {
   name: 'owner-carrepair-details',
   components: { RecordList },
@@ -136,6 +137,9 @@ export default {
     this.queryById()
   },
   methods: {
+    divideFee (fee) {
+      return divideFee(fee)
+    },
     queryById () {
       let vm = this
       queryRepairById({ repairId: vm.infoData.id }).then(res => {

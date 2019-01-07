@@ -50,6 +50,7 @@ import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import { CODE, deleteRepairById } from './client'
+import { divideFee } from '@/libs/js/config'
 export default {
   name: 'owned-car',
   components: {
@@ -194,21 +195,21 @@ export default {
           title: '维修费用（元）',
           key: 'repairMoney',
           render: (h, params) => {
-            return h('span', Number(params.row.repairMoney) / 100)
+            return h('span', divideFee(params.row.repairMoney))
           }
         },
         {
           title: '已支付费用（元）',
           key: 'payMoney',
           render: (h, params) => {
-            return h('span', Number(params.row.payMoney) / 100)
+            return h('span', divideFee(params.row.payMoney))
           }
         },
         {
           title: '未支付费用（元）',
           key: 'waitPayMoney',
           render: (h, params) => {
-            return h('span', Number(params.row.waitPayMoney) / 100)
+            return h('span', divideFee(params.row.waitPayMoney))
           }
         },
         {
