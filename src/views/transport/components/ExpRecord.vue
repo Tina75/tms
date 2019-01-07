@@ -148,6 +148,9 @@
           </i-col>
         </Row>
         <div class="mgbt20 handle-info">
+          <Table :columns="cargoColumns" :data="data.abnormalCargolist"></Table>
+        </div>
+        <div class="mgbt20 handle-info">
           <label class="label-bar">处理备注：</label>
           <span class="flexBox colorGrey">{{data.disposeDesc}}</span>
         </div>
@@ -159,6 +162,7 @@
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
 import openSwipe from '@/components/swipe/index'
+import cargoColumns from '../constant/cargoColumns'
 
 const moneyFormate = (fee) => {
   if (!fee) return 0
@@ -199,6 +203,7 @@ export default {
   },
   data () {
     return {
+      cargoColumns,
       hideDetail: this.listLength > 1,
       IMG_URL: process.env.VUE_APP_IMG_URL,
       columns: [
