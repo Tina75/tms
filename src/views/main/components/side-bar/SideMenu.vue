@@ -199,9 +199,9 @@ export default {
     font-size 20px
     color white
     text-align center
-    line-height 52px
+    line-height 90px
     text-indent -5%
-    height 50px
+    height 90px
     padding 0
     margin 0
   >>> .ivu-menu-vertical

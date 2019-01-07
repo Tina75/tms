@@ -19,7 +19,8 @@ const headType = {
   CAR_PROFIT: 'car_profit_head', // 整车利润
   SINGLEVOTE_PROFIT: 'singleVote_profit_head', // 单票利润
   UPSTREAM_ORDER: 'upstream_order_head', // 上游订单的自定义表头
-  OIL_CARD_LOG: 'oil_card_log' // 油卡使用记录
+  OIL_CARD_LOG: 'oil_card_log', // 油卡使用记录
+  CONSIGNER_CARGO: 'consigner_cargo_head' // 常发货物
 
 }
 export default headType

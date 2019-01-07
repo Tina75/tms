@@ -28,8 +28,8 @@ export default {
     }
   },
   mounted () {
-    window.document.getElementById('content-main').style.minHeight = (document.body.clientHeight - 80) + 'px'
-    this.height = document.body.clientHeight - 80
+    window.document.getElementById('content-main').style.minHeight = (document.body.clientHeight - 80 - 40) + 'px'
+    this.height = document.body.clientHeight - 80 - 40
     this.setDocumentHeight(document.body.clientHeight)
     window.onresize = () => {
       this.setDocumentHeight(document.body.clientHeight)

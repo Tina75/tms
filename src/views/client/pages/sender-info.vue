@@ -93,8 +93,7 @@
         <TabPane :label="tabPaneLabe2">
           <div class="add">
             <Button v-if="hasPower(130107)" type="primary"  @click="_consignerConsigneeAdd">新增</Button>
-            <!-- 权限待加 -->
-            <Button type="default"  @click="_consignerConsigneeAddAll">批量导入</Button>
+            <Button v-if="hasPower(130116)" type="default" @click="_consignerConsigneeAddAll">批量导入</Button>
           </div>
           <template>
             <page-table
@@ -107,10 +106,14 @@
         <TabPane :label="tabPaneLabe3">
           <div class="add">
             <Button v-if="hasPower(130110)" type="primary" @click="_consignerCargoAdd">新增</Button>
+            <!-- 权限待加 -->
+            <Button type="default" @click="_consignerCargoAddAll">批量导入</Button>
           </div>
           <template>
             <page-table
               :columns="columns3"
+              :show-filter="true"
+              :table-head-type="headType"
               :data="data3"
               list-field="list">
             </page-table>
@@ -130,6 +133,8 @@ import ruleForClient from './ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
 import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
+import headType from '@/libs/constant/headtype'
+import { divideFee } from '@/libs/js/config'
 // 是否包含省市
 const hasCity = (val, cityName) => {
   return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
@@ -146,6 +151,7 @@ export default {
   },
   data () {
     return {
+      headType: headType.CONSIGNER_CARGO,
       loading: false,
       id: this.$route.query.id, // 发货方id
       ruleHeight: 0,
@@ -392,7 +398,7 @@ export default {
                           ...params.row,
                           cargoName: params.row.cargoName,
                           unit: params.row.unit,
-                          cargoCost: (params.row.cargoCost / 100).toFixed(2),
+                          cargoCost: divideFee(params.row.cargoCost),
                           weight: String(params.row.weight),
                           volume: String(params.row.volume),
                           remark1: params.row.remark1,
@@ -461,7 +467,7 @@ export default {
           title: '货值',
           key: 'cargoCost',
           render (h, params) {
-            return h('div', {}, (params.row.cargoCost / 100).toFixed(2))
+            return h('div', {}, divideFee(params.row.cargoCost))
           }
         },
         {
@@ -563,7 +569,8 @@ export default {
       pageNo3: 1,
       totalCount4: 0,
       isShow: false,
-      downLoadUrl: ''
+      ConsigneeDownLoadUrl: '',
+      CargoDownLoadUrl: ''
     }
   },
   computed: {
@@ -582,7 +589,7 @@ export default {
   },
   mounted () {
     this._consignerDetail()
-    this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
+    this.ruleHeight = document.body.clientHeight - 90 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
   },
   methods: {
     tabsClick (name) {
@@ -620,7 +627,9 @@ export default {
           this.totalCount2 = data.consigneeList.totalCount
           this.data3 = data.cargoList.list
           this.totalCount3 = data.cargoList.totalCount
-          this.downLoadUrl = data.importConsigneeTemplet
+          this.ConsigneeDownLoadUrl = data.importConsigneeTemplet
+          // 临时 undefied 时 ''
+          this.CargoDownLoadUrl = data.importCargoTemplet || ''
         }
       })
     },
@@ -693,14 +702,15 @@ export default {
         }
       })
     },
-    // 批量导入
+    // 收货方批量导入
     _consignerConsigneeAddAll () {
       const self = this
       this.openDialog({
         name: 'client/dialog/batch-import',
         data: {
           title: '批量导入',
-          downLoadUrl: this.downLoadUrl
+          downLoadUrl: this.ConsigneeDownLoadUrl,
+          notifyRequestUrl: 'consigner/consignee/importList'
         },
         methods: {
           ok: () => {
@@ -744,6 +754,23 @@ export default {
         methods: {
           ok () {
             _this._consignerCargoList() // 刷新页面
+          }
+        }
+      })
+    },
+    // 常发货物批量导入
+    _consignerCargoAddAll () {
+      const self = this
+      this.openDialog({
+        name: 'client/dialog/batch-import',
+        data: {
+          title: '导入常发货物',
+          downLoadUrl: this.CargoDownLoadUrl,
+          notifyRequestUrl: 'consigner/cargo/importList'
+        },
+        methods: {
+          ok: () => {
+            self._consignerCargoList()
           }
         }
       })

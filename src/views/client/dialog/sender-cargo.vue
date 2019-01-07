@@ -1,3 +1,4 @@
+<!--新增编辑常发货物-->
 <template>
   <div>
     <Modal
@@ -8,7 +9,7 @@
       class="modal"
       @on-visible-change="close"
     >
-      <p slot="header" style="text-align:center">{{title}}</p>
+      <p slot="header" style="text-align:center">{{title}}<setCargo></setCargo></p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
         <FormItem label="货物名称：" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
@@ -16,8 +17,9 @@
         <FormItem label="货物编码：">
           <Input v-model="validate.cargoNo" :maxlength="200" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="货值：" prop="cargoCost">
-          <Input v-model="validate.cargoCost"  placeholder="请输入"/>元
+        <FormItem label="货值：">
+          <!-- <Input v-model="validate.cargoCost"  placeholder="请输入"/>元 -->
+          <TagNumberInput :min="0" :precision="$numberPrecesion.fee" v-model="validate.cargoCost" :show-chinese="false" placeholder="请输入"></TagNumberInput>元
         </FormItem>
         <FormItem label="包装方式：">
           <SelectPackageType v-model="validate.unit" style="width: 86%" clearable></SelectPackageType>
@@ -64,14 +66,17 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import { consignerCargoAdd, consignerCargoUpdate } from '../pages/client'
 import float from '@/libs/js/float'
+import { multiplyFee } from '@/libs/js/config'
 import SelectPackageType from '@/components/SelectPackageType'
 import TagNumberInput from '@/components/TagNumberInput'
+import setCargo from './setCargo'
 export default {
   name: 'sender-address',
   components: {
     SelectInput,
     SelectPackageType,
-    TagNumberInput
+    TagNumberInput,
+    setCargo
   },
   mixins: [BaseDialog],
   data () {
@@ -94,10 +99,10 @@ export default {
       ruleValidate: {
         cargoName: [
           { required: true, message: '货物名称不能为空', trigger: 'blur' }
-        ],
-        cargoCost: [
-          { type: 'string', message: '必须为不超过9位的数,最多两位小数', pattern: /^(0|([1-9]\d{0,8}))([.]\d{1,2})?$/, trigger: 'blur' }
         ]
+        // cargoCost: [
+        //   { type: 'string', message: '必须为不超过9位的数,最多两位小数', pattern: /^(0|([1-9]\d{0,8}))([.]\d{1,2})?$/, trigger: 'blur' }
+        // ]
         // weight: [
         //   { type: 'string', message: '必须为大于等于0的数字,最多三位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,3})?$/, trigger: 'blur' }
         // ],
@@ -134,28 +139,28 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true
+          let data = {
+            cargoName: this.validate.cargoName,
+            unit: this.validate.unit,
+            cargoCost: multiplyFee(this.validate.cargoCost),
+            weight: parseFloat(this.validate.weight),
+            volume: parseFloat(this.validate.volume),
+            remark1: this.validate.remark1,
+            remark2: this.validate.remark2,
+            cargoNo: this.validate.cargoNo,
+            dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
+          }
           if (this.flag === 1) { // 新增
-            this.add()
+            this.add(data)
           } else { // 2-编辑
-            this.update()
+            this.update(data)
           }
           this.close()
         }
       })
     },
-    add () {
-      let data = {
-        consignerId: this.consignerId,
-        cargoName: this.validate.cargoName,
-        unit: this.validate.unit,
-        cargoCost: float.round(parseFloat(this.validate.cargoCost) * 100), // *100传给后端
-        weight: parseFloat(this.validate.weight),
-        volume: parseFloat(this.validate.volume),
-        remark1: this.validate.remark1,
-        remark2: this.validate.remark2,
-        cargoNo: this.validate.cargoNo,
-        dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
-      }
+    add (data) {
+      data.consignerId = this.consignerId
       consignerCargoAdd(data).then(res => {
         this.loading = false
         this.ok() // 刷新页面
@@ -163,19 +168,8 @@ export default {
         this.loading = false
       })
     },
-    update () {
-      let data = {
-        id: this.id,
-        cargoName: this.validate.cargoName,
-        unit: this.validate.unit,
-        cargoCost: float.round(parseFloat(this.validate.cargoCost) * 100),
-        weight: parseFloat(this.validate.weight),
-        volume: parseFloat(this.validate.volume),
-        remark1: this.validate.remark1,
-        remark2: this.validate.remark2,
-        cargoNo: this.validate.cargoNo,
-        dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
-      }
+    update (data) {
+      data.id = this.id
       consignerCargoUpdate(data).then(res => {
         this.loading = false
         this.ok() // 刷新页面

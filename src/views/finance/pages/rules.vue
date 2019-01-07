@@ -286,7 +286,7 @@ export default {
   },
   mounted () {
     this.getRules()
-    this.height = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 65
+    this.height = document.body.clientHeight - 90 - 15 * 2 - 20 + 15 - 65
   },
   methods: {
     // ...mapActions(['getSenderRules', 'getCarriesRules']),

@@ -22,7 +22,7 @@
             <Col span="6">
             <div>
               <span class="label">金额：</span>
-              {{infoData.cost / 100}}<span>元</span>
+              {{divideFee(infoData.cost)}}<span>元</span>
             </div>
             </Col>
             <Col span="6">
@@ -78,6 +78,7 @@ import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { mapActions } from 'vuex'
+import { divideFee } from '@/libs/js/config'
 export default {
   name: 'insurance-details',
   components: { RecordList, prepareOpenSwipe },
@@ -100,6 +101,9 @@ export default {
   },
   methods: {
     ...mapActions(['checkQueryById', 'checkDeleteById']),
+    divideFee (fee) {
+      return divideFee(fee)
+    },
     queryById () {
       let vm = this
       this.checkQueryById({ id: vm.infoData.id }).then(res => {
