@@ -18,17 +18,17 @@
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.customerOrderNoOption == 1" span="6">
       <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="$fieldLength.orderNo" clearable></Input>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.customerWaybillNoOption == 1" span="6">
       <FormItem label="客户运单号:" prop="customerWaybillNo">
         <Input v-model="orderForm.customerWaybillNo" :maxlength="$fieldLength.billNo" clearable></Input>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.salesmanIdOption == 1" span="6">
       <FormItem label="对接业务员:" prop="salesmanId">
         <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
           <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
@@ -37,17 +37,17 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="6">
+      <Col v-if="OrderSet.startCityOption == 1" span="6">
       <FormItem label="发货城市:" prop="start">
         <CitySelect v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.endCityOption == 1" span="6">
       <FormItem label="到货城市:" prop="end">
         <CitySelect v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.deliveryTimeOption == 1" span="6">
       <FormItem label="发货时间:">
         <Row>
           <Col span="13">
@@ -63,7 +63,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.arriveTimeOption == 1" span="6">
       <FormItem label="到货时间:">
         <Row>
           <Col span="13">
@@ -185,7 +185,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.mileageOption == 1" span="6">
       <FormItem label="计费里程:" prop="mileage">
         <Row>
           <Col span="19">
@@ -196,7 +196,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.freightFeeOption == 1" span="6">
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
           <Col span="19">
@@ -273,7 +273,7 @@
     </Row>
     <Title>其他</Title>
     <Row :gutter="16" class="i-mt-15">
-      <Col span="6">
+      <Col v-if="OrderSet.pickupOption == 1" span="6">
       <FormItem :class="{'ivu-form-item-error': highLight}" label="提货方式:" prop="pickup">
         <Row>
           <Col span="19">
@@ -284,7 +284,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.receiptCountOption == 1" span="6">
       <FormItem label="回单数量:" prop="receiptCount">
         <Row>
           <Col span="19">
@@ -295,7 +295,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.isInvoiceOption == 1" span="6">
       <FormItem label="是否开票:" prop="isInvoice">
         <Row>
           <Col span="19">
@@ -307,7 +307,7 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem v-if="orderForm.isInvoice === 1" label="开票税率:" prop="invoiceRate">
+      <FormItem v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" label="开票税率:" prop="invoiceRate">
         <Row>
           <Col span="12">
           <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100" clearable>
@@ -322,7 +322,7 @@
       </Col>
     </Row>
     <Row :gutter="16" class="i-mt-15">
-      <Col span="6">
+      <Col v-if="OrderSet.collectionMoneyOption == 1" span="6">
       <FormItem label="代收货款:" prop="collectionMoney">
         <Row>
           <Col span="19">
@@ -332,7 +332,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="18">
+      <Col v-if="OrderSet.OrderRemark == 1" span="18">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" clearable></Input>
       </FormItem>

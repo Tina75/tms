@@ -1,6 +1,6 @@
 <template>
   <Modal v-model="visiable" :mask-closable="false" class="ivu-upload" transfer @on-visible-change="close" >
-    <p slot="header" style="text-align:center">批量导入</p>
+    <p slot="header" style="text-align:center">{{title}}</p>
     <input
       ref="fileInput"
       name="file"
@@ -64,7 +64,6 @@ export default {
       progress: 0,
       ossClient: null,
       ossDir: '',
-      notifyRequestUrl: 'consigner/consignee/importList',
       timer: null,
       percent: 0,
       failStatue: false,
