@@ -88,7 +88,8 @@ const state = {
     collectionMoneyOption: 1,
     // 订单备注
     orderRemarkOption: 1
-  }
+  },
+  tmsCargoDto: {}
 }
 
 export default new Vuex.Store({

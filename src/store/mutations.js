@@ -48,6 +48,14 @@ export default{
    */
   allocationStrategySetting (state, option) {
     state.allocationStrategy = option
+  },
+  /**
+   * 常发货物
+   * @param {*} state
+   * @param {*} option
+   */
+  tmsCargoDtoSetting (state, option) {
+    state.tmsCargoDto = option
   }
 }
 

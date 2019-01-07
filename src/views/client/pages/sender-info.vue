@@ -112,6 +112,8 @@
           <template>
             <page-table
               :columns="columns3"
+              :show-filter="true"
+              :table-head-type="headType"
               :data="data3"
               list-field="list">
             </page-table>
@@ -131,6 +133,7 @@ import ruleForClient from './ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
 import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
+import headType from '@/libs/constant/headtype'
 import { divideFee } from '@/libs/js/config'
 // 是否包含省市
 const hasCity = (val, cityName) => {
@@ -148,6 +151,7 @@ export default {
   },
   data () {
     return {
+      headType: headType.CONSIGNER_CARGO,
       loading: false,
       id: this.$route.query.id, // 发货方id
       ruleHeight: 0,
@@ -585,7 +589,7 @@ export default {
   },
   mounted () {
     this._consignerDetail()
-    this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
+    this.ruleHeight = document.body.clientHeight - 90 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
   },
   methods: {
     tabsClick (name) {
