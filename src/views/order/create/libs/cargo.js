@@ -97,23 +97,7 @@ export default class Cargo {
   set weightKg (value) {
     this._weight = float.round(value / 1000, NumberPrecesion.weight)
   }
-  // set volume (value) {
-  //   this._volume = value
-  // }
-  // get volume () {
-  //   if (!this._volume) {
-  //     return float.round(this.dimension.length * this.dimension.width * this.dimension.height / 1000 * 1000 * 1000,)
-  //   } else {
-  //     return this._volume
-  //   }
-  // }
-  // set dimension (value) {
-  //   console.log(value)
-  //   this._dimension = value
-  // }
-  // get dimension () {
-  //   return this._dimension
-  // }
+
   validate () {
     if (!this.cargoName) {
       return { success: false, message: '请输入货物名称' }
