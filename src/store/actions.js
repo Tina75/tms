@@ -87,10 +87,11 @@ export const getConfiguration = ({ commit }) => {
     method: 'get'
   }).then((result) => {
     if (result.data.code === 10000) {
-      const { smsSetInfo, allocationStrategyInfo, tmsSetConfigDto } = result.data.data
+      const { smsSetInfo, allocationStrategyInfo, tmsSetConfigDto, tmsCargoDto } = result.data.data
       commit('smsSetting', smsSetInfo.smsCode)
       commit('allocationStrategySetting', allocationStrategyInfo)
       commit('changeOrderConfiguration', tmsSetConfigDto)
+      commit('tmsCargoDto', tmsCargoDto)
     }
   })
 }

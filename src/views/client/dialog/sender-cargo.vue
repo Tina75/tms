@@ -1,3 +1,4 @@
+<!--新增编辑常发货物-->
 <template>
   <div>
     <Modal
@@ -8,7 +9,7 @@
       class="modal"
       @on-visible-change="close"
     >
-      <p slot="header" style="text-align:center">{{title}}</p>
+      <p slot="header" style="text-align:center">{{title}}<setCargo></setCargo></p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
         <FormItem label="货物名称：" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
@@ -66,12 +67,14 @@ import { consignerCargoAdd, consignerCargoUpdate } from '../pages/client'
 import float from '@/libs/js/float'
 import SelectPackageType from '@/components/SelectPackageType'
 import TagNumberInput from '@/components/TagNumberInput'
+import setCargo from './setCargo'
 export default {
   name: 'sender-address',
   components: {
     SelectInput,
     SelectPackageType,
-    TagNumberInput
+    TagNumberInput,
+    setCargo
   },
   mixins: [BaseDialog],
   data () {

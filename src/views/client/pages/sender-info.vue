@@ -111,6 +111,8 @@
           <template>
             <page-table
               :columns="columns3"
+              :show-filter="true"
+              :table-head-type="headType"
               :data="data3"
               list-field="list">
             </page-table>
@@ -130,6 +132,7 @@ import ruleForClient from './ruleForClient/index'
 import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, consignerConsigneeList, consignerConsigneeDelete, consignerCargoList, consignerCargoDelete } from './client'
 import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
+import headType from '@/libs/constant/headtype'
 // 是否包含省市
 const hasCity = (val, cityName) => {
   return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
@@ -146,6 +149,7 @@ export default {
   },
   data () {
     return {
+      headType: headType.CONSIGNER_CARGO,
       loading: false,
       id: this.$route.query.id, // 发货方id
       ruleHeight: 0,

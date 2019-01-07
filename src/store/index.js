@@ -60,7 +60,8 @@ const state = {
     insuranceFeeOption: 1,
     // 其他费用
     otherFeeOption: 1
-  }
+  },
+  tmsCargoDto: {}
 }
 
 export default new Vuex.Store({
