@@ -2,8 +2,8 @@
   <div id="set-up-container" class="set-up-container temAll">
     <Row id="temAll" :style="styleHeight">
       <Col span="1" class="menuCol">
-      <!-- <Menu :active-name="rightKey != 4 ? rightTitle : '系统设置'" class="menuList" style="width:160px">
-        <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
+      <!-- <Menu :active-name="rightKey != 3 ? rightTitle : '系统设置'" class="menuList" style="width:160px">
+        <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         </MenuItem>
       </Menu> -->
@@ -50,17 +50,29 @@
           </Col>
       </div>
       <!--个人设置-->
-      <div v-else-if="1 === this.rightKey" key="2" class="divSetContent">
+      <div v-show="1 === this.rightKey" key="2" class="divSetContent">
         <Col span="10" class="setConf">
         <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="100" label-position="right">
           <FormItem label="账号：" class="labelClassSty">
             <span>{{formPersonal.phone}}</span>
           </FormItem>
           <FormItem label="姓名：" prop="name">
-            <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" style="margin-left: 9px;" class="inputClassSty"></Input>
+            <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" class="inputClassSty"></Input>
           </FormItem>
           <FormItem label="角色：" class="labelClassSty">
             <span>{{formPersonal.roleName}}</span>
+          </FormItem>
+          <FormItem label="个人头像：">
+            <span class="imageTips">尺寸100*100像素，大小不超过10MB</span>
+          </FormItem>
+          <FormItem>
+            <image-title
+              ref="upLoadsPerson"
+              :multiple="true"
+              max-count="1"
+              max-size="10"
+              class="personPic">
+            </image-title>
           </FormItem>
           <FormItem>
             <Button type="primary" style="width:86px;"  @click="personalSubmit('formPersonal')">保存</Button>
@@ -69,7 +81,7 @@
           </Col>
       </div>
       <!--短信设置-->
-      <div v-else-if="2 === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
+      <div v-if="2 === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
         <Col span="20" class="setConf">
         <Card dis-hover>
           <div solt="title" class="msgCardTitle">
@@ -124,6 +136,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import Unit from '../components/unit.vue'
 import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
 import VerticalTabs from '@/components/vertical-tabs/index'
+import ImageTitle from '@/components/upLoad/ImageTitle.vue'
 export default {
   name: 'set-up',
   components: {
@@ -132,7 +145,8 @@ export default {
     Unit,
     AllocationStrategy,
     VerticalTabs,
-    VerticalTabItem: VerticalTabs.TabItem
+    VerticalTabItem: VerticalTabs.TabItem,
+    ImageTitle
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -159,17 +173,17 @@ export default {
     return {
       setUpMenu: [{
         name: '修改密码',
-        id: '1'
+        id: '0'
       }, {
         name: '个人设置',
-        id: '2'
+        id: '1'
       }, {
         name: '短信设置',
-        id: '3',
+        id: '2',
         code: '150200'
       }, {
         name: '系统设置',
-        id: '4',
+        id: '3',
         code: '150300'
       }],
       rightTitle: '修改密码',
@@ -288,15 +302,17 @@ export default {
       return this.$route.query.tab
     }
   },
+  created () {
+    // 受理开单来的
+    if (this.isFromOrder) {
+      this.rightKey = 3
+      this.tabName = 'order'
+    }
+  },
   mounted: function () {
     this.messageListInit = _.cloneDeep(this.messageList)
     if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
       document.getElementById('set-up-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
-    }
-    // 受理开单来的
-    if (this.isFromOrder) {
-      this.rightKey = 4
-      this.tabName = 'order'
     }
   },
   methods: {
@@ -320,6 +336,9 @@ export default {
       switch (this.rightKey) {
         case 1:
           this.formPersonal = _.cloneDeep(this.UserInfo)
+          if (this.formPersonal.avatarPic) {
+            this.$refs.upLoadsPerson.uploadImgList = [{ url: this.formPersonal.avatarPic, title: 'person' }]
+          }
           break
         case 2:
           this.smsInfo()
@@ -347,15 +366,17 @@ export default {
     },
     // 个人
     personalSubmit (name) {
+      if (this.$refs.upLoadsPerson.getImageList()[0]) this.formPersonal.avatarPic = this.$refs.upLoadsPerson.getImageList()[0].url
+      else this.formPersonal.avatarPic = ''
       this.$refs[name].validate((valid) => {
         if (valid) {
-          if (this.formPersonal.name === this.UserInfo.name) {
+          if (this.formPersonal.name === this.UserInfo.name && this.formPersonal.avatarPic === this.UserInfo.avatarPic) {
             this.$Message.info('您还未变更任何信息，无需保存')
             return
           }
           let param = {}
           param.name = this.formPersonal.name
-          param.avatarPic = ''
+          param.avatarPic = this.formPersonal.avatarPic
           Server({
             url: 'set/person',
             method: 'post',
@@ -436,18 +457,25 @@ export default {
 }
 </script>
 <style lang='stylus' scoped>
+>>>.personPic .demo-upload-list
+>>>.personPic .ivu-upload .ivu-upload-drag
+>>>.personPic .ivu-upload-input
+  width 96px
+  height 90px
+>>>.personPic input.ivu-input.ivu-input-default
+>>>.personPic .demo-upload-list-input.ivu-input-wrapper.ivu-input-wrapper-default.ivu-input-type
+  width 0
+  height 0
+  overflow: hidden
+>>>.ivu-form .ivu-form-item-label
+>>>.ivu-form .ivu-form-item-content
+  font-size: 14px
+  color #000000
+.personPic
+  margin-top: -20px
+  margin-bottom: -10px
 .set-up-container
   overflow auto
-// >>> .ivu-menu-vertical.ivu-menu-light:after
-//   background: #fff;
-// >>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
-//     background: #fff;
-//     color: #333333;
-//     font-weight: bold;
-// >>> .ivu-form-item-label
-// >>> .ivu-form-item-content
-//   font-size: 14px
-//   font-weight: 400
 .temAll
   background: #fff
   margin: -20px -15px;
@@ -457,8 +485,6 @@ export default {
     margin-left: -35%
     .inputClassSty
       width:300px;
-    .labelClassSty
-      font-weight: bold;
 .menuCol
   width:160px
   height:100%
@@ -501,7 +527,7 @@ export default {
 .msgSaveBtn
     position: absolute;
     left: 30%;
-    margin-top: 20px;
+    margin-top: 25px;
 .msgCardTitle
   margin-bottom: 15px;
   //图片相关
@@ -553,6 +579,9 @@ export default {
   font-size: 16px
   margin-top: 5px;
   margin-left: -10px;
+.imageTips
+  color #999999
+  font-size 14px
 </style>
 
 <style lang='stylus'>
