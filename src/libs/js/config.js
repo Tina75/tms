@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-12-27 19:51:13
+ * @Last Modified time: 2019-01-07 10:25:09
  */
 import float from './float'
 /**
@@ -18,7 +18,7 @@ export const NumberPrecesion = {
   weightKg: 0, // 重量公斤，保留整数
   volume: 6, // 体积精确6位小数
   mileage: 1, // 公里精确到1位小数
-  fee: 2, // 费用精确到2位小数
+  fee: 4, // 费用精确到4位小数，v1.10开始保留4位小数
   dimension: 1 // 包装尺寸1位小数
 }
 /**
@@ -38,18 +38,30 @@ export const FieldLength = {
   cargoNo: 200 // 货物编号，200位
 }
 /**
- * 费用计算，保留2位小数
+ * 费用计算，保留4位小数
+ * v1.10保留4位小数
  * @param {number} fee
  */
 export const roundFee = (fee) => {
   return float.round(fee, NumberPrecesion.fee)
 }
 /**
+ * 接口返回的费用需乘以10000
+ * @param {number} fee 接口返回的值
+ */
+export const multiplyFee = (fee) => {
+  return float.round(fee * 10000, 0)
+}
+
+export const divideFee = (fee) => {
+  return roundFee(fee / 10000)
+}
+/**
  * 保留2位小数字符串类型
  * @param {number} value
  */
 export const getFeeText = (value) => {
-  return value ? (value / 100).toFixed(NumberPrecesion.fee) : '0.00'
+  return value ? divideFee(value) : '0'
 }
 /**
  * 列表中费用格式化
@@ -67,6 +79,7 @@ export const renderFee = (h, value) => {
 export const roundMileage = (value) => {
   return float.round(value, NumberPrecesion.mileage)
 }
+
 /**
  * 字符串化，保留小数
  * @param {*} value
