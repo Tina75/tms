@@ -931,11 +931,6 @@ export default {
         return
       }
       const statics = vm.$refs.cargoTable.statics
-      // 重量和体积二选一，或者都填写，可以了
-      // if (statics.weight <= 0 && statics.volume <= 0) {
-      //   this.$Message.warning('请先填写货物必要信息')
-      //   return
-      // }
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
