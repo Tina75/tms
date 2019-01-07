@@ -172,24 +172,21 @@ export default {
               required: false,
               title: '长',
               key: 'length',
-              min: 0,
-              max: 9999999.9,
+              maxLen: 7,
               point: NumberPrecesion.dimension
             },
             {
               required: false,
               title: '宽',
               key: 'width',
-              min: 0,
-              max: 9999999.9,
+              maxLen: 7,
               point: NumberPrecesion.dimension
             },
             {
               required: false,
               title: '高',
               key: 'height',
-              min: 0,
-              max: 9999999.9,
+              maxLen: 7,
               point: NumberPrecesion.dimension
             }
           ]

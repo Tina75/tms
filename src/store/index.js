@@ -29,6 +29,20 @@ const state = {
     waybillStrategy: 2
   },
   orderSet: {
+    // 客户订单号
+    customerOrderNoOption: 1,
+    // 客户运单号
+    customerWaybillNoOption: 1,
+    // 对接业务员
+    salesmanIdOption: 1,
+    // 发货城市
+    startCityOption: 1,
+    // 到货城市
+    endCityOption: 1,
+    // 发货时间
+    deliveryTimeOption: 1,
+    // 到货时间
+    arriveTimeOption: 1,
     // 收货人单位
     consigneeCompanyNameOption: 2,
     // 货物编号
@@ -50,6 +64,10 @@ const state = {
     // 备注
     remark1Option: 1,
     remark2Option: 1,
+    // 计费里程
+    mileageOption: 1,
+    // 运输费
+    freightFeeOption: 1,
     // 提货费
     pickupFeeOption: 1,
     // 装货费
@@ -59,7 +77,17 @@ const state = {
     // 保险费
     insuranceFeeOption: 1,
     // 其他费用
-    otherFeeOption: 1
+    otherFeeOption: 1,
+    // 提货方式
+    pickupOption: 1,
+    // 回单数量
+    receiptCountOption: 1,
+    // 是否开票
+    isInvoiceOption: 1,
+    // 代收货款
+    collectionMoneyOption: 1,
+    // 订单备注
+    OrderRemark: 1
   }
 }
 
