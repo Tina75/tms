@@ -182,11 +182,11 @@ export default {
     this.getSubOrderNum()
     // 动态添加吨或公斤列
     if (this.WeightOption === 1) {
-      this.triggerWeightColumn(this.columns1, this.columns1Weight, 4)
-      this.triggerWeightColumn(this.columns2, this.columns2Weight, 4)
+      this.triggerWeightColumn(this.columns1, this.columns1Weight, 2)
+      this.triggerWeightColumn(this.columns2, this.columns2Weight, 2)
     } else {
-      this.triggerWeightColumn(this.columns1, this.columns1WeightKg, 4)
-      this.triggerWeightColumn(this.columns2, this.columns2WeightKg, 4)
+      this.triggerWeightColumn(this.columns1, this.columns1WeightKg, 2)
+      this.triggerWeightColumn(this.columns2, this.columns2WeightKg, 2)
     }
   },
 
@@ -339,6 +339,23 @@ export default {
       }
       childData.volume = this.volumeVal ? this.volumeVal : params.row.volume
       this.childOrderCargoList.unshift(childData)
+    },
+    // 拆批量
+    separateAverage () {
+      this.openDialog({
+        name: 'order/management/dialog/separate-average',
+        data: {
+          // 订单数据
+          orderDetail: this.detailData,
+          // 货物信息
+          cargoList: this.parentOrderCargoList
+        },
+        methods: {
+          ok (node) {
+
+          }
+        }
+      })
     }
   }
 

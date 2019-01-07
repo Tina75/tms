@@ -8,7 +8,9 @@
         <div class="company">
           <img v-if="UserInfo.logoUrl" :src="UserInfo.logoUrl" class="avatar" alt="">
           <img v-else src="../../../assets/default-avatar.jpg" class="avatar" alt="">
-          <span class="title">{{UserInfo.companyName}}</span>
+          <!--公司简称-->
+          <span v-if="UserInfo.shortName" class="title">{{UserInfo.shortName}}</span>
+          <span v-else class="title">{{UserInfo.companyName}}</span>
         </div>
         <div class="header-bar-avator-dropdown">
           <span class="header-bar-avator-dropdown-notify">

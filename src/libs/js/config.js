@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-07 10:25:09
+ * @Last Modified time: 2019-01-07 14:50:16
  */
 import float from './float'
 /**
@@ -50,11 +50,11 @@ export const roundFee = (fee) => {
  * @param {number} fee 接口返回的值
  */
 export const multiplyFee = (fee) => {
-  return float.round(fee * 10000, 0)
+  return float.round(fee * 100, 0)
 }
 
 export const divideFee = (fee) => {
-  return roundFee(fee / 10000)
+  return roundFee(fee / 100)
 }
 /**
  * 保留2位小数字符串类型

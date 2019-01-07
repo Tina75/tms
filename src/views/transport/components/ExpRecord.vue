@@ -7,6 +7,7 @@
       <span>记录号：{{data.recordNo}}</span>
       <div class="except-record-btn-group">
         <template v-if="data.status == 10">
+          <Button @click="clickHandle2">点击</Button>
           <Button v-if="hasPower(120401) || (billType === 1 && hasPower(120211)) || (billType === 2 && hasPower(120307)) || (billType === 3 && hasPower(120114))" type="default" style="margin: 0 10px" @click="clickHandle">处理</Button>
           <Button v-if="hasPower(120402) || (billType === 1 && hasPower(120212)) || (billType === 2 && hasPower(120308)) || (billType === 3 && hasPower(120115))" type="primary" @click="editBtn">编辑</Button>
         </template>
@@ -148,6 +149,9 @@
           </i-col>
         </Row>
         <div class="mgbt20 handle-info">
+          <Table :columns="cargoColumns" :data="data.abnormalCargolist"></Table>
+        </div>
+        <div class="mgbt20 handle-info">
           <label class="label-bar">处理备注：</label>
           <span class="flexBox colorGrey">{{data.disposeDesc}}</span>
         </div>
@@ -159,6 +163,7 @@
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
 import openSwipe from '@/components/swipe/index'
+import cargoColumns from '../constant/cargoColumns'
 
 const moneyFormate = (fee) => {
   if (!fee) return 0
@@ -199,6 +204,7 @@ export default {
   },
   data () {
     return {
+      cargoColumns,
       hideDetail: this.listLength > 1,
       IMG_URL: process.env.VUE_APP_IMG_URL,
       columns: [
@@ -325,6 +331,34 @@ export default {
         methods: {
           complete () {
             self.$parent.initData()
+          }
+        }
+      })
+    },
+    // 添加货物
+    // 一行默认显示 代做
+    clickHandle2 (e) {
+      this.openDialog({
+        name: 'transport/dialog/addCargo',
+        data: {
+          orders: [
+            {
+              name: '订单号1',
+              value: '订单号1'
+            },
+            {
+              name: '订单号2',
+              value: '订单号2'
+            },
+            {
+              name: '订单号3',
+              value: '订单号3'
+            }
+          ]
+        },
+        methods: {
+          complete (data) {
+            // console.log(data)
           }
         }
       })
