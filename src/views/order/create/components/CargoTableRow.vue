@@ -28,6 +28,7 @@
       @on-blur="handleBlur(col)"
     >
     </InputNumber>
+    <!-- 包装尺寸 -->
     <div v-else-if="col.type === 'multi' && col.children">
       <TagNumberInput
         v-for="(el, index) in col.children"
@@ -41,9 +42,22 @@
         style="margin: 0 1%">
       </TagNumberInput>
     </div>
+    <!-- 包装方式 -->
     <div v-else-if="col.type == 'package'">
       <SelectPackageType v-model="record[col.key]" clearable/>
     </div>
+    <!-- 订单下拉框 -->
+    <SelectInput
+      v-else-if="col.type === 'orderSelect'"
+      v-model="record[col.key]"
+      :local-options="orders"
+      :maxlength="col.max"
+      :transfer="true"
+      :remote="false"
+      clearable
+      @on-blur="handleBlur(col)"
+    >
+    </SelectInput>
     <Input v-else v-model="record[col.key]" :maxlength="col.max" clearable></Input>
     <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">
       {{record.errorMsg[col.key]}}
@@ -66,6 +80,7 @@ export default {
     index: Number,
     prefixClass: String,
     cargoes: Array,
+    orders: Array,
     headers: Array,
     record: Object,
     col: Object,
@@ -165,13 +180,8 @@ export default {
         }
       }
     },
-    inputHandle (value, key, size) {
-      // 尺寸等属性 长宽高
-      if (size) {
-        this.record[key].size = value
-      } else {
-        this.record[key] = value
-      }
+    inputHandle (value, key) {
+      this.record[key] = value
     }
   }
 }

@@ -17,12 +17,7 @@ export default class Cargo {
     this.volume = null
     this.hasError = false
     this.errorMsg = {}
-    // 1.0.9新增
-    // this.dimension = {
-    //   length: null,
-    //   width: null,
-    //   height: null
-    // }
+
     const self = this
     this.dimension = {
       _length: null,
@@ -59,6 +54,8 @@ export default class Cargo {
     this.cargoNo = null
     this.unit = null
 
+    this.orderNo = null
+
     if (props) {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
@@ -83,6 +80,7 @@ export default class Cargo {
       // 备注 100
       this.remark1 = props.remark1
       this.remark2 = props.remark2
+      this.orderNo = props.orderNo
     }
   }
   get weight () {
@@ -120,6 +118,13 @@ export default class Cargo {
         delete this.errorMsg[field]
       }
     }
+    // if (field === 'orderNo') {
+    //   if (!this.orderNo) {
+    //     this.errorMsg[field] = '请输入订单号'
+    //   } else {
+    //     delete this.errorMsg[field]
+    //   }
+    // }
     this.hasError = false
     for (let name in this.errorMsg) {
       if (name) {
@@ -128,13 +133,6 @@ export default class Cargo {
       }
     }
   }
-  // handleDemsion () {
-  //   const obj = {}
-  //   for (let i in this.dimension) {
-  //     obj[i] = this.dimension[i] || null
-  //   }
-  //   return obj
-  // }
   toJson () {
     return {
       cargoName: this.cargoName,
@@ -152,5 +150,32 @@ export default class Cargo {
         length: this.dimension.length || null
       }
     }
+  }
+  // 异常货物信息
+  toExceptionJson () {
+    return {
+      cargoName: this.cargoName,
+      orderNo: this.orderNo,
+      weight: this.weight,
+      volume: this.volume,
+      cargoCost: float.round(this.cargoCost * 100),
+      quantity: this.quantity,
+      unit: this.unit,
+      cargoNo: this.cargoNo,
+      dimension: {
+        height: this.dimension.height || null,
+        width: this.dimension.width || null,
+        length: this.dimension.length || null
+      }
+    }
+  }
+  validateExp () {
+    if (!this.cargoName) {
+      return { success: false, message: '请输入货物名称' }
+    }
+    if (!this.orderNo) {
+      return { success: false, message: '请输入订单号' }
+    }
+    return { success: true }
   }
 }
