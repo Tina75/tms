@@ -295,7 +295,7 @@ export default {
     }
     // 受理开单来的
     if (this.isFromOrder) {
-      this.rightKey = 4
+      this.rightKey = 3
       this.tabName = 'order'
     }
   },
