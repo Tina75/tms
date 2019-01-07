@@ -582,7 +582,7 @@ export default {
   },
   mounted () {
     this._consignerDetail()
-    this.ruleHeight = document.body.clientHeight - 50 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
+    this.ruleHeight = document.body.clientHeight - 90 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
   },
   methods: {
     tabsClick (name) {
