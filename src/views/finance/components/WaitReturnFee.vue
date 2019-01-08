@@ -46,9 +46,9 @@ import _ from 'lodash'
 import server from '@/libs/js/server'
 import returnFeeMixin from '../mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
-import { renderFee } from '@/libs/js/config'
+import { renderFee, divideFee } from '@/libs/js/config'
 import { mapGetters } from 'vuex'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 export default {
   components: {
     ReconcileLayout,
@@ -238,7 +238,8 @@ export default {
         name: 'finance/dialogs/returnFeeVerify',
         data: {
           id: ids,
-          needPay: float.round((needPay / 100).toFixed(2)),
+          // needPay: float.round((needPay / 100).toFixed(2)),
+          needPay: divideFee(needPay),
           verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: ids.length
         },
@@ -261,7 +262,8 @@ export default {
         name: 'finance/dialogs/returnFeeVerify',
         data: {
           id: data.id,
-          needPay: float.round((data.totalFee / 100).toFixed(2)),
+          // needPay: float.round((data.totalFee / 100).toFixed(2)),
+          needPay: divideFee(data.totalFee),
           verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: 0
         },

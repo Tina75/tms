@@ -18,7 +18,7 @@
       <FormItem label="实际金额：" prop="actrualAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="recover.actrualAmount" :min="0" :length="moneyLength"  :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="recover.actrualAmount" :min="0" :length="moneyLength"   placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
@@ -28,7 +28,7 @@
       <FormItem v-if="recover.carrierName !== '自有车队'" label="退押金：">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="recover.returnDeposit" :min="0"  :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="recover.returnDeposit" :min="0"  :length="moneyLength"  placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
@@ -57,7 +57,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 import contantmixin from '../mixin/contantmixin'
 import SelectInput from '@/components/SelectInput.vue'
 import { CARDTYPELIST, ISSUERLIST } from '../constant/enum'
-import float from '@/libs/js/float'
+import { multiplyFee } from '@/libs/js/config'
 export default {
   name: 'recover',
   components: {
@@ -70,7 +70,6 @@ export default {
       cardTypeList: CARDTYPELIST,
       issuerList: ISSUERLIST,
       loading: false,
-      precision: 2,
       moneyLength: 9,
       recover: {
         carrierName: '',
@@ -106,8 +105,8 @@ export default {
             method: 'post',
             data: {
               id: this.recover.id || undefined,
-              actrualAmount: typeof this.recover.actrualAmount === 'number' ? float.round(this.recover.actrualAmount * 100) : undefined,
-              returnDeposit: typeof this.recover.returnDeposit === 'number' ? float.round(this.recover.returnDeposit * 100) : undefined,
+              actrualAmount: typeof this.recover.actrualAmount === 'number' ? multiplyFee(this.recover.actrualAmount) : undefined,
+              returnDeposit: typeof this.recover.returnDeposit === 'number' ? multiplyFee(this.recover.returnDeposit) : undefined,
               opearteDate: this.recover.opearteDate ? this.recover.opearteDate.Format('yyyy-MM-dd') : undefined,
               remark: this.recover.remark || undefined
             }
@@ -115,9 +114,8 @@ export default {
             this.loading = false
             this.close()
             this.ok()
-          }).catch(err => {
+          }).catch(() => {
             this.loading = false
-            console.log(err)
           })
         }
       })

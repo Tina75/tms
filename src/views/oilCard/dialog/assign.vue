@@ -82,7 +82,7 @@
       <FormItem label="收押金：" prop="changeAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="assign.recieveDeposit" :min="0"  :length="moneyLength" :precision="precision" placeholder="请输入押金金额"></TagNumberInput>
+          <TagNumberInput v-model="assign.recieveDeposit" :min="0"  :length="moneyLength"  placeholder="请输入押金金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
@@ -107,8 +107,8 @@ import Server from '@/libs/js/server'
 import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 import { CAR } from '@/views/client/pages/client'
-import float from '@/libs/js/float'
 import TagNumberInput from '@/components/TagNumberInput'
+import { multiplyFee } from '@/libs/js/config'
 export default {
   name: 'assign',
   components: {
@@ -133,7 +133,6 @@ export default {
     }
     return {
       loading: false,
-      precision: 2,
       moneyLength: 9,
       typeList: [
         { name: '自有车加油', value: 1 },
@@ -262,16 +261,15 @@ export default {
               driverName: this.assign.type === 1 ? this.assign.driverName.split(' ')[0] : (this.assign.driverNameOther || undefined),
               truckNo: this.assign.truckNo || undefined,
               driverPhone: this.assign.type === 1 ? this.assign.driverName.split(' ')[1] : (this.assign.driverPhone || undefined),
-              recieveDeposit: typeof this.assign.recieveDeposit === 'number' ? float.round(this.assign.recieveDeposit * 100) : undefined,
+              recieveDeposit: typeof this.assign.recieveDeposit === 'number' ? multiplyFee(this.assign.recieveDeposit) : undefined,
               remark: this.assign.remark || undefined
             }
           }).then(res => {
             this.loading = false
             this.close()
             this.ok()
-          }).catch(err => {
+          }).catch(() => {
             this.loading = false
-            console.log(err)
           })
         }
       })
