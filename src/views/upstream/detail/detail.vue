@@ -212,6 +212,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
+import { divideFee } from '@/libs/js/config'
 import { renderVolume, renderWeight } from '../constant/util'
 import float from '@/libs/js/float'
 export default {
@@ -260,36 +261,25 @@ export default {
           title: '货值（元）',
           key: 'cost',
           render: (h, params) => {
-            return h('span', params.row.cost ? (params.row.cost / 100).toFixed(2) : '-')
+            // return h('span', params.row.cost ? (params.row.cost / 100).toFixed(2) : '-')
+            return h('div', {}, divideFee(params.row.cost))
           }
         },
         {
           title: '数量',
-          key: 'num',
-          render: (h, p) => {
-            return h('span', p.row.num ? p.row.num : '-')
-          }
+          key: 'num'
         },
         {
           title: '包装',
-          key: 'packageUnit',
-          render: (h, p) => {
-            return h('span', p.row.packageUnit ? p.row.packageUnit : '-')
-          }
+          key: 'packageUnit'
         },
         {
           title: '备注1',
-          key: 'remark1',
-          render: (h, p) => {
-            return h('span', p.row.remark1 ? p.row.remark1 : '-')
-          }
+          key: 'remark1'
         },
         {
           title: '备注2',
-          key: 'remark2',
-          render: (h, p) => {
-            return h('span', p.row.remark2 ? p.row.remark2 : '-')
-          }
+          key: 'remark2'
         }
       ],
       tableData: [],
