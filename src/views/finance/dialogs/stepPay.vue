@@ -105,6 +105,7 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import { multiplyFee } from '@/libs/js/config'
 import { payTypeMap } from '../constant/numList'
 
 export default {
@@ -195,7 +196,7 @@ export default {
           data: {
             orderId: this.id,
             payType: item.payType,
-            fee: float.round(item.fee * 100)
+            fee: multiplyFee(item.fee)
           }
         }).then(res => {
           this.loadData()

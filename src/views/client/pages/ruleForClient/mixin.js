@@ -24,11 +24,14 @@ export default {
     },
     precision () {
       if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量(吨)的只有3位小数
-        return 3
+        // return 3
+        return this.$numberPrecesion.weight
       } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') { // 体积保留6位
-        return 6
+        // return 6
+        return this.$numberPrecesion.volume
       } else if (this.ruleDetail.ruleType === '6' || this.ruleDetail.ruleType === '7') { // 重量公斤没小数
-        return 0
+        // return 0
+        return this.$numberPrecesion.weightKg
       } else {
         return 2
       }

@@ -137,25 +137,25 @@ export default {
     /deep/
       .ivu-poptip-arrow
         display none
-    .ivu-poptip-title
-      padding-top 16px
-      padding-bottom 10px
-    .title
-      color #333
-      font-weight 500
-      font-size 14px
-      line-height 20px
-      text-align center
-      .icon
-        cursor pointer
-        float right
-        font-size 16px
-        font-weight bold
-    .ivu-poptip-body
-      padding 8px 30px
-    .ivu-poptip-title:after
-      right 0
-      left 0
+      .ivu-poptip-title
+        padding-top 16px
+        padding-bottom 10px
+      .title
+        color #333
+        font-weight 500
+        font-size 14px
+        line-height 20px
+        text-align center
+        .icon
+          cursor pointer
+          float right
+          font-size 16px
+          font-weight bold
+      .ivu-poptip-body
+        padding 8px 30px
+      .ivu-poptip-title:after
+        right 0
+        left 0
     .tips
       text-align left
       margin-top 40px
