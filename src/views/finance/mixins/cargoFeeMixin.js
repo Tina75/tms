@@ -3,7 +3,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-11-09 16:48:31
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-11-28 11:19:14
+ * @Last Modified time: 2019-01-08 20:39:15
  */
 import _ from 'lodash'
 import server from '@/libs/js/server'
@@ -64,7 +64,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let height = this.DocumentHeight - 249 + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - 274 + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }
