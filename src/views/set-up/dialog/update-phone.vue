@@ -10,10 +10,10 @@
         <FormItem prop="phone" class="formBody">
           <Input v-model="formModal.phone" :maxlength="11" placeholder="请输入新手机号"></Input>
         </FormItem>
-        <FormItem prop="code">
+        <FormItem prop="smsCode">
           <Row>
             <Col :span="15">
-            <Input v-model="formModal.code" :maxlength="6" placeholder="请输入验证码"></Input>
+            <Input v-model="formModal.smsCode" :maxlength="6" placeholder="请输入验证码"></Input>
             </Col>
             <Col :span="8" :offset="1">
             <Button :disabled="disabled" type="default" long @click="getCode">{{codeMsg}}</Button>
@@ -30,8 +30,10 @@
 </template>
 
 <script>
-// import Server from '@/libs/js/server'
+import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
+import { setToken, removeToken } from '@/libs/js/auth'
+import { mapMutations } from 'vuex'
 export default {
   name: 'update-phone',
   mixins: [BaseDialog],
@@ -40,7 +42,7 @@ export default {
     var checkPhone = function (rule, value, callback) {
       if (value) {
         if (!(/^1\d{10}$/.test(value))) {
-          return callback(new Error('手机号格式不正确'))
+          return callback(new Error('手机号格式不正确，请重输'))
         }
         if (vm.phone === value) {
           return callback(new Error('输入的手机号与当前手机号一致'))
@@ -50,28 +52,18 @@ export default {
         callback()
       }
     }
-    var checkCode = function (rule, value, callback) {
-      if (value) {
-        if (value === '123456') {
-          return callback(new Error('验证码不正确'))
-        }
-        callback()
-      } else {
-        callback()
-      }
-    }
     return {
       formModal: {
-        phone: ''
+        phone: '',
+        smsCode: ''
       },
       rulesModal: {
         phone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' },
+          { required: true, message: '手机号不能为空', trigger: 'blur' },
           { validator: checkPhone, trigger: 'blur' }
         ],
-        code: [
-          { required: true, message: '请输入验证码', trigger: 'blur' },
-          { validator: checkCode, trigger: 'blur' }
+        smsCode: [
+          { required: true, message: '验证码不能为空', trigger: 'blur' }
         ]
       },
       disabled: false,
@@ -81,6 +73,7 @@ export default {
   mounted: function () {
   },
   methods: {
+    ...mapMutations(['initUserInfo']),
     configPhone (phoneNumber) {
       if (phoneNumber.length === 11) {
         let phone = phoneNumber.toString()
@@ -91,8 +84,15 @@ export default {
       let vm = this
       this.$refs.formModal.validateField('phone', callback => {
         if (!callback) {
-          let count = 6
+          let count = 90
           vm.disabled = true
+          Server({
+            url: '/set/phoneSms',
+            method: 'get',
+            data: { phone: vm.formModal.phone }
+          }).then(() => {
+            this.$Message.success('短信验证码已发送至手机，请注意查收')
+          })
           let interval = setInterval(() => {
             if (count === 1) {
               vm.disabled = false
@@ -106,10 +106,25 @@ export default {
       })
     },
     save () {
+      let vm = this
       this.$refs['formModal'].validate((valid) => {
         if (valid) {
-          this.$Message.success('账号更改成功')
-          this.close()
+          let param = {}
+          param.phone = vm.formModal.phone
+          param.smsCode = vm.formModal.smsCode
+          Server({
+            url: '/set/userPhone',
+            method: 'post',
+            data: param
+          }).then(({ data }) => {
+            this.$Message.success('号码修改成功')
+            vm.person.phone = vm.formModal.phone
+            vm.initUserInfo(vm.person)
+            removeToken()
+            setToken(data.data)
+            vm.ok()
+            vm.close()
+          })
         }
       })
     }

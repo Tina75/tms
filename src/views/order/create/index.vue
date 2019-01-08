@@ -520,8 +520,8 @@ export default {
         insuranceFee: null,
         // 其他费用
         otherFee: null,
-        // 提货方式
-        pickup: null, // 默认1：上门提货，2：直接送货
+        // 提货方式 未设置提货配置默认2：上门提货，2：直接送货
+        pickup: null,
         // 回单数量
         receiptCount: 1,
         collectionMoney: null,
@@ -1233,6 +1233,10 @@ export default {
               return el.id === form.salesmanId
             })
             if (!res) form.salesmanId = ''
+            // 未设置提货时 提货方式默认2
+            if (this.OrderSet.pickupOption !== 1 && !form.pickup) {
+              form.pickup = 2
+            }
             resolve(form)
           } else {
             vm.disabled = false
