@@ -1,5 +1,6 @@
 // import TMSUrl from '@/libs/constant/url'
 import float from '@/libs/js/float'
+import { divideFee } from '@/libs/js/config'
 import IconLabel from '@/components/IconLabel'
 import { renderMileage, renderVolume, renderWeight } from './util'
 
@@ -55,10 +56,7 @@ export const TABLE_COLUMNS = vm => [
   {
     title: '客户订单号',
     key: 'customerOrderNo',
-    minWidth: 160,
-    render: (h, p) => {
-      return h('span', p.row.customerOrderNo ? p.row.customerOrderNo : '-')
-    }
+    minWidth: 160
   },
   {
     title: '订单状态',
@@ -71,34 +69,22 @@ export const TABLE_COLUMNS = vm => [
   {
     title: '客户名称',
     key: 'shipperCompanyName',
-    minWidth: 200,
-    render: (h, p) => {
-      return h('span', p.row.shipperCompanyName ? p.row.shipperCompanyName : '-')
-    }
+    minWidth: 200
   },
   {
     title: '对接业务员',
     key: 'handlerUserName',
-    minWidth: 180,
-    render: (h, params) => {
-      return h('span', params.row.handlerUserName || '-')
-    }
+    minWidth: 180
   },
   {
     title: '发货城市',
     key: 'departureCityName',
-    minWidth: 180,
-    render: (h, params) => {
-      return h('span', params.row.departureCityName || '-')
-    }
+    minWidth: 180
   },
   {
     title: '收货城市',
     key: 'destinationCityName',
-    minWidth: 180,
-    render: (h, params) => {
-      return h('span', params.row.destinationCityName || '-')
-    }
+    minWidth: 180
   },
   {
     title: '计费里程（公里）',
@@ -155,70 +141,50 @@ export const TABLE_COLUMNS = vm => [
     title: '发货人',
     key: 'consignerContact',
     minWidth: 180,
-    tooltip: true,
-    render: (h, p) => {
-      return h('span', p.row.consignerContact ? p.row.consignerContact : '-')
-    }
+    tooltip: true
   },
   {
     title: '发货人联系号码',
     key: 'consignerPhone',
     minWidth: 150,
-    tooltip: true,
-    render: (h, p) => {
-      return h('span', p.row.consignerPhone ? p.row.consignerPhone : '-')
-    }
+    tooltip: true
   },
   {
     title: '发货地址',
     key: 'consignerAddress',
     minWidth: 200,
-    tooltip: true,
-    render: (h, p) => {
-      return h('span', p.row.consignerAddress ? p.row.consignerAddress : '-')
-    }
+    tooltip: true
   },
   {
     title: '收货人',
     key: 'consigneeContact',
     minWidth: 180,
-    tooltip: true,
-    render: (h, p) => {
-      return h('span', p.row.consigneeContact ? p.row.consigneeContact : '-')
-    }
+    tooltip: true
   },
   {
     title: '收货人联系号码',
     key: 'consigneePhone',
     minWidth: 150,
-    tooltip: true,
-    render: (h, p) => {
-      return h('span', p.row.consigneePhone ? p.row.consigneePhone : '-')
-    }
+    tooltip: true
   },
   {
     title: '收货地址',
     key: 'consigneeAddress',
     minWidth: 200,
-    tooltip: true,
-    render: (h, p) => {
-      return h('span', p.row.consigneeAddress ? p.row.consigneeAddress : '-')
-    }
+    tooltip: true
   },
   {
     title: '结算方式',
     key: 'settlementTypeDesc',
-    minWidth: 120,
-    render: (h, p) => {
-      return h('span', p.row.settlementTypeDesc ? p.row.settlementTypeDesc : '-')
-    }
+    minWidth: 120
   },
   {
     title: '运输费',
     key: 'freightFee',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.freightFee ? (params.row.freightFee / 100).toFixed(2) : '-')
+      // return h('span', params.row.freightFee ? (params.row.freightFee / 100).toFixed(2) : '-')
+      return h('div', {}, divideFee(params.row.freightFee))
     }
   },
   {
@@ -226,7 +192,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'pickFee',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.pickFee ? (params.row.pickFee / 100).toFixed(2) : '-')
+      // return h('span', params.row.pickFee ? (params.row.pickFee / 100).toFixed(2) : '-')
+      return h('div', {}, divideFee(params.row.pickFee))
     }
   },
   {
@@ -234,16 +201,17 @@ export const TABLE_COLUMNS = vm => [
     key: 'loadFee',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.loadFee ? (params.row.loadFee / 100).toFixed(2) : '-')
+      // return h('span', params.row.loadFee ? (params.row.loadFee / 100).toFixed(2) : '-')
+      return h('div', {}, divideFee(params.row.loadFee))
     }
   },
   {
     title: '卸货费',
     key: 'unloadFee',
     minWidth: 120,
-
     render: (h, params) => {
-      return h('span', params.row.unloadFee ? (params.row.unloadFee / 100).toFixed(2) : '-')
+      // return h('span', params.row.unloadFee ? (params.row.unloadFee / 100).toFixed(2) : '-')
+      return h('div', {}, divideFee(params.row.unloadFee))
     }
   },
   {
@@ -251,7 +219,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'insureFee',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '-')
+      // return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '-')
+      return h('div', {}, divideFee(params.row.insuranceFee))
     }
   },
   {
@@ -259,7 +228,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'otherFee',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.otherFee ? (params.row.otherFee / 100).toFixed(2) : '-')
+      // return h('span', params.row.otherFee ? (params.row.otherFee / 100).toFixed(2) : '-')
+      return h('div', {}, divideFee(params.row.otherFee))
     }
   },
   {
@@ -267,31 +237,27 @@ export const TABLE_COLUMNS = vm => [
     key: 'totalFee',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '-')
+      // return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '-')
+      return h('div', {}, divideFee(params.row.totalFee))
     }
   },
   {
     title: '提货方式',
     key: 'pickTypeDesc',
-    minWidth: 120,
-    render: (h, p) => {
-      return h('span', p.row.pickTypeDesc ? p.row.pickTypeDesc : '-')
-    }
+    minWidth: 120
   },
   {
     title: '回单数量',
     key: 'receiptCount',
-    minWidth: 120,
-    render: (h, p) => {
-      return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
-    }
+    minWidth: 120
   },
   {
     title: '代收货款',
     key: 'collectionMoney',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+      // return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
+      return h('div', {}, divideFee(params.row.collectionMoney))
     }
   },
   {

@@ -1,10 +1,11 @@
+import float from '@/libs/js/float'
 /**
  * 列表中计费里程格式化
  * @param {*} h
  * @param {*} value
  */
 export const renderMileage = (h, value) => {
-  return h('span', {}, value ? (value / 1000).toFixed(1) : '-')
+  return h('span', {}, value ? float.round(value / 1000, 1) : '-')
 }
 /**
  * 列表中体积格式化
@@ -12,7 +13,7 @@ export const renderMileage = (h, value) => {
  * @param {*} value
  */
 export const renderVolume = (h, value) => {
-  return h('span', {}, value ? (value / 100).toFixed(2) : '-')
+  return h('span', {}, value ? float.round(value / 100, 2) : '-')
 }
 
 /**
@@ -21,5 +22,5 @@ export const renderVolume = (h, value) => {
  * @param {*} value
  */
 export const renderWeight = (h, value) => {
-  return h('span', {}, value ? (value / 1000).toFixed(3) : '-')
+  return h('span', {}, value ? float.round(value / 1000, 3) : '-')
 }

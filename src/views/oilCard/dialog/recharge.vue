@@ -18,7 +18,7 @@
       <FormItem label="充值金额：" prop="changeAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="recharge.changeAmount"   :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="recharge.changeAmount"   :length="moneyLength"  placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
@@ -46,7 +46,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 import contantmixin from '../mixin/contantmixin'
 import SelectInput from '@/components/SelectInput.vue'
 import { CARDTYPELIST, ISSUERLIST } from '../constant/enum'
-import float from '@/libs/js/float'
+import { multiplyFee } from '@/libs/js/config'
 export default {
   name: 'recover',
   components: {
@@ -59,7 +59,6 @@ export default {
       cardTypeList: CARDTYPELIST,
       issuerList: ISSUERLIST,
       loading: false,
-      precision: 2,
       moneyLength: 9,
       recharge: {
         id: '',
@@ -83,7 +82,7 @@ export default {
         driverName: { required: true, message: '请输入加油人', type: 'string', trigger: 'change' },
         changeAmount: [
           { required: true, message: '请输入充值金额', type: 'number', trigger: 'change' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数' }
+          { pattern: /^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '九位正数且最多两位小数' }
         ],
         operateDate: { required: true, message: '请输入充值日期' }
       }
@@ -99,7 +98,7 @@ export default {
             method: 'post',
             data: {
               id: this.recharge.id || undefined,
-              changeAmount: typeof this.recharge.changeAmount === 'number' ? float.round(this.recharge.changeAmount * 100) : undefined,
+              changeAmount: typeof this.recharge.changeAmount === 'number' ? multiplyFee(this.recharge.changeAmount) : undefined,
               operateDate: this.recharge.operateDate ? this.recharge.operateDate.Format('yyyy-MM-dd') : undefined,
               remark: this.recharge.remark || undefined
             }
