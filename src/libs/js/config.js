@@ -50,7 +50,7 @@ export const roundFee = (fee) => {
  * @param {number} fee 接口返回的值
  */
 export const multiplyFee = (fee) => {
-  return float.round(fee * 100, 0)
+  return float.round(fee * 100)
 }
 
 export const divideFee = (fee) => {

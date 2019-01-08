@@ -91,7 +91,7 @@ export const getConfiguration = ({ commit }) => {
       commit('smsSetting', smsSetInfo.smsCode)
       commit('allocationStrategySetting', allocationStrategyInfo)
       commit('changeOrderConfiguration', tmsSetConfigDto)
-      commit('tmsCargoDto', tmsCargoDto)
+      commit('tmsCargoDtoSetting', tmsCargoDto)
     }
   })
 }

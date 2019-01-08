@@ -9,22 +9,22 @@
       class="modal"
       @on-visible-change="close"
     >
-      <p slot="header" style="text-align:center">{{title}}<setCargo></setCargo></p>
+      <p slot="header" class="header-title">{{title}}<setCargo></setCargo></p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
         <FormItem label="货物名称：" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="货物编码：">
+        <FormItem v-show="tmsCargoDto.cargoNoOption === 1" label="货物编码：">
           <Input v-model="validate.cargoNo" :maxlength="200" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="货值：">
+        <FormItem v-show="tmsCargoDto.cargoCostOption === 1" label="货值：">
           <!-- <Input v-model="validate.cargoCost"  placeholder="请输入"/>元 -->
           <TagNumberInput :min="0" :precision="$numberPrecesion.fee" v-model="validate.cargoCost" :show-chinese="false" placeholder="请输入"></TagNumberInput>元
         </FormItem>
-        <FormItem label="包装方式：">
+        <FormItem v-show="tmsCargoDto.unitOption === 1" label="包装方式：">
           <SelectPackageType v-model="validate.unit" style="width: 86%" clearable></SelectPackageType>
         </FormItem>
-        <FormItem label="包装尺寸：">
+        <FormItem v-show="tmsCargoDto.dimensionOption === 1" label="包装尺寸：">
           <Row>
             <Col :span="6">
             <TagNumberInput :min="0" :precision="$numberPrecesion.dimension" v-model="volumeLength" :length="7" :show-chinese="false" placeholder="长"></TagNumberInput>
@@ -40,16 +40,19 @@
             <Col :span="4"><span style="padding-left: 15px">毫米</span></Col>
           </Row>
         </FormItem>
-        <FormItem label="重量：" prop="weight">
+        <FormItem v-show="tmsCargoDto.weightOption === 1" label="重量：">
           <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.weight" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>吨
         </FormItem>
-        <FormItem label="体积：" prop="volume">
+        <FormItem v-show="tmsCargoDto.weightKgOption === 1" label="重量：" >
+          <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.weightKg" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>公斤
+        </FormItem>
+        <FormItem v-show="tmsCargoDto.volumeOption === 1" label="体积：">
           <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.volume" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>方
         </FormItem>
-        <FormItem label="备注1：">
+        <FormItem v-show="tmsCargoDto.remark1Option === 1" label="备注1：">
           <Input v-model="validate.remark1" :maxlength="100" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="备注2：">
+        <FormItem v-show="tmsCargoDto.remark2Option === 1" label="备注2：">
           <Input v-model="validate.remark2" :maxlength="100" placeholder="请输入"/>
         </FormItem>
       </Form>
@@ -70,6 +73,7 @@ import { multiplyFee } from '@/libs/js/config'
 import SelectPackageType from '@/components/SelectPackageType'
 import TagNumberInput from '@/components/TagNumberInput'
 import setCargo from './setCargo'
+import { mapGetters } from 'vuex'
 export default {
   name: 'sender-address',
   components: {
@@ -119,6 +123,9 @@ export default {
         { name: '木架', value: '木架' }
       ]
     }
+  },
+  computed: {
+    ...mapGetters(['tmsCargoDto'])
   },
   watch: {
     volumeLength (newVal) {
@@ -183,6 +190,8 @@ export default {
 
 <style scoped lang="stylus">
   @import "../pages/client.styl"
+  .header-title
+    text-align center
   .ivu-input-wrapper
     width: 86%
     margin-right 8px

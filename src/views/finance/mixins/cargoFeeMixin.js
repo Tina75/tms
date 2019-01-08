@@ -9,7 +9,8 @@ import _ from 'lodash'
 import server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
 import { mapGetters } from 'vuex'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
+import { divideFee } from '@/libs/js/config'
 export default {
   data () {
     return {
@@ -46,7 +47,6 @@ export default {
       if (!this.activeSender) {
         return []
       }
-      console.log(this.datas[this.activeSender.partnerName].orderInfos)
       return this.datas[this.activeSender.partnerName].orderInfos.map(item => {
         return Object.assign({}, item, {
           carrierName: item.carrierName ? item.carrierName : '-',
@@ -132,7 +132,8 @@ export default {
           id: ids,
           title: this.verifyTitle,
           verifyType: this.verifyType,
-          needPay: float.round((needPay / 100).toFixed(2)),
+          // needPay: float.round((needPay / 100).toFixed(2)),
+          needPay: divideFee(needPay),
           orderNum: this.selectedRows.length
         },
         methods: {
@@ -157,7 +158,8 @@ export default {
           id: data.id,
           title: this.verifyTitle,
           verifyType: this.verifyType,
-          needPay: float.round((data.collectionMoney / 100).toFixed(2)),
+          // needPay: float.round((data.collectionMoney / 100).toFixed(2)),
+          needPay: divideFee(data.collectionMoney),
           orderNum: 0
         },
         methods: {

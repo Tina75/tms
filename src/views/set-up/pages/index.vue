@@ -34,13 +34,13 @@
       <div v-if="0 === this.rightKey" key="1" class="divSetContent">
         <Col span="10" class="setConf">
         <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="100" label-position="right">
-          <FormItem label="原始密码：" prop="oldPassword" class="labelClassSty">
+          <FormItem label="原始密码：" prop="oldPassword">
             <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码" class="inputClassSty"></Input>
           </FormItem>
-          <FormItem label="新密码：" prop="password" class="labelClassSty">
+          <FormItem label="新密码：" prop="password">
             <Input v-model="formPwd.password" type="password" placeholder="请输入新密码" class="inputClassSty"></Input>
           </FormItem>
-          <FormItem label="确认密码：" prop="confirmPassword" class="labelClassSty">
+          <FormItem label="确认密码：" prop="confirmPassword">
             <Input v-model="formPwd.confirmPassword" type="password" placeholder="请再次输入新密码" class="inputClassSty"></Input>
           </FormItem>
           <FormItem>
@@ -51,30 +51,22 @@
       </div>
       <!--个人设置-->
       <div v-show="1 === this.rightKey" key="2" class="divSetContent">
-        <Col span="10" class="setConf">
+        <Col span="20" class="setConf">
         <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="100" label-position="right">
-          <FormItem label="账号：" class="labelClassSty">
-            <span>{{formPersonal.phone}}<span class="updatePhone" @click="updatePhone">修改</span></span>
+          <FormItem label="账号：">
+            <span class="labelContent">{{formPersonal.phone}}<span class="updatePhone" @click="updatePhone">修改</span></span>
           </FormItem>
           <FormItem label="姓名：" prop="name">
             <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" class="inputClassSty"></Input>
           </FormItem>
-          <FormItem label="角色：" class="labelClassSty">
-            <span>{{formPersonal.roleName}}</span>
+          <FormItem label="角色：">
+            <span class="labelContent">{{formPersonal.roleName}}</span>
           </FormItem>
           <FormItem label="个人头像：">
             <span class="imageTips">尺寸100*100像素，大小不超过10MB</span>
           </FormItem>
           <FormItem>
             <up-load ref="upLoadsPerson" max-size="10" crop class="personPic"></up-load>
-            <!-- <image-title
-              ref="upLoadsPerson"
-              :multiple="true"
-              max-count="1"
-              max-size="10"
-              crop
-              class="personPic">
-            </image-title> -->
           </FormItem>
           <FormItem>
             <Button type="primary" style="width:86px;"  @click="personalSubmit('formPersonal')">保存</Button>
@@ -313,6 +305,7 @@ export default {
   },
   mounted: function () {
     this.messageListInit = _.cloneDeep(this.messageList)
+    this.initPerson()
     if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
       document.getElementById('set-up-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
     }
@@ -337,11 +330,7 @@ export default {
       this.rightKey = param.id
       switch (this.rightKey) {
         case 1:
-          this.formPersonal = _.cloneDeep(this.UserInfo)
-          if (this.formPersonal.avatarPic) {
-            this.$refs.upLoadsPerson.progress = 1
-            this.$refs.upLoadsPerson.uploadImg = this.formPersonal.avatarPic
-          }
+          this.initPerson()
           break
         case 2:
           this.smsInfo()
@@ -398,6 +387,13 @@ export default {
           })
         }
       })
+    },
+    initPerson () {
+      this.formPersonal = _.cloneDeep(this.UserInfo)
+      if (this.formPersonal.avatarPic) {
+        this.$refs.upLoadsPerson.progress = 1
+        this.$refs.upLoadsPerson.uploadImg = this.formPersonal.avatarPic
+      }
     },
     // 短信
     changeCheckBoxGroup (status) {
@@ -467,12 +463,13 @@ export default {
         name: 'set-up/dialog/update-phone',
         data: {
           title: '更换手机号',
-          phone: vm.formPersonal.phone
+          phone: vm.formPersonal.phone,
+          person: vm.formPersonal
         },
         methods: {
-          ok (node) {
-            this.formPersonal.phone = '18565235423'
-            this.initUserInfo(this.formPersonal)
+          ok () {
+            vm.initPerson()
+            location.reload() // 更新账号，刷新浏览器
           }
         }
       })
@@ -483,6 +480,7 @@ export default {
 <style lang='stylus' scoped>
 >>>.personPic .demo-upload-list
 >>>.personPic .ivu-upload .ivu-upload-drag
+>>>.personPic .ivu-upload-input
   width 96px
   height 90px
 >>>.ivu-form .ivu-form-item-label
@@ -600,10 +598,15 @@ export default {
 .imageTips
   color #999999
   font-size 14px
+  position: relative;
+  top: 1px;
 .updatePhone
   color: #00A4BD
   margin-left 25px
   cursor pointer
+span.labelContent
+  position: relative;
+  top: 1px;
 </style>
 
 <style lang='stylus'>

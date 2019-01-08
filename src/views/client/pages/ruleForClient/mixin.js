@@ -24,11 +24,14 @@ export default {
     },
     precision () {
       if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量(吨)的只有3位小数
-        return 3
+        // return 3
+        return this.$numberPrecesion.weight
       } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') { // 体积保留6位
-        return 6
+        // return 6
+        return this.$numberPrecesion.volume
       } else if (this.ruleDetail.ruleType === '6' || this.ruleDetail.ruleType === '7') { // 重量公斤没小数
-        return 0
+        // return 0
+        return this.$numberPrecesion.weightKg
       } else {
         return 2
       }
@@ -77,8 +80,8 @@ export default {
       if (value === null || value === '') {
         callback()
       }
-      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(String(value))) {
-        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(String(value))) {
+      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,4})?))$/.test(String(value))) {
+        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,4})?))$/.test(String(value))) {
           callback()
         } else {
           callback(new Error('最多9位整数'))
@@ -90,7 +93,7 @@ export default {
     const baseAndStartValidate = (rule, value, callback) => {
       let realValue = parseFloat(value.split(',')[0])
       let startNum = parseFloat(value.split(',')[1])
-      if (realValue === null || realValue === '') {
+      if (realValue === null || realValue === '' || isNaN(realValue) === true) {
         callback(new Error('请填写'))
       } else {
         // 小数判断
@@ -212,7 +215,7 @@ export default {
       priceValidate: {
         price: [
           { required: true, message: '请填写金额', trigger: 'change', type: 'number' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'change' }
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '9位正数且最多两位小数', trigger: 'change' }
         ]
         // /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/
       },

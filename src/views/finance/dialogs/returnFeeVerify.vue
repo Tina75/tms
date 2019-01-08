@@ -56,7 +56,8 @@ import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import verifyMixin from '../mixins/verifyMixin.js'
 import tagNumberInput from '@/components/TagNumberInput'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
+import { multiplyFee } from '@/libs/js/config'
 export default {
   name: 'writeOff',
   components: {
@@ -75,7 +76,8 @@ export default {
     save () {
       this.$refs['writeOffForm'].validate((valid) => {
         const data = {
-          actualFee: float.round(this.writeOffForm.actualFee * 100),
+          // actualFee: float.round(this.writeOffForm.actualFee * 100),
+          actualFee: multiplyFee(this.writeOffForm.actualFee),
           payType: this.writeOffForm.payType,
           account: this.writeOffForm.account.replace(/\s+/g, ''),
           bankBranch: this.writeOffForm.bankBranch,
@@ -97,13 +99,11 @@ export default {
             method: 'post',
             data
           }).then(res => {
-            console.log(res)
             if (res.data.data === '') {
               this.ok()
               this.close()
             } else if (res.data.data && res.data.data.operateCode === 1) {
               // 存在异常
-              console.log(res.data.data.orderNos)
               this.$Toast.warning({
                 title: '核销',
                 content: '以下单据存在异常，无法核销',
@@ -111,7 +111,6 @@ export default {
                   const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
                     return h('p', item)
                   }) : []
-                  console.log(list)
                   return h('div', [
                     ...list
                   ])
@@ -120,7 +119,7 @@ export default {
                 cancelText: '取消'
               })
             }
-          }).catch(err => console.error(err))
+          })
         }
       })
     }

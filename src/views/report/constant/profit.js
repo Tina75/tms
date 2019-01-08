@@ -1,30 +1,31 @@
+import { renderFee, getMileageText } from '@/libs/js/config'
 // 公司利润报表初始化
 export const res = {
-  orderFreightFee: '-',
-  orderLoadFee: '-',
-  orderUnloadFee: '-',
-  orderOtherFee: '-',
-  orderPickupFee: '-',
-  orderInsuranceFee: '-',
-  orderTotalFee: '-',
-  carrierFreightFee: '-', // 承运商
-  carrierLoadFee: '-',
-  carrierUnloadFee: '-',
-  carrierOtherFee: '-',
-  carrierInsuranceFee: '-',
-  carrierTotalFee: '-',
-  myFuelFee: '-', // 自有车
-  myTollFee: '-',
-  myLoadFee: '-',
-  myUnloadFee: '-',
-  myInsuranceFee: '-',
-  myOtherFee: '-',
-  // transbillTransFee: '-',
-  profits: '-',
-  carrierTollFee: '-',
-  orderCashBack: '-',
-  orderInvoiceFee: '-',
-  myAccommodation: '-'
+  orderFreightFee: '0',
+  orderLoadFee: '0',
+  orderUnloadFee: '0',
+  orderOtherFee: '0',
+  orderPickupFee: '0',
+  orderInsuranceFee: '0',
+  orderTotalFee: '0',
+  carrierFreightFee: '0', // 承运商
+  carrierLoadFee: '0',
+  carrierUnloadFee: '0',
+  carrierOtherFee: '0',
+  carrierInsuranceFee: '0',
+  carrierTotalFee: '0',
+  myFuelFee: '0', // 自有车
+  myTollFee: '0',
+  myLoadFee: '0',
+  myUnloadFee: '0',
+  myInsuranceFee: '0',
+  myOtherFee: '0',
+  // transbillTransFee: '0',
+  profits: '0',
+  carrierTollFee: '0',
+  orderCashBack: '0',
+  orderInvoiceFee: '0',
+  myAccommodation: '0'
 }
 export const TAB_LIST = [
   { name: '公司利润', count: '' },
@@ -47,49 +48,35 @@ export const TABLECOLUMNS = {
     {
       title: '订单数',
       key: 'orderNum',
-      width: 200,
-      render: (h, params) => {
-        return h('span', params.row.orderNum ? params.row.orderNum : '-')
-      }
+      width: 200
     },
     {
       title: '重量（吨）',
       key: 'weight',
-      width: 200,
-      render: (h, params) => {
-        return h('span', params.row.weight ? params.row.weight : '-')
-      }
+      width: 200
     },
     {
       title: '重量（公斤）',
       key: 'weightKg',
-      width: 200,
-      render: (h, params) => {
-        return h('span', params.row.weightKg ? params.row.weightKg : '-')
-      }
+      width: 200
     },
     {
       title: '体积（方）',
       key: 'volume',
-      width: 200,
-      render: (h, params) => {
-        return h('span', params.row.volume ? params.row.volume : '-')
-      }
+      width: 200
     },
     {
       title: '件数',
       key: 'quantity',
-      width: 200,
-      render: (h, params) => {
-        return h('span', params.row.quantity ? params.row.quantity : '-')
-      }
+      width: 200
     },
     {
       title: '应收总费用',
       key: 'totalFee',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.totalFee / 100).toFixed(2))
+        // return h('span', (params.row.totalFee / 100).toFixed(2))
+        return renderFee(h, params.row.totalFee)
       }
     },
     {
@@ -97,7 +84,8 @@ export const TABLECOLUMNS = {
       key: 'pickupBillFee',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.pickupBillFee / 100).toFixed(2))
+        // return h('span', (params.row.pickupBillFee / 100).toFixed(2))
+        return renderFee(h, params.row.pickupBillFee)
       }
     },
     {
@@ -105,7 +93,8 @@ export const TABLECOLUMNS = {
       key: 'wayBillFee',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.wayBillFee / 100).toFixed(2))
+        // return h('span', (params.row.wayBillFee / 100).toFixed(2))
+        return renderFee(h, params.row.wayBillFee)
       }
     },
     {
@@ -113,7 +102,8 @@ export const TABLECOLUMNS = {
       key: 'payableTotalFee',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.payableTotalFee / 100).toFixed(2))
+        // return h('span', (params.row.payableTotalFee / 100).toFixed(2))
+        return renderFee(h, params.row.payableTotalFee)
       }
     },
     {
@@ -121,7 +111,8 @@ export const TABLECOLUMNS = {
       key: 'profit',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.profit / 100).toFixed(2))
+        // return h('span', (params.row.profit / 100).toFixed(2))
+        return renderFee(h, params.row.profit)
       }
     }
   ],
@@ -141,7 +132,8 @@ export const TABLECOLUMNS = {
       key: 'mileage',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.mileage / 1000).toFixed(1))
+        // return h('span', (params.row.mileage / 1000).toFixed(1))
+        return h('span', getMileageText(params.row.mileage))
       }
     },
     {
@@ -174,7 +166,8 @@ export const TABLECOLUMNS = {
       key: 'orderFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.orderFee / 100).toFixed(2))
+        // return h('span', (params.row.orderFee / 100).toFixed(2))
+        return renderFee(h, params.row.orderFee)
       }
     },
     {
@@ -182,7 +175,8 @@ export const TABLECOLUMNS = {
       key: 'loadbillFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.loadbillFee / 100).toFixed(2))
+        // return h('span', (params.row.loadbillFee / 100).toFixed(2))
+        return renderFee(h, params.row.loadbillFee)
       }
     },
     {
@@ -190,7 +184,8 @@ export const TABLECOLUMNS = {
       key: 'waybillFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.waybillFee / 100).toFixed(2))
+        // return h('span', (params.row.waybillFee / 100).toFixed(2))
+        return renderFee(h, params.row.waybillFee)
       }
     },
     {
@@ -198,7 +193,8 @@ export const TABLECOLUMNS = {
       key: 'payTotalFee',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.payTotalFee / 100).toFixed(2))
+        // return h('span', (params.row.payTotalFee / 100).toFixed(2))
+        return renderFee(h, params.row.payTotalFee)
       }
     },
     {
@@ -206,7 +202,8 @@ export const TABLECOLUMNS = {
       key: 'profits',
       width: 150,
       render: (h, params) => {
-        return h('span', (params.row.profits / 100).toFixed(2))
+        // return h('span', (params.row.profits / 100).toFixed(2))
+        return renderFee(h, params.row.profits)
       }
     },
     {
@@ -257,47 +254,37 @@ export const TABLECOLUMNS = {
       key: 'mileage',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.mileage / 1000).toFixed(1))
+        // return h('span', (params.row.mileage / 1000).toFixed(1))
+        return h('span', getMileageText(params.row.mileage))
       }
     },
     {
       title: '重量（吨）',
       key: 'weight',
-      width: 200,
-      render: (h, params) => {
-        return h('span', params.row.weight ? params.row.weight : '-')
-      }
+      width: 200
     },
     {
       title: '重量（公斤）',
       key: 'weightKg',
-      width: 200,
-      render: (h, params) => {
-        return h('span', params.row.weightKg ? params.row.weightKg : '-')
-      }
+      width: 200
     },
     {
       title: '体积（方）',
       width: 200,
-      key: 'volume',
-      render: (h, params) => {
-        return h('span', params.row.volume ? params.row.volume : '-')
-      }
+      key: 'volume'
     },
     {
       title: '件数',
       width: 200,
-      key: 'quantity',
-      render: (h, params) => {
-        return h('span', params.row.quantity ? params.row.quantity : '-')
-      }
+      key: 'quantity'
     },
     {
       title: '应收总费用',
       key: 'totalFee',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.totalFee / 100).toFixed(2))
+        // return h('span', (params.row.totalFee / 100).toFixed(2))
+        return renderFee(h, params.row.totalFee)
       }
     },
     {
@@ -305,7 +292,8 @@ export const TABLECOLUMNS = {
       key: 'pickupBillFee',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.pickupBillFee / 100).toFixed(2))
+        // return h('span', (params.row.pickupBillFee / 100).toFixed(2))
+        return renderFee(h, params.row.pickupBillFee)
       }
     },
     {
@@ -313,7 +301,8 @@ export const TABLECOLUMNS = {
       key: 'wayBillFee',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.wayBillFee / 100).toFixed(2))
+        // return h('span', (params.row.wayBillFee / 100).toFixed(2))
+        return renderFee(h, params.row.wayBillFee)
       }
     },
     {
@@ -321,7 +310,8 @@ export const TABLECOLUMNS = {
       key: 'payableTotalFee',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.payableTotalFee / 100).toFixed(2))
+        // return h('span', (params.row.payableTotalFee / 100).toFixed(2))
+        return renderFee(h, params.row.payableTotalFee)
       }
     },
     {
@@ -329,7 +319,8 @@ export const TABLECOLUMNS = {
       key: 'profit',
       width: 200,
       render: (h, params) => {
-        return h('span', (params.row.profit / 100).toFixed(2))
+        // return h('span', (params.row.profit / 100).toFixed(2))
+        return renderFee(h, params.row.profit)
       }
     },
     {

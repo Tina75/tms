@@ -6,6 +6,7 @@
       :type="`exception`"
       :order-set="OrderSet"
       :orders="orders"
+      :cargoes="cargoes"
       :data-source="consignerCargoes"
       :on-append="appendCargo"
       :on-remove="removeCargo"
@@ -30,17 +31,26 @@ export default {
   mixins: [ BaseDialog ],
   data () {
     return {
-      consignerCargoes: [new Cargo()]
+      consignerCargoes: []
     }
   },
   computed: {
     ...mapGetters([
-      'OrderSet'
+      'OrderSet',
+      'cargoes'
     ])
   },
   mounted () {
     // 编辑时回显
-    // this.consignerCargoes = orderDetail.orderCargoList.map((item) => new Cargo(item, true))
+    if (this.cargoLists && this.cargoLists.length) {
+      this.consignerCargoes = this.cargoLists.map((item) => new Cargo(item, true))
+    } else {
+      if (this.orders.length === 1) {
+        this.consignerCargoes = [new Cargo({ orderNo: '订单号2' })]
+      } else {
+        this.consignerCargoes = [new Cargo()]
+      }
+    }
   },
   methods: {
     // 货物名称选择下拉项目时触发
