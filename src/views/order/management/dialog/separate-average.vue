@@ -29,7 +29,7 @@
       <div class="separate-action">
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
           <FormItem label="批量拆成：" prop="separateNum">
-            <InputNumber :min="1" v-model="formInline.separateNum"></InputNumber>
+            <InputNumber :min="1" v-model="formInline.separateNum" :parser="handleParser"></InputNumber>
             &nbsp;单
           </FormItem>
           <FormItem>
@@ -62,7 +62,7 @@
  */
 import BaseDialog from '@/basic/BaseDialog'
 import float from '@/libs/js/float'
-import { divideFee, roundFee, roundVolume, roundWeight, roundWeightKg } from '@/libs/js/config'
+import { divideFee, roundFee, roundVolume, roundWeight, roundWeightKg, multiplyFee } from '@/libs/js/config'
 import { mapGetters } from 'vuex'
 import { TABLE_COLUMNS_AVERAGE, TABLE_COLUMNS_AVERAGE_EDIT, COLUMNS_THREE_WEIGHT, COLUMNS_THREE_WEIGHTKG, COLUMNS_TWO_WEIGHT, COLUMNS_TWO_WEIGHTKG } from '../constant/separate.js'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
@@ -174,7 +174,15 @@ export default {
     }
   },
   methods: {
-
+    /**
+     * 拆单数量必须为整数
+     */
+    handleParser (value) {
+      if (value) {
+        return parseInt(value).toString()
+      }
+      return value
+    },
     handleChange (index, key, value) {
       this.separateCargoList[index][key] = value
     },
@@ -203,9 +211,15 @@ export default {
       const vm = this
       // 若包装数量没有值，则按照重量、体积，平均拆
       let separateNum = vm.formInline.separateNum
-      let averageVolume = roundVolume(vm.cargoVolume / separateNum)
-      let averageWeight = roundWeight(vm.cargoWeight / separateNum)
-      let averageCost = roundFee(vm.cargoCost / separateNum)
+      /**
+       * 2000 / 3 6666.66666667
+       * 1. 如果四舍五入，会导致前面会多分配0.0001
+       * 2. 所以这里需要floor，不四舍五入
+       */
+      let cargoCost = divideFee(vm.cargoCost)
+      let averageVolume = float.floor(vm.cargoVolume / separateNum, this.$numberPrecesion.volume)
+      let averageWeight = float.floor(vm.cargoWeight / separateNum, vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
+      let averageCost = float.floor(cargoCost / separateNum, this.$numberPrecesion.fee)
       let i = 0
       while (i < separateNum) {
         let cargo = new Cargo(vm.cargoList[0])
@@ -217,15 +231,22 @@ export default {
             cargo.weightKg = averageWeight
           }
           cargo.volume = averageVolume
-          cargo.cargoCost = averageCost
+          cargo.cargoCost = multiplyFee(averageCost)
         } else {
+          let totals = vm.separateCargoList.reduce((oTotals, cargo) => {
+            oTotals.weight = roundWeight(oTotals.weight + cargo.weight)
+            oTotals.weightKg = roundWeightKg(oTotals.weightKg + cargo.weightKg)
+            oTotals.volume = roundVolume(oTotals.volume + cargo.volume)
+            oTotals.cargoCost = roundFee(oTotals.cargoCost + cargo.cargoCost)
+            return oTotals
+          }, { weight: 0, weightKg: 0, volume: 0, cargoCost: 0 })
           if (vm.WeightOption === 1) {
-            cargo.weight = roundWeight(vm.cargoWeight - roundWeight((separateNum - 1) * averageWeight))
+            cargo.weight = roundWeight(vm.cargoWeight - totals.weight)
           } else {
-            cargo.weightKg = roundWeight(vm.weightKg - roundWeight((separateNum - 1) * averageWeight))
+            cargo.weightKg = roundWeightKg(vm.cargoWeight - totals.weightKg)
           }
-          cargo.volume = roundVolume(vm.cargoVolume - roundVolume((separateNum - 1) * averageVolume))
-          cargo.cargoCost = roundFee(vm.cargoCost - roundFee((separateNum - 1) * averageCost))
+          cargo.volume = roundVolume(vm.cargoVolume - totals.volume)
+          cargo.cargoCost = roundFee(multiplyFee(cargoCost) - totals.cargoCost)
         }
 
         vm.separateCargoList.push(cargo)
@@ -240,13 +261,13 @@ export default {
       // 如包装数量为10，要拆成6单，不能平均拆。10/6=1.67，前5单每单的包装数量为1，第6单的包装数量为5；
       let separateNum = vm.formInline.separateNum
 
-      let baseNum = float.round(vm.cargoQuantity / separateNum)
+      let baseNum = float.floor(vm.cargoQuantity / separateNum)
       // 每个货物 体积比例
-      let volumePercent = float.round(vm.cargoVolume / vm.cargoQuantity)
+      let volumePercent = float.floor(vm.cargoVolume / vm.cargoQuantity)
       // 每个货物重量比例
-      let weightPercent = float.round(vm.cargoWeight / vm.cargoQuantity)
+      let weightPercent = float.floor(vm.cargoWeight / vm.cargoQuantity)
       // 货值比例
-      let costPercent = float.round(vm.cargoCost / vm.cargoQuantity)
+      let costPercent = float.floor(vm.cargoCost / vm.cargoQuantity)
       let i = 0
       while (i < separateNum) {
         let cargo = new Cargo(vm.cargoList[0])

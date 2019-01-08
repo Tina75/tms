@@ -680,7 +680,8 @@ export const TABLE_COLUMNS_AVERAGE_EDIT = (vm) => {
       key: 'cargoCost',
       render: (h, params) => {
         return renderFee(h, params.row.cargoCost)
-        // return h('div', float.round(params.row.cargoCost / 100))
+
+        // return h('span', '0')
       }
     },
     {
