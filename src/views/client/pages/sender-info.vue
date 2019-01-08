@@ -375,6 +375,8 @@ export default {
           title: '操作',
           key: 'id',
           width: 100,
+          fixed: 'left',
+          extra: true,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(130111)) {

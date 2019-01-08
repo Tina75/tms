@@ -1,7 +1,7 @@
 <template>
   <Poptip v-model="visible"
           placement="bottom" width="300" class="popTipForRule"
-          @on-popper-show="initRule" @on-popper-hide="initRule">
+          @on-popper-show="init" @on-popper-hide="init">
     <i class="icon font_family icon-ico-setting setPosition"></i>
     <div slot="title">
       <div class="title">
@@ -23,7 +23,7 @@
       </div>
       <div class="btns">
         <Button @click="setDefault">恢复默认</Button>
-        <Button type="primary" @click="save(ruleTypeValue)">确定</Button>
+        <Button type="primary" @click="save(CargoValue)">确定</Button>
         <Button  @click="close">取消</Button>
       </div>
     </div>
@@ -80,24 +80,25 @@ export default {
   data () {
     return {
       visible: false,
-      CargoList: CargoInit
+      CargoList: CargoInit,
+      CargoValue: []
     }
   },
   computed: {
-    ...mapGetters(['tmsCargoDto']),
-    CargoValue () {
+    ...mapGetters(['tmsCargoDto'])
+  },
+  mounted () {
+    this.getConfiguration()
+  },
+  methods: {
+    ...mapActions(['getConfiguration']),
+    init () {
+      this.getConfiguration()
       let arr = []
       for (let key in this.tmsCargoDto) {
         if (this.tmsCargoDto[key] === 1) arr.push(key)
       }
-      return arr
-    }
-  },
-  methods: {
-    ...mapActions(['getConfiguration']),
-    initRule () {
-      this.getConfiguration()
-      // this.ruleTypeValue = _.cloneDeep(this.ruleTypeList)
+      this.CargoValue = arr
     },
     close () {
       this.visible = false
@@ -117,9 +118,7 @@ export default {
       await Server({
         url: '/consigner/cargo/setSave',
         method: 'POST',
-        data: {
-          obj
-        }
+        data: obj
       }).then((res) => {
         this.$Message.success('保存成功')
         // 关闭弹窗
@@ -132,31 +131,31 @@ export default {
 
 <style scoped lang="stylus">
   .popTipForRule
-    display inline-block
+    vertical-align text-bottom
     margin-left 5px
     cursor pointer
     /deep/
       .ivu-poptip-arrow
         display none
-    .ivu-poptip-title
-      padding-top 16px
-      padding-bottom 10px
-    .title
-      color #333
-      font-weight 500
-      font-size 14px
-      line-height 20px
-      text-align center
-      .icon
-        cursor pointer
-        float right
-        font-size 16px
-        font-weight bold
-    .ivu-poptip-body
-      padding 8px 30px
-    .ivu-poptip-title:after
-      right 0
-      left 0
+      .ivu-poptip-title
+        padding-top 16px
+        padding-bottom 10px
+      .title
+        color #333
+        font-weight 500
+        font-size 14px
+        line-height 20px
+        text-align center
+        .icon
+          cursor pointer
+          float right
+          font-size 16px
+          font-weight bold
+      .ivu-poptip-body
+        padding 8px 30px
+      .ivu-poptip-title:after
+        right 0
+        left 0
     .tips
       text-align left
       margin-top 40px
