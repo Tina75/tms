@@ -89,7 +89,7 @@ const state = {
     // 订单备注
     orderRemarkOption: 1
   },
-  tmsCargoDto: {}
+  tmsCargoDto: {} // 常发货物
 }
 
 export default new Vuex.Store({
