@@ -74,7 +74,7 @@ export default {
   data () {
     const vm = this
     return {
-      columns: TABLE_COLUMNS_AVERAGE,
+      columns: TABLE_COLUMNS_AVERAGE(this),
       columns1Weight: COLUMNS_THREE_WEIGHT(this),
       columns1WeightKg: COLUMNS_THREE_WEIGHTKG(this),
       columns2Weight: COLUMNS_TWO_WEIGHT(this),

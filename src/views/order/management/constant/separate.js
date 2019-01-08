@@ -587,7 +587,7 @@ export const COLUMNS_THREE_WEIGHTKG = vm => {
   }
 }
 // 批量拆单的列表表头字段
-export const TABLE_COLUMNS_AVERAGE = [
+export const TABLE_COLUMNS_AVERAGE = (vm) => [
   {
     title: '货物名称',
     key: 'cargoName'
