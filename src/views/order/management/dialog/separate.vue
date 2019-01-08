@@ -260,7 +260,7 @@ export default {
      * 批量顺序接口序号生成
      */
     getMuiltyOrderNo (cargo, index) {
-      return this.orderNo.indexOf('-') > -1 ? this.orderNo.substring(0, this.orderNo.indexOf('-')) + '-' + (this.subOrderNum + 3 + index) : this.orderNo + '-' + (index + 2)
+      return this.orderNo.indexOf('-') > -1 ? this.orderNo.substring(0, this.orderNo.indexOf('-')) + '-' + (this.subOrderNum + 1 + index) : this.orderNo + '-' + (index + 2)
     },
     onChangeAllocation (val) {
       this.allocationStrategy = val
