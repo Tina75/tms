@@ -77,8 +77,8 @@ export default {
       if (value === null || value === '') {
         callback()
       }
-      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(String(value))) {
-        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(String(value))) {
+      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,4})?))$/.test(String(value))) {
+        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,4})?))$/.test(String(value))) {
           callback()
         } else {
           callback(new Error('最多9位整数'))
@@ -90,7 +90,7 @@ export default {
     const baseAndStartValidate = (rule, value, callback) => {
       let realValue = parseFloat(value.split(',')[0])
       let startNum = parseFloat(value.split(',')[1])
-      if (realValue === null || realValue === '') {
+      if (realValue === null || realValue === '' || isNaN(realValue) === true) {
         callback(new Error('请填写'))
       } else {
         // 小数判断
@@ -212,7 +212,7 @@ export default {
       priceValidate: {
         price: [
           { required: true, message: '请填写金额', trigger: 'change', type: 'number' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'change' }
+          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '9位正数且最多两位小数', trigger: 'change' }
         ]
         // /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/
       },
