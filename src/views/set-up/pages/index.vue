@@ -123,7 +123,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import AreaInput from '@/components/AreaInput'
-import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE } from './validator'
+import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE, PSW_RIGHT } from './validator'
 import _ from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'
 import CitySelect from '@/components/SelectInputForCity'
@@ -147,23 +147,6 @@ export default {
     title: '设置'
   },
   data () {
-    var pswRight = function (rule, value, callback) {
-      if (value) {
-        let params = {}
-        params.oldPassword = value
-        Server({
-          url: 'set/pswRight',
-          method: 'get',
-          data: params
-        }).then(({ data }) => {
-          callback()
-        }).catch(() => {
-          return callback(new Error('原始密码错误，请重输'))
-        })
-      } else {
-        callback()
-      }
-    }
     return {
       setUpMenu: [{
         name: '修改密码',
@@ -241,7 +224,7 @@ export default {
       rulePwd: {
         oldPassword: [
           { required: true, message: '请输入原始密码', trigger: 'blur' },
-          { validator: pswRight, trigger: 'blur' }
+          { validator: PSW_RIGHT, trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入新密码', trigger: 'blur' },

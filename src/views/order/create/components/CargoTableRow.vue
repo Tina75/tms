@@ -16,18 +16,16 @@
       @on-select="handleSelect"
     >
     </SelectInput>
-    <InputNumber
+    <TagNumberInput
       v-else-if="col.type==='number'"
-      :value="record[col.key]"
+      v-model="record[col.key]"
       :min="col.min"
-      :max="col.maxLen"
+      :precision="col.point"
       :parser="handleParse"
-      style="width: 100%"
-      @input="v => { this.inputHandle(v, col.key) }"
       @on-change="handleChange(col.key)"
       @on-blur="handleBlur(col)"
     >
-    </InputNumber>
+    </TagNumberInput>
     <!-- 包装尺寸 -->
     <div v-else-if="col.type === 'multi' && col.children">
       <TagNumberInput
@@ -171,9 +169,6 @@ export default {
           })
         }
       }
-    },
-    inputHandle (value, key) {
-      this.record[key] = value
     }
   }
 }

@@ -49,7 +49,7 @@
         <FormItem label="金额：">
           <Row>
             <Col span="20">
-            <TagNumberInput v-model="addEdit.amount"  :precision="precision" :min="0" placeholder="请输入金额"></TagNumberInput>
+            <TagNumberInput v-model="addEdit.amount"  :min="0" placeholder="请输入金额"></TagNumberInput>
             </Col>
             <Col span="2" offset="1">
             <span>元</span>
@@ -72,8 +72,8 @@ import { CARDTYPELIST, ISSUERLIST } from '../constant/enum'
 import BaseDialog from '@/basic/BaseDialog'
 import TagNumberInput from '@/components/TagNumberInput'
 import Server from '@/libs/js/server'
-import float from '@/libs/js/float'
 import contantmixin from '../mixin/contantmixin'
+import { multiplyFee } from '@/libs/js/config'
 export default {
   name: 'addEdit',
   components: {
@@ -124,8 +124,7 @@ export default {
         ],
         primaryCardId: { required: true, message: '没有主卡可选，请先新增主卡' },
         noprimaryCardId: { required: false }
-      },
-      precision: 2
+      }
     }
   },
   computed: {
@@ -136,7 +135,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.addEdit)
     this.getPrimaryCardList()
   },
   methods: {
@@ -171,16 +169,15 @@ export default {
           number: this.addEdit.number || undefined,
           primaryCardId: this.addEdit.primaryCardId || undefined,
           issuer: this.addEdit.issuer || undefined,
-          amount: typeof this.addEdit.amount === 'number' ? float.round(this.addEdit.amount * 100) : undefined,
+          amount: typeof this.addEdit.amount === 'number' ? multiplyFee(this.addEdit.amount) : undefined,
           remark: this.addEdit.remark || undefined
         }
       }).then(res => {
         this.loading = false
         this.close()
         this.ok()
-      }).catch(err => {
+      }).catch(() => {
         this.loading = false
-        console.log(err)
       })
     },
     edit () {
@@ -193,16 +190,15 @@ export default {
           number: this.addEdit.number || undefined,
           primaryCardId: this.addEdit.primaryCardId || undefined,
           issuer: this.addEdit.issuer || undefined,
-          amount: typeof this.addEdit.amount === 'number' ? float.round(this.addEdit.amount * 100) : undefined,
+          amount: typeof this.addEdit.amount === 'number' ? multiplyFee(this.addEdit.amount) : undefined,
           remark: this.addEdit.remark || ''
         }
       }).then(res => {
         this.loading = false
         this.close()
         this.ok()
-      }).catch(err => {
+      }).catch(() => {
         this.loading = false
-        console.log(err)
       })
     }
   }

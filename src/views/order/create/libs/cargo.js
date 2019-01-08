@@ -101,6 +101,9 @@ export default class Cargo {
     if (!this.cargoName) {
       return { success: false, message: '请输入货物名称' }
     }
+    if (this.cargoCost && !validator.fee(this.cargoCost)) {
+      return { success: false, message: '费用整数位最多输入9位' }
+    }
     return { success: true }
   }
 
@@ -114,7 +117,7 @@ export default class Cargo {
     }
     if (field === 'cargoCost' && this.cargoCost) {
       if (!validator.fee(this.cargoCost)) {
-        this.errorMsg[field] = '费用整数位最多输入9位'
+        this.errorMsg[field] = '货值整数位最多输入9位'
       } else {
         delete this.errorMsg[field]
       }
@@ -176,6 +179,9 @@ export default class Cargo {
     }
     if (!this.orderNo) {
       return { success: false, message: '请输入订单号' }
+    }
+    if (this.cargoCost && !validator.fee(this.cargoCost)) {
+      return { success: false, message: '货值整数位最多输入9位' }
     }
     return { success: true }
   }
