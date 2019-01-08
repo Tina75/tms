@@ -106,8 +106,7 @@
         <TabPane :label="tabPaneLabe3">
           <div class="add">
             <Button v-if="hasPower(130110)" type="primary" @click="_consignerCargoAdd">新增</Button>
-            <!-- 权限待加 -->
-            <Button type="default" @click="_consignerCargoAddAll">批量导入</Button>
+            <Button v-if="hasPower(130110)" type="default" @click="_consignerCargoAddAll">批量导入</Button>
           </div>
           <template>
             <page-table

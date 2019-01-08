@@ -357,13 +357,17 @@ export default {
       })
     },
     headers () {
-      const res = this.headersOption.filter(el => {
-        const key = OrderMap[el.key]
-        return this.orderSet[key] !== 2
-      })
       if (this.type === 'exception') {
-        return this.headersOption2
+        const res = this.headersOption2.filter(el => {
+          const key = OrderMap[el.key]
+          return this.orderSet[key] !== 2
+        })
+        return res
       } else {
+        const res = this.headersOption.filter(el => {
+          const key = OrderMap[el.key]
+          return this.orderSet[key] !== 2
+        })
         return res
       }
     },
