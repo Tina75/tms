@@ -44,7 +44,7 @@
           <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.weight" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>吨
         </FormItem>
         <FormItem v-show="tmsCargoDto.weightKgOption === 1" label="重量：" >
-          <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.weightKg" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>公斤
+          <TagNumberInput :min="0" :precision="$numberPrecesion.weightKg" v-model="validate.weight" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>公斤
         </FormItem>
         <FormItem v-show="tmsCargoDto.volumeOption === 1" label="体积：">
           <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.volume" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>方
