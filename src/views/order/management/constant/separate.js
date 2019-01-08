@@ -522,7 +522,7 @@ export const COLUMNS_TWO_WEIGHTKG = vm => {
  * 拆批量的时候调用，因为 和拆部分逻辑不一样，所以重复了一个
  * @param {*} vm
  */
-export const COLUMNS_THREE_WEIGHT = vm => {
+export const COLUMNS_THREE_WEIGHT = (vm) => {
   return {
     title: '重量（吨）',
     key: 'weight',
@@ -632,55 +632,33 @@ export const TABLE_COLUMNS_AVERAGE_EDIT = (vm) => {
     {
       title: '包装数量',
       key: 'quantity',
+      slot: 'quantity',
       render (h, params) {
-        if (!params.row.quantity) {
-          return h('span', '-')
-        }
-        return h(
-          TagNumberInput,
-          {
-            props: {
-              precision: 0,
-              value: parseInt(params.row.quantity)
-            },
-            on: {
-              'on-change': (val) => {
-                if (val === null) {
-                  vm.handleChange(params.index, 'quantity', 0)
-                } else {
-                  vm.handleChange(params.index, 'quantity', val)
-                }
-              }
-            }
-          }
-        )
+        // if (!vm.orderDetail.quantity) {
+        //   return h('span', '-')
+        // }
+        return h('div',
+          vm.$refs.separateTable.$scopedSlots.quantity({
+            row: params.row,
+            index: params.index,
+            idx: params.row._index
+          }))
       }
     },
     {
       title: '体积（方）',
       key: 'volume',
+      slot: 'volume',
       render: (h, params) => {
-        if (!params.row.volume) {
-          return h('span', '-')
-        }
-        return h(
-          TagNumberInput,
-          {
-            props: {
-              precision: vm.$numberPrecesion.volume,
-              value: roundVolume(params.row.volume)
-            },
-            on: {
-              'on-change': (val) => {
-                if (val === null) {
-                  vm.handleChange(params.index, 'volume', 0)
-                } else {
-                  vm.handleChange(params.index, 'volume', val)
-                }
-              }
-            }
-          }
-        )
+        // if (!vm.orderDetail.volume) {
+        //   return h('span', '-')
+        // }
+        return h('div',
+          vm.$refs.separateTable.$scopedSlots.volume({
+            row: params.row,
+            index: params.index,
+            idx: params.row._index
+          }))
       }
     },
     {

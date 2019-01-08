@@ -6,9 +6,10 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-07 14:50:16
+ * @Last Modified time: 2019-01-08 21:15:46
  */
 import float from './float'
+import NP from 'number-precision'
 /**
  * 全局系统精度控制
  * 组件内可通过: this.$numberPrecesion.weight 访问重量精度
@@ -50,11 +51,11 @@ export const roundFee = (fee) => {
  * @param {number} fee 接口返回的值
  */
 export const multiplyFee = (fee) => {
-  return float.round(fee * 100)
+  return float.round(NP.times(fee, 100))
 }
 
 export const divideFee = (fee) => {
-  return roundFee(fee / 100)
+  return roundFee(NP.divide(fee, 100))
 }
 /**
  * 保留2位小数字符串类型
@@ -85,7 +86,7 @@ export const roundMileage = (value) => {
  * @param {*} value
  */
 export const getMileageText = (value) => {
-  return value ? (value / 1000).toFixed(NumberPrecesion.mileage) : '-'
+  return value ? NP.divide(value, 1000).toFixed(NumberPrecesion.mileage) : '-'
 }
 /**
  * 列表中计费里程格式化

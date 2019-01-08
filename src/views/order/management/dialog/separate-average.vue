@@ -38,7 +38,16 @@
         </Form>
       </div>
       <div class="separate-table">
-        <Table v-if="separateCargoList.length > 0" :columns="columnsSeparate" :data="separateCargoList"></Table>
+        <Table v-show="separateCargoList.length > 0" ref="separateTable" :columns="columnsSeparate" :data="separateCargoList">
+          <template slot-scope="{row, index}" slot="quantity">
+            <span v-if="!orderDetail.quantity">-</span>
+            <TagNumberInput v-else :precision="0" :min="0" :value="row.quantity" @on-change="(v)=>handleChange(index,'quantity',v)"></TagNumberInput>
+          </template>
+          <template slot-scope="{row, index}" slot="volume">
+            <span v-if="!orderDetail.volume">-</span>
+            <TagNumberInput v-else :min="0" :precision="$numberPrecesion.volume" :value="row.volume" @on-change="(v)=>handleChange(index,'volume',v)"></TagNumberInput>
+          </template>
+        </Table>
       </div>
     </div>
     <div slot="footer">
@@ -67,10 +76,16 @@ import { mapGetters } from 'vuex'
 import { TABLE_COLUMNS_AVERAGE, TABLE_COLUMNS_AVERAGE_EDIT, COLUMNS_THREE_WEIGHT, COLUMNS_THREE_WEIGHTKG, COLUMNS_TWO_WEIGHT, COLUMNS_TWO_WEIGHTKG } from '../constant/separate.js'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import Cargo from '../libs/cargo.js'
-
+import NP from 'number-precision'
+import TagNumberInput from '@/components/TagNumberInput'
+import _ from 'lodash'
 export default {
   name: 'sparate-average',
+  components: {
+    TagNumberInput
+  },
   mixins: [BaseDialog, tableWeightColumnMixin],
+
   data () {
     const vm = this
     return {
@@ -85,6 +100,7 @@ export default {
       // 列表数据
       cargoList: [],
       separateCargoList: [],
+      backupCargoList: [], // 具体的变化操作数据
       formInline: {
         separateNum: null
       },
@@ -184,7 +200,7 @@ export default {
       return value
     },
     handleChange (index, key, value) {
-      this.separateCargoList[index][key] = value
+      this.backupCargoList[index][key] = value
     },
     /**
      * 开始批量拆
@@ -192,6 +208,7 @@ export default {
     handleSeparate () {
       const vm = this
       vm.separateCargoList = []
+      vm.backupCargoList = []
       this.$refs.formInline.validateField('separateNum', (valid) => {
         if (!valid) {
           if (vm.cargoQuantity) {
@@ -217,9 +234,9 @@ export default {
        * 2. 所以这里需要floor，不四舍五入
        */
       let cargoCost = divideFee(vm.cargoCost)
-      let averageVolume = float.floor(vm.cargoVolume / separateNum, this.$numberPrecesion.volume)
-      let averageWeight = float.floor(vm.cargoWeight / separateNum, vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
-      let averageCost = float.floor(cargoCost / separateNum, this.$numberPrecesion.fee)
+      let averageVolume = float.floor(NP.divide(vm.cargoVolume, separateNum), this.$numberPrecesion.volume)
+      let averageWeight = float.floor(NP.divide(vm.cargoWeight, separateNum), vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
+      let averageCost = float.floor(NP.divide(cargoCost, separateNum), this.$numberPrecesion.fee)
       let i = 0
       while (i < separateNum) {
         let cargo = new Cargo(vm.cargoList[0])
@@ -234,24 +251,25 @@ export default {
           cargo.cargoCost = multiplyFee(averageCost)
         } else {
           let totals = vm.separateCargoList.reduce((oTotals, cargo) => {
-            oTotals.weight = roundWeight(oTotals.weight + cargo.weight)
-            oTotals.weightKg = roundWeightKg(oTotals.weightKg + cargo.weightKg)
-            oTotals.volume = roundVolume(oTotals.volume + cargo.volume)
-            oTotals.cargoCost = roundFee(oTotals.cargoCost + cargo.cargoCost)
+            oTotals.weight = roundWeight(NP.plus(oTotals.weight, cargo.weight))
+            oTotals.weightKg = roundWeightKg(NP.plus(oTotals.weightKg, cargo.weightKg))
+            oTotals.volume = roundVolume(NP.plus(oTotals.volume, cargo.volume))
+            oTotals.cargoCost = roundFee(NP.plus(oTotals.cargoCost, cargo.cargoCost))
             return oTotals
           }, { weight: 0, weightKg: 0, volume: 0, cargoCost: 0 })
           if (vm.WeightOption === 1) {
-            cargo.weight = roundWeight(vm.cargoWeight - totals.weight)
+            cargo.weight = roundWeight(NP.minus(vm.cargoWeight, totals.weight))
           } else {
-            cargo.weightKg = roundWeightKg(vm.cargoWeight - totals.weightKg)
+            cargo.weightKg = roundWeightKg(NP.minus(vm.cargoWeight, totals.weightKg))
           }
-          cargo.volume = roundVolume(vm.cargoVolume - totals.volume)
-          cargo.cargoCost = roundFee(multiplyFee(cargoCost) - totals.cargoCost)
+          cargo.volume = roundVolume(NP.minus(vm.cargoVolume, totals.volume))
+          cargo.cargoCost = roundFee(NP.minus(multiplyFee(cargoCost), totals.cargoCost))
         }
 
         vm.separateCargoList.push(cargo)
         i++
       }
+      vm.backupCargoList = _.cloneDeep(vm.separateCargoList)
     },
     /**
      * 基于包装数量，平均拆分货物
@@ -261,13 +279,13 @@ export default {
       // 如包装数量为10，要拆成6单，不能平均拆。10/6=1.67，前5单每单的包装数量为1，第6单的包装数量为5；
       let separateNum = vm.formInline.separateNum
 
-      let baseNum = float.floor(vm.cargoQuantity / separateNum)
+      let baseNum = float.floor(NP.divide(vm.cargoQuantity, separateNum))
       // 每个货物 体积比例
-      let volumePercent = float.floor(vm.cargoVolume / vm.cargoQuantity)
+      let volumePercent = float.floor(NP.divide(vm.cargoVolume, vm.cargoQuantity))
       // 每个货物重量比例
-      let weightPercent = float.floor(vm.cargoWeight / vm.cargoQuantity)
+      let weightPercent = float.floor(NP.divide(vm.cargoWeight, vm.cargoQuantity))
       // 货值比例
-      let costPercent = float.floor(vm.cargoCost / vm.cargoQuantity)
+      let costPercent = float.floor(NP.divide(vm.cargoCost, vm.cargoQuantity))
       let i = 0
       while (i < separateNum) {
         let cargo = new Cargo(vm.cargoList[0])
@@ -276,32 +294,34 @@ export default {
           cargo.quantity = parseInt(baseNum)
         } else {
           // 最后一个，需要将剩下的全都赋值
-          cargo.quantity = vm.cargoQuantity - (separateNum - 1) * parseInt(baseNum)
+          cargo.quantity = NP.minus(vm.cargoQuantity, NP.times((separateNum - 1), parseInt(baseNum)))
         }
         // 按照数量的比例，计算相应的货物体积和重量值
-        cargo.volume = roundVolume(volumePercent * cargo.quantity)
-        cargo.cargoCost = roundFee(costPercent * cargo.quantity)
+        cargo.volume = roundVolume(NP.times(volumePercent, cargo.quantity))
+        cargo.cargoCost = roundFee(NP.times(costPercent, cargo.quantity))
         if (vm.WeightOption === 1) {
-          cargo.weight = roundWeight(weightPercent * cargo.quantity)
+          cargo.weight = roundWeight(NP.times(weightPercent, cargo.quantity))
         } else {
-          cargo.weightKg = roundWeightKg(weightPercent * cargo.quantity)
+          cargo.weightKg = roundWeightKg(NP.times(weightPercent, cargo.quantity))
         }
         vm.separateCargoList.push(cargo)
         i++
       }
+      vm.backupCargoList = _.cloneDeep(vm.separateCargoList)
     },
     // 移除货物
     removeCargo (index) {
       this.separateCargoList.splice(index, 1)
+      this.backupCargoList.splice(index, 1)
     },
     save () {
       let vm = this
-      if (vm.separateCargoList.length === 0) {
+      if (vm.backupCargoList.length === 0) {
         return
       }
       let errorKeywords = []
       if (vm.cargoQuantity) {
-        let totalQuantity = vm.separateCargoList.map((cargo) => cargo.quantity).reduce((total, value) => {
+        let totalQuantity = vm.backupCargoList.map((cargo) => cargo.quantity).reduce((total, value) => {
           total = roundVolume(total + value)
           return total
         }, 0)
@@ -310,7 +330,7 @@ export default {
         }
       }
       if (vm.cargoWeight) {
-        let totalWeight = vm.separateCargoList.reduce((total, cargo) => {
+        let totalWeight = vm.backupCargoList.reduce((total, cargo) => {
           if (vm.WeightOption === 1) {
             total = roundWeight(total + cargo.weight)
           } else {
@@ -323,7 +343,7 @@ export default {
         }
       }
       if (vm.cargoVolume) {
-        let totalVolume = vm.separateCargoList.reduce((total, cargo) => {
+        let totalVolume = vm.backupCargoList.reduce((total, cargo) => {
           total = roundVolume(total + cargo.volume)
           return total
         }, 0)
@@ -335,7 +355,7 @@ export default {
         this.$Message.error(`拆单后货物的${errorKeywords.join('、')}之和应与原货物信息相等`)
         return
       }
-      vm.ok(vm.separateCargoList)
+      vm.ok(vm.backupCargoList)
       vm.close()
     }
   }
