@@ -118,7 +118,7 @@ export default {
      */
     cargoCost () {
       if (this.cargoList.length > 0) {
-        return divideFee(this.cargoList[0].cargoCost) || 0
+        return this.cargoList[0].cargoCost || 0
       }
       return 0
     },
@@ -278,14 +278,14 @@ export default {
       if (vm.separateCargoList.length === 0) {
         return
       }
+      let errorKeywords = []
       if (vm.cargoQuantity) {
         let totalQuantity = vm.separateCargoList.map((cargo) => cargo.quantity).reduce((total, value) => {
           total = roundVolume(total + value)
           return total
         }, 0)
         if (totalQuantity !== vm.cargoQuantity) {
-          this.$Message.error('拆单后货物的数量之和应与原货物信息相等')
-          return
+          errorKeywords.push('数量')
         }
       }
       if (vm.cargoWeight) {
@@ -298,8 +298,7 @@ export default {
           return total
         }, 0)
         if (totalWeight !== this.cargoWeight) {
-          this.$Message.error('拆单后货物的重量之和应与原货物信息相等')
-          return
+          errorKeywords.push('重量')
         }
       }
       if (vm.cargoVolume) {
@@ -308,9 +307,12 @@ export default {
           return total
         }, 0)
         if (totalVolume !== this.cargoVolume) {
-          this.$Message.error('拆单后货物的体积之和应与原货物信息相等')
-          return
+          errorKeywords.push('体积')
         }
+      }
+      if (errorKeywords.length > 0) {
+        this.$Message.error(`拆单后货物的${errorKeywords.join('、')}之和应与原货物信息相等`)
+        return
       }
       vm.ok(vm.separateCargoList)
       vm.close()

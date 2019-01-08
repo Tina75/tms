@@ -242,7 +242,7 @@ export const TABLE_COLUMNS_ONE = vm => [
           }, '取消')
         ])
       } else {
-        if (params.row.quantity === 1 || roundWeight(params.row.weight) === 0.001 || roundWeightKg(params.row.weightKg) === 1 || roundVolume(params.row.volume) === 0.000001) {
+        if ((params.row.quantity === 1 || roundWeight(params.row.weight) === 0.001 || roundWeightKg(params.row.weightKg) === 1 || roundVolume(params.row.volume) === 0.000001) && vm.muiltyOrderCargoList.length === 0) {
           return h('div', [
             h('a', {
               style: {
@@ -256,25 +256,29 @@ export const TABLE_COLUMNS_ONE = vm => [
             }, '拆整笔')
           ])
         } else {
-          let renderBtn = [
-            h('a', {
-              style: {
-                marginRight: '20px',
-                color: '#00a4bd'
-              },
-              on: {
-                click: () => {
-                  vm.isSeparate = true
-                  vm.currentId = params.row.id
-                  let cloneData = vm.cloneData[params.index]
-                  vm.cargoCostVal = cloneData.cargoCost
-                  vm.quantityVal = cloneData.quantity
-                  vm.weightVal = vm.WeightOption === 1 ? cloneData.weight : cloneData.weightKg
-                  vm.volumeVal = cloneData.volume
+          let renderBtn = []
+          if (vm.muiltyOrderCargoList.length === 0) {
+            renderBtn = [
+              h('a', {
+                style: {
+                  marginRight: '20px',
+                  color: '#00a4bd'
+                },
+                on: {
+                  click: () => {
+                    vm.isSeparate = true
+                    vm.currentId = params.row.id
+                    let cloneData = vm.cloneData[params.index]
+                    vm.cargoCostVal = cloneData.cargoCost
+                    vm.quantityVal = cloneData.quantity
+                    vm.weightVal = vm.WeightOption === 1 ? cloneData.weight : cloneData.weightKg
+                    vm.volumeVal = cloneData.volume
+                  }
                 }
-              }
-            }, '拆部分')
-          ]
+              }, '拆部分')
+            ]
+          }
+
           // 只有一条货物记录没有拆整笔按钮
           if (vm.parentOrderCargoList.length > 1) {
             renderBtn.push(
@@ -290,21 +294,27 @@ export const TABLE_COLUMNS_ONE = vm => [
               }, '拆整笔')
             )
           } else {
+            if (((vm.parentOrderCargoList[0].quantity && vm.parentOrderCargoList[0].quantity !== 1) ||
+            (vm.parentOrderCargoList[0].weight && vm.parentOrderCargoList[0].weight !== 0.001) ||
+            (vm.parentOrderCargoList[0].weightKg && vm.parentOrderCargoList[0].weightKg !== 1) ||
+            (vm.parentOrderCargoList[0].volume && vm.parentOrderCargoList[0].volume !== 0.000001)) &&
+            vm.childOrderCargoList.length === 0) {
             /**
              * 只有一条货物记录，并且重量和体积不是最小值，数量不为1，就有【拆批量】功能
              */
-            renderBtn.push(
-              h('a', {
-                style: {
-                  color: '#00a4bd'
-                },
-                on: {
-                  click: () => {
-                    vm.separateAverage()
+              renderBtn.push(
+                h('a', {
+                  style: {
+                    color: '#00a4bd'
+                  },
+                  on: {
+                    click: () => {
+                      vm.separateAverage()
+                    }
                   }
-                }
-              }, '拆批量')
-            )
+                }, '拆批量')
+              )
+            }
           }
           return h('div', renderBtn)
         }
@@ -393,9 +403,20 @@ export const TABLE_COLUMNS_TWO = vm => [
                     hasParentList.weightKg += params.row.weightKg
                   }
                   hasParentList.volume = roundVolume(hasParentList.volume + params.row.volume)
-                  vm.childOrderCargoList.splice(params.index, 1)
+                  if (vm.childOrderCargoList.length > 0) {
+                    // 拆部分
+                    vm.childOrderCargoList.splice(params.index, 1)
+                  } else {
+                    // 拆批量
+                    vm.muiltyOrderCargoList.splice(params.index, 1)
+                  }
                 } else {
-                  let child = vm.childOrderCargoList.splice(params.index, 1)
+                  let child
+                  if (vm.childOrderCargoList.length > 0) {
+                    child = vm.childOrderCargoList.splice(params.index, 1)
+                  } else {
+                    child = vm.muiltyOrderCargoList.splice(params.index, 1)
+                  }
                   vm.parentOrderCargoList.push(child[0])
                 }
               }
@@ -658,7 +679,7 @@ export const TABLE_COLUMNS_AVERAGE_EDIT = (vm) => {
       title: '货值',
       key: 'cargoCost',
       render: (h, params) => {
-        return h('span', params.row.cargoCost)
+        return renderFee(h, params.row.cargoCost)
         // return h('div', float.round(params.row.cargoCost / 100))
       }
     },
