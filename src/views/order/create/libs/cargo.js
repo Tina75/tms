@@ -60,27 +60,28 @@ export default class Cargo {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
       this.cargoNo = props.cargoNo
-      // 重量，保留2位小数
-      this._weight = props.weight
-      this.dimension._length = props.dimension.length || null
-      this.dimension._width = props.dimension.width || null
-      this.dimension._height = props.dimension.height || null
+
+      if (props.dimension) {
+        this.dimension._length = props.dimension.length || null
+        this.dimension._width = props.dimension.width || null
+        this.dimension._height = props.dimension.height || null
+      }
       if (!transfer) {
         // 货值，整数
-        this.cargoCost = props.cargoCost
+        this.cargoCost = props.cargoCost || null
       } else {
         this.cargoCost = (props.cargoCost || 0) / 100
       }
-      // 体积方，保留1位小数
-      this.volume = props.volume
+      this._weight = props.weight || null
+      this.volume = props.volume || null
       // 数量
       this.quantity = props.quantity || null
-      // 包装, 10个字
-      this.unit = props.unit
+      // 包装
+      this.unit = props.unit || null
       // 备注 100
-      this.remark1 = props.remark1
-      this.remark2 = props.remark2
-      this.orderNo = props.orderNo
+      this.remark1 = props.remark1 || null
+      this.remark2 = props.remark2 || null
+      this.orderNo = props.orderNo || null
     }
   }
   get weight () {

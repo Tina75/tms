@@ -47,17 +47,9 @@
       <SelectPackageType v-model="record[col.key]" clearable/>
     </div>
     <!-- 订单下拉框 -->
-    <SelectInput
-      v-else-if="col.type === 'orderSelect'"
-      v-model="record[col.key]"
-      :local-options="orders"
-      :maxlength="col.max"
-      :transfer="true"
-      :remote="false"
-      clearable
-      @on-blur="handleBlur(col)"
-    >
-    </SelectInput>
+    <Select v-else-if="col.type === 'orderSelect'" v-model="record[col.key]" clearable>
+      <Option v-for="(item, index) in orders" :value="item.value" :key="index">{{ item.label }}</Option>
+    </Select>
     <Input v-else v-model="record[col.key]" :maxlength="col.max" clearable></Input>
     <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">
       {{record.errorMsg[col.key]}}
