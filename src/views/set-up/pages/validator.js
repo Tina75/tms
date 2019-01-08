@@ -1,3 +1,6 @@
+
+import Server from '@/libs/js/server'
+
 export const CHECK_PWD = function (rule, value, cb) {
   let str = value.replace(/(^\s*)|(\s*$)/g, '')
   let repeat = new RegExp('(\\w)\\1{' + (str.length - 1) + '}')
@@ -49,6 +52,24 @@ export const CHECK_PHONE = function (rule, value, callback) {
       return callback(new Error('联系方式格式不正确'))
     }
     callback()
+  } else {
+    callback()
+  }
+}
+
+export const PSW_RIGHT = function (rule, value, callback) {
+  if (value) {
+    let params = {}
+    params.oldPassword = value
+    Server({
+      url: 'set/pswRight',
+      method: 'get',
+      data: params
+    }).then(({ data }) => {
+      callback()
+    }).catch(() => {
+      return callback(new Error('原始密码错误，请重输'))
+    })
   } else {
     callback()
   }

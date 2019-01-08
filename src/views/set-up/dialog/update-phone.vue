@@ -4,7 +4,14 @@
       <p slot="header" class="ModalTitle">
         <span>{{title}}</span>
       </p>
-      <Form ref="formModal" :model="formModal" :rules="rulesModal">
+      <Form v-show="step === 1" ref="formPwd" :model="formPwd" :rules="rulesformPwd">
+        <p><span class="formTitle">当前手机号：</span><span class="formContent">{{configPhone(phone)}}</span></p>
+        <p><span class="formTitle">修改前，请先输入账号密码，以验证身份</span></p>
+        <FormItem prop="password" class="formBody">
+          <Input v-model="formPwd.password" type="password" placeholder="请输入当前账号密码"></Input>
+        </FormItem>
+      </Form>
+      <Form v-show="step === 2" ref="formModal" :model="formModal" :rules="rulesModal">
         <p><span class="formTitle">当前手机号：</span><span class="formContent">{{configPhone(phone)}}</span></p>
         <p><span class="formTitle">更换手机号之后，下次可使用新手机号登录</span></p>
         <FormItem prop="phone" class="formBody">
@@ -21,8 +28,12 @@
           </Row>
         </FormItem>
       </Form>
-      <div slot="footer">
-        <Button type="primary" @click="save">确定</Button>
+      <div v-if="step === 1" slot="footer">
+        <Button type="primary" @click="next">下一步</Button>
+        <Button type="default" @click="close">取消</Button>
+      </div>
+      <div v-else slot="footer">
+        <Button type="primary" @click="save">提交</Button>
         <Button type="default" @click="close">取消</Button>
       </div>
     </Modal>
@@ -34,6 +45,7 @@ import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import { setToken, removeToken } from '@/libs/js/auth'
 import { mapMutations } from 'vuex'
+import { PSW_RIGHT } from '../pages/validator'
 export default {
   name: 'update-phone',
   mixins: [BaseDialog],
@@ -45,7 +57,7 @@ export default {
           return callback(new Error('手机号格式不正确，请重输'))
         }
         if (vm.phone === value) {
-          return callback(new Error('输入的手机号与当前手机号一致'))
+          return callback(new Error('新手机号不能与当前手机号一致'))
         }
         callback()
       } else {
@@ -53,9 +65,19 @@ export default {
       }
     }
     return {
+      step: 1,
       formModal: {
         phone: '',
         smsCode: ''
+      },
+      formPwd: {
+        password: ''
+      },
+      rulesformPwd: {
+        password: [
+          { required: true, message: '密码不能为空', trigger: 'blur' },
+          { validator: PSW_RIGHT, trigger: 'blur' }
+        ]
       },
       rulesModal: {
         phone: [
@@ -105,6 +127,13 @@ export default {
         }
       })
     },
+    next () {
+      this.$refs['formPwd'].validate((valid) => {
+        if (valid) {
+          this.step = 2
+        }
+      })
+    },
     save () {
       let vm = this
       this.$refs['formModal'].validate((valid) => {
@@ -112,6 +141,7 @@ export default {
           let param = {}
           param.phone = vm.formModal.phone
           param.smsCode = vm.formModal.smsCode
+          param.password = vm.formPwd.password
           Server({
             url: '/set/userPhone',
             method: 'post',

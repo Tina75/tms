@@ -107,12 +107,16 @@ export default {
       this.$emit('on-select', item.value, item)
     },
     findItemData () {
-      let dataInit = this.listMap.find(item => item.value.toString() === this.currentValue.toString())
-      if (!dataInit) {
-        this.showValue = this.currentValue
+      if (this.currentValue) {
+        let dataInit = this.listMap.find(item => item.value.toString() === this.currentValue.toString())
+        if (!dataInit) {
+          this.showValue = this.currentValue
+        } else {
+          this.showValue = dataInit.label
+          return dataInit.label
+        }
       } else {
-        this.showValue = dataInit.label
-        return dataInit.label
+        this.showValue = ''
       }
     },
     clickInput (event) {
