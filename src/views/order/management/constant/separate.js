@@ -550,7 +550,8 @@ export const COLUMNS_THREE_WEIGHT = vm => {
           })
         ])
       } else {
-        return h('div', roundWeight(params.row.weight))
+        return renderWeight(h, params.row.weight)
+        // return h('div', roundWeight(params.row.weight))
       }
     }
   }
@@ -580,7 +581,8 @@ export const COLUMNS_THREE_WEIGHTKG = vm => {
           })
         ])
       } else {
-        return renderWeightKg(h, params.row.weightKg)
+        return renderWeightKg(h, params.row.weight)
+        // return renderWeightKg(h, params.row.weightKg)
         // return h('div', float.round(params.row.weightKg))
       }
     }
@@ -594,7 +596,10 @@ export const TABLE_COLUMNS_AVERAGE = (vm) => [
   },
   {
     title: '包装数量',
-    key: 'quantity'
+    key: 'quantity',
+    render (h, params) {
+      return h('span', params.row.quantity ? params.row.quantity : '-')
+    }
   },
   {
     title: '体积（方）',
@@ -655,6 +660,9 @@ export const TABLE_COLUMNS_AVERAGE_EDIT = (vm) => {
       title: '体积（方）',
       key: 'volume',
       render: (h, params) => {
+        if (!params.row.volume) {
+          return h('span', '-')
+        }
         return h(
           TagNumberInput,
           {

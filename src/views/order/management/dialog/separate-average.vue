@@ -38,7 +38,7 @@
         </Form>
       </div>
       <div class="separate-table">
-        <Table :columns="columnsSeparate" :data="separateCargoList"></Table>
+        <Table v-if="separateCargoList.length > 0" :columns="columnsSeparate" :data="separateCargoList"></Table>
       </div>
     </div>
     <div slot="footer">
@@ -74,12 +74,12 @@ export default {
   data () {
     const vm = this
     return {
-      columns: TABLE_COLUMNS_AVERAGE(this),
-      columns1Weight: COLUMNS_THREE_WEIGHT(this),
+      columns: TABLE_COLUMNS_AVERAGE(this), // 顶部
+      columns1Weight: COLUMNS_THREE_WEIGHT(this), // 编辑表格的表头
       columns1WeightKg: COLUMNS_THREE_WEIGHTKG(this),
-      columns2Weight: COLUMNS_TWO_WEIGHT(this),
+      columns2Weight: COLUMNS_TWO_WEIGHT(this), // 顶部
       columns2WeightKg: COLUMNS_TWO_WEIGHTKG(this),
-      columnsSeparate: TABLE_COLUMNS_AVERAGE_EDIT(this),
+      columnsSeparate: TABLE_COLUMNS_AVERAGE_EDIT(this), // 编辑表格的表头
       // 订单详情数据
       orderDetail: {},
       // 列表数据
