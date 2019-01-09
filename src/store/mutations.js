@@ -56,6 +56,26 @@ export default{
    */
   tmsCargoDtoSetting (state, option) {
     state.tmsCargoDto = option
+  },
+  /**
+   * 上报异常货物修改临时存储货物信息
+   * @param {*} state
+   * @param {*} cargo
+   */
+  setAbnormalCargoInfos (state, cargo) {
+    for (let i in state.abnormalCargoInfos) {
+      state.abnormalCargoInfos[i] = cargo[i] || []
+    }
+  },
+  /**
+   * 上报异常货物重置临时存储货物信息为空
+   * @param {*} state
+   * @param {*} cargo
+   */
+  resetAbnormalCargoInfos (state) {
+    for (let i in state.abnormalCargoInfos) {
+      state.abnormalCargoInfos[i] = []
+    }
   }
 }
 
