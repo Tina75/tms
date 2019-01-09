@@ -104,20 +104,15 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
+import float from '@/libs/js/float'
+import { payTypeMap } from '../constant/numList'
 
 export default {
   name: 'stepPay',
   mixins: [BaseDialog],
   data () {
     return {
-      payTypeMap: {
-        1: '预付现金',
-        2: '预付油卡',
-        3: '到付现金',
-        4: '到付油卡',
-        5: '回付现金',
-        6: '回付油卡'
-      },
+      payTypeMap: payTypeMap,
       payItems: []
     }
   },
@@ -149,7 +144,7 @@ export default {
           this.close()
           this.ok()
         }
-      }).catch(err => console.error(err))
+      })
     },
     writeOffOk (item) {
       const _this = this
@@ -160,12 +155,13 @@ export default {
           scene: this.scene,
           verifyType: 2,
           isOil: item.payType === 2 || item.payType === 4 || item.payType === 6,
-          needPay: parseFloat(item.feeText),
+          needPay: float.round(item.feeText),
           settleTypeDesc: this.settleTypeDesc
         },
         methods: {
           ok () {
             _this.loadData()
+            _this.ok()
           }
         }
       })
@@ -199,11 +195,11 @@ export default {
           data: {
             orderId: this.id,
             payType: item.payType,
-            fee: parseFloat(item.fee) * 100
+            fee: float.round(item.fee * 100)
           }
         }).then(res => {
           this.loadData()
-        }).catch(err => console.error(err))
+        })
       }
     },
     addItem (index) {
@@ -226,7 +222,7 @@ export default {
           }
         }).then(res => {
           this.loadData()
-        }).catch(err => console.error(err))
+        })
       }
     }
   }

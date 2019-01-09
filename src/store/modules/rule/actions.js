@@ -46,5 +46,25 @@ export default {
         reject(error)
       })
     })
+  },
+  /**
+   * 规则列表_根据修改时间倒序
+   * @param {*} 查询用户自定义计费类型
+   */
+  getRuleTypeList ({ state, commit }) {
+    return new Promise((resolve, reject) => {
+      server({
+        url: '/finance/charge/queryRuleType',
+        method: 'get'
+      }).then((res) => {
+        // 承运商计费规则列表
+        const ruleTypeList = res.data.data
+        console.log(res.data.data)
+        commit(types.RULE_TYPE_LIST, ruleTypeList)
+        resolve(ruleTypeList)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
   }
 }

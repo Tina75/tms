@@ -35,6 +35,14 @@
       </div>
       </Col>
     </Row>
+
+    <Row>
+      <i-col span="24" style="margin-top: 28px">
+        <FormItem label="备注：" class="padding-left-label">
+          <Input v-model="form.remark" :maxlength="100" style="width: 96%;"/>
+        </FormItem>
+      </i-col>
+    </Row>
   </div>
 </template>
 
@@ -108,6 +116,7 @@ export default {
      */
     handleSelect (value) {
       if (!value) {
+        this.form.carNo = ''
         this.form.carType = ''
         this.form.carLength = ''
         this.$refs.driverInputs.updateDriversByCar({})
@@ -137,6 +146,8 @@ export default {
 .own-car
   &__label
     height 18px
+    padding-left 27px
+    font-size 13px
     label
       color #666666
     span

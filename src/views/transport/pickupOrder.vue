@@ -28,7 +28,8 @@
                  :maxlength="20"
                  placeholder="请输入提货单号"
                  class="search-input"
-                 @on-click="resetEasySearch" />
+                 @on-click="resetEasySearch"
+                 @on-enter="startSearch" />
 
           <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
                        mode="carrier"
@@ -36,7 +37,8 @@
                        clearable
                        class="search-input"
                        @on-select="selectCarrierHandler"
-                       @on-clear="resetEasySearch" />
+                       @on-clear="resetEasySearch"
+                       @start-search="startSearch" />
 
           <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
                        :carrier-id="carrierId"
@@ -44,7 +46,8 @@
                        placeholder="请输入车牌号"
                        clearable
                        class="search-input"
-                       @on-clear="resetEasySearch" />
+                       @on-clear="resetEasySearch"
+                       @start-search="startSearch" />
 
           <Button icon="ios-search" type="primary"
                   class="search-btn-easy"
@@ -60,27 +63,47 @@
       <div v-if="!isEasySearch" class="operate-box custom-style">
 
         <div style="margin-bottom: 10px;">
-          <Input v-model="seniorSearchFields.pickupNo" :maxlength="20" placeholder="请输入提货单号"  class="search-input-senior" />
+          <Input
+            v-model="seniorSearchFields.pickupNo"
+            :maxlength="20"
+            clearable
+            placeholder="请输入提货单号"
+            class="search-input-senior"
+            @on-enter="startSearch" />
           <SelectInput v-model="seniorSearchFields.carrierName"
                        mode="carrier"
+                       clearable
                        placeholder="请输入承运商"
                        class="search-input-senior"
-                       @on-select="selectCarrierHandler" />
+                       @on-select="selectCarrierHandler"
+                       @start-search="startSearch" />
           <SelectInput v-model="seniorSearchFields.driverName"
                        :carrier-id="carrierId"
                        mode="driver"
+                       clearable
                        placeholder="请输入司机"
-                       class="search-input-senior" />
+                       class="search-input-senior"
+                       @start-search="startSearch" />
           <SelectInput v-model="seniorSearchFields.carNo"
                        :carrier-id="carrierId"
                        mode="carNo"
+                       clearable
                        placeholder="请输入车牌号"
-                       class="search-input-senior" />
+                       class="search-input-senior"
+                       @start-search="startSearch" />
         </div>
 
         <div class="complex-query">
           <div>
-            <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" transfer type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+            <DatePicker
+              v-model="seniorSearchFields.dateRange"
+              :options="timeOption"
+              transfer
+              type="daterange"
+              split-panels
+              placeholder="开始日期-结束日期"
+              class="search-input-senior"
+              @on-change="handleTimeChange"></DatePicker>
           </div>
           <div>
             <Button type="primary"
@@ -141,15 +164,16 @@ import TabHeader from './components/TabHeader'
 import PageTable from '@/components/page-table'
 import SelectInput from './components/SelectInput.vue'
 import PrintPickup from './components/PrintPickup'
-import OrderTabContent from '@/views/order-management/components/TabContent'
+import OrderTabContent from '@/views/order/management/components/TabContent'
 
 import Export from '@/libs/js/export'
 import { BUTTON_LIST, TABLE_COLUMNS } from './constant/pickup'
 import headType from '@/libs/constant/headtype'
+import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'ReceiveManager',
+  name: 'order-pickup',
   components: { TabHeader, PageTable, SelectInput, PrintPickup, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
   metaInfo: { title: '提货管理' },
@@ -187,14 +211,14 @@ export default {
         fixed: 'left',
         extra: true,
         render: (h, p) => {
-          if (p.row.status === 1 && this.hasPower(120201)) {
+          if (p.row.status === 1 && this.hasPower(120208) && ((p.row.carrierName === '' && p.row.assignCarType === 1) || (p.row.carNo === '' && p.row.assignCarType === 2))) {
             return h('a', {
               on: {
                 click: () => {
                   this.billPickup(p.row.pickUpId)
                 }
               }
-            }, '提货')
+            }, '派车')
           } else if (p.row.status > 1 && this.hasPower(120210)) {
             // return h('a', {
             //   on: {
@@ -224,7 +248,8 @@ export default {
       'getPickupOrderLocation',
       'pickupOrderCheck',
       'pickupOrderArrival',
-      'getPickupOrderTabCount'
+      'getPickupOrderTabCount',
+      'loadbillPickup'
     ]),
 
     // 设置标签状态
@@ -335,9 +360,7 @@ export default {
             },
             methods: {}
           })
-        }).catch(err => {
-          console.error(err)
-        })
+        }).catch()
     },
 
     // 删除
@@ -384,7 +407,7 @@ export default {
       })
     },
 
-    // 提货
+    // 提货派车弹窗
     billPickup (id) {
       const self = this
       self.pickupOrderCheck(id)
@@ -402,6 +425,80 @@ export default {
             }
           })
         })
+    },
+
+    // 提货
+    loadBillSend () {
+      const self = this
+      if (!self.checkTableSelection()) return
+      let tableSelection = _.cloneDeep(self.tableSelection)
+      // 提货单提货前判断提货单有无填写承运商
+      let carrierNameList = _.remove(tableSelection, (i) => {
+        return (i.carrierName === '' && i.assignCarType === 1) || (i.carNo === '' && i.assignCarType === 2)
+      })
+      if (carrierNameList.length > 0) {
+        if (self.tableSelection.length > 1) {
+          self.openDialog({
+            name: 'transport/dialog/cashBackWarn',
+            data: {
+              title: '操作提醒',
+              cashBack: carrierNameList,
+              message: '以下单据未派车或信息不全，不能提货。',
+              type: 'pickUp'
+            },
+            methods: {
+              confirm () {}
+            }
+          })
+        } else {
+          if (carrierNameList[0].assignCarType === 1 && !carrierNameList[0].carrierName) {
+            self.$Message.warning('承运商未填写，不能提货')
+          }
+          if (carrierNameList[0].assignCarType === 2 && !carrierNameList[0].carNo) {
+            self.$Message.warning('自送车辆信息未填写，不能提货')
+          }
+        }
+        return
+      }
+      // 提货单提货前判断提货单有无加入订单
+      let cargoList = _.remove(tableSelection, (i) => {
+        return i.orderCnt === 0
+      })
+      if (cargoList.length > 0) {
+        if (self.tableSelection.length > 1) {
+          self.openDialog({
+            name: 'transport/dialog/cashBackWarn',
+            data: {
+              title: '操作提醒',
+              cashBack: cargoList,
+              message: '以下单据没有加入订单，不能提货。',
+              type: 'pickUp'
+            },
+            methods: {
+              confirm () {}
+            }
+          })
+        } else {
+          self.$Message.warning('此提货单未加入订单，不能提货')
+        }
+        return
+      }
+      self.openDialog({
+        name: 'transport/dialog/confirm',
+        data: {
+          title: '提货',
+          message: '提货后将不能修改提货单，是否提货？'
+        },
+        methods: {
+          confirm () {
+            self.loadbillPickup(self.tableSelection.map(item => item.pickUpId))
+              .then(() => {
+                self.$Message.success('操作成功')
+                self.clearSelectedAndFetch()
+              })
+          }
+        }
+      })
     },
 
     // 上报异常

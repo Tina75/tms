@@ -126,7 +126,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['UserInfo']),
+    ...mapGetters(['UserInfo', 'DoucmentHeight', 'IsUserLogin']),
     today () {
       var now = new Date()
       return now.Format('yyyy年MM月dd日') + ' ' + this.week(now.getDay())
@@ -147,7 +147,7 @@ export default {
       }
     },
     styleHeight () {
-      return { minHeight: this.$parent.$parent.$el.children[0].style.minHeight }
+      return { minHeight: this.DocumentHeight }
     },
     cardsMap () {
       const objMap = {}
@@ -235,7 +235,7 @@ export default {
      */
     initNotice () {
       // 用户是否登录
-      if (this.UserInfo.id) {
+      if (this.IsUserLogin) {
         // 查询跑马灯
         server({
           url: 'message/pmd',
@@ -243,39 +243,6 @@ export default {
         }).then(res => {
           if (res && res.data.code === 10000) {
             this.notice = res.data.data
-          }
-        })
-
-        // 查询系统更新消息
-        server({
-          url: 'message/sysSms',
-          method: 'get'
-        }).then((res) => {
-          if (res && res.data.code === 10000) {
-            const upgradeMessage = res.data.data
-            if (!upgradeMessage.id) {
-              return
-            }
-            // 弹出更新消息窗口
-            this.openDialog({
-              name: 'home/dialogs/upgrade',
-              data: {
-                title: upgradeMessage.title,
-                content: upgradeMessage.content
-              },
-              methods: {
-                ok () {
-                  // 删除系统更新消息
-                  server({
-                    url: 'message/sysSmsDel',
-                    method: 'get',
-                    params: {
-                      id: upgradeMessage.id
-                    }
-                  })
-                }
-              }
-            })
           }
         })
       }
@@ -294,22 +261,24 @@ export default {
     },
     // 获取card数组
     initCardList () {
-      server({
-        url: 'home/plugin/user',
-        method: 'get'
-      }).then(res => {
-        if (res && res.data) {
-          const data = res.data.data
-          this.cardChecksTemp = []
-          for (const i of data) {
-            if (i.valid === 1) {
-              this.cardChecksTemp.push(i.name)
+      if (this.IsUserLogin) {
+        server({
+          url: 'home/plugin/user',
+          method: 'get'
+        }).then(res => {
+          if (res && res.data) {
+            const data = res.data.data
+            this.cardChecksTemp = []
+            for (const i of data) {
+              if (i.valid === 1) {
+                this.cardChecksTemp.push(i.name)
+              }
             }
+            this.cardsList = data
+            this.cardChecks = this.cardChecksTemp
           }
-          this.cardsList = data
-          this.cardChecks = this.cardChecksTemp
-        }
-      })
+        })
+      }
     },
     // 确认请求
     confirmAction () {

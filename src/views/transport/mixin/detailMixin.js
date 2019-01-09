@@ -4,8 +4,8 @@
 
 import _ from 'lodash'
 import Float from '@/libs/js/float'
-import { CAR } from '@/views/client/client'
-import { mapActions } from 'vuex'
+import { CAR } from '@/views/client/pages/client'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   data () {
@@ -21,6 +21,7 @@ export default {
       currentBtns: [], // 当前按钮组
 
       detail: [], // 货物明细
+      orderList: [], // 订单明细，用于分摊策略 v1.08新增
 
       // 费用
       payment: {
@@ -32,7 +33,6 @@ export default {
         totalFee: ''
       },
 
-      activeTab: 'detail',
       showLog: false,
       logList: [], // 操作日志
       exceptionCount: 0,
@@ -56,6 +56,31 @@ export default {
             }
           })
         ])
+      },
+      // 吨列
+      columnWeight: {
+        title: '重量(吨)',
+        key: 'weight',
+        width: 120,
+        render: (h, p) => {
+          // 运单里优化了订单和货物的展示效果，多个货物换行显示，所以存在cargolist字段；提货单没有该字段
+          if (p.row.hasOwnProperty('cargoList')) {
+            return this.scopedSlotsRender(h, p, 'weight', 0)
+          }
+          return this.tableDataRender(h, p.row.weight ? p.row.weight : 0)
+        }
+      },
+      // 公斤列
+      columnWeightKg: {
+        title: '重量(公斤)',
+        key: 'weightKg',
+        width: 120,
+        render: (h, p) => {
+          if (p.row.hasOwnProperty('cargoList')) {
+            return this.scopedSlotsRender(h, p, 'weightKg', 0)
+          }
+          return this.tableDataRender(h, p.row.weightKg ? p.row.weightKg : 0)
+        }
       }
     }
   },
@@ -65,6 +90,9 @@ export default {
   },
 
   computed: {
+    ...mapGetters([
+      'WeightOption' // 重量配置 1 吨  2 公斤
+    ]),
     // 根据日志收起展开动态计算高度
     logListHeight () {
       return { height: this.showLog ? 41 * this.logList.length + 'px' : '18px' }
@@ -78,7 +106,7 @@ export default {
               Number(this.payment.insuranceFee) +
               Number(this.payment.otherFee)
       if (this.pageName === 'feright') total += Number(this.payment.tollFee)
-      return parseFloat(total.toFixed(2))
+      return Float.round(total)
     },
     // 货物总计
     orderTotal () {
@@ -87,13 +115,15 @@ export default {
         return {
           cargoCost: Float.round(last.cargoCost + cargoCost),
           quantity: Float.round(last.quantity + item.quantity),
-          weight: Float.round(last.weight + item.weight),
-          volume: Float.round(last.volume + item.volume)
+          weight: Float.round(last.weight + item.weight, 3),
+          weightKg: Float.round(last.weightKg + item.weightKg),
+          volume: Float.round(last.volume + item.volume, 6)
         }
       }, {
         cargoCost: 0,
         quantity: 0,
         weight: 0,
+        weightKg: 0,
         volume: 0
       })
     },
@@ -105,6 +135,9 @@ export default {
     },
     isAbnomal () {
       return this.$route.query.abnormal === 1
+    },
+    activeTab () {
+      return !this.isAbnomal ? 'detail' : 'exception'
     }
   },
 
@@ -112,8 +145,8 @@ export default {
     // 编辑状态且为待发运为货物列表添加操作栏
     inEditing (val) {
       if (!this.tableCanEdit) return
-      if (this.status === '在途' || this.status === '已到货' || this.status === '待提货') return
-      if (val === 'edit' && this.status === '待发运') {
+      if (this.status === '在途' || this.status === '已到货') return
+      if (val === 'edit' && (this.status === '待发运' || this.status === '待提货')) {
         this.tableColumns.unshift({
           title: '操作',
           key: 'action',
@@ -125,6 +158,9 @@ export default {
                   const id = p.row.orderId
                   const temp = this.detail.filter(item => item.orderId !== id)
                   this.detail = temp
+                  // 移除货物列表，也要同步移除对应id的订单列表，分摊策略需校验
+                  const list = this.orderList.filter(item => item.orderId !== id)
+                  this.orderList = list
                 }
               }
             }, '移出')
@@ -133,15 +169,25 @@ export default {
       } else {
         this.tableColumns.shift()
       }
-    },
-    isAbnomal (val) {
-      this.activeTab = val ? 'detail' : 'exception'
     }
   },
 
   methods: {
     ...mapActions([ 'getCargoDetail' ]),
-
+    /**
+     * 货物明细渲染,需要按货物单号分组
+     * @param {*} h
+     * @param {*} p
+     * @param {*} key
+     */
+    scopedSlotsRender (h, p, key, defaultString = '-') {
+      if (p.row.cargoList) {
+        return h('div', {},
+          p.row.cargoList.map((cargo) => h('div', cargo[key] || defaultString))
+        )
+      }
+      return h('span', '-')
+    },
     // 根据状态设置按钮
     setBtnsWithStatus () {
       for (let i = 0; i < this.btnList.length; i++) {
@@ -171,9 +217,12 @@ export default {
           confirm (ids) {
             // 查询货物详情
             self.getCargoDetail(ids).then(list => {
-              console.log(list)
-              list.forEach(item => {
+              list.cargoList.forEach(item => {
                 self.detail.push(item)
+              })
+              // 添加货物需同步对应订单信息
+              list.orderList.forEach(item => {
+                self.orderList.push(item)
               })
             })
           }
@@ -194,9 +243,9 @@ export default {
         // if (typeof temp[key] === 'number') temp[key] = temp[key] * 100
         if (typeof temp[key] === 'number') {
           if (key === 'mileage') {
-            temp[key] = temp[key] * 1000
+            temp[key] = Float.round(temp[key] * 1000)
           } else {
-            temp[key] = temp[key] * 100
+            temp[key] = Float.round(temp[key] * 100)
           }
         } else {
           temp[key] = 0
@@ -246,7 +295,6 @@ export default {
       //   id: this.id,
       //   type: type // 单据类型 1 提货单 2 外转单 3 运单
       // }
-      console.log('编辑对话', data)
       const self = this
       this.openDialog({
         name: 'transport/dialog/abnormal',

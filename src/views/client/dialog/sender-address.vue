@@ -9,7 +9,7 @@
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
-      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122">
+      <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90" style="margin-left: -10px">
         <FormItem label="发货地址：">
           <Row>
             <Col span="11">
@@ -21,14 +21,16 @@
             <FormItem prop="address">
               <AreaInput
                 v-model="validate.address"
-                :disabled="true"
-                :city-code="cityCode"
-                @latlongt-change="latlongtChange"/>
+                :city-code="validate.city"
+                :filter-city="true"
+                @city-select="latlongtChange"/>
             </FormItem>
             </Col>
           </Row>
         </FormItem>
-
+        <FormItem>
+          <Input v-model="validate.consignerHourseNumber" :maxlength="50" placeholder="补充地址（楼号-门牌等）"/>
+        </FormItem>
       </Form>
       <div slot="footer">
         <Button type="primary" @click="save('validate')">确定</Button>
@@ -40,8 +42,7 @@
 
 <script>
 import BaseDialog from '@/basic/BaseDialog'
-import { consignerAddressAdd, consignerAddressUpdate, CODE } from '../client'
-import cityUtil from '@/libs/js/city'
+import { consignerAddressAdd, consignerAddressUpdate, CODE } from '../pages/client'
 import AreaInput from '@/components/AreaInput'
 import CitySelect from '@/components/SelectInputForCity'
 export default {
@@ -60,19 +61,17 @@ export default {
         address: '',
         longitude: '',
         latitude: '',
-        mapType: 1
+        mapType: 1,
+        consignerHourseNumber: ''
       },
       ruleValidate: {
+        city: [
+          { required: false, message: '发货城市不能为空' }
+        ],
         address: [
           { required: true, message: '发货地址不能为空', trigger: 'blur' }
         ]
       }
-    }
-  },
-  computed: {
-    cityCode () {
-      const arr = cityUtil.getPathByCode(this.validate.city)
-      return arr.length ? arr[1].code : ''
     }
   },
   methods: {
@@ -84,7 +83,6 @@ export default {
           } else { // 2-编辑
             this.update()
           }
-          this.close()
         }
       })
     },
@@ -95,11 +93,13 @@ export default {
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
         mapType: this.validate.mapType,
-        cityCode: this.validate.city
+        cityCode: this.validate.city,
+        consignerHourseNumber: this.validate.consignerHourseNumber
       }
       consignerAddressAdd(data).then(res => {
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
@@ -112,26 +112,30 @@ export default {
         longitude: this.validate.longitude,
         latitude: this.validate.latitude,
         mapType: this.validate.mapType,
-        cityCode: this.validate.city
+        cityCode: this.validate.city,
+        consignerHourseNumber: this.validate.consignerHourseNumber
       }
       consignerAddressUpdate(data).then(res => {
-        console.log(res)
         if (res.data.code === CODE) {
           this.ok() // 刷新页面
+          this.close()
         } else {
           this.$Message.error(res.data.msg)
         }
       })
     },
-    latlongtChange ({ lat, lng }) {
+    latlongtChange ({ lat, lng, cityCode }) {
       this.validate.longitude = lng
       this.validate.latitude = lat
       this.validate.mapType = 1
+      // if (!this.validate.city) {
+      //   this.validate.city = cityCode
+      // }
     }
   }
 }
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+  @import "../pages/client.styl"
 </style>

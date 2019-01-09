@@ -25,6 +25,7 @@
         @on-change="handleChange"
         @on-focus="handleFocus"
       >
+      <Icon v-if="prefix" slot="prefix" :type="prefix"></Icon>
       <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
       <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
     </Input>
@@ -52,13 +53,17 @@
  * 3. 如果外面包一层div，问题更严重，会不断触发同一页面其他selectinput组件的blur事件
  */
 import browser from '@/libs/js/browser'
+import dispatchMixin from './mixins/dispatchMixin.js'
 export default {
   name: 'SelectInput',
+  mixins: [dispatchMixin],
   props: {
     autoFocus: {
       type: Boolean,
       default: false
     },
+    // 前置图标
+    prefix: String,
     placement: {
       type: String,
       default: 'bottom-start'
@@ -69,6 +74,11 @@ export default {
     onlyChinese: {
       type: Boolean,
       default: true
+    },
+    // 默认既能输入又能选，某些场景，只能选，比如公司设置
+    onlySelect: {
+      type: Boolean,
+      default: false
     },
     clearable: {
       type: Boolean,
@@ -113,7 +123,10 @@ export default {
      * 显示时候的值，回调函数
      * 比如：手机号，银行卡号，间隔显示，但是最终的值不保留间隔
      */
-    formatter: Function
+    formatter: Function,
+    onChange: Function,
+    // 输入框内回车键
+    enter: Function
   },
   data () {
     return {
@@ -197,15 +210,23 @@ export default {
       const optionInstance = dropdownInstance.$children.find((child) => {
         return child.$options.propsData.name === option.value
       })
+      if (optionInstance) {
+        let bottomDistance = optionInstance.$el.getBoundingClientRect().bottom - dropdownInstance.$el.getBoundingClientRect().bottom
+        let topDistance = optionInstance.$el.getBoundingClientRect().top - dropdownInstance.$el.getBoundingClientRect().top
 
-      let bottomDistance = optionInstance.$el.getBoundingClientRect().bottom - dropdownInstance.$el.getBoundingClientRect().bottom
-      let topDistance = optionInstance.$el.getBoundingClientRect().top - dropdownInstance.$el.getBoundingClientRect().top
-
-      if (bottomDistance > 0) {
-        dropdownInstance.$el.scrollTop += bottomDistance
-      } else if (topDistance < 0) {
-        dropdownInstance.$el.scrollTop += topDistance
+        if (bottomDistance > 0) {
+          dropdownInstance.$el.scrollTop += bottomDistance
+        } else if (topDistance < 0) {
+          dropdownInstance.$el.scrollTop += topDistance
+        }
       }
+    },
+    /**
+     * iview的input空间prefix属性，不是动态创建的
+     * 所以这里要手动执行下内部函数
+     */
+    prefix (newValue) {
+      this.$refs.input.showPrefix = !!newValue
     }
   },
   mounted () {
@@ -241,19 +262,6 @@ export default {
     }
   },
   methods: {
-    dispatch (componentName, eventName, params) {
-      let parent = this.$parent || this.$root
-      let name = parent.$options.name
-      while (parent && (!name || name !== componentName)) {
-        parent = parent.$parent
-        if (parent) {
-          name = parent.$options.name
-        }
-      }
-      if (parent) {
-        parent.$emit.apply(parent, [eventName].concat(params))
-      }
-    },
     onCompositionStart () {
       this.composing = true
     },
@@ -290,6 +298,7 @@ export default {
       this.currentValue = ''
       this.focusIndex = -1
       this.$emit('input', this.currentValue)
+      // this.setCurrentValue('')
     },
     // 点击下拉框项
     handleSelect (name) {
@@ -319,9 +328,17 @@ export default {
     },
     handleBlur () {
       this.resetSelect()
-      // 设置输入框的值，不选择下拉框的选项
-      // this.$emit('input', this.currentValue)
+      // 只能选择，不能输入
+      if (this.onlySelect && this.inputValue !== this.currentValue) {
+        let value = this.currentValue
+        this.currentValue = ''
+        this.$nextTick(() => {
+          this.currentValue = value
+          this.inputValue = value
+        })
+      }
       this.$emit('on-blur', this.currentValue)
+      this.dispatch.call(this.$parent, 'FormItem', 'on-form-blur', this.currentValue)
     },
     /**
      * 更改关键字，input onChange事件
@@ -334,7 +351,12 @@ export default {
       if (this.remote) {
         this.remoteCall(val)
       }
-      this.setCurrentValue(val)
+      if (!this.onlySelect) {
+        this.setCurrentValue(val)
+      } else {
+        this.inputValue = val
+        this.$emit('on-change', val)
+      }
       this.visible = true
     },
     // 远程请求
@@ -376,6 +398,9 @@ export default {
               this.handleSelect(selectOption.name)
             }
           }
+          this.$nextTick(() => {
+            this.$emit('enter', this.currentValue)
+          })
         }
       }
     },

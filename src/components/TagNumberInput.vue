@@ -1,12 +1,14 @@
 <template>
-  <div :class="wrapClasses">
+  <div :class="wrapClasses" class="ivu-input-wrapper">
     <div :class="inputWrapClasses">
       <span v-if="showSuffix" class="ivu-input-suffix">
         <slot name="suffix">
           <i v-if="suffix" :class="['ivu-icon-' + suffix]"  class="ivu-icon"></i>
         </slot>
       </span>
+      <i v-if="clearable && formatterValue" :class="['ivu-icon-ios-close-circle', 'ivu-input-icon', 'ivu-input-icon-clear']" class="ivu-icon" @click="handleClear"></i>
       <input
+        ref="input"
         :id="elementId"
         :class="inputClasses"
         :disabled="disabled"
@@ -20,7 +22,6 @@
         @focus="focus"
         @blur="blur"
         @keydown.stop="keyDown"
-        @input="change"
         @mouseup="preventDefault"
         @change="change">
     </div>
@@ -30,11 +31,17 @@
   </div>
 </template>
 <script>
+/**
+ * changlog:
+ * 1. 取消了oninput事件；因为ie11下，弹出框会自动执行input事件，导致会首次验证，提示错误;导致输入时没法显示中文
+ */
 import float from '../libs/js/float.js'
 import { money2chinese } from '@/libs/js/util'
+import dispatchMixin from './mixins/dispatchMixin.js'
 const prefixCls = 'ivu-input-number'
 export default {
-  name: 'InputNumber',
+  name: 'TagNumberInput',
+  mixins: [dispatchMixin],
   props: {
     max: {
       type: Number,
@@ -53,7 +60,7 @@ export default {
       default: true
     },
     value: {
-      type: Number,
+      type: [Number, String],
       default: 1
     },
     size: {
@@ -64,6 +71,11 @@ export default {
       default () {
         return 'default'
       }
+    },
+    // 整数长度部分长度限制
+    length: {
+      type: [Number, String],
+      default: 9
     },
     disabled: {
       type: Boolean,
@@ -110,6 +122,10 @@ export default {
     showChinese: {
       type: Boolean,
       default: true
+    },
+    clearable: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -159,6 +175,7 @@ export default {
   },
   watch: {
     value (val) {
+      // 不能设置null，如果加上null，用户第一个输入0就出现问题
       this.currentValue = val
     },
     currentValue (val) {
@@ -172,26 +189,18 @@ export default {
     }
   },
   mounted () {
-    this.changeVal(this.currentValue)
+    const vm = this
+    vm.changeVal(vm.currentValue)
 
-    this.showSuffix = this.suffix !== '' || this.$slots.suffix !== undefined
+    vm.showSuffix = vm.suffix !== '' || vm.$slots.suffix !== undefined
+
+    vm.$nextTick(() => {
+      vm.$refs.input.oninput = vm.change
+    })
   },
   methods: {
     preventDefault (e) {
       e.preventDefault()
-    },
-    dispatch (componentName, eventName, params) {
-      let parent = this.$parent || this.$root
-      let name = parent.$options.name
-      while (parent && (!name || name !== componentName)) {
-        parent = parent.$parent
-        if (parent) {
-          name = parent.$options.name
-        }
-      }
-      if (parent) {
-        parent.$emit.apply(parent, [eventName].concat(params))
-      }
     },
     setValue (val) {
       // 如果 step 是小数，且没有设置 precision，是有问题的
@@ -237,6 +246,19 @@ export default {
       if (this.parser) {
         val = this.parser(val)
       }
+      /**
+       * 文本长度是否大于限制的长度
+       * 可能包含小数点
+       */
+      if (val.length > this.length) {
+        if (val.indexOf('.') !== -1) {
+          let vals = val.split('.')
+          let integerValue = vals[0]
+          val = integerValue.substring(0, this.length) + '.' + vals[1]
+        } else {
+          val = val.substring(0, this.length)
+        }
+      }
 
       const isEmptyString = (val === null || val === '') ? true : val.length === 0
       if (isEmptyString) {
@@ -270,6 +292,12 @@ export default {
         return money2chinese(value)
       }
       return ''
+    },
+    handleClear () {
+      const e = { target: { value: null } }
+      this.$emit('input', null)
+      this.setValue(null)
+      this.$emit('on-change', e)
     }
   }
 }

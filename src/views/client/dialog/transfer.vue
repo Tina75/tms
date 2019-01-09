@@ -19,7 +19,7 @@
         <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
       <FormItem label="公司地址：" prop="companyAddress">
-        <AreaInput v-model="validate.companyAddress" :maxlength="60" placeholder="请输入" @latlongt-change="latlongtChange"/>
+        <AreaInput v-model="validate.companyAddress" :maxlength="60" placeholder="请输入" @city-select="latlongtChange"/>
       </FormItem>
       <FormItem label="支付方式：">
         <Select v-model="validate.payType" placeholder="请输入" transfer clearable>
@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import { transfereeAdd, transfereeUpdate, CODE } from '../client'
+import { transfereeAdd, transfereeUpdate, CODE } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import AreaInput from '@/components/AreaInput.vue'
 export default {
@@ -125,5 +125,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
- @import "../client.styl"
+ @import "../pages/client.styl"
 </style>

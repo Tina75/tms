@@ -18,7 +18,8 @@
           <FormItem label="车牌号：" prop="carNo">
             <Row>
               <Col span="20">
-              <SelectInput v-model="validate.carNo" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
+              <span v-if="flag >= 2">{{ validate.carNo }}</span>
+              <SelectInput v-else v-model="validate.carNo" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
               </Col>
             </Row>
           </FormItem>
@@ -27,9 +28,7 @@
           <FormItem label="车型：" prop="carType">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carType" transfer >
-                <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
-              </Select>
+              <SelectCarType v-model="validate.carType" class="formInputSty" placeholder="请选择"></SelectCarType>
               </Col>
             </Row>
           </FormItem>
@@ -38,9 +37,7 @@
           <FormItem label="车长：" prop="carLength">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carLength" transfer >
-                <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
-              </Select>
+              <SelectCarLength v-model="validate.carLength" class="formInputSty" placeholder="请选择"></SelectCarLength>
               </Col>
             </Row>
           </FormItem>
@@ -51,8 +48,7 @@
           <FormItem label="载重：" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
-              <!-- <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="请输入"></Input> -->
+              <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -64,8 +60,7 @@
           <FormItem label="净空：" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" v-model="validate.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
-              <!-- <Input v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input> -->
+              <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="2" offset="1">
               <span>方</span>
@@ -96,6 +91,20 @@
           </Col>
           <Col span="16">
           <OwnDriverSelects :form="validate" :is-validate="true" :filtered-validate="filteredValidate"></OwnDriverSelects>
+          </Col>
+        </Row>
+        <Row>
+          <Col span="8">
+          <FormItem label="挂车号：" prop="trailerNo">
+            <Row>
+              <Col span="20">
+              <SelectInput v-model="validate.trailerNo" :maxlength="6" :parser="formatterCarNo" placeholder="请输入"></SelectInput>
+              </Col>
+              <Col span="2" offset="1">
+              <span>挂</span>
+              </Col>
+            </Row>
+          </FormItem>
           </Col>
         </Row>
         <p class="modalTitle">常跑线路</p>
@@ -147,8 +156,7 @@
   </div>
 </template>
 <script>
-import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
-import { CAR, formatterCarNo } from '../client'
+import { CAR, CAR_GUA, formatterCarNo } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
@@ -157,6 +165,8 @@ import OwnDriverSelects from '@/components/own-car-form/OwnDriverSelects'
 import _ from 'lodash'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
+import SelectCarType from '@/components/SelectCarType'
+import SelectCarLength from '@/components/SelectCarLength'
 export default {
   name: 'owned-editdriver',
   components: {
@@ -164,14 +174,14 @@ export default {
     UpLoad,
     SelectInput,
     OwnDriverSelects,
-    TagNumberInput
+    TagNumberInput,
+    SelectCarType,
+    SelectCarLength
   },
   mixins: [BaseDialog],
   data () {
     return {
       loading: false,
-      carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH,
       validate: {
         driverId: '',
         driverName: '',
@@ -185,24 +195,26 @@ export default {
       address2: {},
       flagAddress: true,
       codeType: 1,
-      selectList: DRIVER_TYPE,
       formatterCarNo: formatterCarNo, // 车牌号大写转换
       ruleValidate: {
         carNo: [
           { required: true, message: '车牌号不能为空', trigger: 'blur' },
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
+        trailerNo: [
+          { type: 'string', message: '挂车号格式不正确', pattern: CAR_GUA, trigger: 'blur' }
+        ],
         carType: [
-          { required: true, message: '车型不能为空', trigger: 'change' }
+          { required: true, message: '车型不能为空' }
         ],
         carLength: [
-          { required: true, message: '车长不能为空', trigger: 'change' }
+          { required: true, message: '车长不能为空' }
         ],
         shippingWeight: [
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于六位整数,最多三位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,3})?$/ }
         ],
         shippingVolume: [
-          { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+          { message: '小于等于六位整数,最多六位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,6})?$/ }
         ]
       },
       filteredValidate: []
@@ -318,7 +330,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import "../client.styl"
+@import "../pages/client.styl"
 .modalTitle
   font-size: 14px;
 </style>

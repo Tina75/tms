@@ -39,11 +39,11 @@
           <label class="label-bar">异常描述：</label>
           <span class="flexBox colorGrey">{{data.abnormalDesc}}</span>
         </div>
-        <div class="exception-distribution">
+        <div class="exception-distribution i-mt-10">
           <label class="label-bar">图片：</label>
           <div class="flexBox">
             <span v-for="(item, index) in data.fileUrls"
-                  :key="index" :style="`background-image: url(${item}) `"
+                  :key="index" :style="`background-image: url(${urlHandle(item)}) `"
                   style="background-position: center; background-size: 100%; background-repeat: no-repeat;"
                   class="img-bar" @click="showImg(index)">
             </span>
@@ -69,6 +69,10 @@
                 <i-col v-if="billType === 3" span="8">
                   <label class="feeLabel">路桥费：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.tollFee | Money}}元</span>
+                </i-col>
+                <i-col v-if="billType === 3 && data.assignCarType === 2" span="8">
+                  <label class="feeLabel">住宿费：</label>
+                  <span class="colorGrey">{{data.beforeFeeInfo.accommodation | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">保险费：</label>
@@ -113,6 +117,10 @@
                 <i-col v-if="billType === 3" span="8">
                   <label class="feeLabel">路桥费：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.tollFee, data.afterFeeInfo.tollFee)}" class="colorGrey">{{data.afterFeeInfo.tollFee | Money}}</span>元
+                </i-col>
+                <i-col v-if="billType === 3 && data.assignCarType === 2" span="8">
+                  <label class="feeLabel">住宿费：</label>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.accommodation, data.afterFeeInfo.accommodation)}" class="colorGrey">{{data.afterFeeInfo.accommodation | Money}}</span>元
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">保险费：</label>
@@ -192,6 +200,7 @@ export default {
   data () {
     return {
       hideDetail: this.listLength > 1,
+      IMG_URL: process.env.VUE_APP_IMG_URL,
       columns: [
         {
           title: '付款方式',
@@ -208,6 +217,9 @@ export default {
                 break
               case 3:
                 txt = '回付'
+                break
+              case 4:
+                txt = '尾款'
                 break
               default:
             }
@@ -241,6 +253,9 @@ export default {
                 break
               case 3:
                 txt = '回付'
+                break
+              case 4:
+                txt = '尾款'
                 break
               default:
             }
@@ -285,9 +300,10 @@ export default {
   },
   computed: {
     imageItems () {
+      const self = this
       const arr = this.data.fileUrls.map(item => {
         return {
-          src: item,
+          src: self.urlHandle(item),
           msrc: item
         }
       })
@@ -296,7 +312,6 @@ export default {
   },
   mounted () {
     this.showImgFn = openSwipe(this.imageItems)
-    console.log(this.data)
   },
   methods: {
     // 处理对话框
@@ -341,6 +356,10 @@ export default {
       if (this.showImgFn) {
         this.showImgFn(index)
       }
+    },
+    // 客户端上传没有阿里云前缀 手动加上
+    urlHandle (item) {
+      return item.indexOf('aliyuncs') > -1 ? item : this.IMG_URL + item
     }
   }
 }

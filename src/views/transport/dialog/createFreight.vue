@@ -40,7 +40,7 @@ import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '@/views/transport/components/SelectInput.vue'
 import SelectInputMixin from '@/views/transport/mixin/selectInputMixin'
 import Server from '@/libs/js/server'
-import { CAR } from '@/views/client/client'
+import { CAR } from '@/views/client/pages/client'
 
 export default {
   name: 'CreatedFreight',

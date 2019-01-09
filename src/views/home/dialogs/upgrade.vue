@@ -34,13 +34,15 @@ export default {
     return {
       title: '',
       content: '',
-      width: 410,
+      width: 660,
       visible: true
     }
   },
   methods: {
     save () {
       this.visible = false
+      this.ok()
+      this.close()
     },
     handleClose () {
       this.ok()
@@ -55,18 +57,18 @@ export default {
 .system-upgrade
   &__title
     text-align left
-    height 84px
-    line-height 84px
+    height 103px
+    line-height 103px
     position relative
   &__title-bg
-    width 410px
-    height 112px
-    background url('../../../assets/upgrade-bg.png') no-repeat left
-    background-size contain
+    width 690px
+    height 143px
+    background url('../../../assets/upgrade-bg.png') no-repeat center center
+    background-size 700px 170px
     position absolute
-    left -16px
+    left -31px
     right 0
-    top -14px
+    top -15px
     bottom 0
     z-index 0
   &__title-text
@@ -74,7 +76,7 @@ export default {
     z-index 2
     position relative
     font-size 24px
-    padding-left 30px
+    padding-left 50px
   &__button
     width 150px
 .ivu-modal-close

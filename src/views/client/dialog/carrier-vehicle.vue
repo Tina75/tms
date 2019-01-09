@@ -157,7 +157,7 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddVehicle, carrierUpdateVehicle, carrierQueryCarlist, CODE, CAR } from '../client'
+import { carrierAddVehicle, carrierUpdateVehicle, carrierQueryCarlist, CODE, CAR } from '../pages/client'
 import float from '@/libs/js/float'
 export default {
   name: 'carrier-vehicle',
@@ -269,9 +269,9 @@ export default {
     },
     add () {
       let data = Object.assign({}, this.validate)
-      data.repairMoney = this.validate.repairMoney * 100
-      data.payMoney = this.validate.payMoney * 100
-      data.waitPayMoney = this.validate.waitPayMoney * 100
+      data.repairMoney = float.round(this.validate.repairMoney * 100)
+      data.payMoney = float.round(this.validate.payMoney * 100)
+      data.waitPayMoney = float.round(this.validate.waitPayMoney * 100)
       carrierAddVehicle(data).then(res => {
         if (res.data.code === CODE) {
           this.$Message.success(res.data.msg)
@@ -284,9 +284,9 @@ export default {
     },
     update () {
       let data = Object.assign({}, this.validate)
-      data.repairMoney = this.validate.repairMoney * 100
-      data.payMoney = this.validate.payMoney * 100
-      data.waitPayMoney = this.validate.waitPayMoney * 100
+      data.repairMoney = float.round(this.validate.repairMoney * 100)
+      data.payMoney = float.round(this.validate.payMoney * 100)
+      data.waitPayMoney = float.round(this.validate.waitPayMoney * 100)
       delete data.creater
       carrierUpdateVehicle(data).then(res => {
         if (res.data.code === CODE) {
@@ -313,7 +313,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+  @import "../pages/client.styl"
 .ivu-col-span-7
   margin-left: 25px!important
 .formatSty

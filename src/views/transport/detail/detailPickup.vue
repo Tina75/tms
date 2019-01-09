@@ -18,8 +18,7 @@
         class="detail-btn-item"
         @click="item.func">{{ item.name }}</Button>
     </div>
-
-    <Tabs :value="activeTab" :animated="false">
+    <Tabs ref="tabs" :value="activeTab" :animated="false">
       <TabPane label="提货单详情" name="detail">
         <section class="detail-info">
           <!-- 提货单信息 -->
@@ -74,11 +73,11 @@
                   <span v-if="info.carType">{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
                   <span v-else>-</span>
                 </i-col>
-                <i-col span="8">
+                <!-- <i-col span="8">
                   <span class="detail-field-title">代收货款：</span>
                   <span v-if="info.collectionMoney">{{info.collectionMoney / 100}}元</span>
                   <span v-else>-</span>
-                </i-col>
+                </i-col> -->
               </Row>
             </div>
             <Row class="detail-field-group">
@@ -97,10 +96,10 @@
             <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
             <div class="table-footer">
               <span class="table-footer-title">总计</span>
-              <span>总货值：{{ orderTotal.cargoCost }}</span>
+              <span>总货值：{{ orderTotal.cargoCost }}元</span>
               <span>总数量：{{ orderTotal.quantity }}</span>
-              <span>总体积：{{ orderTotal.volume }}</span>
-              <span>总重量：{{ orderTotal.weight }}</span>
+              <span>总体积：{{ orderTotal.volume }}方</span>
+              <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
             </div>
           </div>
 
@@ -134,7 +133,7 @@
             <Row class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
-                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
+                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ info.totalFee / 100 }}</span>元
               </i-col>
             </Row>
             <Row v-if="info.assignCarType === 1" class="detail-field-group">
@@ -150,7 +149,16 @@
                 </div>
               </i-col>
             </Row>
+            <Row v-if="orderList.length > 1" class="detail-field-group">
+              <i-col span="24">
+                <span class="detail-field-title-sm">分摊策略：</span>
+                <span>{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
+              </i-col>
+            </Row>
           </div>
+
+          <!-- 车况照片 -->
+          <car-photo v-if="imageItems.length > 0" :image-list="imageItems"></car-photo>
 
           <!-- 提货单日志 -->
           <div>
@@ -199,32 +207,23 @@
           <span>提货单信息</span>
         </div>
 
-        <Form ref="send" :model="info" :label-width="82" label-position="left" class="part" style="border-bottom: none;">
-
-          <div class="sub-title">
-            <div class="send-label">派车方式：</div>
-            <RadioGroup v-model="sendWay">
-              <Radio label="2">自送</Radio>
-              <Radio label="1">外转</Radio>
-              <!-- <Radio label="3">下发承运商</Radio> -->
-            </RadioGroup>
-          </div>
-          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
-          <send-carrier-info
-            v-else
-            ref="SendCarrierInfo"
-            :carrier-info="carrierInfo"
-            source="detail"></send-carrier-info>
-
-          <Row class="detail-field-group">
-            <i-col span="24">
-              <FormItem label="备注：" class="padding-left-label">
-                <Input v-model="info.remark" :maxlength="100" class="detail-info-input" />
-              </FormItem>
-            </i-col>
-          </Row>
-        </Form>
+        <div class="sub-title">
+          <div class="send-label">派车方式：</div>
+          <RadioGroup v-model="sendWay">
+            <Radio label="2">自送</Radio>
+            <Radio label="1">外转</Radio>
+            <!-- <Radio label="3">下发承运商</Radio> -->
+          </RadioGroup>
+        </div>
+        <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
+        <send-carrier-info
+          v-else
+          ref="SendCarrierInfo"
+          :carrier-info="carrierInfo"
+          source="detail"
+          source-type="pickup"></send-carrier-info>
       </div>
+
       <!-- 货物明细 -->
       <div>
         <div class="detail-part-title">
@@ -235,10 +234,10 @@
         <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
-          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总货值：{{ orderTotal.cargoCost }}元</span>
           <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.volume }}</span>
-          <span>总重量：{{ orderTotal.weight }}</span>
+          <span>总体积：{{ orderTotal.volume }}方</span>
+          <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
         </div>
       </div>
       <!-- 应付费用 -->
@@ -251,7 +250,9 @@
           :payment="payment"
           :settlement-type="settlementType"
           :settlement-pay-info="settlementPayInfo"
-          :send-way="sendWay"></pickup-fee>
+          :send-way="sendWay"
+          :pick-fee-orders="orderList"
+          :fee-pass-allocation="info.allocationStrategy"></pickup-fee>
       </div>
     </section>
 
@@ -286,16 +287,20 @@ import _ from 'lodash'
 
 import Exception from './exception.vue'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
+import allocationStrategy from '../constant/allocation.js'
+import { mapActions } from 'vuex'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+import CarPhoto from './components/car-photo.vue'
+
 export default {
   name: 'detailPickup',
-  components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo },
-  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
+  components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo, CarPhoto },
+  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin, tableWeightColumnMixin ],
   metaInfo: { title: '提货单详情' },
   data () {
     return {
       pageName: 'pickup',
       status: '',
-      activeTab: 'detail',
       // 信息
       info: {
         pickupNo: '',
@@ -306,10 +311,12 @@ export default {
         driverName: '',
         driverPhone: '',
         remark: '',
+        totalFee: 0,
         collectionMoney: 0, // 代收货款
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
         assistantDriverName: '', // 副司机名称  V1.07新增
-        assistantDriverPhone: '' // 副司机电话  V1.07新增
+        assistantDriverPhone: '', // 副司机电话  V1.07新增
+        allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
       },
       // 外转赋值给子组件
       carrierInfo: {
@@ -318,7 +325,8 @@ export default {
         driverPhone: '',
         carNo: '',
         carType: '',
-        carLength: ''
+        carLength: '',
+        remark: ''
       },
       // 自送赋值给子组件
       ownInfo: {
@@ -353,7 +361,7 @@ export default {
             name: '提货',
             code: 120201,
             func: () => {
-              this.billPickup()
+              this.loadBillSend()
             }
           }, {
             name: '编辑',
@@ -437,7 +445,7 @@ export default {
           key: 'quantity',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.quantity)
+            return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
           }
         },
         {
@@ -445,15 +453,7 @@ export default {
           key: 'cargoCost',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
-          }
-        },
-        {
-          title: '重量(吨)',
-          key: 'weight',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.weight)
+            return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -461,7 +461,7 @@ export default {
           key: 'volume',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume)
+            return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
           }
         },
         {
@@ -497,12 +497,26 @@ export default {
           }
         }
       ],
+      sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
 
-      sendWay: '1' // 派车类型 1 外转 2 自送  V1.07新增
+      imageItems: [] // 需要展示的车况照片list
+    }
+  },
+
+  mounted () {
+    // 判断显示吨列或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 5)
+    } else {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 5)
     }
   },
 
   methods: {
+    ...mapActions([
+      'loadbillPickup',
+      'checkDriverPhone'
+    ]),
     // 将数据返回的标识映射为文字
     statusFilter (status) {
       switch (status) {
@@ -511,7 +525,11 @@ export default {
         case 3: return '已提货'
       }
     },
-
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === (data !== '' ? data : 1))
+      return list.label
+    },
     fetchData () {
       let vm = this
       this.loading = true
@@ -521,6 +539,13 @@ export default {
         data: { pickUpId: this.id }
       }).then(res => {
         const data = res.data.data
+
+        this.imageItems = data.carInfo.map((item) => {
+          return {
+            src: this.$handleImgUrl(item),
+            msrc: this.$handleImgUrl(item)
+          }
+        })
 
         for (let key in vm.info) {
           vm.info[key] = data.loadbill[key]
@@ -548,7 +573,8 @@ export default {
             driverPhone: '',
             carNo: '',
             carType: '',
-            carLength: ''
+            carLength: '',
+            remark: ''
           }
         }
 
@@ -557,6 +583,7 @@ export default {
         }
         vm.detail = data.cargoList
         vm.logList = data.loadBillLogs
+        this.orderList = data.orderList
 
         vm.status = vm.statusFilter(data.loadbill.status)
         vm.settlementType = data.loadbill.settlementType ? data.loadbill.settlementType.toString() : '1'
@@ -579,7 +606,7 @@ export default {
           vm.$refs['exception'] && vm.$refs['exception'].initData()
         }
         vm.loading = false
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 提货模块数据校验
@@ -604,8 +631,8 @@ export default {
       let data = {
         loadbill: {
           pickUpId: z.id,
-          remark: z.info.remark,
-          assignCarType: z.sendWay
+          assignCarType: z.sendWay,
+          allocationStrategy: z.orderList.length > 1 ? z.$refs.pickupFee.getAllocationStrategy() : void 0 // 订单数大于1需要传分摊策略
         },
         cargoList: _.uniq(this.detail.map(item => item.orderId))
       }
@@ -614,19 +641,35 @@ export default {
           settlementType: z.$refs.pickupFee.getSettlementType(),
           settlementPayInfo: z.$refs.pickupFee.getSettlementPayInfo()
         })
+        // 填了司机手机号需要走校验
+        if (z.$refs.SendCarrierInfo.getCarrierInfo().driverPhone) {
+          z.isPhoneUsed(z.$refs.SendCarrierInfo, data)
+        } else {
+          z.callPickupInterface(data)
+        }
       } else if (z.sendWay === '2') { // 自送
         data.loadbill = Object.assign(data.loadbill, z.$refs.pickupFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
+        // 填了司机手机号需要走校验
+        if (z.$refs.ownSendInfo.getOwnSendInfo().driverPhone || z.$refs.ownSendInfo.getOwnSendInfo().assistantDriverPhone) {
+          z.isPhoneUsed(z.$refs.ownSendInfo, data)
+        } else {
+          z.callPickupInterface(data)
+        }
       }
-      console.log(data)
+    },
+
+    // 调提货详情编辑接口
+    callPickupInterface (data) {
+      const z = this
       Server({
         url: '/load/bill/update',
         method: 'post',
         data: data
       }).then(res => {
-        this.fetchData()
-        this.$Message.success('保存成功')
-        this.cancelEdit()
-      }).catch(err => console.error(err))
+        // this.fetchData()
+        z.$Message.success('保存成功')
+        z.cancelEdit()
+      }).catch()
     },
 
     // 按钮操作
@@ -648,7 +691,7 @@ export default {
             }).then(res => {
               self.$Message.success('删除成功')
               self.ema.fire('closeTab', self.$route)
-            }).catch(err => console.error(err))
+            }).catch()
           }
         }
       })
@@ -672,29 +715,45 @@ export default {
             }).then(res => {
               self.$Message.success('操作成功')
               self.fetchData()
-            }).catch(err => console.error(err))
+            }).catch()
           }
         }
       })
     },
 
     // 提货
-    billPickup () {
+    loadBillSend () {
       const self = this
+      if (self.info.assignCarType === 1 && !self.info.carrierName) {
+        this.$Message.warning('承运商未填写，不能提货')
+        return
+      }
+      if (self.info.assignCarType === 2 && !self.info.carNo) {
+        this.$Message.warning('自送车辆信息未填写，不能提货')
+        return
+      }
+      if (self.detail.length <= 0) {
+        this.$Message.warning('此提货单未加入订单，不能提货')
+        return
+      }
       Server({
         url: '/load/bill/check/order',
         method: 'post',
         data: { pickUpId: self.id }
       }).then(() => {
         self.openDialog({
-          name: 'transport/dialog/action',
+          name: 'transport/dialog/confirm',
           data: {
-            id: self.id,
-            type: 'pickUp'
+            title: '提货',
+            message: '提货后将不能修改提货单，是否提货？'
           },
           methods: {
-            complete () {
-              self.fetchData()
+            confirm () {
+              self.loadbillPickup([ self.id ])
+                .then(() => {
+                  self.$Message.success('操作成功')
+                  self.fetchData()
+                })
             }
           }
         })
@@ -731,7 +790,68 @@ export default {
           break
       }
       return statusClass
+    },
+    // 校验主副司机手机号有没有被更改
+    isPhoneUsed (comp, data) {
+      const z = this
+      let phoneList = []
+      if (z.sendWay === '1') { // 外转
+        comp.getCarrierInfo().driverPhone && phoneList.push(comp.getCarrierInfo().driverPhone)
+      } else {
+        comp.getOwnSendInfo().driverPhone && phoneList.push(comp.getOwnSendInfo().driverPhone)
+        comp.getOwnSendInfo().assistantDriverPhone && phoneList.push(comp.getOwnSendInfo().assistantDriverPhone)
+      }
+      z.checkDriverPhone(phoneList).then((res) => {
+        if (!_.every(res, { used: false })) { // 有变更过手机号
+          let name = ''
+          if (z.sendWay === '1') {
+            if (_.every(res, { used: true })) {
+              name = '司机'
+            }
+          } else {
+            if (res.length > 1 && _.every(res, { used: true })) {
+              name = '主司机和副司机'
+            } else {
+              let obj = _.find(res, { used: true })
+              if (obj.phone === comp.getOwnSendInfo().driverPhone) {
+                name = '主司机'
+              }
+              if (obj.phone === comp.getOwnSendInfo().assistantDriverPhone) {
+                name = '副司机'
+              }
+            }
+          }
+          z.checkPhoneDialog(name, data)
+        } else {
+          z.callPickupInterface(data)
+        }
+      })
+    },
+    // 打开司机手机号校验弹窗
+    checkPhoneDialog (name, data) {
+      const _this = this
+      _this.openDialog({
+        name: 'transport/dialog/checkDriverPhone',
+        data: { name: name },
+        methods: {
+          ok (node) {
+            _this.callPickupInterface(data)
+          }
+        }
+      })
     }
+  },
+  /**
+   * 不同订单号
+   * 打开同一该页，数据不会根据querystring刷新问题
+   */
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.id = this.$route.query.id
+      this.$refs['tabs'].handleChange(0)
+      this.fetchData()
+    })
+    next()
   }
 }
 </script>
@@ -743,6 +863,7 @@ export default {
   .sub-title
     font-size 14px
     color #777
+    margin-bottom 10px
     .send-label
       display inline-block
       margin-right 20px

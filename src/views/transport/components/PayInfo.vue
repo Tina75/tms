@@ -8,7 +8,7 @@
 
 <script>
 import MoneyInput from './MoneyInput'
-
+import float from '@/libs/js/float'
 export default {
   name: 'PayInfo',
   props: {
@@ -49,6 +49,7 @@ export default {
             if (p.row.payType === 1) type = '预付'
             if (p.row.payType === 2) type = '到付'
             if (p.row.payType === 3) type = '回付'
+            if (p.row.payType === 4) type = '尾款'
             return h('span', { style: { fontWeight: 'bolder' } }, type)
           }
         },
@@ -56,6 +57,7 @@ export default {
           title: '现金',
           key: 'cashAmount',
           render: (h, p) => {
+            // 编辑 - 不能编辑 且 需要提示语
             if (this.mode === 'edit' && p.row.isCashDisabled && p.row.type === 'change') {
               let str = this.getTips(p)
               return h('Tooltip', {
@@ -70,7 +72,11 @@ export default {
                 }
               }, str)])
             }
+            // 展示表格 不显示 0 - 改单展示
+            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change' && p.row.cashAmount === '') return h('span', '')
+            // 展示表格 可以显示 0
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount || 0)
+            // 编辑状态
             return h(MoneyInput, {
               props: {
                 value: p.row.cashAmount,
@@ -106,6 +112,7 @@ export default {
                 }
               }, str)])
             }
+            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change' && p.row.fuelCardAmount === '') return h('span', '')
             if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount || 0)
 
             return h(MoneyInput, {
@@ -136,13 +143,16 @@ export default {
       this.tableDataBack = Object.assign([], value)
     }
   },
+  mounted () {
+    console.log(this.tableData)
+  },
   methods: {
     getPayInfo () {
       return this.tableDataBack.map(item => {
         return {
           payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : void 0,
-          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : void 0
+          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? float.round(item.fuelCardAmount * 100) : void 0,
+          cashAmount: typeof item.cashAmount === 'number' ? float.round(item.cashAmount * 100) : void 0
         }
       })
     },
@@ -150,8 +160,8 @@ export default {
       return this.tableDataBack.map(item => {
         return {
           payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? item.fuelCardAmount * 100 : 0,
-          cashAmount: typeof item.cashAmount === 'number' ? item.cashAmount * 100 : 0
+          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? float.round(item.fuelCardAmount * 100) : 0,
+          cashAmount: typeof item.cashAmount === 'number' ? float.round(item.cashAmount * 100) : 0
         }
       })
     },
@@ -159,7 +169,7 @@ export default {
       let total = 0
       console.log(this.tableDataBack)
       this.tableDataBack.forEach(item => {
-        total = total + Number(item.cashAmount) + Number(item.fuelCardAmount)
+        total = float.round(total + float.round(Number(item.cashAmount) + Number(item.fuelCardAmount)))
       })
       if (total !== Number(this.total)) {
         this.$Message.error('结算总额应与费用合计相等')
@@ -173,6 +183,7 @@ export default {
         if (p.row.payType === 1) str = '预付' + p.column.title
         if (p.row.payType === 2) str = '到付' + p.column.title
         if (p.row.payType === 3) str = '回付' + p.column.title
+        if (p.row.payType === 4) str = '尾款' + p.column.title
         str += '已核销,不能修改'
       } else {
         str = this.feeStatusTip

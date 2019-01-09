@@ -216,7 +216,7 @@ export default {
           },
           fileName: '核销单'
         }).then(res => {
-        }).catch(err => console.error(err))
+        })
       } else {
         this.$Message.warning('请选择1条以上的数据')
       }
@@ -224,7 +224,7 @@ export default {
     toDetail (data) {
       this.openTab({
         title: data.row.verifyNo,
-        path: '/finance/writtenOffDetail',
+        path: 'writtenOffDetail',
         query: {
           verifyId: data.row.verifyId,
           verifyNo: data.row.verifyNo,
@@ -262,7 +262,7 @@ export default {
             payFeeText: ((item.payFee || 0) / 100).toFixed(2)
           })
         })
-      }).catch(err => console.error(err))
+      })
     },
     resetPageSize (size) {
       this.writtenOffQuerySave.pageNo = 1

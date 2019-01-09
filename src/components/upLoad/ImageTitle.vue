@@ -21,7 +21,7 @@
               </div>
             </div>
           </div>
-          <Input v-model="pic.title" :maxlength="10" placeholder="标题必填" style="width: 160px;margin: 8px 0;" @on-change="handleChange(pic)"/>
+          <Input v-model="pic.title" :maxlength="maxlength" placeholder="标题必填" class="demo-upload-list-input" @on-change="handleChange(pic)"/>
         </div>
       </div>
       <div v-if="uploadImgList.length < maxCount" class="ivu-upload" style="display: inline-block; width: 160px;">
@@ -85,6 +85,10 @@ export default {
     multipleWidth: {
       type: String,
       default: 'width: 550px;'
+    },
+    maxlength: {
+      type: [String, Number],
+      default: 10
     }
   },
   data () {
@@ -304,4 +308,7 @@ export default {
 <style lang="stylus">
 #uploadFile .ivu-upload input[type=file]
   display block
+.demo-upload-list-input
+ width: 160px;
+ margin: 8px 0;
 </style>

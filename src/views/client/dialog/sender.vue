@@ -10,20 +10,20 @@
     <p slot="header" style="text-align:center">{{title}}</p>
     <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
       <FormItem label="发货方名称：" prop="name">
-        <Input v-model="validate.name" :maxlength="20" placeholder="请输入"/>
+        <Input v-model="validate.name" :maxlength="$fieldLength.company" placeholder="请输入"/>
       </FormItem>
       <FormItem label="发货方联系人：" prop="contact">
-        <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
+        <Input v-model="validate.contact"  :maxlength="$fieldLength.name" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系电话：" prop="phone">
-        <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
+      <FormItem label="联系号码：" prop="phone" >
+        <SelectInput v-model="validate.phone" :formatter="formatePhoneNum"  :maxlength="phoneLength(validate.phone)" placeholder="请输入手机号或座机号"></selectInput>
       </FormItem>
       <FormItem label="提货方式：">
         <Select v-model="validate.pickUp" transfer clearable placeholder="请输入">
           <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
-      <FormItem label="支付方式：" >
+      <FormItem label="结算方式：">
         <Select v-model="validate.payType" transfer clearable placeholder="请输入">
           <Option value="1">现付</Option>
           <Option value="2">到付</Option>
@@ -35,34 +35,34 @@
         <Select v-model="validate.isInvoice" transfer clearable placeholder="请输入">
           <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
+        <Tooltip :max-width="200" :content="`开票税费将计入成本统计`" placement="top" transfer>
+          <Icon class="vermiddle paddingBlock" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
       </FormItem>
       <FormItem v-if="validate.isInvoice === 1" prop="invoiceRate">
         <label slot="label">
-          <span class="vermiddle"></span>开票税率：
-          <Tooltip :max-width="200" :content="`开票税费将计入成本统计`" placement="top" transfer>
-            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
-          </Tooltip>
+          <span class="vermiddle">开票税率：</span>
         </label>
-        <Row>
-          <Col :span="22">
-          <TagNumberInput v-model="validate.invoiceRate" :show-chinese="false" :min="0" :max="100" :precision="2">
-          </TagNumberInput>
-          </Col>
-          <Col :span="2" >
-          <span>&nbsp;%</span>
-          </Col>
-        </Row>
+        <TagNumberInput v-model="validate.invoiceRate" :show-chinese="false" :min="0" :max="100" :precision="2">
+        </TagNumberInput>
+        <span class="paddingBlock">%</span>
+      </FormItem>
+      <FormItem label="开拓渠道：" >
+        <Select v-model="validate.exploiteChannel" transfer placeholder="请输入">
+          <Option value="1">公司开拓</Option>
+          <Option value="2">个人开拓</Option>
+        </Select>
       </FormItem>
       <FormItem label="">
         <label slot="label">
           <span class="vermiddle">对接业务员：</span>
-          <Tooltip :max-width="200" :content="`只可选择配置了提货调度和送货调度权限的员工账号`" placement="top" transfer>
-            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
-          </Tooltip>
         </label>
         <Select v-model="validate.salesmanId" transfer clearable placeholder="请选择对接此客户的业务员">
           <Option v-for="(opt, index) in salesmans" :key="index" :value="opt.id">{{opt.name}}</Option>
         </Select>
+        <Tooltip :max-width="200" :content="`只可选择配置了提货调度和送货调度权限的员工账号`" placement="top" transfer>
+          <Icon class="vermiddle paddingBlock" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
       </FormItem>
       <FormItem label="备注：" >
         <Input v-model="validate.remark" :maxlength="100" :rows="2" :autosize="{minRows: 2,maxRows: 5}" type="textarea"  placeholder="请输入"/>
@@ -76,13 +76,16 @@
 </template>
 
 <script>
-import { consignerAdd, consignerUpdate } from '../client'
+import { consignerAdd, consignerUpdate } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import pickups from '@/libs/constant/pickup.js'
 import { invoiceList } from '@/libs/constant/orderCreate.js'
 import TagNumberInput from '@/components/TagNumberInput'
+import SelectInput from '@/components/SelectInput.vue'
 import server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import { validatePhone } from '@/libs/js/validate'
+import { formatePhone } from '@/libs/js/formate'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -91,7 +94,8 @@ const rate = {
 export default {
   name: 'sender',
   components: {
-    TagNumberInput
+    TagNumberInput,
+    SelectInput
   },
   mixins: [BaseDialog],
   data () {
@@ -110,7 +114,8 @@ export default {
         pickUp: '', // 提货方式
         isInvoice: 0, // 是否开票
         invoiceRate: null, // 开票税率
-        salesmanId: '' // 业务员
+        salesmanId: '', // 业务员
+        exploiteChannel: '1'
       },
       ruleValidate: {
         name: [
@@ -120,8 +125,8 @@ export default {
           { required: true, type: 'string', message: '发货方联系人不能为空', trigger: 'blur' }
         ],
         phone: [
-          { required: true, message: '联系电话不能为空', trigger: 'blur' },
-          { type: 'string', message: '电话号码格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+          { required: true, message: '联系号码不能为空', trigger: 'blur' },
+          { validator: validatePhone, trigger: 'blur' }
         ],
         invoiceRate: [
           { required: true, message: '请填写开票税率' }
@@ -133,6 +138,12 @@ export default {
     this.initSaleMan()
   },
   methods: {
+    formatePhoneNum (temp) {
+      return formatePhone(temp)
+    },
+    phoneLength (value) {
+      return /^1/.test(value) ? 13 : this.$fieldLength.telephone
+    },
     save (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -183,5 +194,11 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-  @import "../client.styl"
+  @import "../pages/client.styl"
+  .ivu-select
+  .ivu-input-wrapper
+  .ivu-dropdown
+    width 90%
+  .paddingBlock
+    padding-left 5px
 </style>

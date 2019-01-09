@@ -1,8 +1,10 @@
+import powerMixin from './powerMixin'
 export default {
   replace: true,
   data: function () {
     return {}
   },
+  mixins: [powerMixin],
   // 组件是你刚被创建,组件属性计算前
   beforeCreated: function () {},
   // 组件创建完成,属性已绑定,但是dom还没生产,$el还不存在
@@ -59,7 +61,6 @@ export default {
      *  }
      */
     openTab: function (data) {
-      data.query = Object.assign({ noCache: true }, data.query)
       data.query.title = data.title ? data.title : (data.query.id ? data.query.id : this.$options.metaInfo.title)
       this.ema.fire('openTab', data)
     },
@@ -74,11 +75,11 @@ export default {
      */
     addPage: function (data) {
       this.ema.fire('Page.push', data)
-    },
-    // 权限控制
-    hasPower: function (power) {
-      if (!power) { return true }
-      return this.$store.state.permissions.includes(power)
     }
+    // 权限控制
+    // hasPower: function (power) {
+    //   if (!power) { return true }
+    //   return this.$store.state.permissions.includes(power + '')
+    // }
   }
 }

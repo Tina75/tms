@@ -17,7 +17,7 @@
             </tr>
           </thead>
           <tbody :class="`${prefixClass}-tbody`">
-            <tr v-for="(item, no) in dataSource" :class="`${prefixClass}-row`" :key="no">
+            <tr v-for="(item, no) in dataSourceCpt" :class="`${prefixClass}-row`" :key="no">
               <td v-for="(col, index) in headers" :key="index">
                 <CargoTableRow
                   :cargoes="cargoes"
@@ -25,6 +25,7 @@
                   :index="no"
                   :record="item"
                   :col="col"
+                  :length="dataSourceCpt.length"
                   :on-append="onAppend"
                   :on-remove="onRemove"
                   :on-select="onSelect"
@@ -64,6 +65,8 @@
 
 import float from '@/libs/js/float'
 import CargoTableRow from './CargoTableRow.vue'
+import { NumberPrecesion } from '@/libs/js/config'
+import OrderMap from '../libs/orderMap'
 const prefixClass = 'ivu-table'
 
 export default {
@@ -71,6 +74,7 @@ export default {
     CargoTableRow
   },
   props: {
+    orderSet: Object,
     dataSource: {
       required: true,
       type: Array,
@@ -80,6 +84,7 @@ export default {
       type: Array,
       default: () => []
     },
+    unitType: Number,
     onAppend: Function,
     onRemove: Function,
     onSelect: Function
@@ -87,7 +92,7 @@ export default {
   data () {
     return {
       prefixClass: prefixClass,
-      headers: [
+      headersOption: [
         {
           required: false,
           title: '',
@@ -104,12 +109,26 @@ export default {
         },
         {
           required: false,
+          title: '货物编号',
+          key: 'cargoNo',
+          type: 'text',
+          max: 200
+        },
+        {
+          required: false,
           title: '重量（吨）',
           key: 'weight',
-          // poptip: '为了方便您计算价格，重量和体积必须填写一项',
           type: 'number',
           min: 0,
-          point: 2
+          point: NumberPrecesion.weight
+        },
+        {
+          required: false,
+          title: '重量（公斤）',
+          key: 'weightKg',
+          type: 'number',
+          min: 0,
+          point: NumberPrecesion.weightKg
         },
         {
           required: false,
@@ -117,7 +136,7 @@ export default {
           key: 'volume',
           type: 'number',
           min: 0,
-          point: 1
+          point: NumberPrecesion.volume
         },
         {
           required: false,
@@ -125,14 +144,13 @@ export default {
           key: 'cargoCost',
           type: 'number',
           min: 0,
-          // maxLen: 999999999.99,
-          point: 2
+          point: NumberPrecesion.fee
         },
         {
           required: false,
           title: '包装方式',
           key: 'unit',
-          type: 'text',
+          type: 'package',
           max: 10
         },
         {
@@ -142,6 +160,39 @@ export default {
           type: 'number',
           min: 1,
           point: 0
+        },
+        {
+          required: false,
+          title: '包装尺寸（毫米）',
+          key: 'dimension',
+          width: 180,
+          type: 'multi',
+          children: [
+            {
+              required: false,
+              title: '长',
+              key: 'length',
+              min: 0,
+              max: 9999999.9,
+              point: NumberPrecesion.dimension
+            },
+            {
+              required: false,
+              title: '宽',
+              key: 'width',
+              min: 0,
+              max: 9999999.9,
+              point: NumberPrecesion.dimension
+            },
+            {
+              required: false,
+              title: '高',
+              key: 'height',
+              min: 0,
+              max: 9999999.9,
+              point: NumberPrecesion.dimension
+            }
+          ]
         },
         {
           required: false,
@@ -172,16 +223,17 @@ export default {
         `${prefixClass}-default`
       ]
     },
-
     headerColClass () {
       return `${prefixClass}-cell`
     },
     statics () {
       return this.dataSource.reduce((sum, cargo) => {
         // 读取临时数据
-
-        sum.weight = float.round((cargo.weight || 0) + sum.weight)
-        sum.volume = float.round((cargo.volume || 0) + sum.volume, 1)
+        if (cargo.cargoName) {
+          sum.cargoInfos.push({ key: cargo.cargoName, value: cargo.quantity })
+        }
+        sum.weight = float.round((cargo.weight || 0) + sum.weight, NumberPrecesion.weight)
+        sum.volume = float.round((cargo.volume || 0) + sum.volume, NumberPrecesion.volume)
         sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
         sum.quantity = (cargo.quantity || 0) + sum.quantity
         return sum
@@ -189,7 +241,20 @@ export default {
         weight: 0,
         volume: 0,
         cargoCost: 0,
-        quantity: 0
+        quantity: 0,
+        cargoInfos: []
+      })
+    },
+    headers () {
+      const res = this.headersOption.filter(el => {
+        const key = OrderMap[el.key]
+        return this.orderSet[key] !== 2
+      })
+      return res
+    },
+    dataSourceCpt () {
+      return this.dataSource.map(el => {
+        return el
       })
     }
   },
@@ -203,11 +268,10 @@ export default {
       return (value) => {
         float.floor(value, col.point).toString()
       }
+    },
+    float (value) {
+      return float.round(value, 3)
     }
   }
 }
 </script>
-
-<style>
-
-</style>

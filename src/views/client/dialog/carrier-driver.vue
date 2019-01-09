@@ -63,9 +63,7 @@
           <FormItem label="车型：">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carType" transfer clearable>
-                <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
-              </Select>
+              <SelectCarType v-model="validate.carType" placeholder="请选择" clearable></SelectCarType>
               </Col>
             </Row>
           </FormItem>
@@ -74,9 +72,7 @@
           <FormItem label="车长：">
             <Row>
               <Col span="20">
-              <Select v-model="validate.carLength" transfer clearable>
-                <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
-              </Select>
+              <SelectCarLength v-model="validate.carLength" placeholder="请选择" clearable></SelectCarLength>
               </Col>
             </Row>
           </FormItem>
@@ -87,7 +83,7 @@
           <FormItem label="载重：" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingWeight" :maxlength="9" placeholder="必填"></Input>
+              <Input :precision="$numberPrecesion.weight" v-model="validate.shippingWeight" :maxlength="9" placeholder="必填"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -99,7 +95,7 @@
           <FormItem label="净空：" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <Input v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input>
+              <Input :precision="$numberPrecesion.volume" v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input>
               </Col>
               <Col span="2" offset="1">
               <span>方</span>
@@ -179,17 +175,21 @@
 <script>
 import { CAR_TYPE1, CAR_LENGTH, DRIVER_TYPE } from '@/libs/constant/carInfo'
 import BaseDialog from '@/basic/BaseDialog'
-import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, formatterCarNo, CODE, CAR } from '../client'
+import { carrierAddDriver, carrierUpdateDriver, carrierQueryDriverlist, formatterCarNo, CODE, CAR } from '../pages/client'
 import CitySelect from '@/components/SelectInputForCity'
 import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
+import SelectCarLength from '@/components/SelectCarLength'
+import SelectCarType from '@/components/SelectCarType'
 import _ from 'lodash'
 export default {
   name: 'carrier-driver',
   components: {
     CitySelect,
     UpLoad,
-    SelectInput
+    SelectInput,
+    SelectCarLength,
+    SelectCarType
   },
   mixins: [BaseDialog],
   data () {
@@ -224,10 +224,10 @@ export default {
           { type: 'string', message: '手机号码格式错误', pattern: /^1\d{10}$/ }
         ],
         shippingWeight: [
-          { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+          { message: '小于等于六位整数,最多三位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,3})?$/ }
         ],
         shippingVolume: [
-          { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+          { message: '小于等于六位整数,最多六位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,6})?$/ }
         ]
       }
     }
@@ -358,7 +358,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import "../client.styl"
+@import "../pages/client.styl"
 .modalTitle
   font-size: 14px;
 </style>

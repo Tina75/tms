@@ -50,6 +50,8 @@
           :send-way="sendWay"
           :is-disabled="isDisabled"
           :abnormal-length="details.abnormalPayInfos.length"
+          :allocation-type="allocationStrategy"
+          :order-cnt="details.orderCnt"
           source="abnormal">
         </send-fee>
       </div>
@@ -62,6 +64,8 @@
           :send-way="sendWay"
           :is-disabled="isDisabled"
           :abnormal-length="details.abnormalPayInfos.length"
+          :allocation-type="allocationStrategy"
+          :order-cnt="details.orderCnt"
           source="abnormal"></pickup-fee>
       </div>
 
@@ -103,6 +107,7 @@ import Server from '@/libs/js/server'
 import SendFee from '../components/SendFee'
 import PickupFee from '../components/PickupFee'
 import UpLoad from '@/components/upLoad/index.vue'
+import float from '@/libs/js/float'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
 export default {
@@ -120,7 +125,8 @@ export default {
         insuranceFee: 0,
         otherFee: 0,
         tollFee: 0,
-        totalFee: 0
+        totalFee: 0,
+        accommodation: 0 // 住宿费 v1.08 新增
       },
       clonePayment: {}, // 复制一份费用数据，用来比较有没有修改费用
       // settlementType: '1',
@@ -138,7 +144,8 @@ export default {
       changeFeeType: 0, // 0 可以修改运费 10 已对账 11 已核销 2 部分修改运费
       canUpdateFee: 0, // 判断多条异常记录只有最后一条可以修改运费
       sendWay: '1',
-      btnLoading: false
+      btnLoading: false,
+      allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
     }
   },
 
@@ -146,7 +153,8 @@ export default {
     this.settlementPayInfo = this.type === 3 ? [
       { payType: 1, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
       { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
-      { payType: 3, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
+      { payType: 3, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
+      { payType: 4, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ] : [
       { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ]
@@ -172,7 +180,9 @@ export default {
       }).then(res => {
         _this.details = res.data.data
         console.log(_this.details)
-
+        // 分摊策略
+        this.allocationStrategy = _this.details.allocationStrategy
+        // 派车类型
         this.sendWay = _this.details.assignCarType.toString()
 
         this.autoAbnormalLinks('selected', 1) // 自动带出selected=1的异常环节,和selected=1的异常类型
@@ -198,8 +208,8 @@ export default {
 
         if (this.type !== 3) {
           delete this.payment.tollFee // 去掉路桥费
+          delete this.payment.accommodation // 去掉住宿费
         }
-
         // this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
         // 将收费信息中的金额单位转为元
         let temp = _this.settlementPayInfo.map((item, i) => {
@@ -285,6 +295,10 @@ export default {
                 if (item.payType === 3) {
                   item.isCardDisabled = statusDetail.receiptPaidFule
                   item.isCashDisabled = statusDetail.receiptPaidCash
+                }
+                if (item.payType === 4) {
+                  item.isCardDisabled = statusDetail.tailPaidFule
+                  item.isCashDisabled = statusDetail.tailPaidCash
                 }
               })
               console.log(_this.settlementPayInfo)
@@ -391,8 +405,8 @@ export default {
           z.cloneSettlementPayInfo.map((item, i) => {
             tableData.push({
               payType: item.payType,
-              cashAmount: item.cashAmount * 100 || 0,
-              fuelCardAmount: item.fuelCardAmount * 100 || 0
+              cashAmount: float.round(item.cashAmount * 100 || 0),
+              fuelCardAmount: float.round(item.fuelCardAmount * 100 || 0)
             })
           })
         }
@@ -441,7 +455,7 @@ export default {
       if (z.isChangeFee === 2) return false
       for (let key in z.clonePayment) {
         if (typeof z.clonePayment[key] === 'number') {
-          z.clonePayment[key] = z.clonePayment[key] * 100
+          z.clonePayment[key] = float.round(z.clonePayment[key] * 100)
         } else {
           z.clonePayment[key] = 0
         }
@@ -451,17 +465,23 @@ export default {
         z.cloneSettlementPayInfo.map((item, i) => {
           cloneTableData.push({
             payType: item.payType,
-            fuelCardAmount: item.fuelCardAmount * 100 || void 0,
-            cashAmount: item.cashAmount * 100 || void 0
+            fuelCardAmount: float.round(item.fuelCardAmount * 100) || void 0,
+            cashAmount: float.round(item.cashAmount * 100) || void 0
           })
         })
         if (z.type === 3) {
+          if (z.sendWay === '1') {
+            delete z.clonePayment.accommodation // 外转去掉住宿费
+          }
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.sendFee.getSettlementPayInfo()) // 费用输入框和多段付
         } else {
           return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.pickupFee.getSettlementPayInfo()) // 费用输入框和多段付
         }
       } else {
         if (z.type === 3) {
+          if (z.sendWay === '1') {
+            delete z.clonePayment.accommodation // // 外转去掉住宿费
+          }
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment)
         } else {
           return _.isEqual(z.$refs.pickupFee.formatMoney(), z.clonePayment)
@@ -480,7 +500,7 @@ export default {
         temp = Object.assign({}, this.clonePayment)
         for (let key in temp) {
           if (typeof temp[key] === 'number') {
-            temp[key] = temp[key] * 100
+            temp[key] = float.round(temp[key] * 100)
           } else {
             temp[key] = 0
           }

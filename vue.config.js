@@ -1,7 +1,23 @@
+const UglifyPlugin = require('uglifyjs-webpack-plugin')
+const uglifyOptions = require('@vue/cli-service/lib/config/uglifyOptions')
+const merge = require('webpack-merge')
 module.exports = {
   baseUrl: './',
   assetsDir: 'static',
   chainWebpack: config => {
+    if (process.env.NODE_ENV === 'production') {
+      // 发布时，去除console和debugger信息
+      config.optimization.minimizer([
+        new UglifyPlugin(merge(uglifyOptions({ productionSourceMap: false }), {
+          uglifyOptions: {
+            compress: {
+              drop_console: true,
+              drop_debugger: true
+            }
+          }
+        }))
+      ])
+    }
     // config.module
     //   .rule('vue')
     //   .test(/\.vue$/)

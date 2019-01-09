@@ -6,6 +6,12 @@
     "powerCode":0
   },
   {
+    "name":"上游来单",
+    "path":"/upstream",
+    "icon":"shangyoulaidan",
+    "powerCode":110000
+  },
+  {
     "name":"受理开单",
     "icon":"shoulikaidan",
     "path":"/order",
@@ -56,7 +62,7 @@
       },
       {
         "name":"回单管理",
-        "path":"/order-management/receipt",
+        "path":"/transport/receipt",
         "powerCode":120500
       }
     ]
@@ -114,6 +120,16 @@
         "name":"利润报表",
         "path":"/report/profit",
         "powerCode":180300
+      },
+      {
+        "name":"自有车出车统计",
+        "path":"/report/car",
+        "powerCode":180400
+      },
+      {
+        "name":"自有司机出车统计",
+        "path":"/report/driver",
+        "powerCode":180500
       }
     ]
   },
@@ -160,6 +176,39 @@
         "name":"维修保养",
         "path":"/owned-vehicle/repair",
         "powerCode":190300
+      },
+      {
+        "name":"车辆保险",
+        "path":"/owned-vehicle/insurance",
+        "powerCode":190300
+      },
+      {
+        "name":"车辆年检",
+        "path":"/owned-vehicle/check",
+        "powerCode":190300
+      },
+      {
+        "name":"轮胎管理",
+        "path":"/owned-vehicle/tyre",
+        "powerCode":190300
+      }
+    ]
+  },
+  {
+    "name":"油卡管理",
+    "icon":"ico-truck",
+    "path":"/oilCard",
+    "powerCode":0,
+    "children":[
+      {
+        "name":"油卡列表",
+        "path":"/oilCard/oilList",
+        "powerCode":0
+      },
+      {
+        "name":"油卡使用记录",
+        "path":"/oilCard/usedList",
+        "powerCode":0
       }
     ]
   },

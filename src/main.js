@@ -1,14 +1,15 @@
 import Vue from 'vue'
 import iView from 'iview'
 import App from './app.vue'
-import Login from './login.vue'
 import router from './router'
-import store from './store'
+import store from './store/index'
 import VueMeta from 'vue-meta'
-import './libs/js/ga.js' // GA打点统计配置与上报方法封装
 import EmaProxy from 'ema-proxy'
-import Toast from '@/components/toast/index'
+import VueToast from '@/libs/plugins/vue-toast.js'
+import VueConfig from '@/libs/plugins/vue-config.js'
+import './libs/js/ga.js' // GA打点统计配置与上报方法封装,
 
+require('./permission')
 require('intersection-observer')
 require('./libs/js/filter')
 require('./libs/js/date')
@@ -30,19 +31,24 @@ Vue.config.errorHandler = errorHandler
 Vue.prototype.$throw = error => {
   errorHandler(error, this)
 }
+// 客户端上传图片不带域名，需要统一添加
+Vue.prototype.$handleImgUrl = url => {
+  return url.indexOf('aliyuncs') > -1 ? url : process.env.VUE_APP_IMG_URL + url
+}
 
 // Meta自设置
 Vue.use(VueMeta)
 // iView引入
 Vue.use(iView)
 // 全局提示框
-Vue.prototype.$Toast = Toast
+Vue.use(VueToast)
+Vue.use(VueConfig)
 window.EMA = new EmaProxy()
 var appData = { router, store }
-var islogin = localStorage.getItem('tms_is_login')
-if (window.location.hash === '#/?mode=signup' || !islogin) {
-  appData.render = h => h(Login)
-} else {
-  appData.render = h => h(App)
-}
+/**
+ * 1. 来源于官网【注册】按钮跳转过滤,#/?mode=signup
+ * 2. 来源于货主版注册完跳转过来;?from=shipper
+ */
+appData.render = h => h(App)
+
 new Vue(appData).$mount('#app')

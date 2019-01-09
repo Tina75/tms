@@ -22,11 +22,13 @@
  * 司机选择框
  */
 import ExtraSelect from './ExtraSelect.vue'
+import dispatchMixin from '../mixins/dispatchMixin.js'
 export default {
   name: 'driver-select',
   components: {
     ExtraSelect
   },
+  mixins: [dispatchMixin],
   props: {
     value: String,
     data: {
@@ -101,18 +103,11 @@ export default {
       this.$emit('input', value)
       this.$emit('on-change', value)
     },
-    dispatch (componentName, eventName, params) {
-      let parent = this.$parent || this.$root
-      let name = parent.$options.name
-      while (parent && (!name || name !== componentName)) {
-        parent = parent.$parent
-        if (parent) {
-          name = parent.$options.name
-        }
-      }
-      if (parent) {
-        parent.$emit.apply(parent, [eventName].concat(params))
-      }
+    /**
+     * 搜索后，在新增，导致下拉框没有选项的bug
+     */
+    clearQuery () {
+      this.$refs.$select.query = ''
     }
   }
 }

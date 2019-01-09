@@ -1,10 +1,15 @@
 import Vue from 'vue'
 import City from './city.js'
+import float from '@/libs/js/float'
 /**
  * 时间格式化
  */
 Vue.filter('datetime', function (value, format) {
   if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+})
+
+Vue.filter('date', function (value, format) {
+  if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
 })
 /**
  * 性别格式化
@@ -48,8 +53,15 @@ Vue.filter('codeToName', function (cityId) {
 /**
  * 将元转为分
  */
-Vue.filter('toPoint', function (cityId) {
-  return cityId / 100
+Vue.filter('toPoint', function (money) {
+  return float.round(money / 100, 2)
+})
+
+/**
+ * 计费里程格式化
+ */
+Vue.filter('mileage', function (mileage) {
+  return mileage ? (mileage / 1000).toFixed(1) : '-'
 })
 /**
  * 根据code获取城市全名 格式化城市

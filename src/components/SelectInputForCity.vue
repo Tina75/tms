@@ -25,8 +25,8 @@
         @on-focus="handleFocus"
       >
       <!--<span v-show="nameSeleced" slot="append" :style="{paddingLeft: (currentValue.length * 12 + 10) + 'px'}" style="display: block;line-height: 24px; text-align: left;" @click="inputFocus">{{nameSeleced}}</span>-->
-      <Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>
-      <Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>
+      <!--<Icon v-if="mousehover && isClearable" slot="suffix" type="ios-close-circle" class="select-input__clear-icon" @click.native.stop="handleClear"></Icon>-->
+      <!--<Icon v-if="!mousehover || !isClearable" slot="suffix" type="ios-arrow-down" class="select-input__input-icon"></Icon>-->
       </Input>
     </div>
     <DropdownMenu ref="dropdown" slot="list"  :style="{'max-height':'150px', overflow:'auto'}">
@@ -50,8 +50,10 @@
    */
 import server from '@/libs/js/server'
 import cityUtil from '@/libs/js/city'
+import dispatchMixin from './mixins/dispatchMixin.js'
 export default {
   name: 'SelectInputForCity',
+  mixins: [dispatchMixin],
   props: {
     autoFocus: {
       type: Boolean,
@@ -179,19 +181,7 @@ export default {
     }
   },
   methods: {
-    dispatch (componentName, eventName, params) {
-      let parent = this.$parent || this.$root
-      let name = parent.$options.name
-      while (parent && (!name || name !== componentName)) {
-        parent = parent.$parent
-        if (parent) {
-          name = parent.$options.name
-        }
-      }
-      if (parent) {
-        parent.$emit.apply(parent, [eventName].concat(params))
-      }
-    },
+
     onCompositionStart () {
       this.composing = true
     },
@@ -394,7 +384,7 @@ export default {
       let city = cityUtil.getPathByCode(code)
       let nameItem = {
         area: city[2] ? city[2].name : '',
-        city: city[1].name,
+        city: city[1] ? city[1].name : '',
         province: city[0].name
       }
       let name = this.cityShow(nameItem, 1)

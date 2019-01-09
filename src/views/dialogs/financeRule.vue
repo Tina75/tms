@@ -36,18 +36,19 @@ import BMap from 'BMap'
 let errorMsg = ''
 
 export default {
-  name: 'FinanceRule',
+  name: 'finance-rule',
   mixins: [ BaseDialog ],
   data () {
     const chargeValidate = (rule, value, callback) => {
       const type = this.ruleOptions[value].ruleType
       if (errorMsg) callback(new Error(errorMsg))
-      else if (((type === 1 || type === 3) && !this.weight) || ((type === 2 || type === 4) && !this.volume) || !type) callback(new Error('未能找到相应的计费规则'))
+      else if (((type === 1 || type === 3 || type === 6 || type === 7) && !this.weight) || ((type === 2 || type === 4) && !this.volume) || !type) callback(new Error('未能找到相应的计费规则'))
       else callback()
     }
 
     return {
       loading: true,
+      cargoInfos: [], // 货物信息，1.09新增；按件计费规则适用,[{'黄金':2}],\2个黄金
       ruleForm: { ruleIndex: void 0 },
       ruleOptions: [],
       ruleEmpty: false,
@@ -101,19 +102,34 @@ export default {
     async ruleChanged (index) {
       errorMsg = ''
       const rule = this.ruleOptions[index]
-      if ((rule.ruleType === 3 || rule.ruleType === 4) && this.distance === 0) errorMsg = '地址填写不够详细无法算出里程数'
-
+      if ((rule.ruleType === 3 || rule.ruleType === 4 || rule.ruleType === 7) && this.distance === 0) errorMsg = '地址填写不够详细无法算出里程数'
       this.$refs.$form.validate(valid => {
         if (!valid) return
+        /**
+         * 重量（吨）1
+         * 体积（方）2
+         * 吨公里3
+         * 方公里4
+         * v.1.08
+         * 车型5
+         * 重量（公斤） 6
+         * 公斤公里 7
+         */
+        // 公斤先乘 1000
+        const weight = float.round(rule.ruleType === 7 || rule.ruleType === 6 ? this.weight * 1000 : this.weight, 3)
+        const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 100)
         Server({
           url: '/finance/charge/calc',
-          method: 'get',
+          method: 'post',
           data: {
             ruleId: rule.id,
             departure: this.start,
             destination: this.end,
             distance: this.distance,
-            input: float.round(((rule.ruleType === 1 || rule.ruleType === 3) ? this.weight : this.volume) * 100)
+            input,
+            carType: this.carType,
+            carLength: this.carLength,
+            cargoInfos: this.cargoInfos
           }
         }).then(res => {
           this.charge = float.round(res.data.data / 100)
@@ -127,10 +143,13 @@ export default {
     },
 
     save () {
+      const vm = this
       this.$refs.$form.validate(valid => {
         if (!valid) return
-        this.ok(this.charge)
-        this.close()
+        vm.$nextTick(() => {
+          vm.ok(vm.charge)
+          vm.close()
+        })
       })
     },
 

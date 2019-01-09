@@ -18,8 +18,8 @@
         @click="item.func">{{ item.name }}
       </Button>
     </div>
-    <Tabs :value="activeTab" :animated="false">
-      <TabPane  label="运单详情" name="detail">
+    <Tabs ref="tabs" :value="activeTab" :animated="false">
+      <TabPane label="运单详情" name="detail">
         <section class="detail-info">
           <!-- 运单信息 -->
           <div>
@@ -81,11 +81,18 @@
                   <span v-if="info.carType">{{ info.carType|carTypeFormatter }} {{ info.carLength|carLengthFormatter }}</span>
                   <span v-else>-</span>
                 </i-col>
+                <i-col v-if="info.assignCarType === 1" span="8">
+                  <span class="detail-field-title">承运商运单号：</span>
+                  <span v-if="info.carrierWaybillNo">{{info.carrierWaybillNo}}</span>
+                  <span v-else>-</span>
+                </i-col>
                 <i-col span="8">
                   <span class="detail-field-title">代收货款：</span>
                   <span v-if="info.collectionMoney">{{info.collectionMoney / 100}}元</span>
                   <span v-else>-</span>
                 </i-col>
+              </Row>
+              <Row class="detail-field-group">
                 <i-col v-if="info.assignCarType === 1" span="8">
                   <span class="detail-field-title">返现运费：</span>
                   <span v-if="info.cashBack">{{info.cashBack / 100}}元</span>
@@ -105,13 +112,14 @@
             <div class="detail-part-title">
               <span>承运订单</span>
             </div>
-            <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
+            <Table ref="cargoTable" :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading" class="detail-field-table">
+            </Table>
             <div class="table-footer">
               <span class="table-footer-title">总计</span>
-              <span>总货值：{{ orderTotal.cargoCost }}</span>
+              <span>总货值：{{ orderTotal.cargoCost }}元</span>
               <span>总数量：{{ orderTotal.quantity }}</span>
-              <span>总体积：{{ orderTotal.volume }}</span>
-              <span>总重量：{{ orderTotal.weight }}</span>
+              <span>总体积：{{ orderTotal.volume }}方</span>
+              <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
             </div>
           </div>
           <!-- 费用明细 -->
@@ -140,6 +148,10 @@
                 <span class="detail-field-title-sm">路桥费：</span>
                 <span class="detail-field-fee">{{ payment.tollFee || 0 }}元</span>
               </i-col>
+              <i-col v-if="info.assignCarType === 2" span="6">
+                <span class="detail-field-title-sm">住宿费：</span>
+                <span class="detail-field-fee">{{ payment.accommodation || 0 }}元</span>
+              </i-col>
               <i-col span="6">
                 <span class="detail-field-title-sm">保险费：</span>
                 <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
@@ -152,7 +164,7 @@
             <Row class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
-                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
+                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ info.totalFee / 100 }}</span>元
               </i-col>
             </Row>
             <Row v-if="info.assignCarType === 1" class="detail-field-group">
@@ -168,7 +180,17 @@
                 </div>
               </i-col>
             </Row>
+            <Row v-if="orderList.length > 1" class="detail-field-group">
+              <i-col span="24">
+                <span class="detail-field-title-sm">分摊策略：</span>
+                <span>{{ getAllocationValToLabel(info.allocationStrategy) }}</span>
+              </i-col>
+            </Row>
           </div>
+
+          <!-- 车况照片 -->
+          <car-photo v-if="imageItems.length > 0" :image-list="imageItems"></car-photo>
+
           <!-- 运单日志 -->
           <div>
             <div class="detail-part-title">
@@ -234,30 +256,22 @@
               </FormItem>
             </i-col>
           </Row>
-
-          <div class="sub-title">
-            <div class="send-label">派车方式：</div>
-            <RadioGroup v-model="sendWay" @on-change="changeAssignCar">
-              <Radio :disabled="radioDisabled" label="2">自送</Radio>
-              <Radio :disabled="radioDisabled" label="1">外转</Radio>
-              <!-- <Radio label="3">下发承运商</Radio> -->
-            </RadioGroup>
-          </div>
-          <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" source="detail"></own-send-info>
-          <send-carrier-info
-            v-else
-            ref="SendCarrierInfo"
-            :carrier-info="carrierInfo"
-            source="detail"></send-carrier-info>
-
-          <Row class="detail-field-group">
-            <i-col span="24">
-              <FormItem label="备注：" class="padding-left-label">
-                <Input v-model="info.remark" :maxlength="100" class="detail-info-input" />
-              </FormItem>
-            </i-col>
-          </Row>
         </Form>
+
+        <div class="sub-title">
+          <div class="send-label">派车方式：</div>
+          <RadioGroup v-model="sendWay" @on-change="changeAssignCar">
+            <Radio :disabled="radioDisabled" label="2">自送</Radio>
+            <Radio :disabled="radioDisabled" label="1">外转</Radio>
+            <!-- <Radio label="3">下发承运商</Radio> -->
+          </RadioGroup>
+        </div>
+        <own-send-info v-if="sendWay === '2'" ref="ownSendInfo" :form="ownInfo" :source="source"></own-send-info>
+        <send-carrier-info
+          v-else
+          ref="SendCarrierInfo"
+          :carrier-info="carrierInfo"
+          :source="source"></send-carrier-info>
       </div>
       <!-- 承运订单 -->
       <div>
@@ -266,13 +280,13 @@
         </div>
         <Button v-if="status === '待发运'" class="detail-field-button" type="primary"
                 @click="addOrder('freight')">添加订单</Button>
-        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <Table ref="cargoEditTable" :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading"> </Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
-          <span>总货值：{{ orderTotal.cargoCost }}</span>
+          <span>总货值：{{ orderTotal.cargoCost }}元</span>
           <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.volume }}</span>
-          <span>总重量：{{ orderTotal.weight }}</span>
+          <span>总体积：{{ orderTotal.volume }}方</span>
+          <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
         </div>
       </div>
       <!-- 费用明细 -->
@@ -289,6 +303,8 @@
           :settlement-pay-info="settlementPayInfo"
           :finance-rules-info="financeRulesInfo"
           :send-way="sendWay"
+          :send-fee-orders="orderList"
+          :fee-pass-allocation="info.allocationStrategy"
           source="detail">
         </send-fee>
       </div>
@@ -332,11 +348,15 @@ import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
 import { mapActions } from 'vuex'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
+import allocationStrategy from '../constant/allocation.js'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+import CarPhoto from './components/car-photo.vue'
+
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
-  components: { SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee },
-  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin ],
+  components: { SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee, CarPhoto },
+  mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin, tableWeightColumnMixin ],
 
   data () {
     return {
@@ -357,11 +377,14 @@ export default {
         driverName: '',
         driverPhone: '',
         remark: '',
+        totalFee: 0,
         collectionMoney: 0, // 代收货款
         cashBack: 0, // 返现运费
         assignCarType: 1, // 派车类型 1 外转 2 自送 V1.07新增
         assistantDriverName: '', // 副司机名称  V1.07新增
-        assistantDriverPhone: '' // 副司机电话  V1.07新增
+        assistantDriverPhone: '', // 副司机电话  V1.07新增
+        carrierWaybillNo: '', // 承运商运单号 v1.08新增
+        allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
       },
       // 外转赋值给子组件
       carrierInfo: {
@@ -370,7 +393,9 @@ export default {
         driverPhone: '',
         carNo: '',
         carType: '',
-        carLength: ''
+        carLength: '',
+        remark: '',
+        carrierWaybillNo: '' // 承运商运单号 v1.08新增z
       },
       // 自送赋值给子组件
       ownInfo: {
@@ -386,7 +411,8 @@ export default {
         otherFee: null,
         cashBack: null,
         tollFee: null, // 路桥费
-        mileage: null // 计费里程 v1.06 新增
+        mileage: null, // 计费里程 v1.06 新增
+        accommodation: null // 住宿费 v1.08 新增
       },
       rules: {
         start: [
@@ -403,7 +429,8 @@ export default {
       settlementPayInfo: [
         { payType: 1, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
         { payType: 2, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
-        { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
+        { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
+        { payType: 4, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
       ],
 
       // 所有按钮组
@@ -484,8 +511,6 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
-              this.inEditing = 'change'
-              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -502,8 +527,6 @@ export default {
             name: '改单',
             code: 120116,
             func: () => {
-              this.inEditing = 'change'
-              this.changeStr = this.changeParams
               this.changeState({ id: this.id, type: 3 })
             }
           }]
@@ -536,7 +559,7 @@ export default {
           }
         },
         {
-          title: '客户单号',
+          title: '客户订单号',
           key: 'customerOrderNo',
           width: 180,
           render: (h, p) => {
@@ -558,7 +581,8 @@ export default {
           key: 'cargoName',
           minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoName)
+            return this.scopedSlotsRender(h, p, 'cargoName')
+            // return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
@@ -566,7 +590,8 @@ export default {
           key: 'unit',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.unit)
+            return this.scopedSlotsRender(h, p, 'unit')
+            // return this.tableDataRender(h, p.row.unit)
           }
         },
         {
@@ -574,7 +599,8 @@ export default {
           key: 'quantity',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.quantity)
+            return this.scopedSlotsRender(h, p, 'quantity', 0)
+            // return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
           }
         },
         {
@@ -582,15 +608,10 @@ export default {
           key: 'cargoCost',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
-          }
-        },
-        {
-          title: '重量(吨)',
-          key: 'weight',
-          width: 120,
-          render: (h, p) => {
-            return this.tableDataRender(h, p.row.weight)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', cargo.cargoCost / 100 || '0.00'))
+            )
+            // return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
@@ -598,7 +619,8 @@ export default {
           key: 'volume',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume)
+            return this.scopedSlotsRender(h, p, 'volume', 0)
+            //  return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
           }
         },
         {
@@ -606,7 +628,8 @@ export default {
           key: 'remark1',
           minWidth: 140,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.remark1)
+            return this.scopedSlotsRender(h, p, 'remark1')
+            // return this.tableDataRender(h, p.row.remark1)
           }
         },
         {
@@ -614,7 +637,8 @@ export default {
           key: 'remark2',
           minWidth: 140,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.remark2)
+            return this.scopedSlotsRender(h, p, 'remark2')
+            // return this.tableDataRender(h, p.row.remark2)
           }
         }
       ],
@@ -623,7 +647,10 @@ export default {
       changeStr: '',
       printData: [], // 待打印数据
       sendWay: '1', // 派车类型 1 外转 2 自送  V1.07新增
-      radioDisabled: false // 控制单选按钮禁用
+      radioDisabled: false, // 控制单选按钮禁用
+      source: 'detail', // 详情页编辑传detail不校验承运商，改单需校验承运商，不传detail
+      detail: [],
+      imageItems: [] // 需要展示的车况照片list
     }
   },
   computed: {
@@ -655,26 +682,107 @@ export default {
           start: z.info.start,
           end: z.info.end,
           status: z.info.status,
-          remark: z.info.remark,
-          assignCarType: z.sendWay
+          assignCarType: z.sendWay,
+          allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
         })
       })
       return data
+    },
+    // 将货物信息按货物名称累加数量
+    cargoInfos () {
+      let arr = []
+      let list = _.groupBy(this.detail, 'cargoName')
+      _.forEach(list, (value, key) => {
+        let quantity = _.sumBy(value, (i) => {
+          return i.quantity
+        })
+        arr.push({
+          key: key,
+          value: quantity
+        })
+      })
+      return arr
     },
     financeRulesInfo () {
       return {
         start: this.info.start,
         end: this.info.end,
         weight: this.orderTotal.weight,
-        volume: this.orderTotal.volume
+        volume: this.orderTotal.volume,
+        cargoInfos: this.cargoInfos
       }
+    },
+    /**
+     * 以orderId分组货物信息，合并后的格式为：
+     * cargo = {
+     *  1: {
+     *  orderNo: '',
+     *  orderId: '',
+     *  ...
+     *  cargoList:[
+     *    {cargoName:''},
+     *    {cargoName:''}
+     *  ]
+     * },
+     * 2:{
+     * }
+     * }
+     */
+    cargoGroupByOrderNo () {
+      // 以orderNo分组后的货物明细数据
+      let _cargoMapById = {}
+
+      this.detail.forEach((cargo) => {
+        // 单独提取货物的字段
+        let {
+          cargoCost,
+          cargoName,
+          packing,
+          quantity,
+          remark1,
+          remark2,
+          unit,
+          volume,
+          weight,
+          weightKg,
+          ...rest
+        } = cargo
+        if (!_cargoMapById[cargo.orderId]) {
+          _cargoMapById[cargo.orderId] = rest
+          _cargoMapById[cargo.orderId].cargoList = []
+        }
+        _cargoMapById[cargo.orderId].cargoList.push({
+          cargoCost,
+          cargoName,
+          packing,
+          quantity,
+          remark1,
+          remark2,
+          unit,
+          volume,
+          weight,
+          weightKg
+        })
+      })
+      return Object.values(_cargoMapById)
     }
   },
+
+  mounted () {
+    // 判断显示吨列或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 7)
+    } else {
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 7)
+    }
+  },
+
   methods: {
     ...mapActions([
       'getWaybillLocation',
       'waybillShipment',
-      'getWaybillPrintData'
+      'getWaybillPrintData',
+      'checkDriverPhone'
     ]),
     // 将数据返回的标识映射为文字
     statusFilter (status) {
@@ -685,10 +793,14 @@ export default {
         case 4: return '已到货'
       }
     },
-
+    // 将分摊策略返回的标识映射为文字
+    getAllocationValToLabel (data) {
+      let list = allocationStrategy.find(item => item.value === (data !== '' ? data : 1))
+      return list.label
+    },
     fetchData () {
       this.loading = true
-      Server({
+      return Server({
         url: '/waybill/details',
         method: 'post',
         data: {
@@ -697,6 +809,12 @@ export default {
         }
       }).then(res => {
         const data = res.data.data
+        this.imageItems = data.carInfo.map((item) => {
+          return {
+            src: this.$handleImgUrl(item),
+            msrc: this.$handleImgUrl(item)
+          }
+        })
         this.id = data.waybill.waybillId
         for (let key in this.info) {
           this.info[key] = data.waybill[key]
@@ -723,7 +841,9 @@ export default {
             driverPhone: '',
             carNo: '',
             carType: '',
-            carLength: ''
+            carLength: '',
+            remark: '',
+            carrierWaybillNo: '' // 承运商运单号
           }
         }
         for (let key in this.payment) {
@@ -732,8 +852,14 @@ export default {
             this.payment[key] = data.waybill[key] / 1000 || null
           }
         }
+
+        // 货物明细显示绑定的表格数据
+        // this.cargoGroupByOrderNo = Object.values(_cargoMapById)
         this.detail = data.cargoList
         this.logList = data.operaterLog
+        this.orderList = data.orderList
+
+        // _cargoMapById = null
 
         this.status = this.statusFilter(data.waybill.status)
         this.settlementType = data.waybill.settlementType ? data.waybill.settlementType.toString() : '1'
@@ -755,9 +881,16 @@ export default {
         }
         // 改单个数
         this.changeCount = data.modifyCnt || 0
+        if (this.changeCount) {
+          this.$refs['change'] && this.$refs['change'].initData()
+        }
+
         this.setBtnsWithStatus()
         this.loading = false
-      }).catch(err => console.error(err))
+        return res
+      }).catch((er) => {
+        return Promise.reject(er)
+      })
     },
     /**
      * 修改派车方式
@@ -789,7 +922,15 @@ export default {
     edit () {
       const z = this
       let data = {
-        waybill: {},
+        waybill: {
+          waybillId: z.id,
+          waybillNo: z.info.waybillNo,
+          start: z.info.start,
+          end: z.info.end,
+          status: z.info.status,
+          assignCarType: z.sendWay,
+          allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
+        },
         cargoList: _.uniq(z.detail.map(item => item.orderId))
       }
       if (z.sendWay === '1') {
@@ -797,20 +938,27 @@ export default {
           settlementType: z.$refs.sendFee.getSettlementType(),
           settlementPayInfo: z.$refs.sendFee.getSettlementPayInfo()
         })
+        // 填了司机手机号需要走校验
+        if (z.$refs.SendCarrierInfo.getCarrierInfo().driverPhone) {
+          z.isPhoneUsed(z.$refs.SendCarrierInfo, data)
+        } else {
+          z.callSendInterface(data)
+        }
       } else if (z.sendWay === '2') { // 自送
         data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.ownSendInfo.getOwnSendInfo())
         delete data.waybill.cashBack // 自送没有返现
+        // 填了司机手机号需要走校验
+        if (z.$refs.ownSendInfo.getOwnSendInfo().driverPhone || z.$refs.ownSendInfo.getOwnSendInfo().assistantDriverPhone) {
+          z.isPhoneUsed(z.$refs.ownSendInfo, data)
+        } else {
+          z.callSendInterface(data)
+        }
       }
-      Object.assign(data.waybill, {
-        waybillId: z.id,
-        waybillNo: z.info.waybillNo,
-        start: z.info.start,
-        end: z.info.end,
-        status: z.info.status,
-        remark: z.info.remark,
-        assignCarType: z.sendWay
-      })
-      console.log(data)
+    },
+
+    // 调送货详情编辑接口
+    callSendInterface (data) {
+      const z = this
       Server({
         url: '/waybill/update',
         method: 'post',
@@ -818,8 +966,9 @@ export default {
       }).then(res => {
         z.$Message.success('保存成功')
         z.cancelEdit()
-      }).catch(err => console.error(err))
+      }).catch()
     },
+
     // 改单
     changeBill () {
       const z = this
@@ -842,8 +991,8 @@ export default {
         start: z.info.start,
         end: z.info.end,
         status: z.info.status,
-        remark: z.info.remark,
-        assignCarType: z.sendWay
+        assignCarType: z.sendWay,
+        allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
       })
       if (JSON.stringify(data) === JSON.stringify(z.changeStr)) {
         z.$Message.error('您并未做修改')
@@ -856,7 +1005,7 @@ export default {
       }).then(res => {
         z.$Message.success(res.data.msg)
         z.cancelEdit()
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 保存编辑
@@ -865,12 +1014,11 @@ export default {
       // if (!_this.validate()) return
       z.$refs['send'].validate((valid) => {
         if (valid) {
-          if (!z.checkDetailValidate()) {
-            if (z.inEditing === 'change') {
-              z.$Message.warning('您有信息未填')
-            }
-            return
-          }
+          if (!z.checkDetailValidate()) return
+          // if (z.inEditing === 'change') {
+          //   z.$Message.warning('您有信息未填')
+          //   return
+          // }
           if (z.inEditing === 'edit') {
             z.edit()
           } else if (z.inEditing === 'change') {
@@ -955,9 +1103,7 @@ export default {
             },
             methods: {}
           })
-        }).catch(err => {
-          console.error(err)
-        })
+        }).catch()
     },
     // 删除
     billDelete () {
@@ -977,7 +1123,7 @@ export default {
             }).then(res => {
               self.$Message.success('删除成功')
               self.ema.fire('closeTab', self.$route)
-            }).catch(err => console.error(err))
+            }).catch()
           }
         }
       })
@@ -1019,7 +1165,6 @@ export default {
       const self = this
       self.getWaybillPrintData([ self.id ])
         .then(res => {
-          console.log(self.$refs.$printer)
           self.printData = res
           self.$refs.$printer.print()
         })
@@ -1102,8 +1247,13 @@ export default {
             if (item.payType === 3 && statusDetail.receiptPaidFule === 1) {
               item.isCardDisabled = true
             }
+            if (item.payType === 4 && statusDetail.tailPaidCash === 1) {
+              item.isCashDisabled = true
+            }
+            if (item.payType === 4 && statusDetail.tailPaidFule === 1) {
+              item.isCardDisabled = true
+            }
           })
-          console.log(this.settlementPayInfo)
         }
         if (this.feeStatus === 10 || this.feeStatus === 20 || this.feeStatus === 30) {
           this.settlementPayInfo.map(item => {
@@ -1112,8 +1262,79 @@ export default {
             item.isCardDisabled = true
           })
         }
-      }).catch(err => console.error(err))
+        if (this.feeStatus === 10) {
+          this.$Message.error('此单已经加入对账单，不允许改单。')
+        } else if (this.feeStatus === 20) {
+          this.$Message.error('此单已经全部核销，不允许改单')
+        } else {
+          this.source = 'change'
+          this.inEditing = 'change'
+          this.changeStr = this.changeParams
+        }
+      }).catch()
+    },
+    // 校验主副司机手机号有没有被更改
+    isPhoneUsed (comp, data) {
+      const z = this
+      let phoneList = []
+      if (z.sendWay === '1') { // 外转
+        comp.getCarrierInfo().driverPhone && phoneList.push(comp.getCarrierInfo().driverPhone)
+      } else {
+        comp.getOwnSendInfo().driverPhone && phoneList.push(comp.getOwnSendInfo().driverPhone)
+        comp.getOwnSendInfo().assistantDriverPhone && phoneList.push(comp.getOwnSendInfo().assistantDriverPhone)
+      }
+      z.checkDriverPhone(phoneList).then((res) => {
+        if (!_.every(res, { used: false })) { // 有变更过手机号
+          let name = ''
+          if (z.sendWay === '1') {
+            if (_.every(res, { used: true })) {
+              name = '司机'
+            }
+          } else {
+            if (res.length > 1 && _.every(res, { used: true })) {
+              name = '主司机和副司机'
+            } else {
+              let obj = _.find(res, { used: true })
+              if (obj.phone === comp.getOwnSendInfo().driverPhone) {
+                name = '主司机'
+              }
+              if (obj.phone === comp.getOwnSendInfo().assistantDriverPhone) {
+                name = '副司机'
+              }
+            }
+          }
+          z.checkPhoneDialog(name, data)
+        } else {
+          z.callSendInterface(data)
+        }
+      })
+    },
+    // 打开司机手机号校验弹窗
+    checkPhoneDialog (name, data) {
+      const _this = this
+      _this.openDialog({
+        name: 'transport/dialog/checkDriverPhone',
+        data: { name: name },
+        methods: {
+          ok (node) {
+            _this.callSendInterface(data)
+          }
+        }
+      })
     }
+  },
+  /**
+   * 不同订单号
+   * 打开同一该页，数据不会根据querystring刷新问题
+   */
+  beforeRouteUpdate (to, from, next) {
+    this.$nextTick(() => {
+      this.id = this.$route.query.id
+      this.no = this.$route.query.no
+      this.$refs['tabs'].handleChange(0)
+      this.fetchData()
+    })
+    next()
   }
 }
 </script>
@@ -1125,6 +1346,7 @@ export default {
   .sub-title
     font-size 14px
     color #777
+    margin-bottom 10px
     .send-label
       display inline-block
       margin-right 20px

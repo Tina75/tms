@@ -77,7 +77,7 @@ export default {
         }
       }).then(res => {
         this.partnerList = res.data.data
-      }).catch(err => console.error(err))
+      })
     },
     takePartnerId (value) {
       for (let i = 0; i < this.partnerList.length; i++) {
@@ -102,7 +102,7 @@ export default {
           }).then(res => {
             this.close()
             this.ok(parseInt(res.data.data))
-          }).catch(err => console.error(err))
+          })
         }
       })
     }

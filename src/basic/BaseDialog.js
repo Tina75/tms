@@ -1,3 +1,4 @@
+import powerMixin from './powerMixin'
 export default {
   replace: true,
   props: {
@@ -11,6 +12,7 @@ export default {
       visiable: this.showDialog
     }
   },
+  mixins: [powerMixin],
   // 组件是你刚被创建,组件属性计算前
   beforeCreated: function () {},
   // 组件创建完成,属性已绑定,但是dom还没生产,$el还不存在
@@ -69,19 +71,12 @@ export default {
      *  }
      */
     openTab: function (data) {
-      data.query = Object.assign({ noCache: true }, data.query)
-      // data.query = Object.assign({_time: new Date().getTime()}, data.query)
       data.query.title = data.title ? data.title : (data.query.id ? data.query.id : this.$options.metaInfo.title)
       this.ema.fire('openTab', data)
     },
     close: function () {
       console.log('close ' + this.$options.name)
       this.ema.fire('Dialogs.close', this.$options.name)
-    },
-    // 权限控制
-    hasPower: function (power) {
-      if (!power) { return true }
-      return this.$store.state.permissions.includes(power)
     }
   }
 }

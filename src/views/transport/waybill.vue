@@ -28,7 +28,8 @@
                  :maxlength="20"
                  placeholder="请输入运单号"
                  class="search-input"
-                 @on-click="resetEasySearch" />
+                 @on-click="resetEasySearch"
+                 @on-enter="startSearch" />
 
           <SelectInput v-if="easySelectMode === 2" v-model="easySearchKeyword"
                        mode="carrier"
@@ -36,7 +37,8 @@
                        clearable
                        class="search-input"
                        @on-select="selectCarrierHandler"
-                       @on-clear="resetEasySearch" />
+                       @on-clear="resetEasySearch"
+                       @start-search="startSearch" />
 
           <SelectInput v-if="easySelectMode === 3" v-model="easySearchKeyword"
                        :carrier-id="carrierId"
@@ -44,7 +46,8 @@
                        placeholder="请输入车牌号"
                        clearable
                        class="search-input"
-                       @on-clear="resetEasySearch" />
+                       @on-clear="resetEasySearch"
+                       @start-search="startSearch" />
 
           <Button icon="ios-search" type="primary"
                   class="search-btn-easy"
@@ -60,29 +63,49 @@
       <div v-if="!isEasySearch" class="operate-box custom-style">
 
         <div style="margin-bottom: 10px;">
-          <Input v-model="seniorSearchFields.waybillNo" :maxlength="20"  placeholder="请输入运单号" class="search-input-senior" />
+          <Input
+            v-model="seniorSearchFields.waybillNo"
+            :maxlength="20"
+            clearable
+            placeholder="请输入运单号"
+            class="search-input-senior"
+            @on-enter="startSearch" />
           <SelectInput v-model="seniorSearchFields.carrierName"
                        mode="carrier"
+                       clearable
                        placeholder="请输入承运商"
                        class="search-input-senior"
-                       @on-select="selectCarrierHandler" />
+                       @on-select="selectCarrierHandler"
+                       @start-search="startSearch" />
           <SelectInput v-model="seniorSearchFields.driverName"
                        :carrier-id="carrierId"
                        mode="driver"
+                       clearable
                        placeholder="请输入司机"
-                       class="search-input-senior" />
+                       class="search-input-senior"
+                       @start-search="startSearch" />
           <SelectInput v-model="seniorSearchFields.carNo"
                        :carrier-id="carrierId"
                        mode="carNo"
+                       clearable
                        placeholder="请输入车牌号"
-                       class="search-input-senior" />
+                       class="search-input-senior"
+                       @start-search="startSearch" />
         </div>
 
         <div class="complex-query">
           <div>
             <SelectInputForCity v-model="seniorSearchFields.start" placeholder="请输入始发地" class="search-input-senior" />
             <SelectInputForCity v-model="seniorSearchFields.end" placeholder="请输入目的地" class="search-input-senior" />
-            <DatePicker v-model="seniorSearchFields.dateRange" :options="timeOption" transfer type="daterange" split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
+            <DatePicker
+              v-model="seniorSearchFields.dateRange"
+              :options="timeOption"
+              transfer
+              type="daterange"
+              split-panels
+              placeholder="开始日期-结束日期"
+              class="search-input-senior"
+              @on-change="handleTimeChange"></DatePicker>
           </div>
           <div>
             <Button type="primary"
@@ -145,7 +168,7 @@ import PageTable from '@/components/page-table'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from './components/SelectInput.vue'
 import PrintFreight from './components/PrintFreight'
-import OrderTabContent from '@/views/order-management/components/TabContent'
+import OrderTabContent from '@/views/order/management/components/TabContent'
 
 import Export from '@/libs/js/export'
 import { BUTTON_LIST, TABLE_COLUMNS } from './constant/waybill'
@@ -154,10 +177,10 @@ import _ from 'lodash'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
-  name: 'WaybillManager',
+  name: 'order-transport',
   components: { TabHeader, PageTable, SelectInputForCity, SelectInput, PrintFreight, OrderTabContent },
   mixins: [ BasePage, TransportBase, SelectInputMixin, TransportMixin ],
-  metaInfo: { title: '运单管理' },
+  metaInfo: { title: '送货管理' },
   data () {
     return {
       tabType: 'WAYBILL',
@@ -196,7 +219,7 @@ export default {
         extra: true,
         render: (h, p) => {
           let record = p.row
-          if (record.status === 2 && this.hasPower(120101) && ((record.carrierName === '' && record.assignCarType === 1) || (record.carNo === '' && record.assignCarType === 2))) {
+          if (record.status === 2 && this.hasPower(120109) && ((record.carrierName === '' && record.assignCarType === 1) || (record.carNo === '' && record.assignCarType === 2))) {
             return h('a', {
               on: {
                 click: () => {
@@ -360,7 +383,6 @@ export default {
       let cashBackList = _.remove(tableSelection, (i) => {
         return i.cashBack > 0
       })
-      console.log(cashBackList)
       if (this.tableSelection.length > 1 && cashBackList.length > 0) {
         self.openDialog({
           name: 'transport/dialog/cashBackWarn',
@@ -422,7 +444,6 @@ export default {
       let carrierNameList = _.remove(tableSelection, (i) => {
         return (i.carrierName === '' && i.assignCarType === 1) || (i.carNo === '' && i.assignCarType === 2)
       })
-      console.log(carrierNameList)
       if (carrierNameList.length > 0) {
         if (self.tableSelection.length > 1) {
           self.openDialog({
@@ -452,7 +473,6 @@ export default {
       let cargoList = _.remove(tableSelection, (i) => {
         return i.orderCnt === 0
       })
-      console.log(cargoList)
       if (cargoList.length > 0) {
         if (self.tableSelection.length > 1) {
           self.openDialog({

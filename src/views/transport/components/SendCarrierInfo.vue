@@ -1,7 +1,7 @@
 <template>
   <div>
-    <Form ref="sendInfo" :label-width="82" :model="carrierInfo" :rules="source === 'pickup' ? pickupRules : rules" class="transport-detail" label-position="left">
-      <div :style="source === 'detail' ? 'margin-bottom: 0;border-bottom: none;' : 'padding-top: 7px;'" class="part">
+    <Form ref="sendInfo" :label-width="82" :model="carrierInfo" :rules="rules" class="transport-detail" label-position="right">
+      <div :style="source === 'detail' || source === 'change' ? 'margin-bottom: 0;border-bottom: none;' : ''" class="part">
         <Row class="detail-field-group">
           <i-col span="8">
             <FormItem :prop="source !== 'detail' ? 'carrierName' : ''" :class="{'padding-left-label': source === 'detail'}" label="承运商：">
@@ -36,7 +36,7 @@
 
         <Row class="detail-field-group">
           <i-col span="8">
-            <FormItem :class="{'padding-left-label': source !== 'pickup'}" prop="carNo" label="车牌号：">
+            <FormItem class="padding-left-label" prop="carNo" label="车牌号：">
               <SelectInput
                 :carrier-id="carrierId"
                 v-model="carrierInfo.carNo"
@@ -46,7 +46,7 @@
             </FormItem>
           </i-col>
           <i-col span="8">
-            <span class="detail-field-title" style="width: 82px;">车型：</span>
+            <span class="detail-field-title" style="width: 82px;text-align: right;">车型：</span>
             <Select v-model="carrierInfo.carType"
                     transfer
                     class="detail-info-input-half"
@@ -58,6 +58,19 @@
                     class="detail-info-input-half">
               <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
             </Select>
+          </i-col>
+          <i-col v-if="sourceType === 'sendCar'" span="8">
+            <FormItem label="承运商运单号：" class="label-width">
+              <Input v-model="carrierInfo.carrierWaybillNo" :maxlength="20" style="width: 200px;"/>
+            </FormItem>
+          </i-col>
+        </Row>
+
+        <Row>
+          <i-col span="24" style="padding: 5px 0;">
+            <FormItem label="备注：" class="padding-left-label">
+              <Input v-model="carrierInfo.remark" :maxlength="100" class="detail-info-input" />
+            </FormItem>
           </i-col>
         </Row>
       </div>
@@ -73,7 +86,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 // import Server from '@/libs/js/server'
 import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import $bus from '@/libs/js/eventBus.js'
-import { CAR } from '@/views/client/client'
+import { CAR } from '@/views/client/pages/client'
 
 export default {
   name: 'SendCarComponent',
@@ -83,7 +96,12 @@ export default {
     // 引用页面来源
     source: {
       type: String,
-      default: 'dispatch' // detail: 详情页，dispatch：调度弹窗，action：提货或派车弹窗, pickup: 提货
+      default: 'dispatch' // detail: 详情页，dispatch：调度弹窗，action：提货或派车弹窗, change: 改单
+    },
+    // 引用模块  sendCar：送货   pickup：提货
+    sourceType: {
+      type: String,
+      default: 'sendCar'
     },
     carrierInfo: {
       type: Object,
@@ -94,7 +112,9 @@ export default {
           driverPhone: '',
           carNo: '',
           carType: '',
-          carLength: ''
+          carLength: '',
+          remark: '', // 备注
+          carrierWaybillNo: '' // 承运商运单号
         }
       }
     }
@@ -140,23 +160,33 @@ export default {
     }
   },
 
-  computed: {
-    carrierName () {
-      return this.carrierInfo.carrierName
-    }
-  },
+  // computed: {
+  //   carrierName () {
+  //     return this.carrierInfo.carrierName
+  //   }
+  // },
 
   watch: {
-    carrierName (newVal, oldVal) {
-      console.log(newVal)
-      $bus.$emit('carrierNameChange', newVal)
+    // carrierName (newVal, oldVal) {
+    //   console.log(newVal)
+    //   $bus.$emit('carrierNameChange', newVal)
+    // },
+    carrierInfo: {
+      handler (newVal, oldVal) {
+        console.log(newVal)
+        $bus.$emit('carrierInfoChange', newVal)
+      },
+      deep: true
     }
   },
 
   created () {
     this.$nextTick(() => {
-      $bus.$emit('carrierNameChange', this.carrierInfo.carrierName)
+      $bus.$emit('carrierInfoChange', this.carrierInfo)
     })
+    if (this.sourceType !== 'sendCar') {
+      delete this.carrierInfo.carrierWaybillNo // 送货调度、派车、详情、编辑、改单有承运商订单号字段，其他没有
+    }
   },
 
   methods: {
@@ -195,9 +225,9 @@ export default {
 
    .label-width
     .ivu-form-item-label
-      width 92px !important
+      width 108px !important
     .ivu-form-item-content
-      margin-left 92px !important
+      margin-left 108px !important
 </style>
 <style lang='stylus' scoped>
 </style>

@@ -28,40 +28,37 @@
       <Row>
         <Col :span="8">
         <FormItem label="司机姓名：" prop="driverName">
-          <Input v-model="validate.driver.driverName" :maxlength="15" placeholder="必填"/>
+          <Input v-model="validate.driver.driverName" :maxlength="15" class="formInputSty" placeholder="必填"/>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="手机号：" prop="driverPhone">
-          <Input v-model="validate.driver.driverPhone" :maxlength="11" placeholder="必填"/>
+          <SelectInput v-model="validate.driver.driverPhone" :maxlength="13" :formatter="formatePhoneNum" class="formInputSty" placeholder="必填"></SelectInput>
+          <!-- <Input v-model="validate.driver.driverPhone" :maxlength="11" class="formInputSty" placeholder="必填"/> -->
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="车牌号：" prop="carNO">
-          <SelectInput v-model="validate.driver.carNO" :maxlength="8" :parser="formatterCarNo" placeholder="必填"></SelectInput>
+          <SelectInput v-model="validate.driver.carNO" :maxlength="8" :parser="formatterCarNo" class="formInputSty" placeholder="必填"></SelectInput>
         </FormItem>
         </Col>
       </Row>
       <Row>
         <Col :span="8">
         <FormItem label="车型：">
-          <Select v-model="validate.driver.carType" transfer clearable>
-            <Option v-for="(item, key) in carTypeMap" :key="key" :value="key">{{item}}</Option>
-          </Select>
+          <SelectCarType v-model="validate.driver.carType" class="formInputSty" placeholder="请选择" clearable></SelectCarType>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="车长：">
-          <Select v-model="validate.driver.carLength" transfer clearable>
-            <Option v-for="(item, key) in carLengthMap" :key="key" :value="''+item.value">{{item.label}}</Option>
-          </Select>
+          <SelectCarLength v-model="validate.driver.carLength" class="formInputSty" placeholder="请选择" clearable></SelectCarLength>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="载重：" prop="shippingWeight">
           <Row>
             <Col span="20">
-            <TagNumberInput :min="0" v-model="validate.driver.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+            <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.driver.shippingWeight" :show-chinese="false" class="formInputSty" placeholder="请输入"></TagNumberInput>
               </Col>
             <Col span="2" offset="1">
             <span>吨</span>
@@ -75,7 +72,7 @@
         <FormItem label="净空：" prop="shippingVolume">
           <Row>
             <Col span="20">
-            <TagNumberInput :min="0" v-model="validate.driver.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+            <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.driver.shippingVolume" :show-chinese="false" class="formInputSty" placeholder="请输入"></TagNumberInput>
             </Col>
             <Col span="2" offset="1">
             <span>方</span>
@@ -85,12 +82,12 @@
         </Col>
         <Col :span="8">
         <FormItem label="车辆品牌：">
-          <Input v-model="validate.driver.carBrand" :maxlength="20" placeholder="如：东风"></Input>
+          <Input v-model="validate.driver.carBrand" :maxlength="20" class="formInputSty" placeholder="如：东风"></Input>
         </FormItem>
         </Col>
         <Col :span="8">
         <FormItem label="结算方式：">
-          <Select v-model="validate.driver.payType" transfer clearable>
+          <Select v-model="validate.driver.payType" transfer class="formInputSty" clearable>
             <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
           </Select>
         </FormItem>
@@ -163,7 +160,8 @@
         </Col>
         <Col span="8">
         <FormItem label="联系电话：" prop="carrierPhone">
-          <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/>
+          <!-- <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/> -->
+          <SelectInput v-model="validate.company.carrierPhone" :maxlength="phoneLength(validate.company.carrierPhone)" :formatter="formatePhoneNum" placeholder="必填"></SelectInput>
         </FormItem>
         </Col>
       </Row>
@@ -196,23 +194,24 @@
   </Modal>
 </template>
 <script>
-import { CAR_TYPE1, CAR_LENGTH } from '@/libs/constant/carInfo'
-import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CAR } from '../client'
+import { carrierAddForDriver, carrierAddForCompany, carrierForDriverUpdate, carrierForCompanyUpdate, formatterCarNo, CAR } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
 import CitySelect from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput'
 import UpLoad from '@/components/upLoad/index.vue'
 import TagNumberInput from '@/components/TagNumberInput'
+import SelectCarLength from '@/components/SelectCarLength'
+import SelectCarType from '@/components/SelectCarType'
+import { formatePhone } from '@/libs/js/formate'
+import { validatePhone } from '@/libs/js/validate'
 import _ from 'lodash'
 export default {
   name: 'carrier',
-  components: { CitySelect, UpLoad, SelectInput, TagNumberInput },
+  components: { CitySelect, UpLoad, SelectInput, TagNumberInput, SelectCarLength, SelectCarType },
   mixins: [BaseDialog],
   data () {
     return {
       loading: false,
-      carTypeMap: CAR_TYPE1,
-      carLengthMap: CAR_LENGTH,
       flag: 2,
       codeType: 1,
       address: [],
@@ -282,10 +281,10 @@ export default {
             { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
           ],
           shippingWeight: [
-            { message: '小于等于六位整数,最多两位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,2})?$/ }
+            { message: '小于等于六位整数,最多三位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,3})?$/ }
           ],
           shippingVolume: [
-            { message: '小于等于六位整数,最多一位小数', pattern: /^[0-9]{0,6}(?:\.\d{1})?$/ }
+            { message: '小于等于六位整数,最多六位小数', pattern: /^[0-9]{0,6}(?:\.\d{1,6})?$/ }
           ]
         },
         company: {
@@ -297,7 +296,7 @@ export default {
           ],
           carrierPhone: [
             { required: true, message: '联系电话不能为空', trigger: 'blur' },
-            { type: 'string', message: '联系电话格式错误', pattern: /^1\d{10}$/, trigger: 'blur' }
+            { validator: validatePhone, trigger: 'blur' }
           ]
         }
       }
@@ -323,6 +322,12 @@ export default {
     }
   },
   methods: {
+    formatePhoneNum (temp) {
+      return formatePhone(temp)
+    },
+    phoneLength (value) {
+      return /^1/.test(value) ? 13 : this.$fieldLength.telephone
+    },
     // 图片传入赋值data
     setImageDate () {
       this.$refs.upload1.progress = 1
@@ -469,7 +474,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import "../client.styl"
+@import "../pages/client.styl"
 .ivu-input-wrapper,.ivu-select
   width: 86%
   margin-right 8px
@@ -479,4 +484,6 @@ export default {
   border-top 1px dashed #cbced3
   padding-top 20px
   margin-top -10px
+.formInputSty
+  width 190px
 </style>

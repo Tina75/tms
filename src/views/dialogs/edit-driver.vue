@@ -213,5 +213,5 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import "../owned-vehicle/client.styl"
+@import "../owned-vehicle/pages/client.styl"
 </style>

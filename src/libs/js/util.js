@@ -129,15 +129,6 @@ export const money2chinese = (number) => {
   return resultArr.join('')
 }
 /**
- * 列表中费用格式化
- * @param {*} h
- * @param {*} value
- */
-export const renderFee = (h, value) => {
-  return h('span', {}, value ? (value / 100).toFixed(2) : '0.00')
-}
-
-/**
  * 清空文件上传INPUT
  * @param {*} input
  */
