@@ -142,7 +142,7 @@ export default class Cargo {
       cargoName: this.cargoName,
       weight: this.weight,
       volume: this.volume,
-      cargoCost: multiplyFee(this.cargoCost * 100),
+      cargoCost: multiplyFee(this.cargoCost),
       quantity: this.quantity,
       unit: this.unit,
       remark1: this.remark1,
