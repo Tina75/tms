@@ -86,7 +86,7 @@ import Export from '@/libs/js/export'
 import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 export default {
-  name: 'driver',
+  name: 'report-driver',
   components: {
     SelectInput,
     PageTable,

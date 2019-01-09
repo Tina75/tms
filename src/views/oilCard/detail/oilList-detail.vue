@@ -91,7 +91,7 @@ import contantmixin from '../mixin/contantmixin'
 import '@/libs/js/filter'
 // import float from '@/libs/js/float'
 export default {
-  name: 'detail',
+  name: 'oilList-detail',
 
   components: {
     // OrderPrint

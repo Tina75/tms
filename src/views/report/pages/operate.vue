@@ -136,7 +136,7 @@ import tableHeadType from '@/libs/constant/headtype.js'
 import jsCookie from 'js-cookie'
 import { renderFee, getMileageText } from '@/libs/js/config'
 export default {
-  name: 'operate',
+  name: 'report-operate',
   components: {
     SelectInput,
     PageTable,
