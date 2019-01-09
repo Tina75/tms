@@ -1,5 +1,6 @@
 // 表格中的按钮方法
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
+import { divideFee } from '@/libs/js/config'
 export default {
   methods: {
     // 分配
@@ -103,7 +104,7 @@ export default {
           addEdit: {
             id: p.row.id,
             number: p.row.number,
-            amount: typeof p.row.amount !== 'string' ? float.round(p.row.amount / 100, 2) : '',
+            amount: typeof p.row.amount !== 'string' ? divideFee(p.row.amount) : '',
             remark: p.row.remark,
             type: p.row.type,
             issuer: p.row.issuer,
@@ -132,7 +133,7 @@ export default {
             type: p.row.type,
             issuer: p.row.issuer,
             carrierName: p.row.carrierName,
-            returnDeposit: typeof p.row.recieveDeposit !== 'string' ? float.round(p.row.recieveDeposit / 100, 2) : ''
+            returnDeposit: typeof p.row.recieveDeposit !== 'string' ? divideFee(p.row.recieveDeposit) : ''
           }
         },
         methods: {
