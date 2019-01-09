@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-09 11:37:07
+ * @Last Modified time: 2019-01-09 13:25:33
  */
 import float from './float'
 import NP from 'number-precision'
@@ -58,7 +58,7 @@ export const multiplyFee = (fee) => {
  * @param {*} fee
  */
 export const divideFee = (fee) => {
-  return roundFee(NP.divide(fee, 100))
+  return roundFee(NP.divide(fee || 0, 100))
 }
 /**
  * 保留2位小数字符串类型
