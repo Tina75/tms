@@ -163,10 +163,9 @@ import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
 import openSwipe from '@/components/swipe/index'
 import cargoColumns from '../constant/cargoColumns'
-
+import { divideFee } from '@/libs/js/config'
 const moneyFormate = (fee) => {
-  if (!fee) return 0
-  return fee / 100
+  return divideFee(fee)
 }
 export default {
   name: 'except-record',

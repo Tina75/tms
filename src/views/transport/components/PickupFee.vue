@@ -106,8 +106,7 @@ import validator from '@/libs/js/validate'
 import PayInfo from './PayInfo'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
-import float from '@/libs/js/float'
-import { roundFee } from '@/libs/js/config'
+import { roundFee, multiplyFee } from '@/libs/js/config'
 import NP from 'number-precision'
 export default {
   name: 'PickupFeeComponent',
@@ -250,9 +249,9 @@ export default {
     formatMoney () {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
-        temp[key] = float.round(temp[key] * 100)
+        temp[key] = multiplyFee(temp[key])
       }
-      temp.totalFee = float.round(this.paymentTotal * 100)
+      temp.totalFee = multiplyFee(this.paymentTotal)
       return temp
     },
     // 获取分摊策略

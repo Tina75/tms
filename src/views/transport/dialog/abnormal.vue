@@ -110,6 +110,7 @@ import UpLoad from '@/components/upLoad/index.vue'
 import float from '@/libs/js/float'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
+import { divideFee } from '@/libs/js/config'
 export default {
   name: 'SendCar',
   components: { TagNumberInput, UpLoad, PickupFee, SendFee },
@@ -179,7 +180,6 @@ export default {
         data: data
       }).then(res => {
         _this.details = res.data.data
-        console.log(_this.details)
         // 分摊策略
         this.allocationStrategy = _this.details.allocationStrategy
         // 派车类型
@@ -230,7 +230,9 @@ export default {
         _this.handleCheckFee(_this.isChangeFee)
 
         _this.loading = false
-      }).catch(err => console.error(err))
+      }).catch(err => {
+        throw err
+      })
     },
 
     // 自动带出selected=1的异常环节,和selected=1的异常类型
@@ -266,7 +268,6 @@ export default {
           method: 'post',
           data: data
         }).then(res => {
-          console.log(res)
           _this.changeFeeType = res.data.data.status
           if (_this.changeFeeType === 0) {
             _this.checkUpdateFee()
@@ -301,10 +302,11 @@ export default {
                   item.isCashDisabled = statusDetail.tailPaidCash
                 }
               })
-              console.log(_this.settlementPayInfo)
             }
           }
-        }).catch(err => console.error(err))
+        }).catch(err => {
+          throw err
+        })
       }
     },
 
@@ -375,16 +377,14 @@ export default {
         okText: '是',
         cancelText: '否',
         onOk: () => {
-          console.log('保存')
           _this.doSubmit()
         },
         onCancel: () => {
-          console.log('取消')
           // 将payment 设置为初始值
           for (let key in _this.clonePayment) {
-            _this.clonePayment[key] = _this.clonePayment[key] / 100
+            // _this.clonePayment[key] / 100
+            _this.clonePayment[key] = divideFee(_this.clonePayment[key])
           }
-          console.log(_this.clonePayment)
         }
       })
     },
@@ -429,13 +429,11 @@ export default {
         data.billId = z.id
         data.billType = z.type
       }
-      console.log(data)
       Server({
         url: z.recordId ? '/abnormal/update' : '/abnormal/create',
         method: 'post',
         data: data
       }).then(res => {
-        console.log(res)
         z.btnLoading = false
         z.complete()
         z.close()
@@ -491,7 +489,7 @@ export default {
 
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
-      return (typeof money === 'number' && money !== 0) ? money / 100 : null
+      return (typeof money === 'number' && money !== 0) ? divideFee(money) : null
     },
     // 格式化金额单位为分
     formatMoney () {

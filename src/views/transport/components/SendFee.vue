@@ -160,8 +160,7 @@ import { mapGetters } from 'vuex'
 import $bus from '@/libs/js/eventBus.js'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
-import float from '@/libs/js/float'
-import { roundFee, multiplyMileage } from '@/libs/js/config'
+import { roundFee, multiplyMileage, multiplyFee } from '@/libs/js/config'
 import NP from 'number-precision'
 export default {
   name: 'SendFeeComponent',
@@ -418,12 +417,12 @@ export default {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
         if (key === 'mileage') {
-          temp[key] = float.round(temp[key] * 1000)
+          temp[key] = multiplyMileage(temp[key])
         } else {
-          temp[key] = float.round(temp[key] * 100)
+          temp[key] = multiplyFee(temp[key])
         }
       }
-      temp.totalFee = this.paymentTotal * 100
+      temp.totalFee = multiplyFee(this.paymentTotal)
       if (this.source === 'abnormal') { // 异常没有计费里程和返现
         delete temp.cashBack
         delete temp.mileage
