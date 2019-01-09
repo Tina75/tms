@@ -97,7 +97,7 @@
           <i-col span="10">
             <Row>
               <i-col span="3">
-                <span>发货地址：</span>
+                <span style="color: #777;">发货地址：</span>
               </i-col>
               <i-col span="21" style="padding-left: 15px;">
                 <p>{{detail.consignerAddress}}</p>
@@ -118,13 +118,23 @@
           <i-col span="10">
             <Row>
               <i-col span="3">
-                <span>收货地址：</span>
+                <span style="color: #777;">收货地址：</span>
               </i-col>
               <i-col span="21" style="padding-left: 15px;">
                 <p>{{detail.consigneeAddress}}</p>
                 <p v-if="detail.consigneeHourseNumber" style="line-height: 1;">{{`${detail.consigneeHourseNumber}`}}</p>
               </i-col>
             </Row>
+          </i-col>
+        </Row>
+        <Row>
+          <i-col span="7">
+            <span>回收人：</span>
+            <span>{{detail.receiptOrder.recoveryName || '-'}}</span>
+          </i-col>
+          <i-col span="7">
+            <span>接收人：</span>
+            <span>{{detail.receiptOrder.returnName || '-'}}</span>
           </i-col>
         </Row>
         <Row style="margin-top: 18px;">
