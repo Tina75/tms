@@ -412,7 +412,20 @@ export default {
         childData.weightKg = this.weightVal ? this.weightVal : params.row.weightKg
       }
       childData.volume = this.volumeVal ? this.volumeVal : params.row.volume
-      this.childOrderCargoList.unshift(childData)
+      let findedChildCargo = this.childOrderCargoList.find(cargo => cargo.id === childData.id)
+      if (!findedChildCargo) {
+        // 如果未找到，就放入数组
+        this.childOrderCargoList.unshift(childData)
+      } else {
+        findedChildCargo.cargoCost = roundFee(findedChildCargo.cargoCost + childData.cargoCost)
+        findedChildCargo.quantity = float.round(findedChildCargo.quantity + childData.quantity)
+        findedChildCargo.volume = roundVolume(findedChildCargo.volume + childData.volume)
+        if (this.WeightOption === 1) {
+          findedChildCargo.weight = roundWeight(findedChildCargo.weight + childData.weight)
+        } else {
+          findedChildCargo.weightKg = roundWeightKg(findedChildCargo.weightKg + childData.weightKg)
+        }
+      }
     },
     // 拆批量
     separateAverage () {
