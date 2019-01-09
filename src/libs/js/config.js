@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-09 13:52:49
+ * @Last Modified time: 2019-01-09 15:02:50
  */
 import float from './float'
 import NP from 'number-precision'
@@ -47,7 +47,7 @@ export const roundFee = (fee) => {
   return float.round(fee, NumberPrecesion.fee)
 }
 /**
- * 接口返回的费用需乘以10000
+ * 接口返回的费用需乘以100
  * @param {number} fee 接口返回的值
  */
 export const multiplyFee = (fee) => {
@@ -61,7 +61,7 @@ export const divideFee = (fee) => {
   return roundFee(NP.divide(fee || 0, 100))
 }
 /**
- * 保留2位小数字符串类型
+ * 保留4位小数字符串类型
  * @param {number} value
  */
 export const getFeeText = (value) => {
