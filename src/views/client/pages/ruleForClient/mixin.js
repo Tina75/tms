@@ -98,7 +98,7 @@ export default {
           callback(new Error('最多九位整数'))
         }
       } else {
-        callback(new Error('最多两位小数'))
+        callback(new Error('最多四位小数'))
       }
     }
     const baseAndStartValidate = (rule, value, callback) => {
@@ -226,7 +226,7 @@ export default {
       priceValidate: {
         price: [
           { required: true, message: '请填写金额', trigger: 'change', type: 'number' },
-          { pattern: /^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '9位正数且最多两位小数', trigger: 'change' }
+          { pattern: /^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '9位正数且最多四位小数', trigger: 'change' }
         ]
         // /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/
       },

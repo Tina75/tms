@@ -98,7 +98,7 @@ export default {
         toCardId: [{ required: true, message: '请选择主卡下面的副卡', trigger: 'change', type: 'number' }],
         changeAmount: [
           { required: true, message: '请输入转出金额', trigger: 'change', type: 'number' },
-          { pattern: /^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '九位正数且最多两位小数' }
+          { pattern: /^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '九位正数且最多四位小数' }
         ],
         operateDate: { required: true, message: '请输入转账日期' }
       }
