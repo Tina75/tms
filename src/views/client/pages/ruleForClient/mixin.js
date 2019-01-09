@@ -58,22 +58,32 @@ export default {
       if (value === null || value === '') {
         callback()
       } else {
-        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d*)?))$/.test(String(value))) {
+        if (/^((0[.]\d*)|(([1-9]\d{0,8})([.]\d*)?))$/.test(String(value))) {
           callback()
         } else {
-          callback(new Error('最多九位正数'))
+          callback(new Error('必须大于0'))
         }
-        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
-          if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(String(value))) {
+        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量精确3位小数
+          if (/^((0[.]\d{1,3})|(([1-9]\d*)([.]\d{1,3})?))$/.test(String(value))) {
           } else {
-            callback(new Error('最多两位小数'))
+            callback(new Error('最多三位小数'))
           }
-        } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
-          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(String(value))) {
+        } else
+        if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') { // 体积精确6位小数
+          if (/^((0[.]\d{1,6})|(([1-9]\d{0,8})([.]\d{1,6})?))$/.test(String(value))) {
             callback()
           } else {
             callback(new Error('最多一位小数'))
           }
+        } else
+        if (this.ruleDetail.ruleType === '6' || this.ruleDetail.ruleType === '7') { // 重量公斤，保留整数
+          if (/^(([1-9]\d{0,8})?)$/.test(String(value))) {
+            callback()
+          } else {
+            callback(new Error('不能有小数'))
+          }
+        } else {
+          callback()
         }
       }
     }
