@@ -310,7 +310,7 @@
       <FormItem v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" label="开票税率:" prop="invoiceRate">
         <Row>
           <Col span="6">
-          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="1" :min="0" :max="100" clearable>
+          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="2" :min="0" :max="100" clearable>
           </TagNumberInput>
           </Col>
           <Col span="18" class="order-create__input-unit">
