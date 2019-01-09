@@ -26,20 +26,6 @@ const tableColumns = [
     }
   },
   {
-    title: '包装尺寸（毫米）',
-    key: 'dimension',
-    width: 180,
-    render: (h, p) => {
-      let text = ''
-      if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
-        text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
-      } else {
-        text = '-'
-      }
-      return h('span', text)
-    }
-  },
-  {
     title: '包装数量',
     key: 'quantity',
     render: (h, p) => {

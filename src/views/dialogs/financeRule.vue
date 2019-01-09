@@ -32,7 +32,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
 import BMap from 'BMap'
-
+import { divideFee } from '@/libs/js/config'
 let errorMsg = ''
 
 export default {
@@ -132,7 +132,7 @@ export default {
             cargoInfos: this.cargoInfos
           }
         }).then(res => {
-          this.charge = float.round(res.data.data / 100)
+          this.charge = divideFee(res.data.data)
           errorMsg = ''
           this.$refs.$form.validate()
         }).catch(err => {
