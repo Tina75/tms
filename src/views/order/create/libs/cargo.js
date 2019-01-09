@@ -1,6 +1,6 @@
 import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
-import { NumberPrecesion } from '@/libs/js/config'
+import { NumberPrecesion, divideFee, multiplyFee } from '@/libs/js/config'
 let uniqueIndex = 0
 export default class Cargo {
   /**
@@ -70,7 +70,7 @@ export default class Cargo {
         // 货值，整数
         this.cargoCost = props.cargoCost || null
       } else {
-        this.cargoCost = (props.cargoCost || 0) / 100
+        this.cargoCost = divideFee(props.cargoCost || 0)
       }
       this._weight = props.weight || null
       this.volume = props.volume || null
@@ -102,7 +102,7 @@ export default class Cargo {
       return { success: false, message: '请输入货物名称' }
     }
     if (this.cargoCost && !validator.fee(this.cargoCost)) {
-      return { success: false, message: '费用整数位最多输入9位' }
+      return { success: false, message: '货值整数位最多输入9位,4位小数' }
     }
     return { success: true }
   }
@@ -117,7 +117,7 @@ export default class Cargo {
     }
     if (field === 'cargoCost' && this.cargoCost) {
       if (!validator.fee(this.cargoCost)) {
-        this.errorMsg[field] = '货值整数位最多输入9位'
+        this.errorMsg[field] = '货值整数位最多输入9位,4位小数'
       } else {
         delete this.errorMsg[field]
       }
@@ -142,7 +142,7 @@ export default class Cargo {
       cargoName: this.cargoName,
       weight: this.weight,
       volume: this.volume,
-      cargoCost: float.round(this.cargoCost * 100),
+      cargoCost: multiplyFee(this.cargoCost * 100),
       quantity: this.quantity,
       unit: this.unit,
       remark1: this.remark1,
@@ -162,7 +162,7 @@ export default class Cargo {
       orderNo: this.orderNo,
       weight: this.weight,
       volume: this.volume,
-      cargoCost: float.round(this.cargoCost * 100),
+      cargoCost: multiplyFee(this.cargoCost * 100),
       quantity: this.quantity,
       unit: this.unit,
       cargoNo: this.cargoNo,
@@ -181,7 +181,7 @@ export default class Cargo {
       return { success: false, message: '请输入订单号' }
     }
     if (this.cargoCost && !validator.fee(this.cargoCost)) {
-      return { success: false, message: '货值整数位最多输入9位' }
+      return { success: false, message: '货值整数位最多输入9位,4位小数' }
     }
     return { success: true }
   }

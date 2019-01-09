@@ -28,6 +28,7 @@ const tableColumns = [
   {
     title: '包装尺寸（毫米）',
     key: 'dimension',
+    width: 180,
     render: (h, p) => {
       let text = ''
       if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
