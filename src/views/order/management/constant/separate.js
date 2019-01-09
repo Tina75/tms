@@ -408,14 +408,16 @@ export const TABLE_COLUMNS_TWO = vm => [
                     vm.childOrderCargoList.splice(params.index, 1)
                   } else {
                     // 拆批量
-                    vm.muiltyOrderCargoList.splice(params.index, 1)
+                    // vm.muiltyOrderCargoList.splice(params.index, 1)
+                    vm.muiltyOrderCargoList = vm.muiltyOrderCargoList.filter((cargo) => cargo.__id !== params.row.__id)
                   }
                 } else {
                   let child
                   if (vm.childOrderCargoList.length > 0) {
                     child = vm.childOrderCargoList.splice(params.index, 1)
                   } else {
-                    child = vm.muiltyOrderCargoList.splice(params.index, 1)
+                    // child = vm.muiltyOrderCargoList.splice(params.index, 1)
+                    child = [{ ...params.row }]
                   }
                   vm.parentOrderCargoList.push(child[0])
                 }
@@ -664,9 +666,15 @@ export const TABLE_COLUMNS_AVERAGE_EDIT = (vm) => {
     {
       title: '货值',
       key: 'cargoCost',
+      slot: 'cargoCost',
       render: (h, params) => {
-        return renderFee(h, params.row.cargoCost)
-
+        // return renderFee(h, params.row.cargoCost)
+        return h('div',
+          vm.$refs.separateTable.$scopedSlots.cargoCost({
+            row: params.row,
+            index: params.index,
+            idx: params.row._index
+          }))
         // return h('span', '0')
       }
     },

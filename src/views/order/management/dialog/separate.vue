@@ -20,7 +20,7 @@
             始发地／目的地：{{ detailData.startName + ' - ' + detailData.endName }}
           </i-col>
           <i-col span="12">
-            费用合计：{{ detailData.allocationFee / 100 }}元
+            费用合计：{{ detailData.allocationFee | toPoint }}元
           </i-col>
         </Row>
       </div>
