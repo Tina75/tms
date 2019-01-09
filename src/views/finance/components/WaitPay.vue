@@ -13,10 +13,11 @@
         <p class="wait-pay__view-title">{{title}}</p>
         <p class="wait-pay__view-supName">
           <span>
-            总额 {{formatFee(activeSender ? activeSender.calcTotalFee : 0)}}
+            <!--总额 {{formatFee(activeSender ? activeSender.calcTotalFee : 0)}}-->
+            总额 {{activeSender.calcTotalFee | toPoint}}
           </span>
           <span class="i-ml-20">
-            已付 {{formatFee(activeSender ? activeSender.verifiedFee : 0)}}
+            已付 {{(activeSender.verifiedFee | toPoint)}}
           </span>
         </p>
       </div>
@@ -27,10 +28,10 @@
         <ListSenderItem v-for="(item, name) in datas" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
           <template slot="supName">
             <span>
-              总额 {{formatFee(item.calcTotalFee)}}
+              总额 {{item.calcTotalFee | toPoint}}
             </span>
             <span class="i-ml-20">
-              已付 {{formatFee(item.verifiedFee)}}
+              已付 {{item.verifiedFee | toPoint}}
             </span>
           </template>
         </ListSenderItem>

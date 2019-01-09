@@ -4,6 +4,7 @@ import Server from '@/libs/js/server'
 import { mapGetters, mapActions } from 'vuex'
 import { ruleTypeAllList } from '@/libs/constant/ruleType.js'
 import float from '@/libs/js/float'
+import { multiplyFee, divideFee } from '@/libs/js/config'
 export default {
   computed: {
     ...mapGetters(['ruleTypeList']),
@@ -215,7 +216,7 @@ export default {
       priceValidate: {
         price: [
           { required: true, message: '请填写金额', trigger: 'change', type: 'number' },
-          { pattern: /^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '九位正数且最多两位小数', trigger: 'change' }
+          { pattern: /^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '9位正数且最多两位小数', trigger: 'change' }
         ]
         // /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/
       },
@@ -348,11 +349,14 @@ export default {
                   // 选择车型，件时，起步价，起步量都没有
                   startNum: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startNum ? float.round(item.startNum * 100) : ''),
                   // 选择起步量的时候，startPrice的值传startNum的值
-                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
+                  // startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
+                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? multiplyFee(item.startPrice) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
                   chargeRules: item.chargeRules.map(el => {
                     return {
                       base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (float.round(el.base * 100)),
-                      price: float.round(el.price * 100),
+                      // base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (multiplyFee(el.base)),
+                      // price: float.round(el.price * 100),
+                      price: multiplyFee(el.price),
                       carType: _this.ruleDetail.ruleType === '5' ? el.carType : undefined,
                       carLength: _this.ruleDetail.ruleType === '5' ? el.carLength : undefined,
                       cargoName: _this.ruleDetail.ruleType === '8' ? el.cargoName : undefined
@@ -418,14 +422,14 @@ export default {
           return {
             departure: item.departure,
             destination: item.destination,
-            startPrice: item.startPrice !== 0 ? (item.startPrice / 100) : null,
+            startPrice: item.startPrice !== 0 ? divideFee(item.startPrice) : null,
             startNum: item.startNum !== 0 ? (item.startNum / 100) : null,
             startType: item.startType ? item.startType + '' : '2',
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: el.base ? (el.base / 100) : null,
-                price: el.price ? (el.price / 100) : null,
+                base: typeof el.base === 'number' ? (el.base / 100) : null,
+                price: typeof el.price === 'number' ? divideFee(el.price) : null,
                 baseAndStart: el.base + ',' + item.startNum,
                 carType: el.carType,
                 carLength: el.carLength,
