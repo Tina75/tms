@@ -53,7 +53,7 @@
             </tr>
             <tr>
               <td>业务员：{{data.salesmanName}}</td>
-              <td>是否开票：{{data.isInvoice == 0 ? `否` : `是（${data.invoiceRate}%）`}}</td>
+              <td>是否开票：{{data.isInvoice == 0 ? `否` : `是（${source !== 'order' ? data.invoiceRate : getFeeText(data.invoiceRate)}%）`}}</td>
             </tr>
           </tbody>
         </table>
@@ -125,6 +125,7 @@ import Printd from 'printd'
 import City from '@/libs/js/city'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
+import { multiplyFee } from '@/libs/js/config'
 export default {
   props: {
     list: {
@@ -206,6 +207,9 @@ export default {
       this.$nextTick(() => {
         this.printer.print(this.$refs.htmlContent, this.cssText)
       })
+    },
+    getFeeText (val) {
+      return multiplyFee(val)
     }
   }
 }
