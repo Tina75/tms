@@ -13,11 +13,10 @@
         <p class="wait-collect__view-title">{{title}}</p>
         <p class="wait-collect__view-supName">
           <span>
-            <!--总额 {{formatFee(activeSender ? activeSender.calcTotalFee : 0)}}-->
-            总额 {{activeSender.calcTotalFee | toPoint}}
+            总额 {{formatFee(activeSender ? activeSender.calcTotalFee : 0)}}
           </span>
           <span class="i-ml-20">
-            已收 {{activeSender.verifiedFee  | toPoint}}
+            已收 {{formatFee(activeSender ? activeSender.verifiedFee : 0)}}
           </span>
         </p>
       </div>
