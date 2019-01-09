@@ -161,7 +161,7 @@ import $bus from '@/libs/js/eventBus.js'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
 import float from '@/libs/js/float'
-import { roundFee } from '@/libs/js/config'
+import { roundFee, multiplyMileage } from '@/libs/js/config'
 import NP from 'number-precision'
 export default {
   name: 'SendFeeComponent',
@@ -397,7 +397,8 @@ export default {
           partnerName: self.carrierInfo.carrierName,
           carType: self.carrierInfo.carType,
           carLength: self.carrierInfo.carLength,
-          distance: self.payment.mileage ? float.round(self.payment.mileage * 1000) : 0,
+          // distance: self.payment.mileage ? float.round(self.payment.mileage * 1000) : 0,
+          distance: multiplyMileage(self.payment.mileage),
           ...self.financeRulesInfo
         },
         methods: {
