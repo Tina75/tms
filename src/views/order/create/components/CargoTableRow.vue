@@ -21,7 +21,6 @@
       v-model="record[col.key]"
       :min="col.min"
       :precision="col.point"
-      :parser="handleParse"
       @on-change="handleChange(col.key)"
       @on-blur="handleBlur(col)"
     >
@@ -122,12 +121,12 @@ export default {
     /**
      * 保持小数
      */
-    handleParse (value) {
-      if (this.requird) {
-        return float.floor(value, this.col.point).toString()
-      }
-      return value ? float.floor(value, this.col.point).toString() : value
-    },
+    // handleParse (value) {
+    //   if (this.requird) {
+    //     return float.floor(value, this.col.point).toString()
+    //   }
+    //   return value ? float.floor(value, this.col.point).toString() : value
+    // },
     /**
      * 新增货物
      */
