@@ -6,7 +6,8 @@ import _ from 'lodash'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/pages/client'
 import { mapActions, mapGetters } from 'vuex'
-
+import { roundFee, roundVolume, roundWeight, roundWeightKg, divideFee } from '@/libs/js/config'
+import NP from 'number-precision'
 export default {
   data () {
     return {
@@ -100,24 +101,31 @@ export default {
     // 支付总额
     paymentTotal () {
       let total
-      total = Number(this.payment.freightFee) +
-              Number(this.payment.loadFee) +
-              Number(this.payment.unloadFee) +
-              Number(this.payment.insuranceFee) +
-              Number(this.payment.otherFee)
-      if (this.pageName === 'feright') total += Number(this.payment.tollFee)
-      return Float.round(total)
+      total = NP.plus(
+        Number(this.payment.freightFee),
+        Number(this.payment.loadFee),
+        Number(this.payment.unloadFee),
+        Number(this.payment.insuranceFee),
+        Number(this.payment.otherFee)
+      )
+      // total = Number(this.payment.freightFee) +
+      //         Number(this.payment.loadFee) +
+      //         Number(this.payment.unloadFee) +
+      //         Number(this.payment.insuranceFee) +
+      //         Number(this.payment.otherFee)
+      if (this.pageName === 'feright') total = NP.plus(total, Number(this.payment.tollFee))
+      return roundFee(total)
     },
     // 货物总计
     orderTotal () {
       return this.detail.reduce((last, item) => {
-        const cargoCost = item.cargoCost / 100
+        const cargoCost = divideFee(item.cargoCost)
         return {
-          cargoCost: Float.round(last.cargoCost + cargoCost),
+          cargoCost: roundFee(last.cargoCost + cargoCost),
           quantity: Float.round(last.quantity + item.quantity),
-          weight: Float.round(last.weight + item.weight, 3),
-          weightKg: Float.round(last.weightKg + item.weightKg),
-          volume: Float.round(last.volume + item.volume, 6)
+          weight: roundWeight(last.weight + item.weight),
+          weightKg: roundWeightKg(last.weightKg + item.weightKg),
+          volume: roundVolume(last.volume + item.volume)
         }
       }, {
         cargoCost: 0,
@@ -233,7 +241,7 @@ export default {
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
       // return typeof money === 'number' ? money / 100 : null
-      return (typeof money === 'number' && money !== 0) ? money / 100 : null
+      return (typeof money === 'number' && money !== 0) ? divideFee(money) : null
     },
 
     // 格式化金额单位为分

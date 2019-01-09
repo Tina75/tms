@@ -1,10 +1,10 @@
 <template>
   <div :class="{'money-input-component-short': suffix}" class="money-input-component">
-    <InputNumber v-model="money" :min="0"
-                 :placeholder="placeholder"
-                 :disabled="isDisabled"
-                 @on-change="changeHandler"
-                 @on-blur="blurHandler" />
+    <TagNumberInput v-model="money" :min="0"
+                    :placeholder="placeholder"
+                    :disabled="isDisabled"
+                    @on-change="changeHandler"
+                    @on-blur="blurHandler" />
 
     <span v-if="suffix"
           class="number-input-unit">元</span>
@@ -12,9 +12,13 @@
 </template>
 
 <script>
+import TagNumberInput from '@/components/TagNumberInput'
 import { roundFee } from '@/libs/js/config'
 export default {
   name: 'MoneyInput',
+  components: {
+    TagNumberInput
+  },
   props: {
     value: [ Number, String ],
     isDisabled: {
