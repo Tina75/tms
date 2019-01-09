@@ -44,7 +44,7 @@
           <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.weight" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>吨
         </FormItem>
         <FormItem v-show="tmsCargoDto.weightKgOption === 1" label="重量：" >
-          <TagNumberInput :min="0" :precision="$numberPrecesion.weightKg" v-model="validate.weight" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>公斤
+          <TagNumberInput :min="0" :precision="$numberPrecesion.weightKg" v-model="validate.weightKg" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>公斤
         </FormItem>
         <FormItem v-show="tmsCargoDto.volumeOption === 1" label="体积：">
           <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.volume" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>方
@@ -93,6 +93,7 @@ export default {
         unit: '',
         cargoCost: '',
         weight: '',
+        weightKg: '',
         volume: '',
         remark1: '',
         remark2: ''
@@ -150,7 +151,7 @@ export default {
             cargoName: this.validate.cargoName,
             unit: this.validate.unit,
             cargoCost: multiplyFee(this.validate.cargoCost),
-            weight: parseFloat(this.validate.weight),
+            weight: this.tmsCargoDto.weightOption === 1 ? parseFloat(this.validate.weight) : parseFloat(this.validate.weightKg),
             volume: parseFloat(this.validate.volume),
             remark1: this.validate.remark1,
             remark2: this.validate.remark2,
