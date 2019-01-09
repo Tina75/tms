@@ -181,8 +181,7 @@ import SelectInput from '@/components/SelectInput.vue'
 import { mapGetters, mapActions } from 'vuex'
 // import City from '@/libs/js/city'
 import SearchMixin from '@/views/order/management/searchMixin.js'
-import float from '@/libs/js/float'
-
+import { renderFee } from '@/libs/js/config'
 // let hasTab = false
 
 export default {
@@ -530,7 +529,8 @@ export default {
           key: 'totalFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.totalFee ? float.round(params.row.totalFee / 100) : 0)
+            return renderFee(h, params.row.totalFee)
+            // return h('span', params.row.totalFee ? float.round(params.row.totalFee / 100) : 0)
           }
         }
       ],

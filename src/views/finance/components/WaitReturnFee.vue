@@ -13,7 +13,7 @@
         <p class="wait-verify__view-title">{{title}}</p>
         <p class="wait-verify__view-supName">
           <span>
-            返现总额 {{activeDriver ? (activeDriver.calcTotalFee / 100).toFixed(2) : 0}}
+            返现总额 {{activeDriver.calcTotalFee | toPoint}}
           </span>
         </p>
       </div>
@@ -24,7 +24,7 @@
         <ListSenderItem v-for="(item, name) in drivers" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
           <template slot="supName">
             <span>
-              返现总额 {{(item.calcTotalFee / 100).toFixed(2) }}
+              返现总额 {{item.calcTotalFee | toPoint}}
             </span>
           </template>
         </ListSenderItem>

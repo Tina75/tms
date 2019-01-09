@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-08 21:15:46
+ * @Last Modified time: 2019-01-09 15:02:50
  */
 import float from './float'
 import NP from 'number-precision'
@@ -47,18 +47,21 @@ export const roundFee = (fee) => {
   return float.round(fee, NumberPrecesion.fee)
 }
 /**
- * 接口返回的费用需乘以10000
+ * 接口返回的费用需乘以100
  * @param {number} fee 接口返回的值
  */
 export const multiplyFee = (fee) => {
-  return float.round(NP.times(fee, 100))
-}
-
-export const divideFee = (fee) => {
-  return roundFee(NP.divide(fee, 100))
+  return float.round(NP.times(fee || 0, 100))
 }
 /**
- * 保留2位小数字符串类型
+ * 提交的值除以100
+ * @param {*} fee
+ */
+export const divideFee = (fee) => {
+  return roundFee(NP.divide(fee || 0, 100))
+}
+/**
+ * 保留4位小数字符串类型
  * @param {number} value
  */
 export const getFeeText = (value) => {
@@ -93,13 +96,26 @@ export const renderFee = (h, value) => {
 export const roundMileage = (value) => {
   return float.round(value, NumberPrecesion.mileage)
 }
-
+/**
+ * 接口返回的计费里程需乘以1000
+ * @param {number} fee 接口返回的值
+ */
+export const multiplyMileage = (fee) => {
+  return float.round(NP.times(fee || 0, 1000))
+}
+/**
+ * 计费里程提交的值除以1000
+ * @param {*} fee
+ */
+export const divideMileage = (fee) => {
+  return roundMileage(NP.divide(fee || 0, 1000))
+}
 /**
  * 字符串化，保留小数
  * @param {*} value
  */
 export const getMileageText = (value) => {
-  return value ? NP.divide(value, 1000).toFixed(NumberPrecesion.mileage) : '-'
+  return value ? divideMileage(value).toFixed(NumberPrecesion.mileage) : '-'
 }
 /**
  * 列表中计费里程格式化

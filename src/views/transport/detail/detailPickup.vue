@@ -133,7 +133,7 @@
             <Row class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
-                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ info.totalFee / 100 }}</span>元
+                <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ info.totalFee | toPoint }}</span>元
               </i-col>
             </Row>
             <Row v-if="info.assignCarType === 1" class="detail-field-group">
@@ -291,7 +291,7 @@ import allocationStrategy from '../constant/allocation.js'
 import { mapActions } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import CarPhoto from './components/car-photo.vue'
-
+import { divideFee } from '@/libs/js/config'
 export default {
   name: 'detailPickup',
   components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo, CarPhoto },
@@ -453,7 +453,8 @@ export default {
           key: 'cargoCost',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return this.tableDataRender(h, divideFee(p.row.cargoCost))
+            // return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {

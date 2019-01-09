@@ -35,6 +35,7 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
+import { getFeeText } from '@/libs/js/config'
 
 export default {
   name: 'orderList',
@@ -162,10 +163,10 @@ export default {
         }
       }).then(res => {
         this.orderData.orderNum = res.data.data.orderNum
-        this.orderData.totalFeeText = (res.data.data.totalFee / 100).toFixed(2)
+        this.orderData.totalFeeText = getFeeText(res.data.data.totalFee)
         this.orderData.list = res.data.data.subOrderInfos.map(item => {
           return Object.assign({}, item, {
-            totalFeeText: (item.totalFee / 100).toFixed(2),
+            totalFeeText: getFeeText(item.totalFee),
             orderTimeText: new Date(item.orderTime).Format('yyyy-MM-dd hh:mm')
           })
         })

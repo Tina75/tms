@@ -107,7 +107,8 @@ import PayInfo from './PayInfo'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
 import float from '@/libs/js/float'
-
+import { roundFee } from '@/libs/js/config'
+import NP from 'number-precision'
 export default {
   name: 'PickupFeeComponent',
   components: { TagNumberInput, PayInfo, AllocationStrategy },
@@ -182,7 +183,7 @@ export default {
       if ((value && validator.fee(value)) || !value) {
         callback()
       } else {
-        callback(new Error('费用整数位最多输入9位,小数2位'))
+        callback(new Error('费用整数位最多输入9位,小数4位'))
       }
     }
     return {
@@ -215,13 +216,20 @@ export default {
   computed: {
     // 计算总费用
     paymentTotal () {
-      let total
-      total = Number(this.payment.freightFee) +
-              Number(this.payment.loadFee) +
-              Number(this.payment.unloadFee) +
-              Number(this.payment.insuranceFee) +
-              Number(this.payment.otherFee)
-      return float.round(total)
+      let total = NP.plus(
+        Number(this.payment.freightFee),
+        Number(this.payment.loadFee),
+        Number(this.payment.unloadFee),
+        Number(this.payment.insuranceFee),
+        Number(this.payment.otherFee)
+      )
+
+      // total = Number(this.payment.freightFee) +
+      //         Number(this.payment.loadFee) +
+      //         Number(this.payment.unloadFee) +
+      //         Number(this.payment.insuranceFee) +
+      //         Number(this.payment.otherFee)
+      return roundFee(total)
     }
   },
   watch: {
