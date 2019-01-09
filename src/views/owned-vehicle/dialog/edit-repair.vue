@@ -224,8 +224,8 @@ export default {
   },
   methods: {
     repairMoneyChange () {
-      if (this.validate.payMoney && float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney))) >= 0) {
-        this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
+      if (this.validate.payMoney && (this.validate.repairMoney - this.validate.payMoney) >= 0) {
+        this.validate.waitPayMoney = float.round((this.validate.repairMoney - this.validate.payMoney), this.$numberPrecesion.fee) || 0
       } else {
         this.validate.payMoney = this.validate.repairMoney
         this.validate.waitPayMoney = 0
@@ -233,11 +233,11 @@ export default {
       this.$refs.validate.validateField('payMoney')
     },
     payMoneyChange () {
-      if ((float.round(this.validate.repairMoney) - float.round(this.validate.payMoney)) <= 0) {
-        this.validate.payMoney = float.round(this.validate.repairMoney)
+      if (this.validate.repairMoney - this.validate.payMoney <= 0) {
+        this.validate.payMoney = this.validate.repairMoney
       }
       if (this.validate.repairMoney) {
-        this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
+        this.validate.waitPayMoney = float.round((this.validate.repairMoney - this.validate.payMoney), this.$numberPrecesion.fee) || 0
       }
     },
     // 修改页面初始化
