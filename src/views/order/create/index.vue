@@ -309,12 +309,12 @@
       <Col span="6">
       <FormItem v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" label="开票税率:" prop="invoiceRate">
         <Row>
-          <Col span="12">
+          <Col span="6">
           <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="1" :min="0" :max="100" clearable>
           </TagNumberInput>
           </Col>
-          <Col span="12" class="order-create__input-unit">
-          <span style="float: left"> %</span>
+          <Col span="18" class="order-create__input-unit">
+          <span style="float: left">%</span>
           <span>({{ invoiceFee }}元)</span>
           </Col>
         </Row>
@@ -379,6 +379,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
 import { formatePhone } from '@/libs/js/formate'
+import { roundFee } from '@/libs/js/config'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -655,7 +656,7 @@ export default {
       let totalFee = 0
       for (let fee of feeList) {
         if (orderForm[fee]) {
-          totalFee = float.round(totalFee + parseFloat(orderForm[fee]))
+          totalFee = roundFee(totalFee + orderForm[fee])
         }
       }
       return totalFee
@@ -685,7 +686,7 @@ export default {
       }
     },
     invoiceFee () {
-      const res = this.totalFee && this.orderForm.invoiceRate ? float.round(this.totalFee * this.orderForm.invoiceRate / 100) : 0
+      const res = this.totalFee && this.orderForm.invoiceRate ? roundFee(this.totalFee * this.orderForm.invoiceRate / 100) : 0
       return res
     }
   },
