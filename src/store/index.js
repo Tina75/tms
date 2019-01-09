@@ -89,7 +89,15 @@ const state = {
     // 订单备注
     orderRemarkOption: 1
   },
-  tmsCargoDto: {} // 常发货物
+  tmsCargoDto: {}, // 常发货物
+  // 异常货物上报临时存储
+  abnormalCargoInfos: {
+    parentOrderCargoList: [],
+    parentOrderData: [],
+    childOrderCargoList: [],
+    childOrderData: [],
+    originData: [] // 原始数据
+  }
 }
 
 export default new Vuex.Store({
