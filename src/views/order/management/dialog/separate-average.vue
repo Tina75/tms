@@ -47,6 +47,10 @@
             <span v-if="!orderDetail.volume">-</span>
             <TagNumberInput v-else :min="0" :precision="$numberPrecesion.volume" :value="row.volume" @on-change="(v)=>handleChange(index,'volume',v)"></TagNumberInput>
           </template>
+          <template slot-scope="{row, index}" slot="cargoCost">
+            <span v-if="!cargoCost">-</span>
+            <TagNumberInput v-else :min="0" :precision="$numberPrecesion.fee" :value="divideFee(row.cargoCost)" @on-change="(v)=>handleChange(index,'cargoCost',v)"></TagNumberInput>
+          </template>
         </Table>
       </div>
     </div>
@@ -120,7 +124,8 @@ export default {
               callback(new Error('拆单数量不能为空'))
             }
           },
-          trigger: 'blur' }
+          // trigger： 上下箭头，必须触发chang
+          trigger: 'change' }
         ]
       }
     }
@@ -190,6 +195,7 @@ export default {
     }
   },
   methods: {
+    divideFee: divideFee,
     /**
      * 拆单数量必须为整数
      */
@@ -316,7 +322,8 @@ export default {
     },
     save () {
       let vm = this
-      if (vm.backupCargoList.length === 0) {
+      if (vm.backupCargoList.length <= 1) {
+        this.$Message.error('至少要拆成2单')
         return
       }
       let errorKeywords = []
@@ -349,6 +356,15 @@ export default {
         }, 0)
         if (totalVolume !== this.cargoVolume) {
           errorKeywords.push('体积')
+        }
+      }
+      if (vm.cargoCost) {
+        let totalCost = vm.backupCargoList.reduce((total, cargo) => {
+          total = roundFee(NP.plus(total, cargo.cargoCost))
+          return total
+        }, 0)
+        if (totalCost !== vm.cargoCost) {
+          errorKeywords.push('货值')
         }
       }
       if (errorKeywords.length > 0) {
