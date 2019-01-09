@@ -117,7 +117,7 @@
                 class="fileImage"
                 @click="handleView(img.count)">
               </div>
-              <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
+              <p class="titleInput">{{ img.title }}</p>
             </div>
           </div>
         </Row>
