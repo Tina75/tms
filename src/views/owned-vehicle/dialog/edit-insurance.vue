@@ -187,12 +187,12 @@ export default {
           { required: true, message: '失效日期不能为空' }
         ],
         trafficFee: [
-          { required: true, message: '交强险金额不能为空' },
-          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
-        ],
-        businessFee: [
-          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+          { required: true, message: '交强险金额不能为空' }
+          // { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ]
+        // businessFee: [
+        //   { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+        // ]
       }
     }
   },

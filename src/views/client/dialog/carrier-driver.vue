@@ -83,7 +83,8 @@
           <FormItem label="载重：" prop="shippingWeight">
             <Row>
               <Col span="20">
-              <Input :precision="$numberPrecesion.weight" v-model="validate.shippingWeight" :maxlength="9" placeholder="必填"></Input>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.shippingWeight" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <!-- <Input :precision="$numberPrecesion.weight" v-model="validate.shippingWeight" :maxlength="9" placeholder="必填"></Input> -->
               </Col>
               <Col span="2" offset="1">
               <span>吨</span>
@@ -95,7 +96,8 @@
           <FormItem label="净空：" prop="shippingVolume">
             <Row>
               <Col span="20">
-              <Input :precision="$numberPrecesion.volume" v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.shippingVolume" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <!-- <Input :min="0" :precision="$numberPrecesion.volume" v-model="validate.shippingVolume" :maxlength="9" placeholder="请输入"></Input> -->
               </Col>
               <Col span="2" offset="1">
               <span>方</span>
@@ -181,6 +183,7 @@ import UpLoad from '@/components/upLoad/index.vue'
 import SelectInput from '@/components/SelectInput'
 import SelectCarLength from '@/components/SelectCarLength'
 import SelectCarType from '@/components/SelectCarType'
+import TagNumberInput from '@/components/TagNumberInput'
 import _ from 'lodash'
 export default {
   name: 'carrier-driver',
@@ -189,7 +192,8 @@ export default {
     UpLoad,
     SelectInput,
     SelectCarLength,
-    SelectCarType
+    SelectCarType,
+    TagNumberInput
   },
   mixins: [BaseDialog],
   data () {
@@ -200,7 +204,10 @@ export default {
       carrierId: '', // 承运商id
       driverId: '', // 司机id
       carId: '',
-      validate: {},
+      validate: {
+        shippingWeight: null,
+        shippingVolume: null
+      },
       address: [],
       address1: {},
       address2: {},
