@@ -117,7 +117,7 @@ export default {
          */
         // 公斤先乘 1000
         const weight = float.round(rule.ruleType === 7 || rule.ruleType === 6 ? this.weight * 1000 : this.weight, 3)
-        const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 100)
+        const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 100, 4)
         Server({
           url: '/finance/charge/calc',
           method: 'post',
