@@ -467,17 +467,23 @@ export default {
       'carrierDrivers'
     ])
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if (from.name === 'order-import') {
+        let importId = jsCookie.get('imported_id')
+        // 有cookie 从批量导入进来的，调用一下接口，传importId
+        if (importId) {
+          vm.keyword = {
+            importId: importId
+          }
+          jsCookie.remove('imported_id')
+        }
+      }
+    })
+  },
   mounted () {
     if (this.$route.query.tab) { // 首页跳转来的
       this.showSevenDate()
-    }
-    let importId = jsCookie.get('imported_id')
-    // 有cookie 从批量导入进来的，调用一下接口，传importId
-    if (importId) {
-      this.keyword = {
-        importId: importId
-      }
-      jsCookie.remove('imported_id')
     }
   },
   methods: {
