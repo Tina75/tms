@@ -102,11 +102,11 @@ import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import FontIcon from '@/components/FontIcon'
 import DataEmpty from '@/components/DataEmpty'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 import _ from 'lodash'
 import payTypeDialog from '../dialogs/payTypeDialog'
 import { payTypeMap } from '../constant/numList'
-import { getFeeText } from '@/libs/js/config'
+import { getFeeText, roundFee } from '@/libs/js/config'
 export default {
   name: 'writingOff',
   components: {
@@ -473,7 +473,7 @@ export default {
             verifyType: 1,
             isOil: 0,
             scene: this.scene,
-            needPay: float.round(data.row.totalFeeText),
+            needPay: roundFee(data.row.totalFeeText),
             settleTypeDesc: data.row.settleTypeDesc
           },
           methods: {

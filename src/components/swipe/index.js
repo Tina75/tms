@@ -10,21 +10,26 @@ import PhotoSwipeUIDefault from 'photoswipe/dist/photoswipe-ui-default'
  * @param {array<title,src,msrc>} items 图片列表
  * @param {object} options photoswipe 选项
  */
-import LoadingImg from '@/assets/loading.gif'
+
 const prepareOpenPhotoSwipe = (items) => {
-  // 等先用loading图片替换原实际图片，在loaded图片后，再用原图
-  let transferItems = items.map((item) => {
-    let { src, ...rest } = item
-    return {
-      src: LoadingImg,
-      realSrc: item.src,
-      isLoadingImg: true,
-      w: 36,
-      h: 36,
-      ...rest
+  // 等图片宽高获取后，在弹窗
+  let isComplete = false
+  const length = items.length
+  // 设置宽高
+  items.forEach((item, index) => {
+    if (!item.src) {
+      throw new Error('图片src参数错误')
+    }
+    let img = new Image()
+    img.src = item.src
+    img.onload = function () {
+      item.w = img.naturalWidth || img.width
+      item.h = img.naturalHeight || img.height
+      if (length === (index + 1)) {
+        isComplete = true
+      }
     }
   })
-
   return (index = 0, options = {}) => {
     let SwipeInstance = new Vue({
       mixins: [SwipeComponent]
@@ -43,47 +48,30 @@ const prepareOpenPhotoSwipe = (items) => {
       index,
       ...options
     }
-    let queue = []
     const initSwiper = function () {
       const gallery = new PhotoSwipe(
         component.$el.children[0],
         PhotoSwipeUIDefault,
-        transferItems,
+        items,
         photoSwipeOptions
       )
       gallery.init()
       gallery.listen('close', function () {
         document.body.removeChild(component.$el)
         SwipeInstance = null
-        queue = []
-      })
-      gallery.listen('gettingData', function (index, item) {
-        if (item.isLoadingImg && !queue.includes(index)) {
-          let img = new Image()
-          img.onload = function () {
-            item.w = img.naturalWidth || img.width
-            item.h = img.naturalHeight || img.height
-            item.src = img.src
-            item.isLoadingImg = false
-            gallery.invalidateCurrItems()
-            gallery.updateSize(true)
-          }
-          img.src = item.realSrc
-          queue.push(index)
-        }
       })
     }
-    initSwiper()
-    // if (isComplete) {
-    // } else {
-    //   let timer = setInterval(() => {
-    //     if (isComplete) {
-    //       clearInterval(timer)
-    //       timer = null
-    //       initSwiper()
-    //     }
-    //   }, 500)
-    // }
+    if (isComplete) {
+      initSwiper()
+    } else {
+      let timer = setInterval(() => {
+        if (isComplete) {
+          clearInterval(timer)
+          timer = null
+          initSwiper()
+        }
+      }, 500)
+    }
   }
 }
 
