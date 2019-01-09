@@ -322,6 +322,7 @@ import FontIcon from '@/components/FontIcon'
 import TextAreaNumber from '@/components/TextAreaNumber'
 import { formatePhone } from '@/libs/js/formate'
 import SelectInput from '@/components/SelectInput.vue'
+import { mapActions } from 'vuex'
 export default {
   name: 'company-setting',
   components: {
@@ -399,6 +400,7 @@ export default {
     this.getCompanyInfo()
   },
   methods: {
+    ...mapActions(['getUserInfo']),
     formatePhoneNum (temp) {
       return formatePhone(temp)
     },
@@ -505,6 +507,7 @@ export default {
               this.$Message.success('保存成功!')
               this.isEdit = false
               this.getCompanyInfo()
+              this.getUserInfo()
             }).catch(() => {
               this.loading = false
             })

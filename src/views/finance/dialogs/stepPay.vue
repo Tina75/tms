@@ -105,7 +105,7 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
-import { multiplyFee } from '@/libs/js/config'
+import { multiplyFee, divideFee } from '@/libs/js/config'
 import { payTypeMap } from '../constant/numList'
 
 export default {
@@ -131,7 +131,7 @@ export default {
       }).then(res => {
         this.payItems = res.data.data.map(item => {
           return Object.assign({}, item, {
-            feeText: (item.fee / 100).toFixed(2),
+            feeText: divideFee(item.fee),
             isEdit: false,
             showAdjuster: false
           })
@@ -140,7 +140,7 @@ export default {
         this.payItems.map(item => {
           this.needPay += Number(item.fee)
         })
-        this.needPay = (this.needPay / 100).toFixed(2)
+        this.needPay = divideFee(this.needPay)
         if (!res.data.data.some(item => !item.verifyStatus)) {
           this.close()
           this.ok()

@@ -45,10 +45,10 @@
                 <p>核销人：<span>{{item.operatorName}}</span></p>
                 </Col>
                 <Col span="3">
-                <p>应付金额：<span>{{item.calcFee|moneyFormat}}</span></p>
+                <p>应付金额：<span>{{item.calcFee|toPoint}}</span></p>
                 </Col>
                 <Col span="3">
-                <p>实付金额：<span>{{item.actualFee|moneyFormat}}</span></p>
+                <p>实付金额：<span>{{item.actualFee|toPoint}}</span></p>
                 </Col>
                 <Col span="3">
                 <p>付款方式：<span>{{item.payTypeDesc}}</span></p>
@@ -77,14 +77,15 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
-import Vue from 'vue'
+// import Vue from 'vue'
+import { getFeeText } from '@/libs/js/config'
 
 /**
  *金额格式化
  */
-Vue.filter('moneyFormat', function (value) {
-  return value ? (value / 100).toFixed(2) : '0'
-})
+// Vue.filter('moneyFormat', function (value) {
+//   return value ? (value / 100).toFixed(2) : '0'
+// })
 
 export default {
   name: 'writtenOffDetail',
@@ -197,10 +198,10 @@ export default {
       }).then(res => {
         this.writtenOffData.orderNum = res.data.data.orderNum
         this.writtenOffData.orderNo = res.data.data.orderNo
-        this.writtenOffData.totalFeeText = (res.data.data.totalFee / 100).toFixed(2)
+        this.writtenOffData.totalFeeText = getFeeText(res.data.data.totalFee)
         this.writtenOffData.list = res.data.data.orderList.map(item => {
           return Object.assign({}, item, {
-            totalFeeText: (item.totalFee / 100).toFixed(2),
+            totalFeeText: getFeeText(item.totalFee),
             orderTimeText: new Date(item.orderTime).Format('yyyy-MM-dd hh:mm')
           })
         })
