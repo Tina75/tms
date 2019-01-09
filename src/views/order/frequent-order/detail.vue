@@ -167,6 +167,7 @@ import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
 import settlement from '@/libs/constant/settlement.js'
+import { roundFee, NumberPrecesion } from '@/libs/js/config'
 export default {
   name: 'frequent-order-detail',
   mixins: [ BasePage ],
@@ -277,7 +278,7 @@ export default {
         total += Number(item.cargoCost)
       })
       total /= 100
-      return float.round(total) + '元'
+      return roundFee(total) + '元'
     },
     // 总数量
     quantityTotal () {
@@ -293,7 +294,7 @@ export default {
       this.detail.orderCargoTemplateList.map((item) => {
         total += Number(item.volume)
       })
-      return float.round(total, 4) + '方'
+      return float.round(total, NumberPrecesion.volume) + '方'
     },
     // 总重量
     weightTotal () {
@@ -301,7 +302,7 @@ export default {
       this.detail.orderCargoTemplateList.map((item) => {
         total += Number(item.weight)
       })
-      return float.round(total, 3) + '吨'
+      return float.round(total, NumberPrecesion.weight) + '吨'
     }
   },
   mounted () {
