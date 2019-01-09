@@ -1,6 +1,7 @@
 <template>
   <Poptip trigger="hover" class="header-user" transfer placement="bottom" popper-class="dropdown-info" title="账号信息" width="260" style="cursor: default">
-    <Avatar  class="avatar"></avatar>
+    <Avatar v-if="UserInfo.avatarPic" :style="'background-image: url(' + UserInfo.avatarPic +')'" class="avatar"></Avatar>
+    <Avatar v-else class="avatar"></Avatar>
     <div class="user-info">
       {{UserInfo.name}}
     </div>

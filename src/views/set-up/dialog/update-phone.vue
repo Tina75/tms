@@ -107,23 +107,23 @@ export default {
       this.$refs.formModal.validateField('phone', callback => {
         if (!callback) {
           let count = 90
-          vm.disabled = true
           Server({
             url: '/set/phoneSms',
             method: 'get',
             data: { phone: vm.formModal.phone }
           }).then(() => {
-            this.$Message.success('短信验证码已发送至手机，请注意查收')
+            vm.disabled = true
+            vm.$Message.success('短信验证码已发送至手机，请注意查收')
+            let interval = setInterval(() => {
+              if (count === 1) {
+                vm.disabled = false
+                vm.codeMsg = '获取验证码'
+                clearInterval(interval)
+              } else {
+                vm.codeMsg = --count + '秒后可重试'
+              }
+            }, 1000)
           })
-          let interval = setInterval(() => {
-            if (count === 1) {
-              vm.disabled = false
-              vm.codeMsg = '获取验证码'
-              clearInterval(interval)
-            } else {
-              vm.codeMsg = --count + '秒后可重试'
-            }
-          }, 1000)
         }
       })
     },
