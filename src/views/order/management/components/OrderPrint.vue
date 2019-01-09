@@ -48,7 +48,7 @@
             <tr>
               <td>回单数：{{data.receiptCount}}</td>
               <td>提货方式：{{pickup(data)}}</td>
-              <td v-if="source === 'order'">代收货款：{{data.collectionMoney ? data.collectionMoney / 100 + '元' : '-'}}</td>
+              <td v-if="source === 'order'">代收货款：{{data.collectionMoney | fee}}元</td>
               <td v-else>代收货款：{{data.collectionMoney ? data.collectionMoney + '元' : '-'}}</td>
             </tr>
             <tr>
@@ -74,20 +74,20 @@
               <td>{{cargo.cargoName}}</td>
               <td>{{cargo.unit}}</td>
               <td>{{cargo.quantity || 0}}</td>
-              <td v-if="source === 'order'">{{cargo.cargoCost / 100}}</td>
-              <td v-else>{{cargo.cargoCost / 1}}</td>
+              <td v-if="source === 'order'">{{cargo.cargoCost | fee}}</td>
+              <td v-else>{{cargo.cargoCost}}</td>
               <td>{{cargo.weight || 0}}</td>
               <td>{{cargo.volume || 0}}</td>
             </tr>
             <tr>
               <td v-if="source === 'order'" colspan="6" class="table-footer">
-                <span class="table-footer-item">运输费：{{ data.freightFee ?  data.freightFee / 100 + '元' : '-' }}</span>
-                <span class="table-footer-item">提货费：{{ data.pickupFee ? data.pickupFee / 100 + '元' : '-' }}</span>
-                <span class="table-footer-item">装货费：{{ data.loadFee ? data.loadFee / 100 + '元' : '-' }}</span>
-                <span class="table-footer-item">卸货费：{{ data.unloadFee ? data.unloadFee / 100 + '元' : '-' }}</span>
-                <span class="table-footer-item">保险费：{{ data.insuranceFee ? data.insuranceFee / 100 + '元' : '-' }}</span>
-                <span class="table-footer-item">其他运费：{{ data.otherFee ? data.otherFee / 100 + '元' : '-' }}</span>
-                <span class="table-footer-item">合计运费: {{ data.totalFee ? data.totalFee / 100 + '元' : '-' }}</span>
+                <span class="table-footer-item">运输费：{{ data.freightFee | fee }}元</span>
+                <span class="table-footer-item">提货费：{{ data.pickupFee  | fee }}元</span>
+                <span class="table-footer-item">装货费：{{ data.loadFee | fee }}元</span>
+                <span class="table-footer-item">卸货费：{{ data.unloadFee | fee }}元</span>
+                <span class="table-footer-item">保险费：{{ data.insuranceFee | fee }}元</span>
+                <span class="table-footer-item">其他运费：{{ data.otherFee | fee }}元</span>
+                <span class="table-footer-item">合计运费: {{ data.totalFee | fee }}元</span>
                 <span class="table-footer-item">结算方式：{{settlement(data) || '-'}}</span>
               </td>
               <td v-else colspan="6" class="table-footer">
@@ -125,8 +125,11 @@ import Printd from 'printd'
 import City from '@/libs/js/city'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
-import { multiplyFee } from '@/libs/js/config'
+import { multiplyFee, getFeeText } from '@/libs/js/config'
 export default {
+  filters: {
+    fee: getFeeText
+  },
   props: {
     list: {
       type: Array,

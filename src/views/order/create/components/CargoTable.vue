@@ -345,7 +345,7 @@ export default {
         }
         sum.weight = float.round((cargo.weight || 0) + sum.weight, NumberPrecesion.weight)
         sum.volume = float.round((cargo.volume || 0) + sum.volume, NumberPrecesion.volume)
-        sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
+        sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost, NumberPrecesion.fee)
         sum.quantity = (cargo.quantity || 0) + sum.quantity
         return sum
       }, {
