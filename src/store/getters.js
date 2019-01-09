@@ -22,3 +22,5 @@ export const OrderSet = (state) => state.orderSet
 export const SmsSet = (state) => state.smsSet
 /** 分摊策略 */
 export const AllocationStrategy = (state) => state.allocationStrategy
+/** 异常货物信息 */
+export const AbnormalCargoInfos = (state) => state.abnormalCargoInfos

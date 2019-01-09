@@ -19,20 +19,23 @@
     </div>
 
     <div class="part">
-      <Row class="detail-field-group" style="margin-bottom: 10px">
-        <i-col span="7" style="margin-right: 15px;">
+      <Row class="detail-field-group">
+        <i-col span="6">
           <span class="detail-field-title-sm detail-field-required">异常环节：</span>
           <Select v-model="abnormalTiming" style="width:160px" transfer @on-change="handleChangeLinks">
             <Option v-for="item in abnormalTimings" :value="item.abnormalTiming" :key="item.abnormalTiming">{{ item.abnormalTimingDesc }}</Option>
           </Select>
         </i-col>
-        <i-col span="7" style="margin-right: 15px;">
+        <i-col :offset="1" span="6">
           <span class="detail-field-title-sm detail-field-required">异常类型：</span>
-          <Select v-model="abnormalTypeCode" style="width:160px" transfer>
+          <Select v-model="abnormalTypeCode" style="width:160px" transfer @on-change="handleChangeTypeCode">
             <Option v-for="item in abnormalTypeCodes" :value="item.abnormalTypeCode" :key="item.abnormalTypeCode">{{ item.abnormalTypeDesc }}</Option>
           </Select>
         </i-col>
-        <i-col span="9">
+        <i-col v-if="abnormalTypeCode === 1 || abnormalTypeCode === 2" span="3">
+          <a @click="openCargoSeparateDialog">+添加异常货物信息</a>
+        </i-col>
+        <i-col :offset="1" span="7">
           <span class="detail-field-title-sm detail-field-required" style="width: 125px;">是否修改运费：</span>
           <RadioGroup v-model="isChangeFee" class="abnormal-radio" @on-change="handleCheckFee">
             <Radio :label="1" style="margin-right: 35px;">是</Radio>
@@ -71,6 +74,22 @@
 
       <div v-if="isChangeFee === 1 && canUpdateFee === 2 && (changeFeeType === 0 || changeFeeType === 2)" class="err-message">存在多个异常记录未处理，只能修改最后一次上报的异常记录的运费。</div>
 
+      <div v-if="AbnormalCargoInfos.childOrderCargoList.length && (abnormalTypeCode === 1 || abnormalTypeCode === 2)" style="padding-left: 8px;">
+        <div class="border-dashed"></div>
+        <div class="order-number">
+          异常货物信息
+        </div>
+        <div>
+          <table-extend
+            :order-list="AbnormalCargoInfos.childOrderData"
+            :col-width="140"
+            class="abnormal-table-extend"
+            style="float: left"></table-extend>
+          <Table :columns="childDataColumns" :data="AbnormalCargoInfos.childOrderCargoList"></Table>
+        </div>
+        <div class="border-dashed"></div>
+      </div>
+
       <Row class="detail-field-group" style="margin: 25px 0 10px;">
         <i-col span="24" class="exception-distribution">
           <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;width: 90px;line-height: 1.6;">异常描述：</span>
@@ -108,12 +127,15 @@ import SendFee from '../components/SendFee'
 import PickupFee from '../components/PickupFee'
 import UpLoad from '@/components/upLoad/index.vue'
 import float from '@/libs/js/float'
+import TableExtend from '../components/TableExtend.vue'
+import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+import { mapGetters } from 'vuex'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
 export default {
   name: 'SendCar',
-  components: { TagNumberInput, UpLoad, PickupFee, SendFee },
-  mixins: [ BaseDialog ],
+  components: { TagNumberInput, UpLoad, PickupFee, SendFee, TableExtend },
+  mixins: [ BaseDialog, tableWeightColumnMixin ],
   data () {
     return {
       show: true,
@@ -145,8 +167,121 @@ export default {
       canUpdateFee: 0, // 判断多条异常记录只有最后一条可以修改运费
       sendWay: '1',
       btnLoading: false,
-      allocationStrategy: 1 // 分摊策略 默认按订单数分摊 v1.08新增
+      allocationStrategy: 1, // 分摊策略 默认按订单数分摊 v1.08新增
+      childDataColumns: [
+        {
+          title: '货物名称',
+          key: 'cargoName',
+          width: 140
+        },
+        {
+          title: '包装方式',
+          key: 'unit',
+          width: 100
+        },
+        {
+          title: '包装数量',
+          key: 'quantity',
+          width: 120
+        },
+        {
+          title: '体积（方）',
+          key: 'volume',
+          width: 120,
+          render: (h, params) => {
+            return h('div', float.round(params.row.volume, 6))
+          }
+        },
+        {
+          title: '操作',
+          key: 'do',
+          width: 128,
+          className: 'padding-left-30',
+          render: (h, params) => {
+            return h('div', [
+              h('a', {
+                style: {
+                  color: '#00a4bd'
+                },
+                on: {
+                  click: () => {
+                    const z = this
+                    // 读取vuex里的数据
+                    z.parentOrderCargoList = _.cloneDeep(z.AbnormalCargoInfos.parentOrderCargoList)
+                    z.parentOrderData = _.cloneDeep(z.AbnormalCargoInfos.parentOrderData)
+                    z.childOrderCargoList = _.cloneDeep(z.AbnormalCargoInfos.childOrderCargoList)
+                    z.childOrderData = _.cloneDeep(z.AbnormalCargoInfos.childOrderData)
+                    z.originData = _.cloneDeep(z.AbnormalCargoInfos.originData)
+                    // 如果parentOrderCargoList不为[]，说明之前操作过添加货物
+                    if (z.parentOrderCargoList.length > 0) {
+                      let hasParentList = z.parentOrderCargoList.find((item) => {
+                        return item.cargoId === params.row.cargoId
+                      })
+                      // 找到原单对应数组的下标
+                      let index = _.findIndex(z.parentOrderCargoList, hasParentList)
+                      hasParentList.quantity += params.row.quantity
+                      hasParentList.cargoCost = float.round(hasParentList.cargoCost + params.row.cargoCost)
+                      // 区分吨和公斤
+                      if (z.WeightOption === 1) {
+                        hasParentList.weight = float.round(hasParentList.weight + params.row.weight, 3)
+                      } else {
+                        hasParentList.weightKg += params.row.weightKg
+                      }
+                      hasParentList.volume = float.round(hasParentList.volume + params.row.volume, 6)
+
+                      z.$set(z.parentOrderCargoList, index, hasParentList)
+                      z.childOrderCargoList.splice(params.index, 1)
+                    } else { // 如果parentOrderCargoList为[]，说明之前未操作过添加货物
+                      z.childOrderCargoList.splice(params.index, 1)
+                    }
+
+                    // 合并单元格需要
+                    z.mergeCell('childOrderCargoList', 'childOrderData')
+                    // 修改vuex里的数据
+                    let cargo = {
+                      parentOrderCargoList: z.parentOrderCargoList,
+                      parentOrderData: z.parentOrderData,
+                      childOrderCargoList: z.childOrderCargoList,
+                      childOrderData: z.childOrderData,
+                      originData: z.originData
+                    }
+                    z.$store.commit('setAbnormalCargoInfos', cargo)
+                  }
+                }
+              }, '移除')
+            ])
+          }
+        }
+      ],
+      columnWeight: {
+        title: '重量（吨）',
+        key: 'weight',
+        width: 120,
+        render: (h, p) => {
+          return h('span', p.row.weight ? float.round(p.row.weight, 3) : 0)
+        }
+      },
+      columnWeightKg: {
+        title: '重量（公斤）',
+        key: 'weightKg',
+        width: 120,
+        render: (h, p) => {
+          return h('span', p.row.weightKg ? p.row.weightKg : 0)
+        }
+      },
+      parentOrderCargoList: [],
+      childOrderCargoList: [],
+      parentOrderData: [], // 原单的订单号信息
+      childOrderData: [], // 异常货物的订单号信息
+      originData: [] // 原始数据
     }
+  },
+
+  computed: {
+    ...mapGetters([
+      'WeightOption',
+      'AbnormalCargoInfos' // 异常货物信息
+    ])
   },
 
   created () {
@@ -159,12 +294,41 @@ export default {
       { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
     ]
     this.fetchData()
+    // 动态添加吨或公斤列
+    if (this.WeightOption === 1) {
+      this.triggerWeightColumn(this.childDataColumns, this.columnWeight, 3)
+    } else {
+      this.triggerWeightColumn(this.childDataColumns, this.columnWeightKg, 3)
+    }
   },
 
   methods: {
+    // 合并单元格需要
+    mergeCell (orderCargoList, orderData) {
+      // 将货物列表根据货物id排序
+      this[orderCargoList] = _.sortBy(this[orderCargoList], ['cargoId'])
+      // 将原来的tableExtend组件里的orderList置为空数组
+      this[orderData] = []
+      let obj = _.groupBy(this[orderCargoList], 'orderId')
+      for (let key in obj) {
+        // 合并单元格需要
+        if (obj[key].length > 1) {
+          obj[key].push(obj[key][0])
+        }
+        obj[key] = obj[key].map((item, index) => {
+          return {
+            orderNo: index === 0 ? item.orderNo : '',
+            customerOrderNo: index === 0 ? item.customerOrderNo : '',
+            cargoLength: index === 0 ? obj[key].length : 1
+          }
+        })
+        this[orderData].push(...obj[key])
+      }
+    },
     // 查询数据
     fetchData () {
       const _this = this
+      _this.$store.commit('resetAbnormalCargoInfos')
       _this.loading = true
       const data = {}
       if (_this.recordId) {
@@ -179,13 +343,22 @@ export default {
         data: data
       }).then(res => {
         _this.details = res.data.data
-        console.log(_this.details)
-        // 分摊策略
-        this.allocationStrategy = _this.details.allocationStrategy
-        // 派车类型
-        this.sendWay = _this.details.assignCarType.toString()
+        _this.childOrderCargoList = _this.details.abnormalCargolist
+        // 合并单元格需要
+        _this.mergeCell('childOrderCargoList', 'childOrderData')
+        // 修改vuex里的数据
+        let cargo = {
+          childOrderCargoList: _this.childOrderCargoList,
+          childOrderData: _this.childOrderData
+        }
+        _this.$store.commit('setAbnormalCargoInfos', cargo)
 
-        this.autoAbnormalLinks('selected', 1) // 自动带出selected=1的异常环节,和selected=1的异常类型
+        // 分摊策略
+        _this.allocationStrategy = _this.details.allocationStrategy
+        // 派车类型
+        _this.sendWay = _this.details.assignCarType.toString()
+
+        _this.autoAbnormalLinks('selected', 1) // 自动带出selected=1的异常环节,和selected=1的异常类型
 
         _this.canUpdateFee = _this.details.canUpdateFee // 多条异常记录只有最后一条可以修改运费
         _this.isChangeFee = _this.details.updateFee // 判断是否修改运费radio初始状态
@@ -206,11 +379,11 @@ export default {
           _this.payment[key] = _this.setMoneyUnit2Yuan(_this.details[key])
         }
 
-        if (this.type !== 3) {
-          delete this.payment.tollFee // 去掉路桥费
-          delete this.payment.accommodation // 去掉住宿费
+        if (_this.type !== 3) {
+          delete _this.payment.tollFee // 去掉路桥费
+          delete _this.payment.accommodation // 去掉住宿费
         }
-        // this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
+        // _this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
         // 将收费信息中的金额单位转为元
         let temp = _this.settlementPayInfo.map((item, i) => {
           if (!_this.details.abnormalPayInfos[i]) return item // 后台只返回预付、到付、回付有的那一项数据，前端需要都展示，保持数据同步
@@ -230,7 +403,7 @@ export default {
         _this.handleCheckFee(_this.isChangeFee)
 
         _this.loading = false
-      }).catch(err => console.error(err))
+      }).catch()
     },
 
     // 自动带出selected=1的异常环节,和selected=1的异常类型
@@ -266,7 +439,6 @@ export default {
           method: 'post',
           data: data
         }).then(res => {
-          console.log(res)
           _this.changeFeeType = res.data.data.status
           if (_this.changeFeeType === 0) {
             _this.checkUpdateFee()
@@ -301,10 +473,9 @@ export default {
                   item.isCashDisabled = statusDetail.tailPaidCash
                 }
               })
-              console.log(_this.settlementPayInfo)
             }
           }
-        }).catch(err => console.error(err))
+        }).catch()
       }
     },
 
@@ -328,6 +499,11 @@ export default {
     // 异常环节修改后，异常类型联动
     handleChangeLinks (val) {
       this.autoAbnormalLinks('abnormalTiming', val)
+    },
+
+    // 切换类型选项后清空之前vuex里的数据
+    handleChangeTypeCode () {
+      this.$store.commit('resetAbnormalCargoInfos')
     },
 
     // 提交
@@ -375,16 +551,13 @@ export default {
         okText: '是',
         cancelText: '否',
         onOk: () => {
-          console.log('保存')
           _this.doSubmit()
         },
         onCancel: () => {
-          console.log('取消')
           // 将payment 设置为初始值
           for (let key in _this.clonePayment) {
             _this.clonePayment[key] = _this.clonePayment[key] / 100
           }
-          console.log(_this.clonePayment)
         }
       })
     },
@@ -429,13 +602,17 @@ export default {
         data.billId = z.id
         data.billType = z.type
       }
-      console.log(data)
+      if (data.abnormalTypeCode === 1 || data.abnormalTypeCode === 2 || data.abnormalTypeCode === 3) {
+        data.abnormalCargolist = this.AbnormalCargoInfos.childOrderCargoList
+        for (let i = 0; i < data.abnormalCargolist.length; i++) {
+          data.abnormalCargolist[i].weightKg = float.round(data.abnormalCargolist[i].weight * 1000)
+        }
+      }
       Server({
         url: z.recordId ? '/abnormal/update' : '/abnormal/create',
         method: 'post',
         data: data
       }).then(res => {
-        console.log(res)
         z.btnLoading = false
         z.complete()
         z.close()
@@ -444,6 +621,8 @@ export default {
         } else {
           z.$Message.success(z.recordId ? '编辑成功' : '创建成功')
         }
+        // 将vuex里的数据置为[]
+        z.$store.commit('resetAbnormalCargoInfos')
       }).catch(() => {
         z.btnLoading = false
       })
@@ -527,6 +706,23 @@ export default {
           }
         }
       })
+    },
+
+    // 少货、货损弹窗
+    openCargoSeparateDialog () {
+      const z = this
+      z.openDialog({
+        name: 'transport/dialog/cargoSeparate',
+        data: {
+          billId: z.id,
+          billType: z.type
+        },
+        methods: {
+          complete () {
+            // self.clearSelectedAndFetch()
+          }
+        }
+      })
     }
   }
 }
@@ -580,6 +776,9 @@ export default {
   .exception-distribution
     display: flex
     display: -ms-flexbox
+  .abnormal-table-extend
+    th.ivu-table-cell
+      padding-left 26px
 </style>
 <style lang='stylus' scoped>
   .part
@@ -595,4 +794,15 @@ export default {
     margin-top -15px
   .ivu-col-span-6
     height 68px
+  .order-number
+    height 20px
+    font-size 14px
+    font-family 'PingFangSC-Medium'
+    font-weight 500
+    color #333
+    line-height 20px
+    margin-bottom 18px
+  .border-dashed
+    border-top 1px dashed rgba(203,206,211,1)
+    margin 32px 0
 </style>

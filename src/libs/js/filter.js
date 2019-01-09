@@ -54,7 +54,7 @@ Vue.filter('codeToName', function (cityId) {
  * 将元转为分
  */
 Vue.filter('toPoint', function (money) {
-  return float.round(money / 100, 2)
+  return float.round(money / 100, 4)
 })
 
 /**

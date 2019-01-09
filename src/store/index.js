@@ -60,6 +60,14 @@ const state = {
     insuranceFeeOption: 1,
     // 其他费用
     otherFeeOption: 1
+  },
+  // 异常货物上报临时存储
+  abnormalCargoInfos: {
+    parentOrderCargoList: [],
+    parentOrderData: [],
+    childOrderCargoList: [],
+    childOrderData: [],
+    originData: [] // 原始数据
   }
 }
 
