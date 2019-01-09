@@ -34,8 +34,8 @@
 import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import float from '@/libs/js/float'
-import { getFeeText } from '@/libs/js/config'
+// import float from '@/libs/js/float'
+import { getFeeText, roundFee } from '@/libs/js/config'
 export default {
   name: 'checkingOrder',
   mixins: [ BaseComponent ],
@@ -175,7 +175,7 @@ export default {
           scene: this.scene,
           verifyType: 3,
           isOil: 0,
-          needPay: float.round(data.row.totalFeeText)
+          needPay: roundFee(data.row.totalFeeText)
         },
         methods: {
           ok () {

@@ -148,7 +148,7 @@
           </i-col>
         </Row>
         <div class="mgbt20 handle-info">
-          <Table :columns="cargoColumns" :data="data.abnormalCargolist"></Table>
+          <Table v-if="data.abnormalCargolist.length" :columns="cargoColumns" :data="data.abnormalCargolist" style="width: 100%"></Table>
         </div>
         <div class="mgbt20 handle-info">
           <label class="label-bar">处理备注：</label>
