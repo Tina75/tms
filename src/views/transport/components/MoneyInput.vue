@@ -3,6 +3,7 @@
     <TagNumberInput v-model="money" :min="0"
                     :placeholder="placeholder"
                     :disabled="isDisabled"
+                    :show-chinese="false"
                     @on-change="changeHandler"
                     @on-blur="blurHandler" />
 
