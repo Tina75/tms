@@ -31,8 +31,7 @@ import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table/'
 import SelectInput from '@/components/SelectInput.vue'
-import float from '@/libs/js/float'
-import { renderFee, renderMileage } from '@/libs/js/config'
+import { renderFee, renderMileage, getRateText, getFeeText } from '@/libs/js/config'
 export default {
   name: 'frequent-order',
   components: {
@@ -290,7 +289,7 @@ export default {
           key: 'collectionMoney',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
+            return h('span', getFeeText(params.row.collectionMoney))
           }
         },
         {
@@ -306,7 +305,7 @@ export default {
           key: 'invoiceRate',
           minWidth: 180,
           render: (h, params) => {
-            return h('span', float.round(params.row.invoiceRate * 100, 2) || '-')
+            return h('span', getRateText(params.row.invoiceRate))
           }
         },
         {

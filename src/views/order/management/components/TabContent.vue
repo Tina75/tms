@@ -159,9 +159,7 @@ import OrderPrint from './OrderPrint'
 import FontIcon from '@/components/FontIcon'
 import IconLabel from '@/components/IconLabel'
 import SearchMixin from '../searchMixin'
-import float from '@/libs/js/float'
-import { renderFee, renderMileage } from '@/libs/js/config'
-// import jsCookie from 'js-cookie'
+import { renderFee, renderMileage, getRateText, getFeeText } from '@/libs/js/config'
 export default {
   name: 'TabContent',
 
@@ -813,7 +811,6 @@ export default {
           key: 'pickupFee',
           minWidth: 120,
           render: (h, params) => {
-            // return h('span', params.row.pickupFee ? float.round(params.row.pickupFee / 100) : 0)
             return renderFee(h, params.row.pickupFee)
           }
         },
@@ -901,7 +898,7 @@ export default {
           key: 'invoiceRate',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', float.round(params.row.invoiceRate * 100, 2) || '-')
+            return h('span', getRateText(params.row.invoiceRate))
           }
         },
         {
@@ -909,7 +906,7 @@ export default {
           key: 'invoiceAmount',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', float.round(params.row.invoiceAmount / 100) || '-')
+            return h('span', getFeeText(params.row.invoiceAmount))
           }
         },
         {
@@ -1322,7 +1319,7 @@ export default {
         }
       }).then((res) => {
         this.orderPrint = _.cloneDeep(res.data.data)
-        this.orderPrint.invoiceRate = float.round(this.orderPrint.invoiceRate * 100, 2)
+        this.orderPrint.invoiceRate = getRateText(this.orderPrint.invoiceRate)
         this.$refs.printer.print()
       })
     },

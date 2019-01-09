@@ -50,7 +50,7 @@ import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 import { renderFee } from '@/libs/js/config'
 export default {
-  name: 'total',
+  name: 'report-total',
   components: {
     PageTable
   },
