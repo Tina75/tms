@@ -216,7 +216,7 @@ import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 import { getFeeText } from '@/libs/js/config'
 export default {
-  name: 'profit',
+  name: 'report-profit',
   components: {
     TabHeader,
     PageTable,

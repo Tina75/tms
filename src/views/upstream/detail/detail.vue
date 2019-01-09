@@ -215,7 +215,7 @@ import { getFeeText } from '@/libs/js/config'
 import { renderVolume, renderWeight } from '../constant/util'
 import float from '@/libs/js/float'
 export default {
-  name: 'detail',
+  name: 'upstreamDetail',
 
   components: {
     // OrderPrint
