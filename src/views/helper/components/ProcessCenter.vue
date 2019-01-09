@@ -49,8 +49,8 @@ export default {
         { x: '475px', y: '307px', type: 'songhuotiaodu', poptip: '对直接送货的客户订单，进行拆单/组合，安排承运商或外转方来送货', access: this.hasPower(120100), link: { path: TMSUrl.TANSPORT_ORDER, query: { tab: 0 }, title: '送货管理' }, text: '送货调度' },
         { x: '603px', y: '307px', type: 'paiche', poptip: '填写承运商和费用信息，确认派车并发运', access: this.hasPower(120100), link: { path: TMSUrl.TANSPORT_ORDER, query: { tab: 1 }, title: '送货管理' }, text: '派车' },
         // { x: '691px', y: '323px', type: 'fayun', poptip: '确认承运商司机已经发运', access: this.hasPower(120100), link: { path: TMSUrl.TANSPORT_ORDER, query: { tab: 2 }, title: '送货管理' }, text: '发运' },
-        { x: '735px', y: '307px', type: 'zaitu', poptip: '查看在途的司机位置，可确认司机送货成功', access: this.hasPower(120100), link: { path: TMSUrl.TANSPORT_ORDER, query: { tab: 3 }, title: '送货管理' }, text: '在途' },
-        { x: '870px', y: '307px', type: 'daohuo', poptip: '送货成功，等待司机送回回单', access: this.hasPower(120100), link: { path: TMSUrl.TANSPORT_ORDER, query: { tab: 4 }, title: '送货管理' }, text: '到货签收' },
+        { x: '735px', y: '307px', type: 'zaitu', poptip: '查看在途的司机位置，可确认司机送货成功', access: this.hasPower(120100), link: { path: TMSUrl.TANSPORT_ORDER, query: { tab: 2 }, title: '送货管理' }, text: '在途' },
+        { x: '870px', y: '307px', type: 'daohuo', poptip: '送货成功，等待司机送回回单', access: this.hasPower(120100), link: { path: TMSUrl.TANSPORT_ORDER, query: { tab: 3 }, title: '送货管理' }, text: '到货签收' },
         /** 财务管理 */
         { x: '60px', y: '497px', type: 'duizhang', poptip: '查看发货方、承运商、外转方的订单信息，可直接进行核销', access: this.hasPower(170100), link: { path: TMSUrl.SENDER_FINANCE, query: { tab: '1' }, title: '发货方对账' }, text: '对账' },
         { x: '166px', y: '497px', type: 'duizhangdan', poptip: '生成对账单，可批量对账核销', access: this.hasPower(170100), link: { path: TMSUrl.SENDER_FINANCE, query: { tab: '2' }, title: '发货方对账' }, text: '对账单' },

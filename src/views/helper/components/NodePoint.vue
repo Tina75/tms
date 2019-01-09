@@ -52,7 +52,7 @@ export default {
     jumpto (e) {
       if (this.access && this.url) {
         this.visible = false
-        this.openTab(this.url)
+        this.openTab({ query: {}, ...this.url })
       } else {
         this.$Message.warning('你的账号没有此节点查看权限，请联系贵公司账号管理员开通')
       }
