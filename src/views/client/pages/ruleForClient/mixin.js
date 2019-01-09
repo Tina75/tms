@@ -421,8 +421,8 @@ export default {
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: el.base ? (el.base / 100) : null,
-                price: el.price ? (el.price / 100) : null,
+                base: typeof el.base === 'number' ? (el.base / 100) : null,
+                price: typeof el.price === 'number' ? (el.price / 100) : null,
                 baseAndStart: el.base + ',' + item.startNum,
                 carType: el.carType,
                 carLength: el.carLength,
