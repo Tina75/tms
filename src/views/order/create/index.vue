@@ -309,12 +309,12 @@
       <Col span="6">
       <FormItem v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" label="开票税率:" prop="invoiceRate">
         <Row>
-          <Col span="12">
+          <Col span="6">
           <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="1" :min="0" :max="100" clearable>
           </TagNumberInput>
           </Col>
-          <Col span="12" class="order-create__input-unit">
-          <span style="float: left"> %</span>
+          <Col span="18" class="order-create__input-unit">
+          <span style="float: left">%</span>
           <span>({{ invoiceFee }}元)</span>
           </Col>
         </Row>
@@ -379,6 +379,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
 import { formatePhone } from '@/libs/js/formate'
+import { roundFee, divideFee, multiplyFee, multiplyMileage, divideMileage } from '@/libs/js/config'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -655,7 +656,7 @@ export default {
       let totalFee = 0
       for (let fee of feeList) {
         if (orderForm[fee]) {
-          totalFee = float.round(totalFee + parseFloat(orderForm[fee]))
+          totalFee = roundFee(totalFee + orderForm[fee])
         }
       }
       return totalFee
@@ -685,7 +686,7 @@ export default {
       }
     },
     invoiceFee () {
-      const res = this.totalFee && this.orderForm.invoiceRate ? float.round(this.totalFee * this.orderForm.invoiceRate / 100) : 0
+      const res = this.totalFee && this.orderForm.invoiceRate ? roundFee(this.totalFee * this.orderForm.invoiceRate / 100) : 0
       return res
     }
   },
@@ -748,7 +749,8 @@ export default {
           vm.orderForm.id = orderDetail.id
           // 分转换元
           transferFeeList.forEach((fee) => {
-            vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+            // vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+            vm.orderForm[fee] = divideFee(vm.orderForm[fee])
           })
           // vm.orderForm.collectionMoney = vm.orderForm.collectionMoney ? vm.orderForm.collectionMoney / 100 : null
           if (vm.orderForm.deliveryTime) {
@@ -762,7 +764,8 @@ export default {
             vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
           }
           // 里程除以 1000
-          vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+          // vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+          vm.orderForm.mileage = divideMileage(vm.orderForm.mileage)
           vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
           vm.orderForm.disabledPickUp = !!(orderDetail.status === 20 && orderDetail.pickup === 1 && vm.orderId)
         })
@@ -781,12 +784,14 @@ export default {
         this.consignerCargoes = orderDetail.orderCargoTemplateList.map((item) => new Cargo(item, true))
         // 分转换元
         transferFeeList.forEach((fee) => {
-          vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+          // vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+          vm.orderForm[fee] = divideFee(vm.orderForm[fee])
         })
         vm.orderForm.deliveryTime = ''
         vm.orderForm.arriveTime = ''
         // 里程除以 1000
-        vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+        vm.orderForm.mileage = divideMileage(vm.orderForm.mileage)
+        // vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
         vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
       })
     },
@@ -942,7 +947,8 @@ export default {
           cargoInfos: statics.cargoInfos,
           weight: statics.weight,
           volume: statics.volume,
-          distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
+          // distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
+          distance: multiplyMileage(this.orderForm.mileage),
           startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
           endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude }
         },
@@ -1219,14 +1225,16 @@ export default {
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
-              mileage: orderForm.mileage * 1000,
+              // mileage: orderForm.mileage * 1000,
+              mileage: multiplyMileage(orderForm.mileage),
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
               consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
               invoiceRate: orderForm.isInvoice === 1 ? rate.set(orderForm.invoiceRate) : null
             })
             // 转换成分单位
             transferFeeList.forEach((fee) => {
-              form[fee] = form[fee] ? float.round(form[fee] * 100) : 0
+              // form[fee] = form[fee] ? float.round(form[fee] * 100) : 0
+              form[fee] = multiplyFee(form[fee]) || 0
             })
             // 没有业务员 置空
             const res = this.salesmanList.some(el => {

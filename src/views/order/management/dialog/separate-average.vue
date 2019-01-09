@@ -322,7 +322,7 @@ export default {
       let errorKeywords = []
       if (vm.cargoQuantity) {
         let totalQuantity = vm.backupCargoList.map((cargo) => cargo.quantity).reduce((total, value) => {
-          total = roundVolume(total + value)
+          total = roundVolume(NP.plus(total, value))
           return total
         }, 0)
         if (totalQuantity !== vm.cargoQuantity) {
@@ -332,9 +332,9 @@ export default {
       if (vm.cargoWeight) {
         let totalWeight = vm.backupCargoList.reduce((total, cargo) => {
           if (vm.WeightOption === 1) {
-            total = roundWeight(total + cargo.weight)
+            total = roundWeight(NP.plus(total, cargo.weight))
           } else {
-            total = roundWeightKg(total + cargo.weightKg)
+            total = roundWeightKg(NP.plus(total, cargo.weightKg))
           }
           return total
         }, 0)
@@ -344,7 +344,7 @@ export default {
       }
       if (vm.cargoVolume) {
         let totalVolume = vm.backupCargoList.reduce((total, cargo) => {
-          total = roundVolume(total + cargo.volume)
+          total = roundVolume(NP.plus(total, cargo.volume))
           return total
         }, 0)
         if (totalVolume !== this.cargoVolume) {

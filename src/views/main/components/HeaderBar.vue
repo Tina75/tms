@@ -571,6 +571,7 @@ export default {
       .avatar
         display inline-block
         vertical-align middle
+        border 1px solid #fff
         width 35px
         height 35px
       .title

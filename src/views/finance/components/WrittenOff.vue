@@ -1,4 +1,4 @@
-<!--  -->
+<!-- 已核销  -->
 <template>
   <div class="written-off">
     <div class="query-box">
@@ -49,7 +49,7 @@
 import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-
+import { getFeeText } from '@/libs/js/config'
 export default {
   name: 'writtenOff',
   mixins: [ BaseComponent ],
@@ -258,8 +258,8 @@ export default {
         this.writtenOffData.totalCount = res.data.data.totalCount
         this.writtenOffData.list = res.data.data.dataList.map(item => {
           return Object.assign({}, item, {
-            totalFeeText: ((item.totalFee || 0) / 100).toFixed(2),
-            payFeeText: ((item.payFee || 0) / 100).toFixed(2)
+            totalFeeText: getFeeText(item.totalFee),
+            payFeeText: getFeeText(item.payFee)
           })
         })
       })

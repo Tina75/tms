@@ -1,5 +1,5 @@
 import TMSUrl from '@/libs/constant/url'
-
+import { getFeeText } from '@/libs/js/config'
 export const TAB_LIST = [
   // { name: '全部', count: '' },
   { name: '待调度', count: '' },
@@ -214,7 +214,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'totalFee',
     width: 120,
     render: (h, p) => {
-      return vm.tableDataRender(h, p.row.totalFee === '' ? '' : p.row.totalFee / 100)
+      return vm.tableDataRender(h, getFeeText(p.row.totalFee))
+      // return vm.tableDataRender(h, p.row.totalFee === '' ? '' : p.row.totalFee / 100)
     }
   },
   {
@@ -254,7 +255,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'cargoCost',
     width: 120,
     render: (h, p) => {
-      return vm.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
+      return vm.tableDataRender(h, getFeeText(p.row.cargoCost))
+      // return vm.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
     }
   },
   {

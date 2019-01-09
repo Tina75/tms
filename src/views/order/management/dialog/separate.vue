@@ -366,8 +366,28 @@ export default {
     // 拆整笔
     separateWholeList (index) {
       let childList = this.parentOrderCargoList.splice(index, 1)[0]
-      this.childOrderCargoList.unshift(childList)
-      this.cloneData = this.parentOrderCargoList
+      let findedChildCargo = this.childOrderCargoList.find(cargo => cargo.id === childList.id)
+      if (!findedChildCargo) {
+        this.childOrderCargoList.unshift(childList)
+        this.cloneData = this.parentOrderCargoList
+      } else {
+        this.mergeRepeatCargo(findedChildCargo, childList)
+      }
+    },
+    /**
+     * 部分拆单或拆整后，如果订单号是一样的，就合并货物信息，累计数据
+     * @params {object} findedChildCargo 已拆分出来的列表，重复的货物项
+     * @params {object} childCargo 拆出来的货物
+     */
+    mergeRepeatCargo (findedChildCargo, childCargo) {
+      findedChildCargo.cargoCost = roundFee(findedChildCargo.cargoCost + childCargo.cargoCost)
+      findedChildCargo.quantity = float.round(findedChildCargo.quantity + childCargo.quantity)
+      findedChildCargo.volume = roundVolume(findedChildCargo.volume + childCargo.volume)
+      if (this.WeightOption === 1) {
+        findedChildCargo.weight = roundWeight(findedChildCargo.weight + childCargo.weight)
+      } else {
+        findedChildCargo.weightKg = roundWeightKg(findedChildCargo.weightKg + childCargo.weightKg)
+      }
     },
     // 拆部分
     separatePartList (params) {
@@ -417,14 +437,15 @@ export default {
         // 如果未找到，就放入数组
         this.childOrderCargoList.unshift(childData)
       } else {
-        findedChildCargo.cargoCost = roundFee(findedChildCargo.cargoCost + childData.cargoCost)
-        findedChildCargo.quantity = float.round(findedChildCargo.quantity + childData.quantity)
-        findedChildCargo.volume = roundVolume(findedChildCargo.volume + childData.volume)
-        if (this.WeightOption === 1) {
-          findedChildCargo.weight = roundWeight(findedChildCargo.weight + childData.weight)
-        } else {
-          findedChildCargo.weightKg = roundWeightKg(findedChildCargo.weightKg + childData.weightKg)
-        }
+        this.mergeRepeatCargo(findedChildCargo, childData)
+        // findedChildCargo.cargoCost = roundFee(findedChildCargo.cargoCost + childData.cargoCost)
+        // findedChildCargo.quantity = float.round(findedChildCargo.quantity + childData.quantity)
+        // findedChildCargo.volume = roundVolume(findedChildCargo.volume + childData.volume)
+        // if (this.WeightOption === 1) {
+        //   findedChildCargo.weight = roundWeight(findedChildCargo.weight + childData.weight)
+        // } else {
+        //   findedChildCargo.weightKg = roundWeightKg(findedChildCargo.weightKg + childData.weightKg)
+        // }
       }
     },
     // 拆批量

@@ -12,8 +12,7 @@
 </template>
 
 <script>
-import float from '@/libs/js/float'
-
+import { roundFee } from '@/libs/js/config'
 export default {
   name: 'MoneyInput',
   props: {
@@ -46,7 +45,7 @@ export default {
         this.$Message.error('金额整数部分不能超过9位')
       } else {
         this.$nextTick(() => {
-          this.money = float.floor(value, 2)
+          this.money = roundFee(value)
         })
       }
     },

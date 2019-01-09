@@ -40,8 +40,7 @@
           </i-col>
           <i-col  span="4">
             <span>代收货款：</span>
-            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
-            <span v-else>-</span>
+            <span>{{detail.collectionMoney | toPoint}}元</span>
           </i-col>
         </Row>
         <Row>
@@ -212,7 +211,7 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
-import { divideFee } from '@/libs/js/config'
+import { getFeeText } from '@/libs/js/config'
 import { renderVolume, renderWeight } from '../constant/util'
 import float from '@/libs/js/float'
 export default {
@@ -262,7 +261,7 @@ export default {
           key: 'cost',
           render: (h, params) => {
             // return h('span', params.row.cost ? (params.row.cost / 100).toFixed(2) : '-')
-            return h('div', {}, divideFee(params.row.cost))
+            return h('div', {}, getFeeText(params.row.cost))
           }
         },
         {
@@ -303,7 +302,8 @@ export default {
       this.detail.cargoInfos.map((item) => {
         total += Number(item.cost)
       })
-      return (total / 100).toFixed(2)
+      // return (total / 100).toFixed(2)
+      return getFeeText(total)
     },
     // 总数量
     quantityTotal () {

@@ -225,7 +225,7 @@ export default {
   methods: {
     repairMoneyChange () {
       if (this.validate.payMoney && (this.validate.repairMoney - this.validate.payMoney) >= 0) {
-        this.validate.waitPayMoney = float.round((this.validate.repairMoney - this.validate.payMoney), 4) || 0
+        this.validate.waitPayMoney = float.round((this.validate.repairMoney - this.validate.payMoney), this.$numberPrecesion.fee) || 0
       } else {
         this.validate.payMoney = this.validate.repairMoney
         this.validate.waitPayMoney = 0
@@ -237,7 +237,7 @@ export default {
         this.validate.payMoney = this.validate.repairMoney
       }
       if (this.validate.repairMoney) {
-        this.validate.waitPayMoney = float.round((this.validate.repairMoney - this.validate.payMoney), 4) || 0
+        this.validate.waitPayMoney = float.round((this.validate.repairMoney - this.validate.payMoney), this.$numberPrecesion.fee) || 0
       }
     },
     // 修改页面初始化

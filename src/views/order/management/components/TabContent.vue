@@ -160,6 +160,7 @@ import FontIcon from '@/components/FontIcon'
 import IconLabel from '@/components/IconLabel'
 import SearchMixin from '../searchMixin'
 import float from '@/libs/js/float'
+import { renderFee, renderMileage } from '@/libs/js/config'
 // import jsCookie from 'js-cookie'
 export default {
   name: 'TabContent',
@@ -697,7 +698,8 @@ export default {
           key: 'mileage',
           width: 120,
           render: (h, params) => {
-            return h('span', params.row.mileage / 1000 ? params.row.mileage / 1000 : '-')
+            // return h('span', params.row.mileage / 1000 ? params.row.mileage / 1000 : '-')
+            return renderMileage(h, params.row.mileage)
           }
         },
         {
@@ -802,7 +804,8 @@ export default {
           key: 'freightFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.freightFee ? float.round(params.row.freightFee / 100) : 0)
+            // return h('span', params.row.freightFee ? float.round(params.row.freightFee / 100) : 0)
+            return renderFee(h, params.row.freightFee)
           }
         },
         {
@@ -810,7 +813,8 @@ export default {
           key: 'pickupFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.pickupFee ? float.round(params.row.pickupFee / 100) : 0)
+            // return h('span', params.row.pickupFee ? float.round(params.row.pickupFee / 100) : 0)
+            return renderFee(h, params.row.pickupFee)
           }
         },
         {
@@ -818,7 +822,8 @@ export default {
           key: 'loadFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.loadFee ? float.round(params.row.loadFee / 100) : 0)
+            return renderFee(h, params.row.loadFee)
+            // return h('span', params.row.loadFee ? float.round(params.row.loadFee / 100) : 0)
           }
         },
         {
@@ -827,7 +832,8 @@ export default {
           minWidth: 120,
 
           render: (h, params) => {
-            return h('span', params.row.unloadFee ? float.round(params.row.unloadFee / 100) : 0)
+            return renderFee(h, params.row.unloadFee)
+            // return h('span', params.row.unloadFee ? float.round(params.row.unloadFee / 100) : 0)
           }
         },
         {
@@ -835,7 +841,8 @@ export default {
           key: 'insuranceFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.insuranceFee ? float.round(params.row.insuranceFee / 100) : 0)
+            return renderFee(h, params.row.insuranceFee)
+            // return h('span', params.row.insuranceFee ? float.round(params.row.insuranceFee / 100) : 0)
           }
         },
         {
@@ -843,7 +850,8 @@ export default {
           key: 'otherFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.otherFee ? float.round(params.row.otherFee / 100) : 0)
+            return renderFee(h, params.row.otherFee)
+            // return h('span', params.row.otherFee ? float.round(params.row.otherFee / 100) : 0)
           }
         },
         {
@@ -851,7 +859,8 @@ export default {
           key: 'totalFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.totalFee ? float.round(params.row.totalFee / 100) : 0)
+            return renderFee(h, params.row.totalFee)
+            // return h('span', params.row.totalFee ? float.round(params.row.totalFee / 100) : 0)
           }
         },
         {
@@ -875,7 +884,8 @@ export default {
           key: 'collectionMoney',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
+            return renderFee(h, params.row.collectionMoney)
+            // return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
           }
         },
         {

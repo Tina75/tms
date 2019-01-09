@@ -1,4 +1,4 @@
-<!--  -->
+<!-- 待核销 -->
 <template>
   <div class="writing-off">
     <div class="query-box">
@@ -106,6 +106,7 @@ import float from '@/libs/js/float'
 import _ from 'lodash'
 import payTypeDialog from '../dialogs/payTypeDialog'
 import { payTypeMap } from '../constant/numList'
+import { getFeeText } from '@/libs/js/config'
 export default {
   name: 'writingOff',
   components: {
@@ -553,8 +554,8 @@ export default {
       }).then(res => {
         this.companyData = res.data.data.map((item, index) => {
           return Object.assign({}, item, {
-            calcTotalFeeText: (item.calcTotalFee / 100).toFixed(2),
-            verifiedFeeText: (item.verifiedFee / 100).toFixed(2),
+            calcTotalFeeText: getFeeText(item.calcTotalFee),
+            verifiedFeeText: getFeeText(item.verifiedFee),
             id: item.partnerName + index
           })
         })
@@ -586,7 +587,7 @@ export default {
           destinationName: item.destinationName ? item.destinationName : '-',
           orderNo: item.orderNo ? item.orderNo : '-',
           truckNo: item.truckNo ? item.truckNo : '-',
-          totalFeeText: item.totalFee !== '' ? (item.totalFee / 100).toFixed(2) : '-',
+          totalFeeText: getFeeText(item.totalFee),
           settleTypeDesc: item.settleTypeDesc ? item.settleTypeDesc : '-',
           orderStatusDesc: item.orderStatusDesc ? item.orderStatusDesc : '-',
           // _disabled: !!item.isMultiPay,
@@ -606,7 +607,7 @@ export default {
         },
         methods: {
           ok () {
-            console.log('ok!')
+            // console.log('ok!')
           }
         }
       })

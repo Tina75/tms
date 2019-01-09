@@ -351,7 +351,7 @@ import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import allocationStrategy from '../constant/allocation.js'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import CarPhoto from './components/car-photo.vue'
-
+import { divideFee } from '@/libs/js/config'
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
@@ -609,8 +609,9 @@ export default {
           width: 120,
           render: (h, p) => {
             return h('div', {},
-              p.row.cargoList.map((cargo) => h('div', cargo.cargoCost / 100 || '0.00'))
-            )
+              p.row.cargoList.map((cargo) => h('div', divideFee(cargo.cargoCost))))
+            // p.row.cargoList.map((cargo) => h('div', cargo.cargoCost / 100 || '0'))
+
             // return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },

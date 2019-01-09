@@ -291,7 +291,7 @@ import allocationStrategy from '../constant/allocation.js'
 import { mapActions } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import CarPhoto from './components/car-photo.vue'
-
+import { divideFee } from '@/libs/js/config'
 export default {
   name: 'detailPickup',
   components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo, CarPhoto },
@@ -453,7 +453,8 @@ export default {
           key: 'cargoCost',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoCost / 100)
+            return this.tableDataRender(h, divideFee(p.row.cargoCost))
+            // return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
         {
