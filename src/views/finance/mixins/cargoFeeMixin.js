@@ -72,7 +72,7 @@ export default {
   },
   methods: {
     formatFee (fee) {
-      return ((fee || 0) / 100).toFixed(2)
+      return divideFee((fee))
     },
     toDetail (data) {
       this.openTab({

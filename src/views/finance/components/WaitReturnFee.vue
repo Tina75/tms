@@ -13,7 +13,7 @@
         <p class="wait-verify__view-title">{{title}}</p>
         <p class="wait-verify__view-supName">
           <span>
-            返现总额 {{activeDriver.calcTotalFee | toPoint}}
+            返现总额 {{activeDriver ? (activeDriver.calcTotalFee / 100).toFixed(2) : 0}}
           </span>
         </p>
       </div>
