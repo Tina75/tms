@@ -3,7 +3,7 @@ import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import Server from '@/libs/js/server'
 import { mapGetters, mapActions } from 'vuex'
 import { ruleTypeAllList } from '@/libs/constant/ruleType.js'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 import { multiplyFee, divideFee } from '@/libs/js/config'
 export default {
   computed: {
@@ -357,13 +357,13 @@ export default {
                   destination: item.destination,
                   startType: item.startType,
                   // 选择车型，件时，起步价，起步量都没有
-                  startNum: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startNum ? float.round(item.startNum * 100) : ''),
+                  startNum: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startNum ? multiplyFee(item.startNum) : ''),
                   // 选择起步量的时候，startPrice的值传startNum的值
                   // startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
-                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? multiplyFee(item.startPrice) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
+                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? multiplyFee(item.startPrice) : '') : (item.startNum ? multiplyFee(item.startNum) : '')),
                   chargeRules: item.chargeRules.map(el => {
                     return {
-                      base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (float.round(el.base * 100)),
+                      base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (multiplyFee(el.base)),
                       // base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (multiplyFee(el.base)),
                       // price: float.round(el.price * 100),
                       price: multiplyFee(el.price),
