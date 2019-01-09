@@ -3,7 +3,7 @@ import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import Server from '@/libs/js/server'
 import { mapGetters, mapActions } from 'vuex'
 import { ruleTypeAllList } from '@/libs/constant/ruleType.js'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 import { multiplyFee, divideFee } from '@/libs/js/config'
 export default {
   computed: {
@@ -58,22 +58,32 @@ export default {
       if (value === null || value === '') {
         callback()
       } else {
-        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d*)?))$/.test(String(value))) {
+        if (/^((0[.]\d*)|(([1-9]\d{0,8})([.]\d*)?))$/.test(String(value))) {
           callback()
         } else {
-          callback(new Error('最多九位正数'))
+          callback(new Error('必须大于0'))
         }
-        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
-          if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(String(value))) {
+        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量精确3位小数
+          if (/^((0[.]\d{1,3})|(([1-9]\d*)([.]\d{1,3})?))$/.test(String(value))) {
           } else {
-            callback(new Error('最多两位小数'))
+            callback(new Error('最多三位小数'))
           }
-        } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
-          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(String(value))) {
+        } else
+        if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') { // 体积精确6位小数
+          if (/^((0[.]\d{1,6})|(([1-9]\d{0,8})([.]\d{1,6})?))$/.test(String(value))) {
             callback()
           } else {
             callback(new Error('最多一位小数'))
           }
+        } else
+        if (this.ruleDetail.ruleType === '6' || this.ruleDetail.ruleType === '7') { // 重量公斤，保留整数
+          if (/^(([1-9]\d{0,8})?)$/.test(String(value))) {
+            callback()
+          } else {
+            callback(new Error('不能有小数'))
+          }
+        } else {
+          callback()
         }
       }
     }
@@ -347,13 +357,13 @@ export default {
                   destination: item.destination,
                   startType: item.startType,
                   // 选择车型，件时，起步价，起步量都没有
-                  startNum: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startNum ? float.round(item.startNum * 100) : ''),
+                  startNum: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startNum ? multiplyFee(item.startNum) : ''),
                   // 选择起步量的时候，startPrice的值传startNum的值
                   // startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
-                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? multiplyFee(item.startPrice) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
+                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? multiplyFee(item.startPrice) : '') : (item.startNum ? multiplyFee(item.startNum) : '')),
                   chargeRules: item.chargeRules.map(el => {
                     return {
-                      base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (float.round(el.base * 100)),
+                      base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (multiplyFee(el.base)),
                       // base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (multiplyFee(el.base)),
                       // price: float.round(el.price * 100),
                       price: multiplyFee(el.price),
