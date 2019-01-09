@@ -31,7 +31,7 @@ import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table/'
 import SelectInput from '@/components/SelectInput.vue'
-import float from '@/libs/js/float'
+import { getRateText, getFeeText } from '@/libs/js/config'
 export default {
   name: 'frequent-order',
   components: {
@@ -209,7 +209,7 @@ export default {
           key: 'freightFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.freightFee ? float.round(params.row.freightFee / 100) : 0)
+            return h('span', getFeeText(params.row.freightFee))
           }
         },
         {
@@ -217,7 +217,7 @@ export default {
           key: 'pickupFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.pickupFee ? float.round(params.row.pickupFee / 100) : 0)
+            return h('span', getFeeText(params.row.pickupFee))
           }
         },
         {
@@ -225,7 +225,7 @@ export default {
           key: 'loadFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.loadFee ? float.round(params.row.loadFee / 100) : 0)
+            return h('span', getFeeText(params.row.loadFee))
           }
         },
         {
@@ -233,7 +233,7 @@ export default {
           key: 'unloadFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.unloadFee ? float.round(params.row.unloadFee / 100) : 0)
+            return h('span', getFeeText(params.row.unloadFee))
           }
         },
         {
@@ -241,7 +241,7 @@ export default {
           key: 'insuranceFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.insuranceFee ? float.round(params.row.insuranceFee / 100) : 0)
+            return h('span', getFeeText(params.row.insuranceFee))
           }
         },
         {
@@ -249,7 +249,7 @@ export default {
           key: 'otherFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.otherFee ? float.round(params.row.otherFee / 100) : 0)
+            return h('span', getFeeText(params.row.otherFee))
           }
         },
         {
@@ -257,7 +257,7 @@ export default {
           key: 'totalFee',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.totalFee ? float.round(params.row.totalFee / 100) : 0)
+            return h('span', getFeeText(params.row.totalFee))
           }
         },
         {
@@ -281,7 +281,7 @@ export default {
           key: 'collectionMoney',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
+            return h('span', getFeeText(params.row.collectionMoney))
           }
         },
         {
@@ -297,7 +297,7 @@ export default {
           key: 'invoiceRate',
           minWidth: 180,
           render: (h, params) => {
-            return h('span', float.round(params.row.invoiceRate * 100, 2) || '-')
+            return h('span', getRateText(params.row.invoiceRate))
           }
         },
         {

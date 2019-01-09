@@ -65,6 +65,19 @@ export const getFeeText = (value) => {
   return value ? divideFee(value) : '0'
 }
 /**
+ * 税率乘100保留两位小数
+ * @param {number} value
+ */
+export const multiplyRate = (value) => {
+  return float.round(NP.times(value, 100), 2)
+}
+/**
+ * 税率
+ */
+export const getRateText = (value) => {
+  return value ? float.round(NP.times(value, 100), 2) : '-'
+}
+/**
  * 列表中费用格式化
  * * 除以 100
  * @param {*} h
