@@ -39,18 +39,18 @@
               <td>{{cargo.cargoName}}</td>
               <td>{{cargo.unit}}</td>
               <td>{{cargo.quantity}}</td>
-              <td>{{cargo.cargoCost / 100}}</td>
+              <td>{{cargo.cargoCost | fee}}</td>
               <td>{{cargo.weight}}</td>
               <td>{{cargo.volume}}</td>
             </tr>
             <tr>
               <td colspan="6" class="table-footer">
-                <span class="table-footer-item">{{item.loadbill.assignCarType === 1 ? '运输费':'油费'}}：{{item.loadbill.freightFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">装货费：{{item.loadbill.loadFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">卸货费：{{item.loadbill.unloadFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">保险费：{{item.loadbill.insuranceFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">其他：{{item.loadbill.otherFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">合计运费: {{item.loadbill.totalFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">{{item.loadbill.assignCarType === 1 ? '运输费':'油费'}}：{{item.loadbill.freightFee | fee}} 元</span>
+                <span class="table-footer-item">装货费：{{item.loadbill.loadFee | fee}} 元</span>
+                <span class="table-footer-item">卸货费：{{item.loadbill.unloadFee | fee}} 元</span>
+                <span class="table-footer-item">保险费：{{item.loadbill.insuranceFee | fee}} 元</span>
+                <span class="table-footer-item">其他：{{item.loadbill.otherFee | fee}} 元</span>
+                <span class="table-footer-item">合计运费: {{item.loadbill.totalFee | fee}} 元</span>
                 <span class="table-footer-item">结算方式：{{item.loadbill.settlementType | payTypeFormatter}}</span>
               </td>
             </tr>
@@ -75,8 +75,11 @@
 <script>
 import TransportBase from '../mixin/transportBase'
 import Printd from 'printd'
-
+import { getFeeText } from '@/libs/js/config'
 export default {
+  filters: {
+    fee: getFeeText
+  },
   mixins: [ TransportBase ],
   props: {
     data: {
@@ -140,6 +143,9 @@ export default {
       this.$nextTick(() => {
         this.printer.print(this.$refs.htmlContent, this.cssText)
       })
+    },
+    getFeeText (val) {
+      return getFeeText(val)
     }
   }
 }
