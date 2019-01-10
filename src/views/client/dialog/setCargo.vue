@@ -87,6 +87,20 @@ export default {
   computed: {
     ...mapGetters(['tmsCargoDto'])
   },
+  watch: {
+    CargoValue (val) {
+      let flag = null
+      for (let i = 0; i < val.length - 1; i++) {
+        if (val[i] === 'weightOption' || val[i] === 'weightKgOption') {
+          flag = i
+          break
+        }
+      }
+      if (flag !== null && (val[val.length - 1] === 'weightOption' || val[val.length - 1] === 'weightKgOption')) {
+        this.CargoValue.splice(flag, 1)
+      }
+    }
+  },
   mounted () {
     this.getConfiguration()
   },
