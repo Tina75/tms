@@ -3,9 +3,7 @@ const tableColumns = [
   {
     title: '订单号',
     key: 'orderNo',
-    render: (h, p) => {
-      return h('span', p.row.orderNo || '-')
-    }
+    tooltip: true
   },
   {
     title: '客户订单号',
@@ -17,15 +15,62 @@ const tableColumns = [
   {
     title: '货物名称',
     key: 'cargoName',
-    render: (h, p) => {
-      return h('span', p.row.cargoName || '-')
+    render: (h, params) => {
+      let text = ''
+      if (params.row.cargoName.length > 12) { // 显示tooltip
+        text = params.row.cargoName.slice(0, 12) + '...'
+        return h('div', [
+          h('Tooltip', {
+            props: {
+              placeholder: 'bottom',
+              transfer: false
+            }
+          }, [
+            h('span', {
+            }, text),
+            h('div', {
+              slot: 'content',
+              style: {
+                whiteSpace: 'normal'
+              }
+            }, params.row.cargoName)
+          ])
+        ])
+      } else {
+        return h('span', {
+        }, params.row.cargoName || '-')
+      }
     }
   },
   {
     title: '货物编号',
     key: 'cargoNo',
-    render: (h, p) => {
-      return h('span', p.row.cargoNo ? p.row.cargoNo : '-')
+    render: (h, params) => {
+      let text = ''
+      if (params.row.cargoNo.length > 12) { // 显示tooltip
+        text = params.row.cargoNo.slice(0, 12) + '...'
+        return h('div', [
+          h('Tooltip', {
+            props: {
+              placeholder: 'bottom',
+              transfer: false
+            }
+          }, [
+            h('span', {
+            }, text),
+            h('div', {
+              slot: 'content',
+              style: {
+                whiteSpace: 'normal'
+              }
+            }, params.row.cargoNo)
+          ])
+        ])
+      } else {
+        return h('span', {
+        }, params.row.cargoNo || '-')
+      }
+      // return h('span', p.row.cargoNo ? p.row.cargoNo : '-')
     }
   },
   {
