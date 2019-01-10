@@ -471,7 +471,7 @@ export default {
       this.formCompany.companyPhoto = JSON.stringify(this.$refs.upLoadsStyle.getImageList()) // 公司风貌
       this.formCompany.wxQrPic = JSON.stringify(this.$refs.upLoadsWX.getImageList()) // 微信二维码
       // 公司首页形象图
-      if (this.$refs.upLoadsBanner.uploadImgList[0]) this.formCompany.homeBanner = this.$refs.upLoadsBanner.uploadImgList[0].url
+      if (this.$refs.upLoadsBanner.uploadImg) this.formCompany.homeBanner = this.$refs.upLoadsBanner.uploadImg
       else this.formCompany.homeBanner = ''
     },
     // 公司

@@ -43,7 +43,7 @@
           <label class="label-bar">图片：</label>
           <div class="flexBox">
             <span v-for="(item, index) in data.fileUrls"
-                  :key="index" :style="`background-image: url(${urlHandle(item)}) `"
+                  :key="index" :style="`background-image: url(${zoomImage(item)}) `"
                   style="background-position: center; background-size: 100%; background-repeat: no-repeat;"
                   class="img-bar" @click="showImg(index)">
             </span>
@@ -380,6 +380,13 @@ export default {
     // 客户端上传没有阿里云前缀 手动加上
     urlHandle (item) {
       return item.indexOf('aliyuncs') > -1 ? item : this.IMG_URL + item
+    },
+    /**
+   * 缩放图片
+   */
+    zoomImage (item) {
+      item += '?x-oss-process=image/resize,w_160'
+      return this.urlHandle(item)
     }
   }
 }

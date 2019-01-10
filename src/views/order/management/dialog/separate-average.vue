@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" transfer class="separate-dialog" width="850" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer class="separate-dialog" width="960" @on-visible-change="close">
     <p slot="header" class="dialog-title">
       <span>拆单</span>
     </p>
