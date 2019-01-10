@@ -217,103 +217,80 @@ export default {
       vm.backupCargoList = []
       this.$refs.formInline.validateField('separateNum', (valid) => {
         if (!valid) {
-          if (vm.cargoQuantity) {
-            // 基于数量拆分
-            vm.separateByQuantity()
-          } else {
-            // 重量体积平均拆分
-            vm.separateByWeightAndVolume()
-          }
+          // if (vm.cargoQuantity) {
+          //   // 基于数量拆分
+          //   vm.separateByQuantity()
+          // } else {
+          //   // 重量体积平均拆分
+          //   vm.separateByWeightAndVolume()
+          // }
+          vm.separateAverage()
         }
       })
     },
     /**
-     * 没有包装数量，按照体积和重量平均拆分
+     * 平均分摊
      */
-    separateByWeightAndVolume () {
-      const vm = this
-      // 若包装数量没有值，则按照重量、体积，平均拆
-      let separateNum = vm.formInline.separateNum
-      /**
-       * 2000 / 3 6666.66666667
-       * 1. 如果四舍五入，会导致前面会多分配0.0001
-       * 2. 所以这里需要floor，不四舍五入
-       */
-      let cargoCost = divideFee(vm.cargoCost)
-      let averageVolume = float.floor(NP.divide(vm.cargoVolume, separateNum), this.$numberPrecesion.volume)
-      let averageWeight = float.floor(NP.divide(vm.cargoWeight, separateNum), vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
-      let averageCost = float.floor(NP.divide(cargoCost, separateNum), this.$numberPrecesion.fee)
-      let i = 0
-      while (i < separateNum) {
-        let cargo = new Cargo(vm.cargoList[0])
-
-        if ((i + 1) !== separateNum) {
-          if (vm.WeightOption === 1) {
-            cargo.weight = averageWeight
-          } else {
-            cargo.weightKg = averageWeight
-          }
-          cargo.volume = averageVolume
-          cargo.cargoCost = multiplyFee(averageCost)
-        } else {
-          let totals = vm.separateCargoList.reduce((oTotals, cargo) => {
-            oTotals.weight = roundWeight(NP.plus(oTotals.weight, cargo.weight))
-            oTotals.weightKg = roundWeightKg(NP.plus(oTotals.weightKg, cargo.weightKg))
-            oTotals.volume = roundVolume(NP.plus(oTotals.volume, cargo.volume))
-            oTotals.cargoCost = roundFee(NP.plus(oTotals.cargoCost, cargo.cargoCost))
-            return oTotals
-          }, { weight: 0, weightKg: 0, volume: 0, cargoCost: 0 })
-          if (vm.WeightOption === 1) {
-            cargo.weight = roundWeight(NP.minus(vm.cargoWeight, totals.weight))
-          } else {
-            cargo.weightKg = roundWeightKg(NP.minus(vm.cargoWeight, totals.weightKg))
-          }
-          cargo.volume = roundVolume(NP.minus(vm.cargoVolume, totals.volume))
-          cargo.cargoCost = roundFee(NP.minus(multiplyFee(cargoCost), totals.cargoCost))
-        }
-
-        vm.separateCargoList.push(cargo)
-        i++
-      }
-      vm.backupCargoList = _.cloneDeep(vm.separateCargoList)
-    },
-    /**
-     * 基于包装数量，平均拆分货物
-     */
-    separateByQuantity () {
+    separateAverage () {
       const vm = this
       // 如包装数量为10，要拆成6单，不能平均拆。10/6=1.67，前5单每单的包装数量为1，第6单的包装数量为5；
       let separateNum = vm.formInline.separateNum
-
-      let baseNum = float.floor(NP.divide(vm.cargoQuantity, separateNum))
+      let cargoCost = divideFee(vm.cargoCost)
+      let baseNum = float.floor(NP.divide(vm.cargoQuantity || 0, separateNum))
       // 每个货物 体积比例
-      let volumePercent = float.floor(NP.divide(vm.cargoVolume, vm.cargoQuantity))
+      let volumePercent = float.floor(NP.divide(vm.cargoVolume, separateNum), this.$numberPrecesion.volume)
       // 每个货物重量比例
-      let weightPercent = float.floor(NP.divide(vm.cargoWeight, vm.cargoQuantity))
+      let weightPercent = float.floor(NP.divide(vm.cargoWeight, separateNum), vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
       // 货值比例
-      let costPercent = float.floor(NP.divide(vm.cargoCost, vm.cargoQuantity))
+      let costPercent = float.floor(NP.divide(cargoCost, separateNum), this.$numberPrecesion.fee)
       let i = 0
       while (i < separateNum) {
         let cargo = new Cargo(vm.cargoList[0])
 
         if ((i + 1) !== separateNum) {
           cargo.quantity = parseInt(baseNum)
+          // 按照数量的比例，计算相应的货物体积和重量值
+          cargo.volume = roundVolume(volumePercent)
+          cargo.cargoCost = roundFee(multiplyFee(costPercent))
+          if (vm.WeightOption === 1) {
+            cargo.weight = roundWeight(weightPercent)
+          } else {
+            cargo.weightKg = roundWeightKg(weightPercent)
+          }
         } else {
           // 最后一个，需要将剩下的全都赋值
-          cargo.quantity = NP.minus(vm.cargoQuantity, NP.times((separateNum - 1), parseInt(baseNum)))
+          vm.setCargoLeftValue(cargo, cargoCost)
+          if (vm.cargoQuantity) {
+            cargo.quantity = NP.minus(vm.cargoQuantity, NP.times((separateNum - 1), parseInt(baseNum)))
+          } else {
+            cargo.quantity = 0
+          }
         }
-        // 按照数量的比例，计算相应的货物体积和重量值
-        cargo.volume = roundVolume(NP.times(volumePercent, cargo.quantity))
-        cargo.cargoCost = roundFee(NP.times(costPercent, cargo.quantity))
-        if (vm.WeightOption === 1) {
-          cargo.weight = roundWeight(NP.times(weightPercent, cargo.quantity))
-        } else {
-          cargo.weightKg = roundWeightKg(NP.times(weightPercent, cargo.quantity))
-        }
+
         vm.separateCargoList.push(cargo)
         i++
       }
       vm.backupCargoList = _.cloneDeep(vm.separateCargoList)
+    },
+    /**
+     * 最后一个货物，取总的货物值-减去已经分配的
+     */
+    setCargoLeftValue (cargo, cargoCost) {
+      const vm = this
+      let totals = vm.separateCargoList.reduce((oTotals, cargo) => {
+        oTotals.weight = roundWeight(NP.plus(oTotals.weight, cargo.weight))
+        oTotals.weightKg = roundWeightKg(NP.plus(oTotals.weightKg, cargo.weightKg))
+        oTotals.volume = roundVolume(NP.plus(oTotals.volume, cargo.volume))
+        oTotals.cargoCost = roundFee(NP.plus(oTotals.cargoCost, cargo.cargoCost))
+        return oTotals
+      }, { weight: 0, weightKg: 0, volume: 0, cargoCost: 0 })
+      if (vm.WeightOption === 1) {
+        cargo.weight = roundWeight(NP.minus(vm.cargoWeight, totals.weight))
+      } else {
+        cargo.weightKg = roundWeightKg(NP.minus(vm.cargoWeight, totals.weightKg))
+      }
+      cargo.volume = roundVolume(NP.minus(vm.cargoVolume, totals.volume))
+      cargo.cargoCost = roundFee(NP.minus(multiplyFee(cargoCost), totals.cargoCost))
     },
     // 移除货物
     removeCargo (index) {
