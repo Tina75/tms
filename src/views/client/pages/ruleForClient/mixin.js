@@ -91,14 +91,10 @@ export default {
       if (value === null || value === '') {
         callback()
       }
-      if (/^((0[.]\d{1,4})|(([1-9]\d*)([.]\d{1,4})?))$/.test(String(value))) {
-        if (/^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/.test(String(value))) {
-          callback()
-        } else {
-          callback(new Error('最多九位整数'))
-        }
+      if (!(/^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/.test(String(value)))) {
+        callback(new Error('必须大于0'))
       } else {
-        callback(new Error('最多四位小数'))
+        callback()
       }
     }
     const baseAndStartValidate = (rule, value, callback) => {
@@ -145,7 +141,7 @@ export default {
         callback(new Error('请填写车长'))
       }
     }
-    const cargoNameValidate = (rule, value, callback) => {
+    const cargoNameValidater = (rule, value, callback) => {
       if (value) {
         callback()
       } else {
@@ -241,7 +237,7 @@ export default {
       },
       cargoNameValidate: {
         cargoName: [
-          { validate: cargoNameValidate, trigger: 'blur' }
+          { validator: cargoNameValidater, trigger: 'change' }
         ]
       }
     }
@@ -320,26 +316,32 @@ export default {
       for (let i = 0; i < this.$refs['ruleRoute'].length; i++) {
         await this.formValidate(this.$refs['ruleRoute'][i])
       }
-      for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
-        await this.formValidate(this.$refs['ruleBase'][j])
-        await this.formValidate(this.$refs['rulePrice'][j])
+      if (this.ruleDetail.ruleType !== '5' && this.ruleDetail.ruleType !== '8') {
+        for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
+          await this.formValidate(this.$refs['ruleBase'][j])
+          await this.formValidate(this.$refs['rulePrice'][j])
+        }
       }
       if (this.ruleDetail.ruleType === '5') {
         for (let j = 0; j < this.$refs['ruleCar'].length; j++) {
           await this.formValidate(this.$refs['ruleCar'][j])
+          await this.formValidate(this.$refs['rulePrice'][j])
         }
       }
       if (this.ruleDetail.ruleType === '8') {
         for (let j = 0; j < this.$refs['cargoName'].length; j++) {
           await this.formValidate(this.$refs['cargoName'][j])
+          await this.formValidate(this.$refs['rulePrice'][j])
         }
       }
       // 1、起步量 不做验证 2、起步价 起步量和起步价要么都写要么都不写
-      if (!_this.ruleDetail.details.every((item, index, array) => {
-        return (item.startType === '2' || (item.startNum === null && item.startPrice === null)) || (item.startNum && item.startPrice)
-      })) {
-        this.$Message.error('请填写起步价')
-        return
+      if (this.ruleDetail.ruleType !== '5' && this.ruleDetail.ruleType !== '8') {
+        if (!_this.ruleDetail.details.every((item, index, array) => {
+          return (item.startType === '2' || (item.startNum === null && item.startPrice === null)) || (item.startNum && item.startPrice)
+        })) {
+          this.$Message.error('请填写起步价')
+          return
+        }
       }
       this.$Modal.confirm({
         title: '提示',
@@ -429,8 +431,8 @@ export default {
           return {
             departure: item.departure,
             destination: item.destination,
-            startPrice: item.startPrice !== 0 ? (item.startPrice / 100) : null,
-            startNum: item.startNum !== 0 ? (item.startNum / 100) : null,
+            startPrice: typeof item.startPrice === 'number' ? (item.startPrice / 100) : null,
+            startNum: typeof item.startNum === 'number' ? (item.startNum / 100) : null,
             startType: item.startType ? item.startType + '' : '2',
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
