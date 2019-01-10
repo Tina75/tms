@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import City from './city.js'
-import { divideFee } from './config'
+import { divideFee, divideMileage } from './config'
 /**
  * 时间格式化
  */
@@ -61,7 +61,7 @@ Vue.filter('toPoint', function (money) {
  * 计费里程格式化
  */
 Vue.filter('mileage', function (mileage) {
-  return mileage ? (mileage / 1000).toFixed(1) : '-'
+  return mileage ? divideMileage(mileage).toFixed(1) : '-'
 })
 /**
  * 根据code获取城市全名 格式化城市
