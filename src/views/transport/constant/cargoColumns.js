@@ -95,6 +95,13 @@ const tableColumns = [
     }
   },
   {
+    title: '重量（公斤）',
+    key: 'weightKg',
+    render: (h, p) => {
+      return h('span', p.row.weightKg || 0)
+    }
+  },
+  {
     title: '体积（方）',
     key: 'volume',
     render: (h, p) => {
