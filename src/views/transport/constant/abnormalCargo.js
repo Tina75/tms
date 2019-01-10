@@ -73,7 +73,7 @@ export const TABLE_COLUMNS_ONE = vm => [
               style: {
                 color: 'red'
               }
-            }, vm.originData[params.index].quantity)
+            }, vm.originData[params.index].quantity || 0)
           ])
         }
       }
@@ -290,10 +290,10 @@ export const TABLE_COLUMNS_ONE = vm => [
             }, '整笔异常')
           ])
         } else {
-          if (!(vm.parentOrderCargoList[params.index].quantity === 0 &&
-                     vm.parentOrderCargoList[params.index].weight === 0 &&
-                     vm.parentOrderCargoList[params.index].weightKg === 0 &&
-                     vm.parentOrderCargoList[params.index].volume === 0)) {
+          if (!(!vm.parentOrderCargoList[params.index].quantity &&
+                     !vm.parentOrderCargoList[params.index].weight &&
+                     !vm.parentOrderCargoList[params.index].weightKg &&
+                     !vm.parentOrderCargoList[params.index].volume)) {
             let renderBtn = [
               h('a', {
                 style: {
@@ -356,7 +356,10 @@ export const TABLE_COLUMNS_TWO = vm => [
   {
     title: '包装数量',
     key: 'quantity',
-    width: 130
+    width: 130,
+    render: (h, params) => {
+      return h('div', params.row.quantity || 0)
+    }
   },
   {
     title: '体积（方）',

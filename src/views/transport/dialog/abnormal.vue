@@ -90,13 +90,19 @@
         <div class="border-dashed"></div>
       </div>
 
-      <div v-if="abnormalTypeCode === 3 && AbnormalAddCargoInfos.length > 0" style="padding-left: 8px;">
+      <div v-if="abnormalTypeCode === 3 && AbnormalAddCargoInfos.addCargoInfos.length > 0" style="padding-left: 8px;">
         <div class="border-dashed"></div>
         <div class="order-number">
           异常货物信息
         </div>
         <div>
-          <Table :columns="headers" :data="AbnormalAddCargoInfos"></Table>
+          <!-- <table-extend
+            :order-list="AbnormalAddCargoInfos.addOrderData"
+            :col-width="140"
+            :has-customer-order-no="false"
+            class="abnormal-table-extend"
+            style="float: left"></table-extend> -->
+          <Table :columns="headers" :data="AbnormalAddCargoInfos.addCargoInfos"></Table>
         </div>
         <div class="border-dashed"></div>
       </div>
@@ -248,6 +254,8 @@ export default {
                       z.childOrderCargoList.splice(params.index, 1)
                     }
 
+                    // 将货物列表根据货物id排序
+                    z.childOrderCargoList = _.sortBy(z.childOrderCargoList, ['cargoId'])
                     // 合并单元格需要
                     z.mergeCell('childOrderCargoList', 'childOrderData')
                     // 修改vuex里的数据
@@ -285,7 +293,7 @@ export default {
       parentOrderCargoList: [],
       childOrderCargoList: [],
       parentOrderData: [], // 原单的订单号信息
-      childOrderData: [], // 异常货物的订单号信息
+      childOrderData: [], // 少货货损异常货物的订单号信息
       originData: [], // 原始数据
       // 异常信息表头
       headersOption2: [
@@ -301,7 +309,8 @@ export default {
         },
         {
           title: '货物编号',
-          key: 'cargoNo'
+          key: 'cargoNo',
+          tooltip: true
         },
         {
           title: '重量（吨）',
@@ -328,12 +337,15 @@ export default {
           title: '货值（元）',
           key: 'cargoCost',
           render: (h, p) => {
-            return h('div', p.row.cargoCost ? float.round(p.row.cargoCost / 100) : 0)
+            return h('div', p.row.cargoCost ? float.round(p.row.cargoCost / 100, 4) : 0)
           }
         },
         {
           title: '包装方式',
-          key: 'unit'
+          key: 'unit',
+          render: (h, p) => {
+            return h('span', p.row.unit ? p.row.unit : '-')
+          }
         },
         // {
         //   title: '包装尺寸（毫米）',
@@ -374,7 +386,8 @@ export default {
             ])
           }
         }
-      ]
+      ],
+      addOrderData: [] // 多货异常货物的订单号信息
     }
   },
 
@@ -416,7 +429,7 @@ export default {
     // 合并单元格需要
     mergeCell (orderCargoList, orderData) {
       // 将货物列表根据货物id排序
-      this[orderCargoList] = _.sortBy(this[orderCargoList], ['cargoId'])
+      // this[orderCargoList] = _.sortBy(this[orderCargoList], ['cargoId'])
       // 将原来的tableExtend组件里的orderList置为空数组
       this[orderData] = []
       let obj = _.groupBy(this[orderCargoList], 'orderId')
@@ -524,6 +537,9 @@ export default {
           _this.$store.commit('resetAbnormalAddCargoInfos', _this.details.abnormalCargolist)
         } else if (_this.abnormalTypeCode === 1 || _this.abnormalTypeCode === 2) {
           _this.childOrderCargoList = _this.details.abnormalCargolist
+
+          // 将货物列表根据货物id排序
+          _this.childOrderCargoList = _.sortBy(_this.childOrderCargoList, ['cargoId'])
           // 合并单元格需要
           _this.mergeCell('childOrderCargoList', 'childOrderData')
           // 修改vuex里的数据
@@ -729,7 +745,7 @@ export default {
           data.abnormalCargolist[i].weightKg = float.round(data.abnormalCargolist[i].weight * 1000)
         }
       } else if (data.abnormalTypeCode === 3) {
-        data.abnormalCargolist = this.AbnormalAddCargoInfos
+        data.abnormalCargolist = this.AbnormalAddCargoInfos.addCargoInfos
       }
       Server({
         url: z.recordId ? '/abnormal/update' : '/abnormal/create',

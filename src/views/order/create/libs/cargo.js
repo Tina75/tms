@@ -162,10 +162,10 @@ export default class Cargo {
       orderId: this.orderNo,
       weight: this.weight,
       volume: this.volume,
-      cargoCost: multiplyFee(this.cargoCost * 100),
+      cargoCost: multiplyFee(this.cargoCost),
       quantity: this.quantity,
       unit: this.unit,
-      cargoNo: this.cargoNo
+      cargoNo: this.cargoNo || '-'
       // dimension: {
       //   height: this.dimension.height || null,
       //   width: this.dimension.width || null,

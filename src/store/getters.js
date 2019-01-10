@@ -28,3 +28,5 @@ export const tmsCargoDto = (state) => state.tmsCargoDto
 export const AbnormalCargoInfos = (state) => state.abnormalCargoInfos
 /** 异常货物信息(多货) */
 export const AbnormalAddCargoInfos = (state) => state.abnormalAddCargoInfos
+/** 导入订单批次号 */
+export const ImportId = (state) => state.importId
