@@ -90,14 +90,16 @@ const state = {
     orderRemarkOption: 1
   },
   tmsCargoDto: {}, // 常发货物
-  // 异常货物上报临时存储
+  // 异常货物上报少货、货损临时存储
   abnormalCargoInfos: {
     parentOrderCargoList: [],
     parentOrderData: [],
     childOrderCargoList: [],
     childOrderData: [],
     originData: [] // 原始数据
-  }
+  },
+  // 异常货物上报多货临时存储
+  abnormalAddCargoInfos: []
 }
 
 export default new Vuex.Store({

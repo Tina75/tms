@@ -159,18 +159,18 @@ export default class Cargo {
   toExceptionJson () {
     return {
       cargoName: this.cargoName,
-      orderNo: this.orderNo,
+      orderId: this.orderNo,
       weight: this.weight,
       volume: this.volume,
       cargoCost: float.round(this.cargoCost * 100),
       quantity: this.quantity,
       unit: this.unit,
-      cargoNo: this.cargoNo,
-      dimension: {
-        height: this.dimension.height || null,
-        width: this.dimension.width || null,
-        length: this.dimension.length || null
-      }
+      cargoNo: this.cargoNo
+      // dimension: {
+      //   height: this.dimension.height || null,
+      //   width: this.dimension.width || null,
+      //   length: this.dimension.length || null
+      // }
     }
   }
   validateExp () {

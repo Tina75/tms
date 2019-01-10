@@ -289,29 +289,43 @@ export const TABLE_COLUMNS_ONE = vm => [
               }
             }, '整笔异常')
           ])
-        } else if (!(vm.parentOrderCargoList[params.index].quantity === 0 &&
+        } else {
+          if (!(vm.parentOrderCargoList[params.index].quantity === 0 &&
                      vm.parentOrderCargoList[params.index].weight === 0 &&
                      vm.parentOrderCargoList[params.index].weightKg === 0 &&
                      vm.parentOrderCargoList[params.index].volume === 0)) {
-          let renderBtn = [
-            h('a', {
-              style: {
-                marginRight: '20px',
-                color: '#00a4bd'
-              },
-              on: {
-                click: () => {
-                  vm.isSeparate = true
-                  vm.currentId = params.row.cargoId
-                  let cloneData = vm.cloneData[params.index]
-                  vm.cargoCostVal = cloneData.cargoCost
-                  vm.quantityVal = cloneData.quantity
-                  vm.weightVal = vm.WeightOption === 1 ? cloneData.weight : cloneData.weightKg
-                  vm.volumeVal = cloneData.volume
+            let renderBtn = [
+              h('a', {
+                style: {
+                  marginRight: '20px',
+                  color: '#00a4bd'
+                },
+                on: {
+                  click: () => {
+                    vm.isSeparate = true
+                    vm.currentId = params.row.cargoId
+                    let cloneData = vm.cloneData[params.index]
+                    vm.cargoCostVal = cloneData.cargoCost
+                    vm.quantityVal = cloneData.quantity
+                    vm.weightVal = vm.WeightOption === 1 ? cloneData.weight : cloneData.weightKg
+                    vm.volumeVal = cloneData.volume
+                  }
                 }
-              }
-            }, '部分异常'),
-            h('a', {
+              }, '部分异常'),
+              h('a', {
+                style: {
+                  color: '#00a4bd'
+                },
+                on: {
+                  click: () => {
+                    vm.separateWholeList(params.index)
+                  }
+                }
+              }, '整笔异常')
+            ]
+            return h('div', renderBtn)
+          } else {
+            return h('div', [h('a', {
               style: {
                 color: '#00a4bd'
               },
@@ -320,9 +334,8 @@ export const TABLE_COLUMNS_ONE = vm => [
                   vm.separateWholeList(params.index)
                 }
               }
-            }, '整笔异常')
-          ]
-          return h('div', renderBtn)
+            }, '整笔异常')])
+          }
         }
       }
     }
