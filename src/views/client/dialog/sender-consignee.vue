@@ -7,6 +7,7 @@
       transfer
       label-position="left"
       class="modal"
+      width="800"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
@@ -20,12 +21,12 @@
         </FormItem>
         <FormItem label="收货地址：">
           <Row>
-            <Col span="11">
+            <Col span="10">
             <FormItem prop="cityCode">
               <CitySelect v-model="validate.cityCode" clearable></CitySelect>
             </FormItem>
             </Col>
-            <Col span="13" style="padding-left: 5px">
+            <Col span="14" style="padding-left: 5px">
             <FormItem prop="address">
               <AreaInput
                 v-model="validate.address"

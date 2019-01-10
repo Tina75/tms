@@ -6,7 +6,8 @@ export const TABLE_COLUMNS_ONE = vm => [
   {
     title: '货物名称',
     key: 'cargoName',
-    width: 139
+    width: 139,
+    tooltip: true
   },
   {
     title: '包装方式',
@@ -339,7 +340,8 @@ export const TABLE_COLUMNS_TWO = vm => [
   {
     title: '货物名称',
     key: 'cargoName',
-    width: 139
+    width: 139,
+    tooltip: true
   },
   {
     title: '包装方式',

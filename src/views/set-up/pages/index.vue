@@ -476,7 +476,7 @@ export default {
 .set-up-container
   overflow auto
 .temAll
-  background: #fff
+  background: #f3f5f9
   margin: -20px -15px;
   .setConf
     margin-top: 20px;
@@ -496,7 +496,7 @@ export default {
 .contentDiv
   background:#fff;
   padding-left:20px;
-  height: 100%;
+  min-height: 100%;
 .borderBottomLine
   border-bottom: 1px solid #e9e9e9;
   padding-bottom: 12px;

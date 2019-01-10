@@ -264,4 +264,5 @@ export default {
 .order-set-footer
   text-align center
   margin-top 50px
+  margin-bottom 30px
 </style>

@@ -416,11 +416,11 @@ export default {
     border-top 1px solid #d4d5dc
     &-hide
       display none
-      .exception-distribution
-        display: flex;
-        display -ms-flexbox
-        margin-bottom: 10px;
-        margin-top: 10px
+    .exception-distribution
+      display: flex;
+      display -ms-flexbox
+      margin-bottom: 10px;
+      margin-top: 10px
       .mgbt20
         margin-bottom 35px
   .img-bar
@@ -454,6 +454,7 @@ export default {
     display inline-block
     flex 1
     -ms-flex 1
+    word-break break-word
   .wigtFont
     font-weight 600
     color #333
