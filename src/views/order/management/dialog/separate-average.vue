@@ -33,7 +33,7 @@
             &nbsp;单
           </FormItem>
           <FormItem>
-            <Button @click="handleSeparate">确定</Button>
+            <Button ghost type="primary" @click="handleSeparate">确定</Button>
           </FormItem>
         </Form>
       </div>

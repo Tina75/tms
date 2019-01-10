@@ -45,7 +45,7 @@
             </div>
           </td>
           <td>
-            <div class="ivu-table-cell">总重量：{{statics.weight}}吨</div>
+            <div class="ivu-table-cell">总重量：{{orderSet.weightKgOption == 1 ? `${weightToKg(statics.weight)}公斤` : `${statics.weight}吨` }}</div>
           </td>
           <td>
             <div class="ivu-table-cell">总体积：{{statics.volume}}方</div>
@@ -388,8 +388,8 @@ export default {
         float.floor(value, col.point).toString()
       }
     },
-    float (value) {
-      return float.round(value, 3)
+    weightToKg (value) {
+      return float.round(value * 1000, 0)
     }
   }
 }
