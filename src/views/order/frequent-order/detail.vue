@@ -114,7 +114,7 @@
       <Row :gutter="16">
         <Col span="6">
         <FormItem label="计费里程：">
-          <span class="blod-font">{{detail.mileage / 1000}}公里</span>
+          <span class="blod-font">{{detail.mileage | mile}}公里</span>
         </FormItem>
         </Col>
         <Col span="6">
@@ -167,9 +167,12 @@ import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
 import settlement from '@/libs/constant/settlement.js'
-import { roundFee, NumberPrecesion } from '@/libs/js/config'
+import { divideFee, NumberPrecesion, divideMileage, renderFee } from '@/libs/js/config'
 export default {
   name: 'frequent-order-detail',
+  filters: {
+    mile: divideMileage
+  },
   mixins: [ BasePage ],
   data () {
     return {
@@ -207,7 +210,7 @@ export default {
           title: '货值（元）',
           key: 'cargoCost',
           render: (h, params) => {
-            return h('span', params.row.cargoCost / 100 || '-')
+            return renderFee(h, params.row.cargoCost)
           }
         },
         {
@@ -277,8 +280,7 @@ export default {
       this.detail.orderCargoTemplateList.map((item) => {
         total += Number(item.cargoCost)
       })
-      total /= 100
-      return roundFee(total) + '元'
+      return divideFee(total) + '元'
     },
     // 总数量
     quantityTotal () {
