@@ -281,18 +281,20 @@ export const TABLE_COLUMNS_ONE = vm => [
             vm.parentOrderCargoList[params.index].weight === 0 &&
             vm.parentOrderCargoList[params.index].weightKg === 0 &&
             vm.parentOrderCargoList[params.index].volume === 0)) {
-          return h('div', [
-            h('a', {
-              style: {
-                color: '#00a4bd'
-              },
-              on: {
-                click: () => {
-                  vm.separateWholeList(params.index)
+          if (!vm.compareOriginAndChild(params.index)) {
+            return h('div', [
+              h('a', {
+                style: {
+                  color: '#00a4bd'
+                },
+                on: {
+                  click: () => {
+                    vm.separateWholeList(params.index)
+                  }
                 }
-              }
-            }, '整笔异常')
-          ])
+              }, '整笔异常')
+            ])
+          }
         } else if (!(vm.parentOrderCargoList[params.index].quantity === 0 &&
                     vm.parentOrderCargoList[params.index].weight === 0 &&
                     vm.parentOrderCargoList[params.index].weightKg === 0 &&
