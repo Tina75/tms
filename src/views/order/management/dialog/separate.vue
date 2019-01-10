@@ -73,6 +73,7 @@
     <div slot="footer">
       <Button
         :disabled="!(parentOrderCargoList.length && (childOrderCargoList.length || muiltyOrderCargoList.length))"
+        :loading="loading"
         type="primary"
         @click="save">
         确定
@@ -113,6 +114,7 @@ export default {
       weightVal: 0,
       volumeVal: 0,
       cargoCostVal: 0,
+      loading: false,
       cloneData: [], // 复制一份货物详情数据
       allocationStrategy: 1,
       columns1Weight: COLUMNS_ONE_WEIGHT(this),
@@ -267,6 +269,7 @@ export default {
     },
     save () {
       let vm = this
+      vm.loading = true
       let transformField = function (item) {
         // 区分吨和公斤 吨和公斤只需传一个
         if (vm.WeightOption === 1) {
@@ -319,6 +322,9 @@ export default {
         } else {
           this.$Message.error(res.data.msg)
         }
+        vm.loading = false
+      }).catch(er => {
+        vm.loading = false
       })
     },
     // 拆单完成后的弹窗提示
