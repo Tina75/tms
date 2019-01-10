@@ -88,14 +88,14 @@
                 </i-col>
                 <i-col span="8">
                   <span class="detail-field-title">代收货款：</span>
-                  <span v-if="info.collectionMoney">{{info.collectionMoney / 100}}元</span>
+                  <span v-if="info.collectionMoney">{{info.collectionMoney | toPoint}}元</span>
                   <span v-else>-</span>
                 </i-col>
               </Row>
               <Row class="detail-field-group">
                 <i-col v-if="info.assignCarType === 1" span="8">
                   <span class="detail-field-title">返现运费：</span>
-                  <span v-if="info.cashBack">{{info.cashBack / 100}}元</span>
+                  <span v-if="info.cashBack">{{info.cashBack | toPoint}}元</span>
                   <span v-else>-</span>
                 </i-col>
               </Row>
