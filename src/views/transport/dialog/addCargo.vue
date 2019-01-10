@@ -37,7 +37,8 @@ export default {
   computed: {
     ...mapGetters([
       'OrderSet',
-      'cargoes'
+      'cargoes',
+      'AbnormalAddCargoInfos' // 异常货物信息(多货)
     ])
   },
   mounted () {
@@ -109,9 +110,21 @@ export default {
       })
     },
     ok () {
-      this.validate().then(data => {
-        this.complete(data)
-        this.close()
+      const z = this
+      z.validate().then(data => {
+        let obj = {}
+        z.orders.map((order) => {
+          obj[order['value']] = order['label']
+        })
+        for (let i = 0; i < data.length; i++) {
+          for (let key in obj) {
+            if (data[i].orderId === Number(key)) {
+              data[i].orderNo = obj[key]
+            }
+          }
+        }
+        z.$store.commit('setAbnormalAddCargoInfos', data)
+        z.close()
       })
     }
   }
