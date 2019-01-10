@@ -1,3 +1,4 @@
+import { renderFee } from '@/libs/js/config'
 const tableColumns = [
   {
     title: '订单号',
@@ -44,6 +45,13 @@ const tableColumns = [
     key: 'volume',
     render: (h, p) => {
       return h('span', p.row.volume ? p.row.volume : 0)
+    }
+  },
+  {
+    title: '货值（元）',
+    key: 'cargoCost',
+    render: (h, params) => {
+      return renderFee(h, params.row.cargoCost)
     }
   }
 ]
