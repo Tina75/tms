@@ -461,11 +461,27 @@ export default {
           }
         },
         {
+          title: '回收人',
+          key: 'recoveryName',
+          minWidth: 100,
+          render: (h, params) => {
+            return h('span', params.row.receiptOrder.recoveryName ? params.row.receiptOrder.recoveryName : '-')
+          }
+        },
+        {
           title: '返厂时间',
           key: 'returnTime',
           minWidth: 150,
           render: (h, params) => {
             return h('span', params.row.receiptOrder.returnTime ? new Date(params.row.receiptOrder.returnTime).Format('yyyy-MM-dd hh:mm:ss') : '-')
+          }
+        },
+        {
+          title: '接收人',
+          key: 'returnName',
+          minWidth: 100,
+          render: (h, params) => {
+            return h('span', params.row.receiptOrder.returnName ? params.row.receiptOrder.returnName : '-')
           }
         },
         {

@@ -21,7 +21,6 @@
       v-model="record[col.key]"
       :min="col.min"
       :precision="col.point"
-      :parser="handleParse"
       @on-change="handleChange(col.key)"
       @on-blur="handleBlur(col)"
     >
@@ -122,12 +121,12 @@ export default {
     /**
      * 保持小数
      */
-    handleParse (value) {
-      if (this.requird) {
-        return float.floor(value, this.col.point).toString()
-      }
-      return value ? float.floor(value, this.col.point).toString() : value
-    },
+    // handleParse (value) {
+    //   if (this.requird) {
+    //     return float.floor(value, this.col.point).toString()
+    //   }
+    //   return value ? float.floor(value, this.col.point).toString() : value
+    // },
     /**
      * 新增货物
      */
@@ -156,6 +155,7 @@ export default {
       if (type !== 'quantity') {
         return
       }
+      const self = this
       // 是否输入了货物名称
       let cargoName = this.record.cargoName
       // 查找货物名称，是否是已维护的货物信息
@@ -165,7 +165,7 @@ export default {
         if (matchCargo) {
           ['weight', 'volume', 'cargoCost'].forEach((key) => {
             let value = this.record[this.col.key] || 1
-            this.record[key] = float.round(value * matchCargo[key])
+            this.record[key] = float.round(value * matchCargo[key], self.$numberPrecesion.volume)
           })
         }
       }

@@ -37,7 +37,8 @@ export default {
   computed: {
     ...mapGetters([
       'OrderSet',
-      'cargoes'
+      'cargoes',
+      'AbnormalAddCargoInfos' // 异常货物信息(多货)
     ])
   },
   mounted () {
@@ -46,7 +47,7 @@ export default {
       this.consignerCargoes = this.cargoLists.map((item) => new Cargo(item, true))
     } else {
       if (this.orders.length === 1) {
-        this.consignerCargoes = [new Cargo({ orderNo: '订单号2' })]
+        this.consignerCargoes = [new Cargo({ orderNo: this.orders[0].value })]
       } else {
         this.consignerCargoes = [new Cargo()]
       }
@@ -109,9 +110,21 @@ export default {
       })
     },
     ok () {
-      this.validate().then(data => {
-        this.complete(data)
-        this.close()
+      const z = this
+      z.validate().then(data => {
+        let obj = {}
+        z.orders.map((order) => {
+          obj[order['value']] = order['label']
+        })
+        for (let i = 0; i < data.length; i++) {
+          for (let key in obj) {
+            if (data[i].orderId === Number(key)) {
+              data[i].orderNo = obj[key]
+            }
+          }
+        }
+        z.$store.commit('setAbnormalAddCargoInfos', data)
+        z.close()
       })
     }
   }

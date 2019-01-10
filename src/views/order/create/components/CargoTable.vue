@@ -281,36 +281,36 @@ export default {
           type: 'package',
           max: 10
         },
-        {
-          required: false,
-          title: '包装尺寸（毫米）',
-          key: 'dimension',
-          width: 180,
-          type: 'multi',
-          children: [
-            {
-              required: false,
-              title: '长',
-              key: 'length',
-              maxLen: 7,
-              point: NumberPrecesion.dimension
-            },
-            {
-              required: false,
-              title: '宽',
-              key: 'width',
-              maxLen: 7,
-              point: NumberPrecesion.dimension
-            },
-            {
-              required: false,
-              title: '高',
-              key: 'height',
-              maxLen: 7,
-              point: NumberPrecesion.dimension
-            }
-          ]
-        },
+        // {
+        //   required: false,
+        //   title: '包装尺寸（毫米）',
+        //   key: 'dimension',
+        //   width: 180,
+        //   type: 'multi',
+        //   children: [
+        //     {
+        //       required: false,
+        //       title: '长',
+        //       key: 'length',
+        //       maxLen: 7,
+        //       point: NumberPrecesion.dimension
+        //     },
+        //     {
+        //       required: false,
+        //       title: '宽',
+        //       key: 'width',
+        //       maxLen: 7,
+        //       point: NumberPrecesion.dimension
+        //     },
+        //     {
+        //       required: false,
+        //       title: '高',
+        //       key: 'height',
+        //       maxLen: 7,
+        //       point: NumberPrecesion.dimension
+        //     }
+        //   ]
+        // },
         {
           required: false,
           title: '包装数量',
@@ -345,7 +345,7 @@ export default {
         }
         sum.weight = float.round((cargo.weight || 0) + sum.weight, NumberPrecesion.weight)
         sum.volume = float.round((cargo.volume || 0) + sum.volume, NumberPrecesion.volume)
-        sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
+        sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost, NumberPrecesion.fee)
         sum.quantity = (cargo.quantity || 0) + sum.quantity
         return sum
       }, {

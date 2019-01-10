@@ -159,7 +159,7 @@ import OrderPrint from './OrderPrint'
 import FontIcon from '@/components/FontIcon'
 import IconLabel from '@/components/IconLabel'
 import SearchMixin from '../searchMixin'
-import { renderFee, renderMileage, getRateText, getFeeText } from '@/libs/js/config'
+import { renderFee, renderMileage, getRateText } from '@/libs/js/config'
 export default {
   name: 'TabContent',
 
@@ -906,7 +906,7 @@ export default {
           key: 'invoiceAmount',
           minWidth: 120,
           render: (h, params) => {
-            return h('span', getFeeText(params.row.invoiceAmount))
+            return renderFee(h, params.row.invoiceAmount)
           }
         },
         {
@@ -1319,7 +1319,6 @@ export default {
         }
       }).then((res) => {
         this.orderPrint = _.cloneDeep(res.data.data)
-        this.orderPrint.invoiceRate = getRateText(this.orderPrint.invoiceRate)
         this.$refs.printer.print()
       })
     },

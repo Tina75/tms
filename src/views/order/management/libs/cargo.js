@@ -1,9 +1,11 @@
+let unique = 0
 export default class Cargo {
   /**
    *
    * @param {Object} props
    */
   constructor (props) {
+    this.__id = unique++
     this.id = props.id || null
     this.orderId = props.orderId || null
     this.packing = props.packing || null

@@ -71,11 +71,12 @@ function checkExistEquallyQuery (equallyPathTabs, toPageQuery) {
 const install = (Vue) => {
   let timers = {}
 
-  function getComponentNameOrRoutePath (vm) {
+  function getComponentNameAndRoutePath (vm) {
     if (!vm.$options) {
       return 'route: ' + window.location.hash.split('?')[0].replace('#', '')
     } else {
-      return vm.$options.name ? ('component: ' + vm.$options.name) : ('route: ' + vm.$route.path)
+      const route = 'route: ' + vm.$route.path
+      return vm.$options.name ? ('component: ' + vm.$options.name + ' || ' + route) : route
     }
   }
 
@@ -93,12 +94,12 @@ const install = (Vue) => {
         const name = this.$options.timerName
         this.$ga.time(
           'domRender',
-          getComponentNameOrRoutePath(this),
+          getComponentNameAndRoutePath(this),
           endTimestamp - timers[name],
           this.$route.path
         )
         if (!isProdEnv) {
-          console.log(`render time: ${getComponentNameOrRoutePath(this)} —> ${endTimestamp - timers[name]}`)
+          // console.log(`render time: ${getComponentNameAndRoutePath(this)} —> ${endTimestamp - timers[name]}`)
         }
         delete timers[name]
         delete this.$options.timerName
@@ -157,13 +158,13 @@ const install = (Vue) => {
     const timerName = [this.$options ? this.$options.name : '', name].join('__')
     if (!timers[timerName]) return
     if (!isProdEnv) {
-      console.log(`execute time: ${name} —> ${endTimestamp - timers[timerName]}`)
+      // console.log(`execute time: ${name} —> ${endTimestamp - timers[timerName]}`)
     }
     this.$ga.time(
       isUserInfo ? 'userInfo' : 'performance',
       name,
       endTimestamp - timers[timerName],
-      getComponentNameOrRoutePath(this)
+      getComponentNameAndRoutePath(this)
     )
   }
 
@@ -173,7 +174,7 @@ const install = (Vue) => {
    */
   Vue.prototype.$reportClick = Vue.$reportClick = function (name) {
     if (!name) return
-    this.$ga.event('click', name, getComponentNameOrRoutePath(this))
+    this.$ga.event('click', name, getComponentNameAndRoutePath(this))
   }
 
   /**
@@ -184,7 +185,7 @@ const install = (Vue) => {
    */
   Vue.prototype.$reportUser = Vue.$reportUser = function (name, label, value) {
     if (!name) return
-    this.$ga.event('userInfo', name, label || getComponentNameOrRoutePath(this), value)
+    this.$ga.event('userInfo', name, label || getComponentNameAndRoutePath(this), value)
   }
 
   /**
@@ -196,7 +197,7 @@ const install = (Vue) => {
    */
   Vue.prototype.$reportEvent = Vue.$reportEvent = function (name, label, value, category) {
     if (!name) return
-    const temp = getComponentNameOrRoutePath(this)
+    const temp = getComponentNameAndRoutePath(this)
     this.$ga.event(category || (temp || 'unset_category'), name, label, value)
   }
 
@@ -206,10 +207,10 @@ const install = (Vue) => {
    */
   Vue.prototype.$reportError = Vue.$reportError = function (error) {
     if (!(error instanceof Error)) {
-      console.warn('上报异常请传入一个Error对象')
+      // console.warn('上报异常请传入一个Error对象')
       return
     }
-    const temp = getComponentNameOrRoutePath(this)
+    const temp = getComponentNameAndRoutePath(this)
     this.$ga.exception(`msg: ${error.message} || stack: ${error.stack.toString()} || userAgent: ${window.navigator.userAgent}${temp ? (' || ' + temp) : ''}`)
   }
 }

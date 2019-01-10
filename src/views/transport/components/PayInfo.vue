@@ -194,9 +194,9 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-  .payment-info-table
-    .ivu-table-cell
-      overflow inherit
-
+<style lang="stylus" scoped>
+.payment-info-table
+>>> .ivu-table
+      .ivu-table-cell
+        overflow inherit
 </style>
