@@ -304,6 +304,26 @@ export default {
         })
         this[orderData].push(...obj[key])
       }
+    },
+
+    // 比较originData和childOrderCargoList中是否有相同的值
+    compareOriginAndChild (index) {
+      const z = this
+      let bool = false
+      // 同步吨和公斤
+      z.childOrderCargoList.map((item) => {
+        if (this.WeightOption === 1) {
+          item.weightKg = parseInt(float.round(item.weight * 1000))
+        } else {
+          item.weight = float.round(item.weightKg / 1000, 3)
+        }
+      })
+      z.childOrderCargoList.map((item) => {
+        if (JSON.stringify(item) === JSON.stringify(z.originData[index])) {
+          bool = true
+        }
+      })
+      return bool
     }
   }
 
