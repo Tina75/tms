@@ -16,7 +16,7 @@
       @dragover.prevent="dragOver = true"
       @dragleave.prevent="dragOver = false">
       <div style="padding: 20px 0">
-        <Icon type="ios-cloud-upload" size="52" style="color: #3399ff"></Icon>
+        <FontIcon type="daoru" size="52" style="color: #3399ff"></FontIcon>
         <p>将文件拖至此处，或<a>点击导入</a></p>
       </div>
     </div>
