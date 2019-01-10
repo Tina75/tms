@@ -206,7 +206,11 @@ export default {
       return value
     },
     handleChange (index, key, value) {
-      this.backupCargoList[index][key] = value
+      if (key === 'cargoCost') {
+        this.backupCargoList[index][key] = multiplyFee(value)
+      } else {
+        this.backupCargoList[index][key] = value
+      }
     },
     /**
      * 开始批量拆
