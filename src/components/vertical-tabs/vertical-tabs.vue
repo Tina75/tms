@@ -31,6 +31,9 @@ export default {
   props: {
     value: {
       type: [String, Number]
+    },
+    onSelect: {
+      type: Function
     }
   },
   data () {
@@ -92,6 +95,8 @@ export default {
     },
     handleSelect (name) {
       this.activeKey = name
+      let currentTab = this.tabList.find((tab) => tab.name === name)
+      this.$emit('on-select', { ...currentTab })
     }
   }
 }

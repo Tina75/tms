@@ -40,8 +40,7 @@
           </i-col>
           <i-col  span="4">
             <span>代收货款：</span>
-            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
-            <span v-else>-</span>
+            <span>{{detail.collectionMoney | toPoint}}元</span>
           </i-col>
         </Row>
         <Row>
@@ -212,10 +211,11 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
+import { getFeeText } from '@/libs/js/config'
 import { renderVolume, renderWeight } from '../constant/util'
 import float from '@/libs/js/float'
 export default {
-  name: 'detail',
+  name: 'upstreamDetail',
 
   components: {
     // OrderPrint
@@ -260,36 +260,25 @@ export default {
           title: '货值（元）',
           key: 'cost',
           render: (h, params) => {
-            return h('span', params.row.cost ? (params.row.cost / 100).toFixed(2) : '-')
+            // return h('span', params.row.cost ? (params.row.cost / 100).toFixed(2) : '-')
+            return h('div', {}, getFeeText(params.row.cost))
           }
         },
         {
           title: '数量',
-          key: 'num',
-          render: (h, p) => {
-            return h('span', p.row.num ? p.row.num : '-')
-          }
+          key: 'num'
         },
         {
           title: '包装',
-          key: 'packageUnit',
-          render: (h, p) => {
-            return h('span', p.row.packageUnit ? p.row.packageUnit : '-')
-          }
+          key: 'packageUnit'
         },
         {
           title: '备注1',
-          key: 'remark1',
-          render: (h, p) => {
-            return h('span', p.row.remark1 ? p.row.remark1 : '-')
-          }
+          key: 'remark1'
         },
         {
           title: '备注2',
-          key: 'remark2',
-          render: (h, p) => {
-            return h('span', p.row.remark2 ? p.row.remark2 : '-')
-          }
+          key: 'remark2'
         }
       ],
       tableData: [],
@@ -313,7 +302,8 @@ export default {
       this.detail.cargoInfos.map((item) => {
         total += Number(item.cost)
       })
-      return (total / 100).toFixed(2)
+      // return (total / 100).toFixed(2)
+      return getFeeText(total)
     },
     // 总数量
     quantityTotal () {

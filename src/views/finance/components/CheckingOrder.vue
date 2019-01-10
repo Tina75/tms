@@ -1,4 +1,4 @@
-<!--  -->
+<!-- 对账单 -->
 <template>
   <div class="checking-order">
     <div class="query-box">
@@ -34,8 +34,8 @@
 import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
-import float from '@/libs/js/float'
-
+// import float from '@/libs/js/float'
+import { getFeeText, roundFee } from '@/libs/js/config'
 export default {
   name: 'checkingOrder',
   mixins: [ BaseComponent ],
@@ -175,7 +175,7 @@ export default {
           scene: this.scene,
           verifyType: 3,
           isOil: 0,
-          needPay: float.round(data.row.totalFeeText)
+          needPay: roundFee(data.row.totalFeeText)
         },
         methods: {
           ok () {
@@ -265,10 +265,10 @@ export default {
         this.orderData.totalCount = res.data.data.reconcileList.totalCount
         this.orderData.list = res.data.data.reconcileList.map(item => {
           return Object.assign({}, item, {
-            totalFeeText: (item.totalFee / 100).toFixed(2)
+            totalFeeText: getFeeText(item.totalFee)
           })
         })
-      }).catch(err => console.error(err))
+      })
     },
     resetPageSize (size) {
       this.checkingOrderQuerySave.pageNo = 1

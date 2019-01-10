@@ -322,6 +322,7 @@ import FontIcon from '@/components/FontIcon'
 import TextAreaNumber from '@/components/TextAreaNumber'
 import { formatePhone } from '@/libs/js/formate'
 import SelectInput from '@/components/SelectInput.vue'
+import { mapActions } from 'vuex'
 export default {
   name: 'company-setting',
   components: {
@@ -399,6 +400,7 @@ export default {
     this.getCompanyInfo()
   },
   methods: {
+    ...mapActions(['getUserInfo']),
     formatePhoneNum (temp) {
       return formatePhone(temp)
     },
@@ -469,7 +471,7 @@ export default {
       this.formCompany.companyPhoto = JSON.stringify(this.$refs.upLoadsStyle.getImageList()) // 公司风貌
       this.formCompany.wxQrPic = JSON.stringify(this.$refs.upLoadsWX.getImageList()) // 微信二维码
       // 公司首页形象图
-      if (this.$refs.upLoadsBanner.uploadImgList[0]) this.formCompany.homeBanner = this.$refs.upLoadsBanner.uploadImgList[0].url
+      if (this.$refs.upLoadsBanner.uploadImg) this.formCompany.homeBanner = this.$refs.upLoadsBanner.uploadImg
       else this.formCompany.homeBanner = ''
     },
     // 公司
@@ -505,6 +507,7 @@ export default {
               this.$Message.success('保存成功!')
               this.isEdit = false
               this.getCompanyInfo()
+              this.getUserInfo()
             }).catch(() => {
               this.loading = false
             })

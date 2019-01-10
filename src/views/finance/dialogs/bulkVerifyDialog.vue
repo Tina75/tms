@@ -31,8 +31,9 @@
 <script>
 import { payTypeMap } from '../constant/numList'
 import BaseDialog from '@/basic/BaseDialog'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 import '@/libs/js/filter'
+import { divideFee } from '@/libs/js/config'
 // import _ from 'lodash'
 export default {
   name: 'bulkVerifyDialog',
@@ -75,7 +76,7 @@ export default {
       let needPay = 0
       _this.list.map(item => {
         _this.checkGroup.map(list => {
-          if (item.value === list) needPay += float.floor(item.money / 100, 2)
+          if (item.value === list) needPay += divideFee(item.money)
         })
       })
       _this.checkGroup.map(item => {

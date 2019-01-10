@@ -48,6 +48,78 @@ export default{
    */
   allocationStrategySetting (state, option) {
     state.allocationStrategy = option
+  },
+  /**
+   * 常发货物
+   * @param {*} state
+   * @param {*} option
+   */
+  tmsCargoDtoSetting (state, option) {
+    state.tmsCargoDto = option
+  },
+  /**
+   * 上报异常货物修改临时存储货物信息(少货、货损)
+   * @param {*} state
+   * @param {*} cargo
+   */
+  setAbnormalCargoInfos (state, cargo) {
+    for (let i in state.abnormalCargoInfos) {
+      state.abnormalCargoInfos[i] = cargo[i] || []
+    }
+  },
+  /**
+   * 上报异常货物重置临时存储货物信息为空
+   * @param {*} state
+   */
+  resetAbnormalCargoInfos (state) {
+    for (let i in state.abnormalCargoInfos) {
+      state.abnormalCargoInfos[i] = []
+    }
+  },
+  /**
+   * 上报异常货物修改临时存储货物信息(多货)
+   * @param {*} state
+   * @param {*} cargo
+   * @param {*} order
+   */
+  setAbnormalAddCargoInfos (state, cargo) {
+    state.abnormalAddCargoInfos.addCargoInfos.push(...cargo)
+    // state.abnormalAddCargoInfos.addOrderData = order
+  },
+  /**
+   * 上报异常货物覆盖临时存储货物信息(多货)
+   * @param {*} state
+   * @param {*} cargo
+   * @param {*} order
+   */
+  resetAbnormalAddCargoInfos (state, cargo) {
+    state.abnormalAddCargoInfos.addCargoInfos = cargo
+    // state.abnormalAddCargoInfos.addOrderData = order
+  },
+  /**
+   * 移除上报异常货物修改临时存储货物信息(多货)
+   * @param {*} state
+   * @param {*} index
+   * @param {*} order
+   */
+  removeAbnormalAddCargoInfos (state, index) {
+    state.abnormalAddCargoInfos.addCargoInfos.splice(index, 1)
+    // state.abnormalAddCargoInfos.addOrderData = order
+  },
+  /**
+   * 清空上报异常货物修改临时存储货物信息(多货)
+   * @param {*} state
+   */
+  clearAbnormalAddCargoInfos (state) {
+    state.abnormalAddCargoInfos.addCargoInfos = []
+    // state.abnormalAddCargoInfos.addOrderData = []
+  },
+  /**
+   * 设置当前导入订单批次号
+   * @param {*} id
+   */
+  setImported (state, id) {
+    state.importId = id
   }
 }
 

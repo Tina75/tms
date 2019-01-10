@@ -16,34 +16,37 @@
       @on-select="handleSelect"
     >
     </SelectInput>
-    <InputNumber
+    <TagNumberInput
       v-else-if="col.type==='number'"
-      :value="record[col.key]"
+      v-model="record[col.key]"
       :min="col.min"
-      :max="col.maxLen"
-      :parser="handleParse"
-      style="width: 100%"
-      @input="v => { this.inputHandle(v, col.key) }"
+      :precision="col.point"
       @on-change="handleChange(col.key)"
       @on-blur="handleBlur(col)"
     >
-    </InputNumber>
+    </TagNumberInput>
+    <!-- 包装尺寸 -->
     <div v-else-if="col.type === 'multi' && col.children">
       <TagNumberInput
         v-for="(el, index) in col.children"
         :key="index"
         v-model="record[col.key][el.key]"
-        :min="el.min"
-        :max="el.max"
+        :length="el.maxLen"
+        :show-chinese="false"
         :style="`width: 31%`"
         :placeholder="el.title"
         :precision="el.point"
         style="margin: 0 1%">
       </TagNumberInput>
     </div>
+    <!-- 包装方式 -->
     <div v-else-if="col.type == 'package'">
       <SelectPackageType v-model="record[col.key]" clearable/>
     </div>
+    <!-- 订单下拉框 -->
+    <Select v-else-if="col.type === 'orderSelect'" v-model="record[col.key]" clearable>
+      <Option v-for="(item, index) in orders" :value="item.value" :key="index">{{ item.label }}</Option>
+    </Select>
     <Input v-else v-model="record[col.key]" :maxlength="col.max" clearable></Input>
     <p v-if="record.hasError && record.errorMsg[col.key] !== ''" :class="errorClass">
       {{record.errorMsg[col.key]}}
@@ -66,6 +69,7 @@ export default {
     index: Number,
     prefixClass: String,
     cargoes: Array,
+    orders: Array,
     headers: Array,
     record: Object,
     col: Object,
@@ -117,12 +121,12 @@ export default {
     /**
      * 保持小数
      */
-    handleParse (value) {
-      if (this.requird) {
-        return float.floor(value, this.col.point).toString()
-      }
-      return value ? float.floor(value, this.col.point).toString() : value
-    },
+    // handleParse (value) {
+    //   if (this.requird) {
+    //     return float.floor(value, this.col.point).toString()
+    //   }
+    //   return value ? float.floor(value, this.col.point).toString() : value
+    // },
     /**
      * 新增货物
      */
@@ -151,6 +155,7 @@ export default {
       if (type !== 'quantity') {
         return
       }
+      const self = this
       // 是否输入了货物名称
       let cargoName = this.record.cargoName
       // 查找货物名称，是否是已维护的货物信息
@@ -160,17 +165,9 @@ export default {
         if (matchCargo) {
           ['weight', 'volume', 'cargoCost'].forEach((key) => {
             let value = this.record[this.col.key] || 1
-            this.record[key] = float.round(value * matchCargo[key])
+            this.record[key] = float.round(value * matchCargo[key], self.$numberPrecesion.volume)
           })
         }
-      }
-    },
-    inputHandle (value, key, size) {
-      // 尺寸等属性 长宽高
-      if (size) {
-        this.record[key].size = value
-      } else {
-        this.record[key] = value
       }
     }
   }

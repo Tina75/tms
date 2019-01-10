@@ -99,7 +99,7 @@ export default {
     // 小数点精度
     precision: {
       type: Number,
-      default: 2
+      default: 4
     },
     elementId: {
       type: String

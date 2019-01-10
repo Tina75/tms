@@ -67,10 +67,10 @@
           </FormItem>
           </Col>
           <Col span="8">
-          <FormItem label="换上公里数：" prop="setupMileage">
+          <FormItem label="换上公里数：">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" v-model="validate.setupMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" :length="6" v-model="validate.setupMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="3" offset="1">
               <span>公里</span>
@@ -81,10 +81,10 @@
         </Row>
         <Row>
           <Col span="8">
-          <FormItem label="换下公里数：" prop="uninstallMileage">
+          <FormItem label="换下公里数：">
             <Row>
               <Col span="20">
-              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" v-model="validate.uninstallMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
+              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" :length="6" v-model="validate.uninstallMileage" :show-chinese="false" placeholder="请输入"></TagNumberInput>
               </Col>
               <Col span="3" offset="1">
               <span>公里</span>
@@ -117,6 +117,7 @@ import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 import CarSelect from '@/components/own-car-form/CarSelect'
 import float from '@/libs/js/float'
+import { multiplyFee, divideFee } from '@/libs/js/config'
 export default {
   name: 'edit-tyre',
   components: {
@@ -148,15 +149,15 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         cost: [
-          { required: true, message: '金额不能为空' },
-          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+          { required: true, message: '金额不能为空' }
+          // { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
-        setupMileage: [
-          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
-        ],
-        uninstallMileage: [
-          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
-        ],
+        // setupMileage: [
+        //   { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+        // ],
+        // uninstallMileage: [
+        //   { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+        // ],
         tireBrand: [
           { required: true, message: '轮胎品牌不能为空' }
         ],
@@ -186,7 +187,7 @@ export default {
           })
         }
         vm.$refs.upLoads.uploadImgList = vm.imgList
-        vm.validate.cost = Number(vm.validate.cost) / 100
+        vm.validate.cost = divideFee(vm.validate.cost)
         vm.validate.setupMileage = Number(vm.validate.setupMileage) / 1000
         vm.validate.uninstallMileage = Number(vm.validate.uninstallMileage) / 1000
       }
@@ -198,7 +199,7 @@ export default {
       })
       let params = Object.assign({}, this.validate)
       if (params.setupDate) params.setupDate = new Date(this.validate.setupDate).getTime()
-      if (params.cost) params.cost = float.round(this.validate.cost * 100)
+      if (params.cost) params.cost = multiplyFee(this.validate.cost)
       if (params.setupMileage) params.setupMileage = float.round(this.validate.setupMileage * 1000)
       if (params.uninstallMileage) params.uninstallMileage = float.round(this.validate.uninstallMileage * 1000)
       this.$refs[name].validate((valid) => {

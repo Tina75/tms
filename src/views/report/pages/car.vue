@@ -90,13 +90,14 @@
 import PageTable from '@/components/page-table'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
+import { renderFee, getMileageText } from '@/libs/js/config'
 // import City from '@/libs/js/city'
 // import { mapGetters, mapActions } from 'vuex'
 import Export from '@/libs/js/export'
 import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 export default {
-  name: 'car',
+  name: 'report-car',
   components: {
     SelectInput,
     PageTable,
@@ -191,7 +192,8 @@ export default {
           key: 'mileage',
           width: 200,
           render: (h, params) => {
-            return h('span', params.row.mileage !== '' ? (params.row.mileage / 1000).toFixed(1) : '-')
+            // return h('span', params.row.mileage !== '' ? (params.row.mileage / 1000).toFixed(1) : '-')
+            return h('span', getMileageText(params.row.mileage))
           }
         },
         {
@@ -200,7 +202,8 @@ export default {
           width: 200,
           render: (h, params) => {
             // return h('span', params.row.totalFee !== '' ? (params.row.totalFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.totalFee === 'number' ? (params.row.totalFee / 100).toFixed(2) : '0.00')
+            // return h('span', typeof params.row.totalFee === 'number' ? (params.row.totalFee / 100).toFixed(2) : '0.00')
+            return renderFee(h, params.row.totalFee)
           }
         },
         {
@@ -209,7 +212,8 @@ export default {
           key: 'freightFee',
           render: (h, params) => {
             // return h('span', params.row.freightFee !== '' ? (params.row.freightFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.freightFee === 'number' ? (params.row.freightFee / 100).toFixed(2) : '0.00')
+            // return h('span', typeof params.row.freightFee === 'number' ? (params.row.freightFee / 100).toFixed(2) : '0.00')
+            return renderFee(h, params.row.freightFee)
           }
         },
         {
@@ -218,7 +222,8 @@ export default {
           key: 'loadFee',
           render: (h, params) => {
             // return h('span', params.row.loadFee !== '' ? (params.row.loadFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.loadFee === 'number' ? (params.row.loadFee / 100).toFixed(2) : '0.00')
+            // return h('span', typeof params.row.loadFee === 'number' ? (params.row.loadFee / 100).toFixed(2) : '0.00')
+            return renderFee(h, params.row.loadFee)
           }
         },
         {
@@ -227,7 +232,8 @@ export default {
           key: 'unloadFee',
           render: (h, params) => {
             // return h('span', params.row.unloadFee !== '' ? (params.row.unloadFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.unloadFee === 'number' ? (params.row.unloadFee / 100).toFixed(2) : '0.00')
+            // return h('span', typeof params.row.unloadFee === 'number' ? (params.row.unloadFee / 100).toFixed(2) : '0.00')
+            return renderFee(h, params.row.unloadFee)
           }
         },
         {
@@ -236,7 +242,8 @@ export default {
           key: 'insuranceFee',
           render: (h, params) => {
             // return h('span', params.row.insuranceFee !== '' ? (params.row.insuranceFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.insuranceFee === 'number' ? (params.row.insuranceFee / 100).toFixed(2) : '0.00')
+            // return h('span', typeof params.row.insuranceFee === 'number' ? (params.row.insuranceFee / 100).toFixed(2) : '0.00')
+            return renderFee(h, params.row.insuranceFee)
           }
         },
         {
@@ -245,7 +252,8 @@ export default {
           key: 'tollFee',
           render: (h, params) => {
             // return h('span', params.row.tollFee !== '' ? (params.row.tollFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.tollFee === 'number' ? (params.row.tollFee / 100).toFixed(2) : '0.00')
+            // return h('span', typeof params.row.tollFee === 'number' ? (params.row.tollFee / 100).toFixed(2) : '0.00')
+            return renderFee(h, params.row.tollFee)
           }
         },
         {
@@ -254,7 +262,8 @@ export default {
           key: 'accommodation',
           render: (h, params) => {
             // return h('span', params.row.accommodation !== '' ? (params.row.accommodation / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.accommodation === 'number' ? (params.row.accommodation / 100).toFixed(2) : '0.00')
+            // return h('span', typeof params.row.accommodation === 'number' ? (params.row.accommodation / 100).toFixed(2) : '0.00')
+            return renderFee(h, params.row.accommodation)
           }
         },
         {
@@ -263,7 +272,8 @@ export default {
           key: 'otherFee',
           render: (h, params) => {
             // return h('span', params.row.otherFee !== '' ? (params.row.otherFee / 100).toFixed(2) : '-')
-            return h('span', typeof params.row.otherFee === 'number' ? (params.row.otherFee / 100).toFixed(2) : '0.00')
+            // return h('span', typeof params.row.otherFee === 'number' ? (params.row.otherFee / 100).toFixed(2) : '0.00')
+            return renderFee(h, params.row.otherFee)
           }
         },
         {

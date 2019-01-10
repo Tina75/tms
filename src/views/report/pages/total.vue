@@ -48,8 +48,9 @@ import PageTable from '@/components/page-table'
 import Export from '@/libs/js/export'
 import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
+import { renderFee } from '@/libs/js/config'
 export default {
-  name: 'total',
+  name: 'report-total',
   components: {
     PageTable
   },
@@ -113,49 +114,56 @@ export default {
           title: '保险费',
           key: 'insuranceFee',
           render: (h, params) => {
-            return h('span', (params.row.insuranceFee / 100).toFixed(2))
+            // return h('span', (params.row.insuranceFee / 100).toFixed(2))
+            return renderFee(h, params.row.insuranceFee)
           }
         },
         {
           title: '运输费',
           key: 'freightFee',
           render: (h, params) => {
-            return h('span', (params.row.freightFee / 100).toFixed(2))
+            // return h('span', (params.row.freightFee / 100).toFixed(2))
+            return renderFee(h, params.row.freightFee)
           }
         },
         {
           title: '提货费',
           key: 'pickupFee',
           render: (h, params) => {
-            return h('span', (params.row.pickupFee / 100).toFixed(2))
+            // return h('span', (params.row.pickupFee / 100).toFixed(2))
+            return renderFee(h, params.row.pickupFee)
           }
         },
         {
           title: '装卸费',
           key: 'loadFee',
           render: (h, params) => {
-            return h('span', (params.row.loadFee / 100).toFixed(2))
+            // return h('span', (params.row.loadFee / 100).toFixed(2))
+            return renderFee(h, params.row.loadFee)
           }
         },
         {
           title: '卸货费',
           key: 'unloadFee',
           render: (h, params) => {
-            return h('span', (params.row.unloadFee / 100).toFixed(2))
+            // return h('span', (params.row.unloadFee / 100).toFixed(2))
+            return renderFee(h, params.row.unloadFee)
           }
         },
         {
           title: '其他费用',
           key: 'otherFee',
           render: (h, params) => {
-            return h('span', (params.row.otherFee / 100).toFixed(2))
+            // return h('span', (params.row.otherFee / 100).toFixed(2))
+            return renderFee(h, params.row.otherFee)
           }
         },
         {
           title: '费用合计',
           key: 'totalFee',
           render: (h, params) => {
-            return h('span', (params.row.totalFee / 100).toFixed(2))
+            // return h('span', (params.row.totalFee / 100).toFixed(2))
+            return renderFee(h, params.row.totalFee)
           }
         }
       ],

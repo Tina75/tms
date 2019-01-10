@@ -1,15 +1,28 @@
 <template>
   <div id="set-up-container" class="set-up-container temAll">
     <Row id="temAll" :style="styleHeight">
-      <Col span="1" style="width:160px;height:100%;background-color:#f3f5f9;">
-      <Menu :active-name="rightKey != 4 ? rightTitle : '系统设置'" class="menuList" style="width:160px">
-        <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickLeftMenu(menu.id, menu.name)">
+      <Col span="1" class="menuCol">
+      <!-- <Menu :active-name="rightKey != 3 ? rightTitle : '系统设置'" class="menuList" style="width:160px">
+        <MenuItem v-for="menu in setUpMenu" v-if="hasPower(menu.code)" :key="menu.id" :name="menu.name" @click.native="clickMenu(menu)">
         <p class="menuTitle">{{menu.name}}</p>
         </MenuItem>
-      </Menu>
+      </Menu> -->
+      <!-- <VerticalTabs value="11">
+        <VerticalTabItem key="1" :icon="{type:'ico-discovery',color:'#00a4bd'}" label="test1" name="11">123</VerticalTabItem>
+        <VerticalTabItem key="2" label="test2" name="22">456</VerticalTabItem>
+      </VerticalTabs> -->
+      <VerticalTabs :value="rightKey != '3' ? rightKey : '3'" @on-select="clickMenu">
+        <VerticalTabItem
+          v-for="menu in setUpMenu"
+          v-if="hasPower(menu.code)"
+          :key="menu.id"
+          :name="menu.id"
+          :label="menu.name">
+        </VerticalTabItem>
+      </VerticalTabs>
       </Col>
       <Col span="20" class="contentDiv">
-      <div v-if="4 != rightKey" class="borderBottomLine">
+      <div v-if="3 != rightKey" class="borderBottomLine">
         <span class="iconRightTitle"></span>
         <span class="iconRightTitleP">{{rightTitle}}</span>
       </div>
@@ -18,16 +31,16 @@
         <TabPane label="开单设置" name="order"></TabPane>
       </Tabs>
       <!--密码设置-->
-      <div v-if="'1' === this.rightKey" key="1" class="divSetContent">
+      <div v-if="0 === this.rightKey" key="1" class="divSetContent">
         <Col span="10" class="setConf">
         <Form ref="formPwd" :model="formPwd" :rules="rulePwd" :label-width="100" label-position="right">
-          <FormItem label="原始密码：" prop="oldPassword" class="labelClassSty">
+          <FormItem label="原始密码：" prop="oldPassword">
             <Input v-model="formPwd.oldPassword" type="password" placeholder="请输入原始密码" class="inputClassSty"></Input>
           </FormItem>
-          <FormItem label="新密码：" prop="password" class="labelClassSty">
+          <FormItem label="新密码：" prop="password">
             <Input v-model="formPwd.password" type="password" placeholder="请输入新密码" class="inputClassSty"></Input>
           </FormItem>
-          <FormItem label="确认密码：" prop="confirmPassword" class="labelClassSty">
+          <FormItem label="确认密码：" prop="confirmPassword">
             <Input v-model="formPwd.confirmPassword" type="password" placeholder="请再次输入新密码" class="inputClassSty"></Input>
           </FormItem>
           <FormItem>
@@ -37,17 +50,23 @@
           </Col>
       </div>
       <!--个人设置-->
-      <div v-else-if="'2' === this.rightKey" key="2" class="divSetContent">
-        <Col span="10" class="setConf">
+      <div v-show="1 === this.rightKey" key="2" class="divSetContent">
+        <Col span="20" class="setConf">
         <Form ref="formPersonal" :model="formPersonal" :rules="rulePersonal" :label-width="100" label-position="right">
-          <FormItem label="账号：" class="labelClassSty">
-            <span>{{formPersonal.phone}}</span>
+          <FormItem label="账号：">
+            <span class="labelContent">{{formPersonal.phone}}<span class="updatePhone" @click="updatePhone">修改</span></span>
           </FormItem>
           <FormItem label="姓名：" prop="name">
-            <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" style="margin-left: 9px;" class="inputClassSty"></Input>
+            <Input v-model="formPersonal.name" :maxlength="10" placeholder="请输入姓名" class="inputClassSty"></Input>
           </FormItem>
-          <FormItem label="角色：" class="labelClassSty">
-            <span>{{formPersonal.roleName}}</span>
+          <FormItem label="角色：">
+            <span class="labelContent">{{formPersonal.roleName}}</span>
+          </FormItem>
+          <FormItem label="个人头像：">
+            <span class="imageTips">尺寸100*100像素，大小不超过10MB</span>
+          </FormItem>
+          <FormItem>
+            <up-load ref="upLoadsPerson" max-size="10" crop class="personPic"></up-load>
           </FormItem>
           <FormItem>
             <Button type="primary" style="width:86px;"  @click="personalSubmit('formPersonal')">保存</Button>
@@ -56,7 +75,7 @@
           </Col>
       </div>
       <!--短信设置-->
-      <div v-else-if="'3' === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
+      <div v-if="2 === this.rightKey" key="3" style="margin-left:-125px;" class="divSetContent">
         <Col span="20" class="setConf">
         <Card dis-hover>
           <div solt="title" class="msgCardTitle">
@@ -83,7 +102,7 @@
         </Col>
       </div>
       <!--系统设置-->
-      <div v-else-if="'4' === this.rightKey" key="4" class="system-set">
+      <div v-else-if="3 === this.rightKey" key="4" class="system-set">
         <div v-if="tabName != 'order'" class="setup-allocation">
           <allocation-strategy ref="orderAllocation" allocation-label="订单：" source="order"></allocation-strategy>
           <div class="allocation-tips">选择以后订单拆单将默认选择此运费分摊策略</div>
@@ -104,60 +123,48 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import AreaInput from '@/components/AreaInput'
-import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE } from './validator'
+import { CHECK_PWD, CHECK_PWD_SAME, CHECK_NAME, CHECK_NAME_COMPANY, CHECK_PHONE, PSW_RIGHT } from './validator'
 import _ from 'lodash'
 import { mapGetters, mapMutations } from 'vuex'
 import CitySelect from '@/components/SelectInputForCity'
 import Unit from '../components/unit.vue'
 import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
+import VerticalTabs from '@/components/vertical-tabs/index'
+import UpLoad from '@/components/upLoad/index.vue'
 export default {
   name: 'set-up',
   components: {
     AreaInput,
     CitySelect,
     Unit,
-    AllocationStrategy
+    AllocationStrategy,
+    VerticalTabs,
+    VerticalTabItem: VerticalTabs.TabItem,
+    UpLoad
   },
   mixins: [ BasePage ],
   metaInfo: {
     title: '设置'
   },
   data () {
-    var pswRight = function (rule, value, callback) {
-      if (value) {
-        let params = {}
-        params.oldPassword = value
-        Server({
-          url: 'set/pswRight',
-          method: 'get',
-          data: params
-        }).then(({ data }) => {
-          callback()
-        }).catch(() => {
-          return callback(new Error('原始密码错误，请重输'))
-        })
-      } else {
-        callback()
-      }
-    }
     return {
       setUpMenu: [{
         name: '修改密码',
-        id: '1'
+        id: '0'
       }, {
         name: '个人设置',
-        id: '2'
+        id: '1'
       }, {
         name: '短信设置',
-        id: '3',
+        id: '2',
         code: '150200'
       }, {
         name: '系统设置',
-        id: '4',
+        id: '3',
         code: '150300'
       }],
       rightTitle: '修改密码',
-      rightKey: '1',
+      rightKey: 0,
       // 密码
       formPwd: {
         oldPassword: '',
@@ -217,7 +224,7 @@ export default {
       rulePwd: {
         oldPassword: [
           { required: true, message: '请输入原始密码', trigger: 'blur' },
-          { validator: pswRight, trigger: 'blur' }
+          { validator: PSW_RIGHT, trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入新密码', trigger: 'blur' },
@@ -272,15 +279,18 @@ export default {
       return this.$route.query.tab
     }
   },
-  mounted: function () {
-    this.messageListInit = _.cloneDeep(this.messageList)
-    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
-      document.getElementById('set-up-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
-    }
+  created () {
     // 受理开单来的
     if (this.isFromOrder) {
-      this.rightKey = '4'
+      this.rightKey = 3
       this.tabName = 'order'
+    }
+  },
+  mounted: function () {
+    this.messageListInit = _.cloneDeep(this.messageList)
+    this.initPerson()
+    if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
+      document.getElementById('set-up-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
     }
   },
   methods: {
@@ -297,33 +307,15 @@ export default {
           }
         })
       }
-      // Server({
-      //   url: 'set/smsInfo',
-      //   method: 'get'
-      // }).then(({ data }) => {
-      //   this.switchMsg = false
-      //   if (data.data.smsCode) {
-      //     this.msgCheckBoxList = data.data.smsCode === '' ? [] : data.data.smsCode
-      //     this.msgCheckBoxListInit = data.data.smsCode === '' ? [] : data.data.smsCode
-      //     for (const checkList of this.messageList) {
-      //       checkList.checkBox.forEach(element => {
-      //         if (this.msgCheckBoxList.includes(element.model)) {
-      //           element.model = true
-      //           this.switchMsg = true
-      //         }
-      //       })
-      //     }
-      //   }
-      // })
     },
-    clickLeftMenu (id, menuName) {
-      this.rightTitle = menuName
-      this.rightKey = id
-      switch (id) {
-        case '2':
-          this.formPersonal = _.cloneDeep(this.UserInfo)
+    clickMenu (param) {
+      this.rightTitle = param.label
+      this.rightKey = parseInt(param.name)
+      switch (this.rightKey) {
+        case 1:
+          this.initPerson()
           break
-        case '3':
+        case 2:
           this.smsInfo()
           break
       }
@@ -349,15 +341,22 @@ export default {
     },
     // 个人
     personalSubmit (name) {
+      let isChanged = true
+      this.formPersonal.avatarPic = this.$refs.upLoadsPerson.uploadImg
       this.$refs[name].validate((valid) => {
         if (valid) {
-          if (this.formPersonal.name === this.UserInfo.name) {
+          for (const key in this.UserInfo) {
+            if (this.formPersonal[key] !== this.UserInfo[key]) {
+              isChanged = false
+            }
+          }
+          if (isChanged) {
             this.$Message.info('您还未变更任何信息，无需保存')
             return
           }
           let param = {}
           param.name = this.formPersonal.name
-          param.avatarPic = ''
+          param.avatarPic = this.formPersonal.avatarPic
           Server({
             url: 'set/person',
             method: 'post',
@@ -371,6 +370,13 @@ export default {
           })
         }
       })
+    },
+    initPerson () {
+      this.formPersonal = _.cloneDeep(this.UserInfo)
+      if (this.formPersonal.avatarPic) {
+        this.$refs.upLoadsPerson.progress = 1
+        this.$refs.upLoadsPerson.uploadImg = this.formPersonal.avatarPic
+      }
     },
     // 短信
     changeCheckBoxGroup (status) {
@@ -433,23 +439,42 @@ export default {
         this.allocationStrategySetting(data)
         this.$Message.success('设置成功')
       })
+    },
+    updatePhone () {
+      const vm = this
+      this.openDialog({
+        name: 'set-up/dialog/update-phone',
+        data: {
+          title: '更换手机号',
+          phone: vm.formPersonal.phone,
+          person: vm.formPersonal
+        },
+        methods: {
+          ok () {
+            vm.initPerson()
+            location.reload() // 更新账号，刷新浏览器
+          }
+        }
+      })
     }
   }
 }
 </script>
 <style lang='stylus' scoped>
+>>>.personPic .demo-upload-list
+>>>.personPic .ivu-upload .ivu-upload-drag
+>>>.personPic .ivu-upload-input
+  width 96px
+  height 90px
+>>>.ivu-form .ivu-form-item-label
+>>>.ivu-form .ivu-form-item-content
+  font-size: 14px
+  color #000000
+.personPic
+  margin-top: -20px
+  margin-bottom: -10px
 .set-up-container
   overflow auto
->>> .ivu-menu-vertical.ivu-menu-light:after
-  background: #fff;
->>> .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu)
-    background: #fff;
-    color: #333333;
-    font-weight: bold;
->>> .ivu-form-item-label
->>> .ivu-form-item-content
-  font-size: 14px
-  font-weight: 400
 .temAll
   background: #fff
   margin: -20px -15px;
@@ -459,8 +484,12 @@ export default {
     margin-left: -35%
     .inputClassSty
       width:300px;
-    .labelClassSty
-      font-weight: bold;
+.menuCol
+  width:160px
+  height:100%
+  background-color:#f3f5f9
+  overflow:hidden
+  padding-top: 20px
 .menuList
   background:rgba(243,245,249,1);
   color: #333;
@@ -470,7 +499,7 @@ export default {
   height: 100%;
 .borderBottomLine
   border-bottom: 1px solid #e9e9e9;
-  padding-bottom: 18px;
+  padding-bottom: 12px;
   margin-top: 18px;
   margin-right: 20px;
   .iconRightTitle
@@ -497,7 +526,7 @@ export default {
 .msgSaveBtn
     position: absolute;
     left: 30%;
-    margin-top: 20px;
+    margin-top: 25px;
 .msgCardTitle
   margin-bottom: 15px;
   //图片相关
@@ -549,6 +578,18 @@ export default {
   font-size: 16px
   margin-top: 5px;
   margin-left: -10px;
+.imageTips
+  color #999999
+  font-size 14px
+  position: relative;
+  top: 1px;
+.updatePhone
+  color: #00A4BD
+  margin-left 25px
+  cursor pointer
+span.labelContent
+  position: relative;
+  top: 1px;
 </style>
 
 <style lang='stylus'>
@@ -557,7 +598,6 @@ export default {
     position absolute
     top 24%
     left 50%
-    margin-top 50px
     transform translate(-50%, -50%)
     .ivu-form-item-label
       width 110px !important

@@ -12,7 +12,6 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
     commit('initPermissions', permission || [])
     return data.data
   }).catch(e => {
-    console.log(e)
     return Promise.reject(e)
   })
 }
@@ -24,8 +23,6 @@ export const getCompanyInfo = ({ rootState, commit, state, dispatch }, data) => 
     method: 'get'
   }).then(({ data }) => {
     commit('initUserInfo', data.data)
-  }).catch(e => {
-    console.log(e)
   })
 }
 /**
@@ -38,8 +35,6 @@ export const getPermissons = ({ commit }, list) => {
     method: 'get'
   }).then(({ data }) => {
     commit('initPermissions', data.data)
-  }).catch(e => {
-    console.log(e)
   })
 }
 
@@ -50,8 +45,6 @@ export const getMessageCount = ({ commit }) => {
     method: 'get'
   }).then(({ data }) => {
     commit('updateMsgCount', data.data)
-  }).catch(e => {
-    console.log(e)
   })
 }
 
@@ -62,14 +55,12 @@ export const getTableColumns = ({ commit }) => {
     method: 'get'
   }).then(({ data }) => {
     commit('initTableColumns', data.data)
-  }).catch(e => {
-    console.log(e)
   })
 }
 
 /** 获取自定义table列表信息 */
 export const setDocumentHeight = ({ commit }, height) => {
-  commit('updateDocumentHeight', height - 80)
+  commit('updateDocumentHeight', height - 80 - 40)
 }
 /**
  * 获取订单开单配置
@@ -96,10 +87,11 @@ export const getConfiguration = ({ commit }) => {
     method: 'get'
   }).then((result) => {
     if (result.data.code === 10000) {
-      const { smsSetInfo, allocationStrategyInfo, tmsSetConfigDto } = result.data.data
+      const { smsSetInfo, allocationStrategyInfo, tmsSetConfigDto, tmsCargoDto } = result.data.data
       commit('smsSetting', smsSetInfo.smsCode)
       commit('allocationStrategySetting', allocationStrategyInfo)
       commit('changeOrderConfiguration', tmsSetConfigDto)
+      commit('tmsCargoDtoSetting', tmsCargoDto)
     }
   })
 }

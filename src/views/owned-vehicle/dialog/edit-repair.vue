@@ -100,8 +100,7 @@
           <FormItem label="送修公里数：" prop="repairMile">
             <Row>
               <Col span="19">
-              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" v-model="validate.repairMile" :show-chinese="false" placeholder="必填"></TagNumberInput>
-              <!-- <Input v-model="validate.repairMile" :maxlength="9" placeholder="必填"></Input> -->
+              <TagNumberInput :min="0" :precision="$numberPrecesion.mileage" v-model="validate.repairMile" :length="6" :show-chinese="false" placeholder="必填"></TagNumberInput>
               </Col>
               <Col span="4" offset="1">
               <span>公里</span>
@@ -156,6 +155,7 @@ import float from '@/libs/js/float'
 import Server from '@/libs/js/server'
 import CarSelect from '@/components/own-car-form/CarSelect'
 import TagNumberInput from '@/components/TagNumberInput'
+import { multiplyFee, divideFee } from '@/libs/js/config'
 export default {
   name: 'owned-vehicle',
   components: { CarSelect, TagNumberInput },
@@ -199,16 +199,16 @@ export default {
           { required: true, message: '送修公里数不能为空' }
         ],
         repairMoney: [
-          { required: true, message: '维修费用不能为空' },
-          { message: '<=九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+          { required: true, message: '维修费用不能为空' }
+          // { message: '<=九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
         payMoney: [
-          { required: true, message: '已支付费用不能为空' },
-          { message: '<=九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+          { required: true, message: '已支付费用不能为空' }
+          // { message: '<=九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ],
         waitPayMoney: [
-          { required: true, message: '未支付费用不能为空' },
-          { message: '<=九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+          { required: true, message: '未支付费用不能为空' }
+          // { message: '<=九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ]
       }
     }
@@ -224,8 +224,8 @@ export default {
   },
   methods: {
     repairMoneyChange () {
-      if (this.validate.payMoney && float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney))) >= 0) {
-        this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
+      if (this.validate.payMoney && (this.validate.repairMoney - this.validate.payMoney) >= 0) {
+        this.validate.waitPayMoney = float.round((this.validate.repairMoney - this.validate.payMoney), this.$numberPrecesion.fee) || 0
       } else {
         this.validate.payMoney = this.validate.repairMoney
         this.validate.waitPayMoney = 0
@@ -233,20 +233,20 @@ export default {
       this.$refs.validate.validateField('payMoney')
     },
     payMoneyChange () {
-      if ((float.round(this.validate.repairMoney) - float.round(this.validate.payMoney)) <= 0) {
-        this.validate.payMoney = float.round(this.validate.repairMoney)
+      if (this.validate.repairMoney - this.validate.payMoney <= 0) {
+        this.validate.payMoney = this.validate.repairMoney
       }
       if (this.validate.repairMoney) {
-        this.validate.waitPayMoney = float.round(float.round(this.validate.repairMoney) - (float.round(this.validate.payMoney)) || 0)
+        this.validate.waitPayMoney = float.round((this.validate.repairMoney - this.validate.payMoney), this.$numberPrecesion.fee) || 0
       }
     },
     // 修改页面初始化
     configData () {
       this.disAbleBtn = true
       this.validate.repairType = this.validate.repairType.toString()
-      this.validate.repairMoney = this.validate.repairMoney / 100
-      this.validate.payMoney = this.validate.payMoney / 100
-      this.validate.waitPayMoney = this.validate.waitPayMoney / 100
+      this.validate.repairMoney = divideFee(this.validate.repairMoney)
+      this.validate.payMoney = divideFee(this.validate.payMoney)
+      this.validate.waitPayMoney = divideFee(this.validate.waitPayMoney)
       this.validate.repairMile = this.validate.repairMile / 1000
       this.carNoList.push({ carNo: this.validate.carNo })
     },
@@ -254,9 +254,9 @@ export default {
       this.$refs[name].validate((valid) => {
         this.validate.repairDate = new Date(this.validate.repairDate).Format('yyyy-MM-dd hh:mm:ss')
         let params = Object.assign({}, this.validate)
-        params.repairMoney = float.round(this.validate.repairMoney * 100)
-        params.payMoney = float.round(this.validate.payMoney * 100)
-        params.waitPayMoney = float.round(this.validate.waitPayMoney * 100)
+        params.repairMoney = multiplyFee(this.validate.repairMoney)
+        params.payMoney = multiplyFee(this.validate.payMoney)
+        params.waitPayMoney = multiplyFee(this.validate.waitPayMoney)
         params.repairMile = float.round(this.validate.repairMile * 1000)
         if (valid) {
           this.loading = true

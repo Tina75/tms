@@ -1,3 +1,4 @@
+<!--新增编辑常发货物-->
 <template>
   <div>
     <Modal
@@ -8,21 +9,22 @@
       class="modal"
       @on-visible-change="close"
     >
-      <p slot="header" style="text-align:center">{{title}}</p>
+      <p slot="header" class="header-title">{{title}}<setCargo></setCargo></p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
         <FormItem label="货物名称：" prop="cargoName">
           <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="货物编码：">
+        <FormItem v-show="tmsCargoDto.cargoNoOption === 1" label="货物编码：">
           <Input v-model="validate.cargoNo" :maxlength="200" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="货值：" prop="cargoCost">
-          <Input v-model="validate.cargoCost"  placeholder="请输入"/>元
+        <FormItem v-show="tmsCargoDto.cargoCostOption === 1" label="货值：">
+          <!-- <Input v-model="validate.cargoCost"  placeholder="请输入"/>元 -->
+          <TagNumberInput :min="0" :precision="$numberPrecesion.fee" v-model="validate.cargoCost" :show-chinese="false" placeholder="请输入"></TagNumberInput>元
         </FormItem>
-        <FormItem label="包装方式：">
+        <FormItem v-show="tmsCargoDto.unitOption === 1" label="包装方式：">
           <SelectPackageType v-model="validate.unit" style="width: 86%" clearable></SelectPackageType>
         </FormItem>
-        <FormItem label="包装尺寸：">
+        <FormItem v-show="tmsCargoDto.dimensionOption === 1" label="包装尺寸：">
           <Row>
             <Col :span="6">
             <TagNumberInput :min="0" :precision="$numberPrecesion.dimension" v-model="volumeLength" :length="7" :show-chinese="false" placeholder="长"></TagNumberInput>
@@ -38,16 +40,19 @@
             <Col :span="4"><span style="padding-left: 15px">毫米</span></Col>
           </Row>
         </FormItem>
-        <FormItem label="重量：" prop="weight">
+        <FormItem v-show="tmsCargoDto.weightOption === 1" label="重量：">
           <TagNumberInput :min="0" :precision="$numberPrecesion.weight" v-model="validate.weight" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>吨
         </FormItem>
-        <FormItem label="体积：" prop="volume">
+        <FormItem v-show="tmsCargoDto.weightKgOption === 1" label="重量：" >
+          <TagNumberInput :min="0" :precision="$numberPrecesion.weightKg" v-model="validate.weightKg" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>公斤
+        </FormItem>
+        <FormItem v-show="tmsCargoDto.volumeOption === 1" label="体积：">
           <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.volume" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>方
         </FormItem>
-        <FormItem label="备注1：">
+        <FormItem v-show="tmsCargoDto.remark1Option === 1" label="备注1：">
           <Input v-model="validate.remark1" :maxlength="100" placeholder="请输入"/>
         </FormItem>
-        <FormItem label="备注2：">
+        <FormItem v-show="tmsCargoDto.remark2Option === 1" label="备注2：">
           <Input v-model="validate.remark2" :maxlength="100" placeholder="请输入"/>
         </FormItem>
       </Form>
@@ -64,14 +69,18 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import { consignerCargoAdd, consignerCargoUpdate } from '../pages/client'
 import float from '@/libs/js/float'
+import { multiplyFee } from '@/libs/js/config'
 import SelectPackageType from '@/components/SelectPackageType'
 import TagNumberInput from '@/components/TagNumberInput'
+import setCargo from './setCargo'
+import { mapGetters } from 'vuex'
 export default {
   name: 'sender-address',
   components: {
     SelectInput,
     SelectPackageType,
-    TagNumberInput
+    TagNumberInput,
+    setCargo
   },
   mixins: [BaseDialog],
   data () {
@@ -84,6 +93,7 @@ export default {
         unit: '',
         cargoCost: '',
         weight: '',
+        weightKg: '',
         volume: '',
         remark1: '',
         remark2: ''
@@ -94,10 +104,10 @@ export default {
       ruleValidate: {
         cargoName: [
           { required: true, message: '货物名称不能为空', trigger: 'blur' }
-        ],
-        cargoCost: [
-          { type: 'string', message: '必须为不超过9位的数,最多两位小数', pattern: /^(0|([1-9]\d{0,8}))([.]\d{1,2})?$/, trigger: 'blur' }
         ]
+        // cargoCost: [
+        //   { type: 'string', message: '必须为不超过9位的数,最多两位小数', pattern: /^(0|([1-9]\d{0,8}))([.]\d{1,2})?$/, trigger: 'blur' }
+        // ]
         // weight: [
         //   { type: 'string', message: '必须为大于等于0的数字,最多三位小数', pattern: /^(0|([1-9]\d*))([.]\d{1,3})?$/, trigger: 'blur' }
         // ],
@@ -114,6 +124,9 @@ export default {
         { name: '木架', value: '木架' }
       ]
     }
+  },
+  computed: {
+    ...mapGetters(['tmsCargoDto'])
   },
   watch: {
     volumeLength (newVal) {
@@ -134,28 +147,29 @@ export default {
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true
+          let data = {
+            cargoName: this.validate.cargoName,
+            unit: this.validate.unit,
+            cargoCost: multiplyFee(this.validate.cargoCost),
+            weight: this.tmsCargoDto.weightOption === 1 ? parseFloat(this.validate.weight) : undefined,
+            weightKg: this.tmsCargoDto.weightKgOption === 1 ? parseFloat(this.validate.weightKg) : undefined,
+            volume: parseFloat(this.validate.volume),
+            remark1: this.validate.remark1,
+            remark2: this.validate.remark2,
+            cargoNo: this.validate.cargoNo,
+            dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
+          }
           if (this.flag === 1) { // 新增
-            this.add()
+            this.add(data)
           } else { // 2-编辑
-            this.update()
+            this.update(data)
           }
           this.close()
         }
       })
     },
-    add () {
-      let data = {
-        consignerId: this.consignerId,
-        cargoName: this.validate.cargoName,
-        unit: this.validate.unit,
-        cargoCost: float.round(parseFloat(this.validate.cargoCost) * 100), // *100传给后端
-        weight: parseFloat(this.validate.weight),
-        volume: parseFloat(this.validate.volume),
-        remark1: this.validate.remark1,
-        remark2: this.validate.remark2,
-        cargoNo: this.validate.cargoNo,
-        dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
-      }
+    add (data) {
+      data.consignerId = this.consignerId
       consignerCargoAdd(data).then(res => {
         this.loading = false
         this.ok() // 刷新页面
@@ -163,19 +177,8 @@ export default {
         this.loading = false
       })
     },
-    update () {
-      let data = {
-        id: this.id,
-        cargoName: this.validate.cargoName,
-        unit: this.validate.unit,
-        cargoCost: float.round(parseFloat(this.validate.cargoCost) * 100),
-        weight: parseFloat(this.validate.weight),
-        volume: parseFloat(this.validate.volume),
-        remark1: this.validate.remark1,
-        remark2: this.validate.remark2,
-        cargoNo: this.validate.cargoNo,
-        dimension: { length: this.volumeLength, width: this.volumeWidth, height: this.volumeHeight }
-      }
+    update (data) {
+      data.id = this.id
       consignerCargoUpdate(data).then(res => {
         this.loading = false
         this.ok() // 刷新页面
@@ -189,6 +192,8 @@ export default {
 
 <style scoped lang="stylus">
   @import "../pages/client.styl"
+  .header-title
+    text-align center
   .ivu-input-wrapper
     width: 86%
     margin-right 8px

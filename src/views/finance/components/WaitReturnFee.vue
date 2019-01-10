@@ -13,7 +13,7 @@
         <p class="wait-verify__view-title">{{title}}</p>
         <p class="wait-verify__view-supName">
           <span>
-            返现总额 {{activeDriver ? (activeDriver.calcTotalFee / 100).toFixed(2) : 0}}
+            返现总额 {{activeDriver ? formatFee(activeDriver.calcTotalFee) : 0}}
           </span>
         </p>
       </div>
@@ -24,7 +24,7 @@
         <ListSenderItem v-for="(item, name) in drivers" :key="name" :item="item" :title="item.partnerName" :extra="item.orderNum" icon="ico-company">
           <template slot="supName">
             <span>
-              返现总额 {{(item.calcTotalFee / 100).toFixed(2) }}
+              返现总额 {{item.calcTotalFee | toPoint}}
             </span>
           </template>
         </ListSenderItem>
@@ -46,9 +46,9 @@ import _ from 'lodash'
 import server from '@/libs/js/server'
 import returnFeeMixin from '../mixins/returnFeeMixin.js'
 import settlement from '@/libs/constant/settlement'
-import { renderFee } from '@/libs/js/config'
+import { renderFee, divideFee } from '@/libs/js/config'
 import { mapGetters } from 'vuex'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 export default {
   components: {
     ReconcileLayout,
@@ -185,7 +185,7 @@ export default {
   },
   mounted () {
     this.$nextTick(() => {
-      let height = this.DocumentHeight - 249 + this.$parent.$parent.$el.getBoundingClientRect().top
+      let height = this.DocumentHeight - 274 + this.$parent.$parent.$el.getBoundingClientRect().top
       this.styles = {
         height: (height) + 'px'
       }
@@ -193,6 +193,9 @@ export default {
     this.fetch()
   },
   methods: {
+    formatFee (fee) {
+      return divideFee((fee))
+    },
     /**
      * 搜索
      */
@@ -238,7 +241,8 @@ export default {
         name: 'finance/dialogs/returnFeeVerify',
         data: {
           id: ids,
-          needPay: float.round((needPay / 100).toFixed(2)),
+          // needPay: float.round((needPay / 100).toFixed(2)),
+          needPay: divideFee(needPay),
           verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: ids.length
         },
@@ -261,7 +265,8 @@ export default {
         name: 'finance/dialogs/returnFeeVerify',
         data: {
           id: data.id,
-          needPay: float.round((data.totalFee / 100).toFixed(2)),
+          // needPay: float.round((data.totalFee / 100).toFixed(2)),
+          needPay: divideFee(data.totalFee),
           verifyType: 3, // 1-代收货款已收未付，2-代收货款已付款，3-返现运费'
           orderNum: 0
         },

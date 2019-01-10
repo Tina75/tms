@@ -61,6 +61,7 @@ export default {
   mounted () {
     navTabManager.addNavTab(this.$route)
     window.EMA.bind('openTab', (route) => { this.handleClick(route) })
+    // 页面内部，主动调用关闭本页函数，监听函数；
     window.EMA.bind('closeTab', (route) => { this.handleClose(route) })
   },
   methods: {

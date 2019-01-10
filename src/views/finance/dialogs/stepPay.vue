@@ -1,3 +1,4 @@
+<!--多段付-->
 <template>
   <Modal v-model="visiable" :mask-closable="false" transfer width="440" footer-hide @on-visible-change="close">
     <p slot="header" style="text-align:center;font-size:17px">核销</p>
@@ -104,7 +105,8 @@
 <script>
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
+import { divideFee, multiplyFee, roundFee } from '@/libs/js/config'
 import { payTypeMap } from '../constant/numList'
 
 export default {
@@ -130,7 +132,7 @@ export default {
       }).then(res => {
         this.payItems = res.data.data.map(item => {
           return Object.assign({}, item, {
-            feeText: (item.fee / 100).toFixed(2),
+            feeText: divideFee(item.fee),
             isEdit: false,
             showAdjuster: false
           })
@@ -139,7 +141,7 @@ export default {
         this.payItems.map(item => {
           this.needPay += Number(item.fee)
         })
-        this.needPay = (this.needPay / 100).toFixed(2)
+        this.needPay = divideFee(this.needPay)
         if (!res.data.data.some(item => !item.verifyStatus)) {
           this.close()
           this.ok()
@@ -155,7 +157,7 @@ export default {
           scene: this.scene,
           verifyType: 2,
           isOil: item.payType === 2 || item.payType === 4 || item.payType === 6,
-          needPay: float.round(item.feeText),
+          needPay: roundFee(item.feeText),
           settleTypeDesc: this.settleTypeDesc
         },
         methods: {
@@ -195,7 +197,7 @@ export default {
           data: {
             orderId: this.id,
             payType: item.payType,
-            fee: float.round(item.fee * 100)
+            fee: multiplyFee(item.fee)
           }
         }).then(res => {
           this.loadData()

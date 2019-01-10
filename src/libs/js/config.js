@@ -6,9 +6,10 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2018-12-27 19:51:13
+ * @Last Modified time: 2019-01-09 15:02:50
  */
 import float from './float'
+import NP from 'number-precision'
 /**
  * 全局系统精度控制
  * 组件内可通过: this.$numberPrecesion.weight 访问重量精度
@@ -18,7 +19,7 @@ export const NumberPrecesion = {
   weightKg: 0, // 重量公斤，保留整数
   volume: 6, // 体积精确6位小数
   mileage: 1, // 公里精确到1位小数
-  fee: 2, // 费用精确到2位小数
+  fee: 4, // 费用精确到4位小数，v1.10开始保留4位小数
   dimension: 1 // 包装尺寸1位小数
 }
 /**
@@ -38,18 +39,46 @@ export const FieldLength = {
   cargoNo: 200 // 货物编号，200位
 }
 /**
- * 费用计算，保留2位小数
+ * 费用计算，保留4位小数
+ * v1.10保留4位小数
  * @param {number} fee
  */
 export const roundFee = (fee) => {
   return float.round(fee, NumberPrecesion.fee)
 }
 /**
- * 保留2位小数字符串类型
+ * 接口返回的费用需乘以100
+ * @param {number} fee 接口返回的值
+ */
+export const multiplyFee = (fee) => {
+  return float.round(NP.times(fee || 0, 100))
+}
+/**
+ * 提交的值除以100
+ * @param {*} fee
+ */
+export const divideFee = (fee) => {
+  return roundFee(NP.divide(fee || 0, 100))
+}
+/**
+ * 保留4位小数字符串类型
  * @param {number} value
  */
 export const getFeeText = (value) => {
-  return value ? (value / 100).toFixed(NumberPrecesion.fee) : '0.00'
+  return value ? divideFee(value) : '0'
+}
+/**
+ * 税率乘100保留两位小数
+ * @param {number} value
+ */
+export const multiplyRate = (value) => {
+  return float.round(NP.times(value, 100), 2)
+}
+/**
+ * 税率
+ */
+export const getRateText = (value) => {
+  return value ? float.round(NP.times(value, 100), 2) : '-'
 }
 /**
  * 列表中费用格式化
@@ -68,11 +97,25 @@ export const roundMileage = (value) => {
   return float.round(value, NumberPrecesion.mileage)
 }
 /**
+ * 接口返回的计费里程需乘以1000
+ * @param {number} fee 接口返回的值
+ */
+export const multiplyMileage = (fee) => {
+  return float.round(NP.times(fee || 0, 1000))
+}
+/**
+ * 计费里程提交的值除以1000
+ * @param {*} fee
+ */
+export const divideMileage = (fee) => {
+  return roundMileage(NP.divide(fee || 0, 1000))
+}
+/**
  * 字符串化，保留小数
  * @param {*} value
  */
 export const getMileageText = (value) => {
-  return value ? (value / 1000).toFixed(NumberPrecesion.mileage) : '-'
+  return value ? divideMileage(value).toFixed(NumberPrecesion.mileage) : '-'
 }
 /**
  * 列表中计费里程格式化

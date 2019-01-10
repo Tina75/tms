@@ -17,12 +17,12 @@
           </Col>
           <Col span="6">
           <FormItem label="应收货款：">
-            {{transferFee(record.calcFee)}}&nbsp;元
+            {{record.calcFee | toPoint}}&nbsp;元
           </FormItem>
           </Col>
           <Col span="6">
           <FormItem label="实收货款：">
-            {{transferFee(record.actualFee)}}&nbsp;元
+            {{record.actualFee | toPoint}}&nbsp;元
           </FormItem>
           </Col>
         </Row>
@@ -67,12 +67,12 @@
           </Col>
           <Col span="6">
           <FormItem label="应付货款：">
-            {{transferFee(record.calcFee)}}&nbsp;元
+            {{record.calcFee  | toPoint}}&nbsp;元
           </FormItem>
           </Col>
           <Col span="6">
           <FormItem label="实付货款：">
-            {{transferFee(record.actualFee)}}&nbsp;元
+            {{record.actualFee | toPoint}}&nbsp;元
           </FormItem>
           </Col>
         </Row>
@@ -142,7 +142,6 @@ export default {
     },
     save () {
       this.$refs['info'].validate((valid) => {
-        console.log(this.code)
         if (valid) {
           // Server({
           //   url: 'user/update',

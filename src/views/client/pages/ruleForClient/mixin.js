@@ -4,6 +4,7 @@ import Server from '@/libs/js/server'
 import { mapGetters, mapActions } from 'vuex'
 import { ruleTypeAllList } from '@/libs/constant/ruleType.js'
 import float from '@/libs/js/float'
+// import { multiplyFee, divideFee } from '@/libs/js/config'
 export default {
   computed: {
     ...mapGetters(['ruleTypeList']),
@@ -24,11 +25,14 @@ export default {
     },
     precision () {
       if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量(吨)的只有3位小数
-        return 3
+        // return 3
+        return this.$numberPrecesion.weight
       } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') { // 体积保留6位
-        return 6
+        // return 6
+        return this.$numberPrecesion.volume
       } else if (this.ruleDetail.ruleType === '6' || this.ruleDetail.ruleType === '7') { // 重量公斤没小数
-        return 0
+        // return 0
+        return this.$numberPrecesion.weightKg
       } else {
         return 2
       }
@@ -54,22 +58,32 @@ export default {
       if (value === null || value === '') {
         callback()
       } else {
-        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d*)?))$/.test(String(value))) {
+        if (/^((0[.]\d*)|(([1-9]\d{0,8})([.]\d*)?))$/.test(String(value))) {
           callback()
         } else {
-          callback(new Error('最多九位正数'))
+          callback(new Error('必须大于0'))
         }
-        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量的只有2位小数
-          if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(String(value))) {
+        if (this.ruleDetail.ruleType === '1' || this.ruleDetail.ruleType === '3') { // 重量精确3位小数
+          if (/^((0[.]\d{1,3})|(([1-9]\d*)([.]\d{1,3})?))$/.test(String(value))) {
           } else {
-            callback(new Error('最多两位小数'))
+            callback(new Error('最多三位小数'))
           }
-        } else if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') {
-          if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d)?))$/.test(String(value))) {
+        } else
+        if (this.ruleDetail.ruleType === '2' || this.ruleDetail.ruleType === '4') { // 体积精确6位小数
+          if (/^((0[.]\d{1,6})|(([1-9]\d{0,8})([.]\d{1,6})?))$/.test(String(value))) {
             callback()
           } else {
             callback(new Error('最多一位小数'))
           }
+        } else
+        if (this.ruleDetail.ruleType === '6' || this.ruleDetail.ruleType === '7') { // 重量公斤，保留整数
+          if (/^(([1-9]\d{0,8})?)$/.test(String(value))) {
+            callback()
+          } else {
+            callback(new Error('不能有小数'))
+          }
+        } else {
+          callback()
         }
       }
     }
@@ -77,20 +91,16 @@ export default {
       if (value === null || value === '') {
         callback()
       }
-      if (/^((0[.]\d{1,2})|(([1-9]\d*)([.]\d{1,2})?))$/.test(String(value))) {
-        if (/^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/.test(String(value))) {
-          callback()
-        } else {
-          callback(new Error('最多9位整数'))
-        }
+      if (!(/^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/.test(String(value)))) {
+        callback(new Error('必须大于0'))
       } else {
-        callback(new Error('最多两位小数'))
+        callback()
       }
     }
     const baseAndStartValidate = (rule, value, callback) => {
       let realValue = parseFloat(value.split(',')[0])
       let startNum = parseFloat(value.split(',')[1])
-      if (realValue === null || realValue === '') {
+      if (realValue === null || realValue === '' || isNaN(realValue) === true) {
         callback(new Error('请填写'))
       } else {
         // 小数判断
@@ -131,7 +141,7 @@ export default {
         callback(new Error('请填写车长'))
       }
     }
-    const cargoNameValidate = (rule, value, callback) => {
+    const cargoNameValidater = (rule, value, callback) => {
       if (value) {
         callback()
       } else {
@@ -212,7 +222,7 @@ export default {
       priceValidate: {
         price: [
           { required: true, message: '请填写金额', trigger: 'change', type: 'number' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数', trigger: 'change' }
+          { pattern: /^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '9位正数且最多四位小数', trigger: 'change' }
         ]
         // /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/
       },
@@ -227,7 +237,7 @@ export default {
       },
       cargoNameValidate: {
         cargoName: [
-          { validate: cargoNameValidate, trigger: 'blur' }
+          { validator: cargoNameValidater, trigger: 'change' }
         ]
       }
     }
@@ -306,26 +316,32 @@ export default {
       for (let i = 0; i < this.$refs['ruleRoute'].length; i++) {
         await this.formValidate(this.$refs['ruleRoute'][i])
       }
-      for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
-        await this.formValidate(this.$refs['ruleBase'][j])
-        await this.formValidate(this.$refs['rulePrice'][j])
+      if (this.ruleDetail.ruleType !== '5' && this.ruleDetail.ruleType !== '8') {
+        for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
+          await this.formValidate(this.$refs['ruleBase'][j])
+          await this.formValidate(this.$refs['rulePrice'][j])
+        }
       }
       if (this.ruleDetail.ruleType === '5') {
         for (let j = 0; j < this.$refs['ruleCar'].length; j++) {
           await this.formValidate(this.$refs['ruleCar'][j])
+          await this.formValidate(this.$refs['rulePrice'][j])
         }
       }
       if (this.ruleDetail.ruleType === '8') {
         for (let j = 0; j < this.$refs['cargoName'].length; j++) {
           await this.formValidate(this.$refs['cargoName'][j])
+          await this.formValidate(this.$refs['rulePrice'][j])
         }
       }
       // 1、起步量 不做验证 2、起步价 起步量和起步价要么都写要么都不写
-      if (!_this.ruleDetail.details.every((item, index, array) => {
-        return (item.startType === '2' || (item.startNum === null && item.startPrice === null)) || (item.startNum && item.startPrice)
-      })) {
-        this.$Message.error('请填写起步价')
-        return
+      if (this.ruleDetail.ruleType !== '5' && this.ruleDetail.ruleType !== '8') {
+        if (!_this.ruleDetail.details.every((item, index, array) => {
+          return (item.startType === '2' || (item.startNum === null && item.startPrice === null)) || (item.startNum && item.startPrice)
+        })) {
+          this.$Message.error('请填写起步价')
+          return
+        }
       }
       this.$Modal.confirm({
         title: '提示',
@@ -343,13 +359,13 @@ export default {
                   destination: item.destination,
                   startType: item.startType,
                   // 选择车型，件时，起步价，起步量都没有
-                  startNum: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startNum ? float.round(item.startNum * 100) : ''),
+                  startNum: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startNum ? float.round(item.startNum * 100, 6) : ''),
                   // 选择起步量的时候，startPrice的值传startNum的值
-                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
+                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100, 6) : '') : (item.startNum ? float.round(item.startNum * 100, 6) : '')),
                   chargeRules: item.chargeRules.map(el => {
                     return {
-                      base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (float.round(el.base * 100)),
-                      price: float.round(el.price * 100),
+                      base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (float.round(el.base * 100, 6)),
+                      price: float.round(el.price * 100, 6),
                       carType: _this.ruleDetail.ruleType === '5' ? el.carType : undefined,
                       carLength: _this.ruleDetail.ruleType === '5' ? el.carLength : undefined,
                       cargoName: _this.ruleDetail.ruleType === '8' ? el.cargoName : undefined
@@ -415,14 +431,14 @@ export default {
           return {
             departure: item.departure,
             destination: item.destination,
-            startPrice: item.startPrice !== 0 ? (item.startPrice / 100) : null,
-            startNum: item.startNum !== 0 ? (item.startNum / 100) : null,
+            startPrice: typeof item.startPrice === 'number' ? float.round(item.startPrice / 100, 6) : null,
+            startNum: typeof item.startNum === 'number' ? float.round(item.startNum / 100, 6) : null,
             startType: item.startType ? item.startType + '' : '2',
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: typeof el.base === 'number' ? (el.base / 100) : null,
-                price: typeof el.price === 'number' ? (el.price / 100) : null,
+                base: typeof el.base === 'number' ? float.round(el.base / 100, 6) : null,
+                price: typeof el.price === 'number' ? float.round(el.price / 100, 6) : null,
                 baseAndStart: el.base + ',' + item.startNum,
                 carType: el.carType,
                 carLength: el.carLength,

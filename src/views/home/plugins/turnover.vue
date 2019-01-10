@@ -11,7 +11,7 @@ import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
 import url from '@/libs/constant/url'
-
+import { divideFee } from '@/libs/js/config'
 import 'echarts/lib/chart/bar'
 
 export default {
@@ -137,7 +137,7 @@ export default {
           if (Number(response.code) === 10000) {
             const res = response.data
             res.map(item => {
-              const fmtTotal = Number(item.total) / 100
+              const fmtTotal = divideFee(Number(item.total))
               self.xData.push(item.day)
               self.yTotalData.push(fmtTotal)
               self.yCountData.push(item.cnt)

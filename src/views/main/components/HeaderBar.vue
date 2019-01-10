@@ -4,29 +4,40 @@
       <div class="tag-nav-wrapper">
         <tab-nav/>
       </div>
-      <div class="header-bar-avator-dropdown">
-        <span class="header-bar-avator-dropdown-notify">
-          <Tooltip v-if="processVisible" :value="processVisible" transfer  placement="bottom" content=" 业务流程" always>
-            <router-link to="/help/process">
-              <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
-            </router-link>
-          </Tooltip>
-          <Tooltip v-else transfer content=" 业务流程">
-            <router-link to="/help/process">
-              <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
-            </router-link>
-          </Tooltip>
-        </span>
-        <span class="header-bar-avator-dropdown-notify">
-          <Badge :count="MsgCount.all" :offset="[8,3]" type="primary">
-            <Tooltip transfer content=" 消息">
-              <router-link to="/information/index">
-                <Icon type="ios-notifications" size="30" color="#fff"></Icon>
+      <div class="info">
+        <div class="company">
+          <!-- <img v-if="UserInfo.logoUrl" :src="UserInfo.logoUrl" class="avatar" alt="">-->
+          <!--<img  src="../../../assets/company_logo.png" class="avatar" alt="">-->
+          <Avatar v-if="UserInfo.logoUrl" :style="'background-image: url(' + UserInfo.logoUrl +')'" class="avatar"></Avatar>
+          <Avatar v-else class="avatar"></Avatar>
+          <!--公司简称-->
+          <span v-if="UserInfo.shortName" class="title">{{UserInfo.shortName}}</span>
+          <span v-else class="title">{{UserInfo.companyName}}</span>
+        </div>
+        <div class="header-bar-avator-dropdown">
+          <span class="header-bar-avator-dropdown-notify">
+            <Tooltip v-if="processVisible" :value="processVisible" transfer  placement="bottom" content=" 业务流程" always>
+              <router-link to="/help/process">
+                <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
               </router-link>
             </Tooltip>
-          </Badge>
-        </span>
-        <UserInfo :renew="renew"></UserInfo>
+            <Tooltip v-else transfer content=" 业务流程">
+              <router-link to="/help/process">
+                <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+              </router-link>
+            </Tooltip>
+          </span>
+          <span class="header-bar-avator-dropdown-notify">
+            <Badge :count="MsgCount.all" :offset="[8,3]" type="primary">
+              <Tooltip transfer content=" 消息">
+                <router-link to="/information/index">
+                  <Icon type="ios-notifications" size="30" color="#fff"></Icon>
+                </router-link>
+              </Tooltip>
+            </Badge>
+          </span>
+          <UserInfo :renew="renew"></UserInfo>
+        </div>
       </div>
     </div>
   </Header>
@@ -477,14 +488,18 @@ export default {
 </script>
 <style lang="stylus">
 .header-con
+  height 90px!important
   position relative
   z-index 9
   width 100%
+  /deep/
+    .btn-con.right-btn
+      border-right none
   .tag-nav-wrapper
     width auto
-    top 4px
+    top 44px
     left 0
-    right 250px
+    right 10px
     position absolute
     padding 0
     height 46px
@@ -493,13 +508,17 @@ export default {
     overflow hidden
     .tags-nav .scroll-outer .scroll-body
       bottom -1px
+      /deep/
+        .btn-con.right-btn
+          border-right none
 .header-bar
   width 100%
-  height 100%
+  height 90px
   position relative
   text-align left
   background #252A2F
   color #fff
+  padding-right 10px
   &-content-con
     float right
     height auto
@@ -543,4 +562,26 @@ export default {
           img
             display inline-block
             padding-top 12px
+  .info
+    border-left 1px solid #3a424b
+    overflow hidden
+    .company
+      background none
+      line-height 44px
+      float left
+      padding-left 10px
+      padding-top 2px
+      .avatar
+        border-radius 0
+        display inline-block
+        vertical-align middle
+        border 1px solid #fff
+        width 35px
+        height 35px
+        background-image: url('../../../assets/company_logo.png')
+        background-size 33px
+      .title
+        margin-left 15px
+        line-height 44px
+        font-size 16px
 </style>

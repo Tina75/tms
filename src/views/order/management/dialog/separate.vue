@@ -1,5 +1,5 @@
 <template>
-  <Modal v-model="visiable" :mask-closable="false" transfer class="separate-dialog" width="850" @on-visible-change="close">
+  <Modal v-model="visiable" :mask-closable="false" transfer class="separate-dialog" width="960" @on-visible-change="close">
     <p slot="header" class="dialog-title">
       <span>拆单</span>
     </p>
@@ -20,12 +20,12 @@
             始发地／目的地：{{ detailData.startName + ' - ' + detailData.endName }}
           </i-col>
           <i-col span="12">
-            费用合计：{{ detailData.allocationFee / 100 }}元
+            费用合计：{{ detailData.allocationFee | toPoint }}元
           </i-col>
         </Row>
       </div>
       <div class="border-dashed margin-bottom-21"></div>
-      <Row v-if="childOrderCargoList.length" class="order-number">
+      <Row v-if="childOrderCargoList.length || muiltyOrderCargoList.length" class="order-number">
         <i-col span="10">
           子订单1：{{ childOneNo }}
         </i-col>
@@ -35,17 +35,33 @@
       </Row>
       <Table :columns="columns1" :data="parentOrderCargoList"></Table>
     </div>
-    <div v-if="childOrderCargoList.length">
-      <div class="border-dashed margin-dashed-two"></div>
-      <Row class="order-number">
-        <i-col span="10">
-          子订单2：{{ childTwoNo }}
-        </i-col>
-        <i-col span="14">
-          费用：{{ childTwoFee }}元
-        </i-col>
-      </Row>
-      <Table :columns="columns2" :data="childOrderCargoList"></Table>
+    <div v-if="childOrderCargoList.length || muiltyOrderCargoList.length">
+      <div v-if="childOrderCargoList.length">
+        <div class="border-dashed margin-dashed-two"></div>
+        <Row class="order-number">
+          <i-col span="10">
+            子订单2：{{ childTwoNo }}
+          </i-col>
+          <i-col span="14">
+            费用：{{ childTwoFee }}元
+          </i-col>
+        </Row>
+        <Table :columns="columns2" :data="childOrderCargoList"></Table>
+      </div>
+      <template v-for="(cargo, index) in muiltyOrderCargoList" v-if="muiltyOrderCargoList.length">
+        <div :key="index">
+          <div class="border-dashed margin-dashed-two"></div>
+          <Row class="order-number">
+            <i-col span="10">
+              子订单{{index+2}}：{{ getMuiltyOrderNo(cargo, index) }}
+            </i-col>
+            <i-col span="14">
+              费用：{{ getSeparateOrderFeeByStrategy(cargo, index) }}元
+            </i-col>
+          </Row>
+          <Table :columns="columns2" :data="[cargo]"></Table>
+        </div>
+      </template>
       <allocation-strategy
         ref="allocationStrategy"
         :allocation-orders="[...detailData]"
@@ -56,7 +72,8 @@
     </div>
     <div slot="footer">
       <Button
-        :disabled="!(parentOrderCargoList.length && childOrderCargoList.length)"
+        :disabled="!(parentOrderCargoList.length && (childOrderCargoList.length || muiltyOrderCargoList.length))"
+        :loading="loading"
         type="primary"
         @click="save">
         确定
@@ -75,6 +92,7 @@ import _ from 'lodash'
 import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
 import { mapGetters } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+import { roundFee, roundWeight, roundVolume, roundWeightKg } from '@/libs/js/config'
 
 export default {
   name: 'separate',
@@ -87,14 +105,16 @@ export default {
       columns2: TABLE_COLUMNS_TWO(this),
       detailData: {},
       subOrderNum: void 0, // 子订单数
-      parentOrderCargoList: [],
-      childOrderCargoList: [],
+      parentOrderCargoList: [], // 拆部分或批量拆的原单或第一条货物数据
+      childOrderCargoList: [], // 拆部分的子单
+      muiltyOrderCargoList: [], // 拆批量的子单
       currentId: 0,
       // childPortionData: {}, // 拆分成子单后的数据
       quantityVal: 0,
       weightVal: 0,
       volumeVal: 0,
       cargoCostVal: 0,
+      loading: false,
       cloneData: [], // 复制一份货物详情数据
       allocationStrategy: 1,
       columns1Weight: COLUMNS_ONE_WEIGHT(this),
@@ -115,24 +135,30 @@ export default {
       return this.orderNo.indexOf('-') > -1 ? this.orderNo.substring(0, this.orderNo.indexOf('-')) + '-' + (this.subOrderNum + 1) : this.orderNo + '-2'
     },
     childOneFee () {
-      let fee = float.round(this.detailData.allocationFee / 100)
+      let fee = roundFee(this.detailData.allocationFee / 100)
       if (this.allocationStrategy === 1) { // 按订单数分摊费用
-        fee /= 2
+        if (this.childOrderCargoList.length > 0) {
+          // 拆部分，除以2
+          fee /= 2
+        } else {
+          // 拆批量，根据多个订单平均数
+          fee /= (this.muiltyOrderCargoList.length + 1)
+        }
       } else if (this.allocationStrategy === 2 && this.detailData.quantity) { // 按件数分摊费用，件数必须大于0
-        fee *= float.round(this.parentQuantity / this.detailData.quantity)
+        fee *= roundFee(this.parentQuantity / this.detailData.quantity)
       } else if (this.allocationStrategy === 3 && (this.detailData.weight || this.detailData.weightKg)) { // 按重量分摊费用，重量必须大于0
         // 区分吨和公斤
         if (this.WeightOption === 1) {
-          fee *= float.round(this.parentWeight / this.detailData.weight)
+          fee *= roundFee(this.parentWeight / this.detailData.weight)
         } else {
-          fee *= float.round(this.parentWeight / this.detailData.weightKg)
+          fee *= roundFee(this.parentWeight / this.detailData.weightKg)
         }
       } else if (this.allocationStrategy === 4 && this.detailData.volume) { // 按体积分摊费用，体积必须大于0
-        fee *= float.round(this.parentVolume / this.detailData.volume)
+        fee *= roundFee(this.parentVolume / this.detailData.volume)
       } else {
         fee = 0
       }
-      return float.round(fee)
+      return roundFee(fee)
     },
     childTwoFee () {
       let fee = float.round(this.detailData.allocationFee / 100)
@@ -144,7 +170,7 @@ export default {
       } else {
         fee = 0
       }
-      return float.round(fee)
+      return roundFee(fee)
     },
     // 子单1的总数量
     parentQuantity () {
@@ -165,7 +191,7 @@ export default {
           weight += item.weightKg
         }
       })
-      return float.round(weight)
+      return roundWeight(weight)
     },
     // 子单1的总体积
     parentVolume () {
@@ -173,7 +199,7 @@ export default {
       this.parentOrderCargoList.map((item) => {
         volume += item.volume
       })
-      return float.round(volume, 6)
+      return roundVolume(volume, 6)
     }
   },
 
@@ -182,45 +208,96 @@ export default {
     this.getSubOrderNum()
     // 动态添加吨或公斤列
     if (this.WeightOption === 1) {
-      this.triggerWeightColumn(this.columns1, this.columns1Weight, 4)
-      this.triggerWeightColumn(this.columns2, this.columns2Weight, 4)
+      this.triggerWeightColumn(this.columns1, this.columns1Weight, 2)
+      this.triggerWeightColumn(this.columns2, this.columns2Weight, 2)
     } else {
-      this.triggerWeightColumn(this.columns1, this.columns1WeightKg, 4)
-      this.triggerWeightColumn(this.columns2, this.columns2WeightKg, 4)
+      this.triggerWeightColumn(this.columns1, this.columns1WeightKg, 2)
+      this.triggerWeightColumn(this.columns2, this.columns2WeightKg, 2)
     }
   },
 
   methods: {
+    /**
+     * 根据策略，计算该订单的费用
+     * 拆批量的时候调用，计算每笔订单的费用合计
+     * 1. 前面一批订单按照比例计算费用合计
+     * 2. 最后一笔拆分的订单需要特殊处理，用户总费用减去之前的订单的总和，剩余的值赋值就可以
+     */
+    getSeparateOrderFeeByStrategy (cargo, index) {
+      let fee = roundFee(this.detailData.allocationFee / 100)
+      let total = this.muiltyOrderCargoList.length + 1
+      // 最后一组，用减法，将剩余的赋值
+      if ((index + 1) === this.muiltyOrderCargoList.length) {
+        // 最后一条数据，特殊处理
+        let no = 0
+        let restFee = 0
+        while (no < index) {
+          restFee = roundFee(restFee + this.getSeparateOrderFeeByStrategy(this.muiltyOrderCargoList[no], no))
+          no++
+        }
+        restFee = roundFee(restFee + this.childOneFee)
+        fee -= restFee
+      } else {
+        if (this.allocationStrategy === 1) { // 按订单数分摊费用
+          fee /= total
+        } else if (this.allocationStrategy === 2 && cargo.quantity) { // 按件数分摊费用，件数必须大于0
+          fee *= roundFee(cargo.quantity / this.detailData.quantity)
+        } else if (this.allocationStrategy === 3 && (cargo.weight || cargo.weightKg)) { // 按重量分摊费用，重量必须大于0
+        // 区分吨和公斤
+          if (this.WeightOption === 1) {
+            fee *= roundFee(cargo.weight / this.detailData.weight)
+          } else {
+            fee *= roundFee(cargo.weightKg / this.detailData.weightKg)
+          }
+        } else if (this.allocationStrategy === 4 && cargo.volume) { // 按体积分摊费用，体积必须大于0
+          fee *= roundFee(cargo.volume / this.detailData.volume)
+        } else {
+          fee = 0
+        }
+      }
+
+      return roundFee(fee)
+    },
+    /**
+     * 批量顺序接口序号生成
+     */
+    getMuiltyOrderNo (cargo, index) {
+      return this.orderNo.indexOf('-') > -1 ? this.orderNo.substring(0, this.orderNo.indexOf('-')) + '-' + (this.subOrderNum + 1 + index) : this.orderNo + '-' + (index + 2)
+    },
     onChangeAllocation (val) {
       this.allocationStrategy = val
     },
     save () {
+      let vm = this
+      vm.loading = true
+      let transformField = function (item) {
+        // 区分吨和公斤 吨和公斤只需传一个
+        if (vm.WeightOption === 1) {
+          item.weight = roundWeight(item.weight)
+          delete item.weightKg
+        } else {
+          item.weightKg = roundWeightKg(item.weightKg)
+          delete item.weight
+        }
+        item.volume = roundVolume(item.volume)
+      }
       // 将参数中的重量体积四舍五入
-      this.parentOrderCargoList.map((item) => {
-        // 区分吨和公斤 吨和公斤只需传一个
-        if (this.WeightOption === 1) {
-          item.weight = float.round(item.weight, 3)
-          delete item.weightKg
-        } else {
-          item.weightKg = float.round(item.weightKg)
-          delete item.weight
-        }
-        item.volume = float.round(item.volume, 6)
-      })
-      this.childOrderCargoList.map((item) => {
-        // 区分吨和公斤 吨和公斤只需传一个
-        if (this.WeightOption === 1) {
-          item.weight = float.round(item.weight, 3)
-          delete item.weightKg
-        } else {
-          item.weightKg = float.round(item.weightKg)
-          delete item.weight
-        }
-        item.volume = float.round(item.volume, 6)
-      })
+      vm.parentOrderCargoList.forEach(transformField)
+      // 拆部分
+      vm.childOrderCargoList.forEach(transformField)
+      // 拆批量
+      vm.muiltyOrderCargoList.forEach(transformField)
+      let list = [[...vm.parentOrderCargoList]]
+      if (vm.childOrderCargoList.length > 0) {
+        list = list.concat([[...vm.childOrderCargoList]])
+      } else {
+        vm.muiltyOrderCargoList.forEach((cargo) => {
+          list.push([cargo])
+        })
+      }
       const data = {
         id: this.id,
-        orderCargoList: [[...this.parentOrderCargoList], [...this.childOrderCargoList]],
+        orderCargoList: list,
         allocationStrategy: this.$refs.allocationStrategy.getAllocation()
       }
       Server({
@@ -245,6 +322,9 @@ export default {
         } else {
           this.$Message.error(res.data.msg)
         }
+        vm.loading = false
+      }).catch(er => {
+        vm.loading = false
       })
     },
     // 拆单完成后的弹窗提示
@@ -292,8 +372,28 @@ export default {
     // 拆整笔
     separateWholeList (index) {
       let childList = this.parentOrderCargoList.splice(index, 1)[0]
-      this.childOrderCargoList.unshift(childList)
-      this.cloneData = this.parentOrderCargoList
+      let findedChildCargo = this.childOrderCargoList.find(cargo => cargo.id === childList.id)
+      if (!findedChildCargo) {
+        this.childOrderCargoList.unshift(childList)
+        this.cloneData = this.parentOrderCargoList
+      } else {
+        this.mergeRepeatCargo(findedChildCargo, childList)
+      }
+    },
+    /**
+     * 部分拆单或拆整后，如果订单号是一样的，就合并货物信息，累计数据
+     * @params {object} findedChildCargo 已拆分出来的列表，重复的货物项
+     * @params {object} childCargo 拆出来的货物
+     */
+    mergeRepeatCargo (findedChildCargo, childCargo) {
+      findedChildCargo.cargoCost = roundFee(findedChildCargo.cargoCost + childCargo.cargoCost)
+      findedChildCargo.quantity = float.round(findedChildCargo.quantity + childCargo.quantity)
+      findedChildCargo.volume = roundVolume(findedChildCargo.volume + childCargo.volume)
+      if (this.WeightOption === 1) {
+        findedChildCargo.weight = roundWeight(findedChildCargo.weight + childCargo.weight)
+      } else {
+        findedChildCargo.weightKg = roundWeightKg(findedChildCargo.weightKg + childCargo.weightKg)
+      }
     },
     // 拆部分
     separatePartList (params) {
@@ -338,7 +438,42 @@ export default {
         childData.weightKg = this.weightVal ? this.weightVal : params.row.weightKg
       }
       childData.volume = this.volumeVal ? this.volumeVal : params.row.volume
-      this.childOrderCargoList.unshift(childData)
+      let findedChildCargo = this.childOrderCargoList.find(cargo => cargo.id === childData.id)
+      if (!findedChildCargo) {
+        // 如果未找到，就放入数组
+        this.childOrderCargoList.unshift(childData)
+      } else {
+        this.mergeRepeatCargo(findedChildCargo, childData)
+        // findedChildCargo.cargoCost = roundFee(findedChildCargo.cargoCost + childData.cargoCost)
+        // findedChildCargo.quantity = float.round(findedChildCargo.quantity + childData.quantity)
+        // findedChildCargo.volume = roundVolume(findedChildCargo.volume + childData.volume)
+        // if (this.WeightOption === 1) {
+        //   findedChildCargo.weight = roundWeight(findedChildCargo.weight + childData.weight)
+        // } else {
+        //   findedChildCargo.weightKg = roundWeightKg(findedChildCargo.weightKg + childData.weightKg)
+        // }
+      }
+    },
+    // 拆批量
+    separateAverage () {
+      const vm = this
+      this.openDialog({
+        name: 'order/management/dialog/separate-average',
+        data: {
+          // 订单数据
+          orderDetail: vm.detailData,
+          // 货物信息
+          cargoList: vm.parentOrderCargoList
+        },
+        methods: {
+          ok (cargoList) {
+            vm.$set(vm.parentOrderCargoList, 0, cargoList[0])
+            // vm.parentOrderCargoList[0] = cargoList[0]
+            vm.muiltyOrderCargoList = cargoList.slice(1).concat(vm.muiltyOrderCargoList)
+            cargoList = null
+          }
+        }
+      })
     }
   }
 

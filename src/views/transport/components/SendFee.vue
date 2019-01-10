@@ -160,8 +160,8 @@ import { mapGetters } from 'vuex'
 import $bus from '@/libs/js/eventBus.js'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
-import float from '@/libs/js/float'
-
+import { roundFee, multiplyMileage, multiplyFee } from '@/libs/js/config'
+import NP from 'number-precision'
 export default {
   name: 'SendFeeComponent',
   components: { TagNumberInput, PayInfo, AllocationStrategy },
@@ -264,7 +264,7 @@ export default {
       if ((value && validator.fee(value)) || !value) {
         callback()
       } else {
-        callback(new Error('费用整数位最多输入9位,小数2位'))
+        callback(new Error('费用整数位最多输入9位,小数4位'))
       }
     }
     // 6位整数 1位小数
@@ -326,15 +326,22 @@ export default {
     ]),
     // 计算总费用
     paymentTotal () {
-      let total
-      total = Number(this.payment.freightFee) +
-              Number(this.payment.loadFee) +
-              Number(this.payment.unloadFee) +
-              Number(this.payment.insuranceFee) +
-              Number(this.payment.otherFee) +
-              Number(this.payment.tollFee)
-      if (this.sendWay === '2') total += Number(this.payment.accommodation) // 自送要算住宿费
-      return float.round(total)
+      let total = NP.plus(
+        Number(this.payment.freightFee),
+        Number(this.payment.loadFee),
+        Number(this.payment.unloadFee),
+        Number(this.payment.insuranceFee),
+        Number(this.payment.otherFee),
+        Number(this.payment.tollFee)
+      )
+      // total = Number(this.payment.freightFee) +
+      //         Number(this.payment.loadFee) +
+      //         Number(this.payment.unloadFee) +
+      //         Number(this.payment.insuranceFee) +
+      //         Number(this.payment.otherFee) +
+      //         Number(this.payment.tollFee)
+      if (this.sendWay === '2') total = NP.plus(total, Number(this.payment.accommodation)) // 自送要算住宿费
+      return roundFee(total)
     }
   },
   watch: {
@@ -389,7 +396,8 @@ export default {
           partnerName: self.carrierInfo.carrierName,
           carType: self.carrierInfo.carType,
           carLength: self.carrierInfo.carLength,
-          distance: self.payment.mileage ? float.round(self.payment.mileage * 1000) : 0,
+          // distance: self.payment.mileage ? float.round(self.payment.mileage * 1000) : 0,
+          distance: multiplyMileage(self.payment.mileage),
           ...self.financeRulesInfo
         },
         methods: {
@@ -409,12 +417,12 @@ export default {
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
         if (key === 'mileage') {
-          temp[key] = float.round(temp[key] * 1000)
+          temp[key] = multiplyMileage(temp[key])
         } else {
-          temp[key] = float.round(temp[key] * 100)
+          temp[key] = multiplyFee(temp[key])
         }
       }
-      temp.totalFee = this.paymentTotal * 100
+      temp.totalFee = multiplyFee(this.paymentTotal)
       if (this.source === 'abnormal') { // 异常没有计费里程和返现
         delete temp.cashBack
         delete temp.mileage

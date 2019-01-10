@@ -20,7 +20,7 @@ export default {
         if (key === 'systemDate' || key === 'operateDate') {
           this.queryParams[key] ? (obj[key] = new Date(this.queryParams[key]).Format('yyyy-MM-dd')) : (obj[key] = undefined)
         } else {
-          this.queryParams[key] ? (obj[key] = this.queryParams[key].replace(/\s+/g, '')) : (obj[key] = undefined)
+          this.queryParams[key] ? (obj[key] = this.queryParams[key].toString().replace(/\s+/g, '')) : (obj[key] = undefined)
         }
       }
       return obj

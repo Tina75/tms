@@ -1,6 +1,6 @@
 import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
-import { NumberPrecesion } from '@/libs/js/config'
+import { NumberPrecesion, divideFee, multiplyFee } from '@/libs/js/config'
 let uniqueIndex = 0
 export default class Cargo {
   /**
@@ -17,12 +17,7 @@ export default class Cargo {
     this.volume = null
     this.hasError = false
     this.errorMsg = {}
-    // 1.0.9新增
-    // this.dimension = {
-    //   length: null,
-    //   width: null,
-    //   height: null
-    // }
+
     const self = this
     this.dimension = {
       _length: null,
@@ -59,30 +54,34 @@ export default class Cargo {
     this.cargoNo = null
     this.unit = null
 
+    this.orderNo = null
+
     if (props) {
       this.id = props.id || uniqueIndex++
       this.cargoName = props.cargoName
       this.cargoNo = props.cargoNo
-      // 重量，保留2位小数
-      this._weight = props.weight
-      this.dimension._length = props.dimension.length || null
-      this.dimension._width = props.dimension.width || null
-      this.dimension._height = props.dimension.height || null
+
+      if (props.dimension) {
+        this.dimension._length = props.dimension.length || null
+        this.dimension._width = props.dimension.width || null
+        this.dimension._height = props.dimension.height || null
+      }
       if (!transfer) {
         // 货值，整数
-        this.cargoCost = props.cargoCost
+        this.cargoCost = props.cargoCost || null
       } else {
-        this.cargoCost = (props.cargoCost || 0) / 100
+        this.cargoCost = divideFee(props.cargoCost || 0)
       }
-      // 体积方，保留1位小数
-      this.volume = props.volume
+      this._weight = props.weight || null
+      this.volume = props.volume || null
       // 数量
       this.quantity = props.quantity || null
-      // 包装, 10个字
-      this.unit = props.unit
+      // 包装
+      this.unit = props.unit || null
       // 备注 100
-      this.remark1 = props.remark1
-      this.remark2 = props.remark2
+      this.remark1 = props.remark1 || null
+      this.remark2 = props.remark2 || null
+      this.orderNo = props.orderNo || null
     }
   }
   get weight () {
@@ -97,26 +96,13 @@ export default class Cargo {
   set weightKg (value) {
     this._weight = float.round(value / 1000, NumberPrecesion.weight)
   }
-  // set volume (value) {
-  //   this._volume = value
-  // }
-  // get volume () {
-  //   if (!this._volume) {
-  //     return float.round(this.dimension.length * this.dimension.width * this.dimension.height / 1000 * 1000 * 1000,)
-  //   } else {
-  //     return this._volume
-  //   }
-  // }
-  // set dimension (value) {
-  //   console.log(value)
-  //   this._dimension = value
-  // }
-  // get dimension () {
-  //   return this._dimension
-  // }
+
   validate () {
     if (!this.cargoName) {
       return { success: false, message: '请输入货物名称' }
+    }
+    if (this.cargoCost && !validator.fee(this.cargoCost)) {
+      return { success: false, message: '货值整数位最多输入9位,4位小数' }
     }
     return { success: true }
   }
@@ -131,11 +117,18 @@ export default class Cargo {
     }
     if (field === 'cargoCost' && this.cargoCost) {
       if (!validator.fee(this.cargoCost)) {
-        this.errorMsg[field] = '费用整数位最多输入9位'
+        this.errorMsg[field] = '货值整数位最多输入9位,4位小数'
       } else {
         delete this.errorMsg[field]
       }
     }
+    // if (field === 'orderNo') {
+    //   if (!this.orderNo) {
+    //     this.errorMsg[field] = '请输入订单号'
+    //   } else {
+    //     delete this.errorMsg[field]
+    //   }
+    // }
     this.hasError = false
     for (let name in this.errorMsg) {
       if (name) {
@@ -144,19 +137,12 @@ export default class Cargo {
       }
     }
   }
-  // handleDemsion () {
-  //   const obj = {}
-  //   for (let i in this.dimension) {
-  //     obj[i] = this.dimension[i] || null
-  //   }
-  //   return obj
-  // }
   toJson () {
     return {
       cargoName: this.cargoName,
       weight: this.weight,
       volume: this.volume,
-      cargoCost: float.round(this.cargoCost * 100),
+      cargoCost: multiplyFee(this.cargoCost),
       quantity: this.quantity,
       unit: this.unit,
       remark1: this.remark1,
@@ -168,5 +154,36 @@ export default class Cargo {
         length: this.dimension.length || null
       }
     }
+  }
+  // 异常货物信息
+  toExceptionJson () {
+    return {
+      cargoName: this.cargoName,
+      orderId: this.orderNo,
+      weight: this.weight,
+      weightKg: this.weightKg,
+      volume: this.volume,
+      cargoCost: multiplyFee(this.cargoCost),
+      quantity: this.quantity,
+      unit: this.unit,
+      cargoNo: this.cargoNo || '-'
+      // dimension: {
+      //   height: this.dimension.height || null,
+      //   width: this.dimension.width || null,
+      //   length: this.dimension.length || null
+      // }
+    }
+  }
+  validateExp () {
+    if (!this.cargoName) {
+      return { success: false, message: '请输入货物名称' }
+    }
+    if (!this.orderNo) {
+      return { success: false, message: '请输入订单号' }
+    }
+    if (this.cargoCost && !validator.fee(this.cargoCost)) {
+      return { success: false, message: '货值整数位最多输入9位,4位小数' }
+    }
+    return { success: true }
   }
 }

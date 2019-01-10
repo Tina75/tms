@@ -21,6 +21,7 @@
               <td v-for="(col, index) in headers" :key="index">
                 <CargoTableRow
                   :cargoes="cargoes"
+                  :orders="orders"
                   :prefix-class="prefixClass"
                   :index="no"
                   :record="item"
@@ -74,6 +75,7 @@ export default {
     CargoTableRow
   },
   props: {
+    type: String,
     orderSet: Object,
     dataSource: {
       required: true,
@@ -81,6 +83,10 @@ export default {
       default: () => []
     },
     cargoes: {
+      type: Array,
+      default: () => []
+    },
+    orders: {
       type: Array,
       default: () => []
     },
@@ -172,24 +178,21 @@ export default {
               required: false,
               title: '长',
               key: 'length',
-              min: 0,
-              max: 9999999.9,
+              maxLen: 7,
               point: NumberPrecesion.dimension
             },
             {
               required: false,
               title: '宽',
               key: 'width',
-              min: 0,
-              max: 9999999.9,
+              maxLen: 7,
               point: NumberPrecesion.dimension
             },
             {
               required: false,
               title: '高',
               key: 'height',
-              min: 0,
-              max: 9999999.9,
+              maxLen: 7,
               point: NumberPrecesion.dimension
             }
           ]
@@ -207,6 +210,114 @@ export default {
           key: 'remark2',
           type: 'text',
           max: 100
+        }
+      ],
+      // 异常信息表头
+      headersOption2: [
+        {
+          required: false,
+          title: '',
+          type: 'operation',
+          width: 80
+        },
+        {
+          required: true,
+          title: '订单号',
+          key: 'orderNo',
+          type: 'orderSelect',
+          max: 200
+        },
+        {
+          required: true,
+          title: '货物名称',
+          key: 'cargoName',
+          type: 'select',
+          max: 200,
+          width: 180
+        },
+        {
+          required: false,
+          title: '货物编号',
+          key: 'cargoNo',
+          type: 'text',
+          max: 200
+        },
+        {
+          required: false,
+          title: '重量（吨）',
+          key: 'weight',
+          type: 'number',
+          min: 0,
+          point: NumberPrecesion.weight
+        },
+        {
+          required: false,
+          title: '重量（公斤）',
+          key: 'weightKg',
+          type: 'number',
+          min: 0,
+          point: NumberPrecesion.weightKg
+        },
+        {
+          required: false,
+          title: '体积（方）',
+          key: 'volume',
+          type: 'number',
+          min: 0,
+          point: NumberPrecesion.volume
+        },
+        {
+          required: false,
+          title: '货值（元）',
+          key: 'cargoCost',
+          type: 'number',
+          min: 0,
+          point: NumberPrecesion.fee
+        },
+        {
+          required: false,
+          title: '包装方式',
+          key: 'unit',
+          type: 'package',
+          max: 10
+        },
+        // {
+        //   required: false,
+        //   title: '包装尺寸（毫米）',
+        //   key: 'dimension',
+        //   width: 180,
+        //   type: 'multi',
+        //   children: [
+        //     {
+        //       required: false,
+        //       title: '长',
+        //       key: 'length',
+        //       maxLen: 7,
+        //       point: NumberPrecesion.dimension
+        //     },
+        //     {
+        //       required: false,
+        //       title: '宽',
+        //       key: 'width',
+        //       maxLen: 7,
+        //       point: NumberPrecesion.dimension
+        //     },
+        //     {
+        //       required: false,
+        //       title: '高',
+        //       key: 'height',
+        //       maxLen: 7,
+        //       point: NumberPrecesion.dimension
+        //     }
+        //   ]
+        // },
+        {
+          required: false,
+          title: '包装数量',
+          key: 'quantity',
+          type: 'number',
+          min: 1,
+          point: 0
         }
       ]
     }
@@ -234,7 +345,7 @@ export default {
         }
         sum.weight = float.round((cargo.weight || 0) + sum.weight, NumberPrecesion.weight)
         sum.volume = float.round((cargo.volume || 0) + sum.volume, NumberPrecesion.volume)
-        sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost)
+        sum.cargoCost = float.round((cargo.cargoCost || 0) + sum.cargoCost, NumberPrecesion.fee)
         sum.quantity = (cargo.quantity || 0) + sum.quantity
         return sum
       }, {
@@ -246,11 +357,19 @@ export default {
       })
     },
     headers () {
-      const res = this.headersOption.filter(el => {
-        const key = OrderMap[el.key]
-        return this.orderSet[key] !== 2
-      })
-      return res
+      if (this.type === 'exception') {
+        const res = this.headersOption2.filter(el => {
+          const key = OrderMap[el.key]
+          return this.orderSet[key] !== 2
+        })
+        return res
+      } else {
+        const res = this.headersOption.filter(el => {
+          const key = OrderMap[el.key]
+          return this.orderSet[key] !== 2
+        })
+        return res
+      }
     },
     dataSourceCpt () {
       return this.dataSource.map(el => {

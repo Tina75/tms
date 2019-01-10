@@ -9,6 +9,8 @@
 <script>
 import MoneyInput from './MoneyInput'
 import float from '@/libs/js/float'
+import NP from 'number-precision'
+import { roundFee } from '@/libs/js/config'
 export default {
   name: 'PayInfo',
   props: {
@@ -144,7 +146,6 @@ export default {
     }
   },
   mounted () {
-    console.log(this.tableData)
   },
   methods: {
     getPayInfo () {
@@ -167,9 +168,8 @@ export default {
     },
     validate () {
       let total = 0
-      console.log(this.tableDataBack)
       this.tableDataBack.forEach(item => {
-        total = float.round(total + float.round(Number(item.cashAmount) + Number(item.fuelCardAmount)))
+        total = roundFee(NP.plus(total, roundFee(Number(item.cashAmount) + Number(item.fuelCardAmount))))
       })
       if (total !== Number(this.total)) {
         this.$Message.error('结算总额应与费用合计相等')
@@ -194,9 +194,9 @@ export default {
 }
 </script>
 
-<style lang="stylus">
-  .payment-info-table
-    .ivu-table-cell
-      overflow inherit
-
+<style lang="stylus" scoped>
+.payment-info-table
+>>> .ivu-table
+      .ivu-table-cell
+        overflow inherit
 </style>

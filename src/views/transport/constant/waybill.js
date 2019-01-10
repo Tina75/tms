@@ -1,7 +1,6 @@
 import TMSUrl from '@/libs/constant/url'
 import IconLabel from '@/components/IconLabel'
-import float from '@/libs/js/float'
-
+import { getMileageText, getFeeText } from '@/libs/js/config'
 export const TAB_LIST = [
   // { name: '全部', count: '' },
   { name: '待调度', count: '' },
@@ -248,7 +247,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'mileage',
     width: 120,
     render: (h, p) => {
-      return vm.tableDataRender(h, p.row.mileage === '' ? '' : Math.floor(p.row.mileage) / 1000)
+      return vm.tableDataRender(h, getMileageText(p.row.mileage))
+      // return vm.tableDataRender(h, p.row.mileage === '' ? '' : Math.floor(p.row.mileage) / 1000)
     }
   },
   {
@@ -256,7 +256,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'totalFee',
     width: 120,
     render: (h, p) => {
-      return vm.tableDataRender(h, p.row.totalFee === '' ? '' : p.row.totalFee / 100)
+      return vm.tableDataRender(h, getFeeText(p.row.totalFee))
+      // return vm.tableDataRender(h, p.row.totalFee === '' ? '' : p.row.totalFee / 100)
     }
   },
   {
@@ -293,7 +294,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'cargoCost',
     width: 120,
     render: (h, p) => {
-      return vm.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
+      return vm.tableDataRender(h, getFeeText(p.row.cargoCost))
+      // return vm.tableDataRender(h, p.row.cargoCost === '' ? '' : p.row.cargoCost / 100)
     }
   },
   {
@@ -309,7 +311,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'cashBack',
     width: 120,
     render: (h, p) => {
-      return vm.tableDataRender(h, p.row.cashBack > 0 ? p.row.cashBack / 100 : '-')
+      return vm.tableDataRender(h, getFeeText(p.row.cashBack))
+      // return vm.tableDataRender(h, p.row.cashBack > 0 ? p.row.cashBack / 100 : '-')
     }
   },
   {
@@ -352,7 +355,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'collectionMoney',
     minWidth: 120,
     render: (h, params) => {
-      return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
+      return vm.tableDataRender(h, getFeeText(params.row.collectionMoney))
+      // return h('span', params.row.collectionMoney ? float.round(params.row.collectionMoney / 100) : 0)
     }
   },
   {

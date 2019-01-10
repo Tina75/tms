@@ -136,7 +136,7 @@ import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 import CarSelect from '@/components/own-car-form/CarSelect'
-import float from '@/libs/js/float'
+import { multiplyFee, divideFee } from '@/libs/js/config'
 export default {
   name: 'edit-insurance',
   components: {
@@ -187,12 +187,12 @@ export default {
           { required: true, message: '失效日期不能为空' }
         ],
         trafficFee: [
-          { required: true, message: '交强险金额不能为空' },
-          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
-        ],
-        businessFee: [
-          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+          { required: true, message: '交强险金额不能为空' }
+          // { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ]
+        // businessFee: [
+        //   { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+        // ]
       }
     }
   },
@@ -213,9 +213,9 @@ export default {
           })
         }
         vm.$refs.upLoads.uploadImgList = vm.imgList
-        vm.validate.totalFee = Number(vm.validate.totalFee) / 100
-        vm.validate.trafficFee = Number(vm.validate.trafficFee) / 100
-        vm.validate.businessFee = Number(vm.validate.businessFee) / 100
+        vm.validate.totalFee = divideFee(vm.validate.totalFee)
+        vm.validate.trafficFee = divideFee(vm.validate.trafficFee)
+        vm.validate.businessFee = divideFee(vm.validate.businessFee)
       } else {
         vm.validate.buyDate = new Date()
       }
@@ -229,8 +229,8 @@ export default {
       if (params.buyDate) params.buyDate = new Date(this.validate.buyDate).getTime()
       if (params.effectDate) params.effectDate = new Date(this.validate.effectDate).getTime()
       if (params.expireDate) params.expireDate = new Date(this.validate.expireDate).getTime()
-      if (params.trafficFee) params.trafficFee = float.round(this.validate.trafficFee * 100)
-      if (params.businessFee) params.businessFee = float.round(this.validate.businessFee * 100)
+      if (params.trafficFee) params.trafficFee = multiplyFee(this.validate.trafficFee)
+      if (params.businessFee) params.businessFee = multiplyFee(this.validate.businessFee)
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true

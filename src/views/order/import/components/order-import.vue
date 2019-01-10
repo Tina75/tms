@@ -96,7 +96,8 @@ export default {
                 },
                 on: {
                   click: () => {
-                    jsCookie.set('imported_id', params.row.id, { expires: 1 })
+                    // jsCookie.set('imported_id', params.row.id, { expires: 1 })
+                    vm.$store.commit('setImported', params.row.id) // 将当前导入批次号存入vuex
                     vm.openTab({
                       title: '订单管理',
                       path: TMSUrl.ORDER_MANAGEMENT,

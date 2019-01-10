@@ -5940,6 +5940,11 @@ number-is-nan@^1.0.0:
   resolved "https://registry.yarnpkg.com/number-is-nan/-/number-is-nan-1.0.1.tgz#097b602b53422a522c1afb8790318336941a011d"
   integrity sha1-CXtgK1NCKlIsGvuHkDGDNpQaAR0=
 
+number-precision@^1.2.1:
+  version "1.2.1"
+  resolved "http://192.168.1.40:4873/number-precision/-/number-precision-1.2.1.tgz#80ea25e677f1ecaa1c809367f781d3ee6d5202c1"
+  integrity sha1-gOol5nfx7KocgJNn94HT7m1SAsE=
+
 oauth-sign@~0.9.0:
   version "0.9.0"
   resolved "https://registry.yarnpkg.com/oauth-sign/-/oauth-sign-0.9.0.tgz#47a7b016baa68b5fa0ecf3dee08a85c679ac6455"

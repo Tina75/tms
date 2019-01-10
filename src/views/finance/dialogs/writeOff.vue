@@ -55,9 +55,10 @@
 import BaseDialog from '@/basic/BaseDialog'
 import Server from '@/libs/js/server'
 import verifyMixin from '../mixins/verifyMixin.js'
+import { multiplyFee } from '@/libs/js/config'
 // import writeOffMixin from '../mixins/writeOffMixin.js'
 import tagNumberInput from '@/components/TagNumberInput'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 export default {
   name: 'writeOff',
   components: {
@@ -105,7 +106,7 @@ export default {
         method: 'post',
         data: {
           id: this.id,
-          actualFee: float.round(this.writeOffForm.actualFee * 100),
+          actualFee: multiplyFee(this.writeOffForm.actualFee),
           payType: this.writeOffForm.payType,
           account: this.writeOffForm.account.replace(/\s+/g, ''),
           bankBranch: this.writeOffForm.bankBranch,
@@ -126,7 +127,6 @@ export default {
               const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
                 return h('p', item)
               }) : []
-              console.log(list)
               return h('div', [
                 ...list
               ])
@@ -135,7 +135,7 @@ export default {
             cancelText: '取消'
           })
         }
-      }).catch(err => console.error(err))
+      })
     },
     batchVerifyOrder () {
       let vm = this
@@ -164,7 +164,6 @@ export default {
               const list = res.data.data.orderNos.length > 0 ? res.data.data.orderNos.map(item => {
                 return h('p', item)
               }) : []
-              console.log(list)
               return h('div', [
                 ...list
               ])
@@ -173,7 +172,7 @@ export default {
             cancelText: '取消'
           })
         }
-      }).catch(err => console.error(err))
+      })
     }
   }
 

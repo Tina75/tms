@@ -134,8 +134,9 @@ import Export from '@/libs/js/export'
 import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 import jsCookie from 'js-cookie'
+import { renderFee, getMileageText } from '@/libs/js/config'
 export default {
-  name: 'operate',
+  name: 'report-operate',
   components: {
     SelectInput,
     PageTable,
@@ -240,7 +241,7 @@ export default {
           key: 'start',
           width: 250,
           render: (h, params) => {
-            return h('span', City.codeToFullNameArr(params.row.start))
+            return h('span', params.row.start ? City.codeToFullNameArr(params.row.start) : '-')
           }
         },
         {
@@ -248,7 +249,7 @@ export default {
           key: 'end',
           width: 250,
           render: (h, params) => {
-            return h('span', City.codeToFullNameArr(params.row.end))
+            return h('span', params.row.end ? City.codeToFullNameArr(params.row.end) : '-')
           }
         },
         {
@@ -256,7 +257,8 @@ export default {
           key: 'mileage',
           width: 150,
           render: (h, params) => {
-            return h('span', (params.row.mileage / 1000).toFixed(1))
+            // return h('span', (params.row.mileage / 1000).toFixed(1))
+            return h('span', getMileageText(params.row.mileage))
           }
         },
         {
@@ -292,7 +294,8 @@ export default {
           key: 'orderTotalFee',
           width: 150,
           render: (h, params) => {
-            return h('span', (params.row.orderTotalFee / 100).toFixed(2))
+            // return h('span', (params.row.orderTotalFee / 100).toFixed(2))
+            return renderFee(h, params.row.orderTotalFee)
           }
         },
         {
@@ -300,7 +303,8 @@ export default {
           key: 'collectionMoney',
           width: 150,
           render: (h, params) => {
-            return h('span', (params.row.collectionMoney / 100).toFixed(2))
+            // return h('span', (params.row.collectionMoney / 100).toFixed(2))
+            return renderFee(h, params.row.collectionMoney)
           }
         },
         {
@@ -329,7 +333,8 @@ export default {
           key: 'loadbillTotalFee',
           width: 150,
           render: (h, params) => {
-            return h('span', (params.row.loadbillTotalFee / 100).toFixed(2))
+            // return h('span', (params.row.loadbillTotalFee / 100).toFixed(2))
+            return renderFee(h, params.row.loadbillTotalFee)
           }
         },
         {
@@ -370,7 +375,8 @@ export default {
           key: 'waybillTotalFee',
           width: 150,
           render: (h, params) => {
-            return h('span', (params.row.waybillTotalFee / 100).toFixed(2))
+            // return h('span', (params.row.waybillTotalFee / 100).toFixed(2))
+            return renderFee(h, params.row.waybillTotalFee)
           }
         },
         {
@@ -424,7 +430,8 @@ export default {
           key: 'cashBack',
           width: 150,
           render: (h, params) => {
-            return h('span', (params.row.cashBack / 100).toFixed(2))
+            // return h('span', (params.row.cashBack / 100).toFixed(2))
+            return renderFee(h, params.row.cashBack)
           }
         },
         // {
@@ -460,17 +467,23 @@ export default {
       'carrierDrivers'
     ])
   },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if (from.name === 'order-import') {
+        let importId = jsCookie.get('imported_id')
+        // 有cookie 从批量导入进来的，调用一下接口，传importId
+        if (importId) {
+          vm.keyword = {
+            importId: importId
+          }
+          jsCookie.remove('imported_id')
+        }
+      }
+    })
+  },
   mounted () {
     if (this.$route.query.tab) { // 首页跳转来的
       this.showSevenDate()
-    }
-    let importId = jsCookie.get('imported_id')
-    // 有cookie 从批量导入进来的，调用一下接口，传importId
-    if (importId) {
-      this.keyword = {
-        importId: importId
-      }
-      jsCookie.remove('imported_id')
     }
   },
   methods: {

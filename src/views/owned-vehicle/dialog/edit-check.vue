@@ -82,7 +82,7 @@ import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 import CarSelect from '@/components/own-car-form/CarSelect'
-import float from '@/libs/js/float'
+import { multiplyFee, divideFee } from '@/libs/js/config'
 export default {
   name: 'edit-check',
   components: {
@@ -121,8 +121,8 @@ export default {
           { type: 'string', message: '车牌号格式错误', pattern: CAR, trigger: 'blur' }
         ],
         cost: [
-          { required: true, message: '总金额不能为空' },
-          { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
+          { required: true, message: '总金额不能为空' }
+          // { message: '小于等于九位整数,最多两位小数', pattern: /^[0-9]{0,9}(?:\.\d{1,2})?$/ }
         ]
       }
     }
@@ -144,7 +144,7 @@ export default {
           })
         }
         vm.$refs.upLoads.uploadImgList = vm.imgList
-        vm.validate.cost = Number(vm.validate.cost) / 100
+        vm.validate.cost = divideFee(vm.validate.cost)
       }
       if (!vm.validate.checkDate && !vm.validate.nextCheckDate) {
         vm.validate.checkDate = new Date()
@@ -159,7 +159,7 @@ export default {
       let params = Object.assign({}, this.validate)
       if (params.checkDate) params.checkDate = new Date(this.validate.checkDate).getTime()
       if (params.nextCheckDate) params.nextCheckDate = new Date(this.validate.nextCheckDate).getTime()
-      if (params.cost) params.cost = float.round(this.validate.cost * 100)
+      if (params.cost) params.cost = multiplyFee(this.validate.cost)
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true

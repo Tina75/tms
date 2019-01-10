@@ -18,17 +18,17 @@
         </SelectInput>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.customerOrderNoOption == 1" span="6">
       <FormItem label="客户订单号:" prop="customerOrderNo">
         <Input v-model="orderForm.customerOrderNo" :maxlength="$fieldLength.orderNo" clearable></Input>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.customerWaybillNoOption == 1" span="6">
       <FormItem label="客户运单号:" prop="customerWaybillNo">
         <Input v-model="orderForm.customerWaybillNo" :maxlength="$fieldLength.billNo" clearable></Input>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.salesmanIdOption == 1" span="6">
       <FormItem label="对接业务员:" prop="salesmanId">
         <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
           <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
@@ -37,17 +37,17 @@
       </Col>
     </Row>
     <Row :gutter="16">
-      <Col span="6">
+      <Col v-if="OrderSet.startCityOption == 1" span="6">
       <FormItem label="发货城市:" prop="start">
         <CitySelect v-model="orderForm.start" clearable></CitySelect>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.endCityOption == 1" span="6">
       <FormItem label="到货城市:" prop="end">
         <CitySelect v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.deliveryTimeOption == 1" span="6">
       <FormItem label="发货时间:">
         <Row>
           <Col span="13">
@@ -63,7 +63,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.arriveTimeOption == 1" span="6">
       <FormItem label="到货时间:">
         <Row>
           <Col span="13">
@@ -185,7 +185,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.mileageOption == 1" span="6">
       <FormItem label="计费里程:" prop="mileage">
         <Row>
           <Col span="19">
@@ -196,7 +196,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.freightFeeOption == 1" span="6">
       <FormItem label="运输费用:" prop="freightFee">
         <Row>
           <Col span="19">
@@ -273,7 +273,7 @@
     </Row>
     <Title>其他</Title>
     <Row :gutter="16" class="i-mt-15">
-      <Col span="6">
+      <Col v-if="OrderSet.pickupOption == 1" span="6">
       <FormItem :class="{'ivu-form-item-error': highLight}" label="提货方式:" prop="pickup">
         <Row>
           <Col span="19">
@@ -284,7 +284,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.receiptCountOption == 1" span="6">
       <FormItem label="回单数量:" prop="receiptCount">
         <Row>
           <Col span="19">
@@ -295,7 +295,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="6">
+      <Col v-if="OrderSet.isInvoiceOption == 1" span="6">
       <FormItem label="是否开票:" prop="isInvoice">
         <Row>
           <Col span="19">
@@ -307,14 +307,14 @@
       </FormItem>
       </Col>
       <Col span="6">
-      <FormItem v-if="orderForm.isInvoice === 1" label="开票税率:" prop="invoiceRate">
+      <FormItem v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" label="开票税率:" prop="invoiceRate">
         <Row>
-          <Col span="12">
-          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100" clearable>
+          <Col span="6">
+          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="2" :min="0" :max="100" clearable>
           </TagNumberInput>
           </Col>
-          <Col span="12" class="order-create__input-unit">
-          <span style="float: left"> %</span>
+          <Col span="18" class="order-create__input-unit">
+          <span style="float: left">%</span>
           <span>({{ invoiceFee }}元)</span>
           </Col>
         </Row>
@@ -322,7 +322,7 @@
       </Col>
     </Row>
     <Row :gutter="16" class="i-mt-15">
-      <Col span="6">
+      <Col v-if="OrderSet.collectionMoneyOption == 1" span="6">
       <FormItem label="代收货款:" prop="collectionMoney">
         <Row>
           <Col span="19">
@@ -332,7 +332,7 @@
         </Row>
       </FormItem>
       </Col>
-      <Col span="18">
+      <Col v-if="OrderSet.orderRemarkOption == 1" span="18">
       <FormItem label="备注:" prop="remark">
         <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" clearable></Input>
       </FormItem>
@@ -379,6 +379,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
 import { formatePhone } from '@/libs/js/formate'
+import { roundFee, divideFee, multiplyFee, multiplyMileage, divideMileage } from '@/libs/js/config'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -520,8 +521,8 @@ export default {
         insuranceFee: null,
         // 其他费用
         otherFee: null,
-        // 提货方式
-        pickup: null, // 默认1：上门提货，2：直接送货
+        // 提货方式 未设置提货配置默认2：上门提货，2：直接送货
+        pickup: null,
         // 回单数量
         receiptCount: 1,
         collectionMoney: null,
@@ -655,7 +656,7 @@ export default {
       let totalFee = 0
       for (let fee of feeList) {
         if (orderForm[fee]) {
-          totalFee = float.round(totalFee + parseFloat(orderForm[fee]))
+          totalFee = roundFee(totalFee + orderForm[fee])
         }
       }
       return totalFee
@@ -685,7 +686,7 @@ export default {
       }
     },
     invoiceFee () {
-      const res = this.totalFee && this.orderForm.invoiceRate ? float.round(this.totalFee * this.orderForm.invoiceRate / 100) : 0
+      const res = this.totalFee && this.orderForm.invoiceRate ? roundFee(this.totalFee * this.orderForm.invoiceRate / 100) : 0
       return res
     }
   },
@@ -708,15 +709,17 @@ export default {
     }
     // focus到结算方式和提货方式等下拉框时要弹出下拉框
     ['pickupSelector', 'settlementSelector'].forEach((selector) => {
-      vm.$refs[selector].$refs.reference.onfocus = (e) => {
-        vm.$refs[selector].toggleHeaderFocus(e)
-        vm.$nextTick(() => {
-          setTimeout(() => {
-            if (!vm.$refs[selector].visible) {
-              vm.$refs[selector].toggleMenu(e)
-            }
-          }, 200)
-        })
+      if (vm.$refs[selector]) {
+        vm.$refs[selector].$refs.reference.onfocus = (e) => {
+          vm.$refs[selector].toggleHeaderFocus(e)
+          vm.$nextTick(() => {
+            setTimeout(() => {
+              if (!vm.$refs[selector].visible) {
+                vm.$refs[selector].toggleMenu(e)
+              }
+            }, 200)
+          })
+        }
       }
     })
     this.initBusineList()
@@ -746,7 +749,8 @@ export default {
           vm.orderForm.id = orderDetail.id
           // 分转换元
           transferFeeList.forEach((fee) => {
-            vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+            // vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+            vm.orderForm[fee] = divideFee(vm.orderForm[fee])
           })
           // vm.orderForm.collectionMoney = vm.orderForm.collectionMoney ? vm.orderForm.collectionMoney / 100 : null
           if (vm.orderForm.deliveryTime) {
@@ -760,7 +764,8 @@ export default {
             vm.orderForm.arriveTimes = `${arriveTime.getHours() > 9 ? arriveTime.getHours() : '0' + arriveTime.getHours()}:${arriveTime.getMinutes() > 9 ? arriveTime.getMinutes() : '0' + arriveTime.getMinutes()}`
           }
           // 里程除以 1000
-          vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+          // vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+          vm.orderForm.mileage = divideMileage(vm.orderForm.mileage)
           vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
           vm.orderForm.disabledPickUp = !!(orderDetail.status === 20 && orderDetail.pickup === 1 && vm.orderId)
         })
@@ -779,12 +784,14 @@ export default {
         this.consignerCargoes = orderDetail.orderCargoTemplateList.map((item) => new Cargo(item, true))
         // 分转换元
         transferFeeList.forEach((fee) => {
-          vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+          // vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
+          vm.orderForm[fee] = divideFee(vm.orderForm[fee])
         })
         vm.orderForm.deliveryTime = ''
         vm.orderForm.arriveTime = ''
         // 里程除以 1000
-        vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
+        vm.orderForm.mileage = divideMileage(vm.orderForm.mileage)
+        // vm.orderForm.mileage = vm.orderForm.mileage ? vm.orderForm.mileage / 1000 : 0
         vm.orderForm.invoiceRate = rate.get(vm.orderForm.invoiceRate)
       })
     },
@@ -929,11 +936,6 @@ export default {
         return
       }
       const statics = vm.$refs.cargoTable.statics
-      // 重量和体积二选一，或者都填写，可以了
-      // if (statics.weight <= 0 && statics.volume <= 0) {
-      //   this.$Message.warning('请先填写货物必要信息')
-      //   return
-      // }
       this.openDialog({
         name: 'dialogs/financeRule',
         data: {
@@ -945,7 +947,8 @@ export default {
           cargoInfos: statics.cargoInfos,
           weight: statics.weight,
           volume: statics.volume,
-          distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
+          // distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
+          distance: multiplyMileage(this.orderForm.mileage),
           startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
           endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude }
         },
@@ -1222,20 +1225,26 @@ export default {
               arriveTime: !orderForm.arriveTime ? null : orderForm.arriveTime.Format('yyyy-MM-dd hh:mm'),
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
-              mileage: orderForm.mileage * 1000,
+              // mileage: orderForm.mileage * 1000,
+              mileage: multiplyMileage(orderForm.mileage),
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
               consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
               invoiceRate: orderForm.isInvoice === 1 ? rate.set(orderForm.invoiceRate) : null
             })
             // 转换成分单位
             transferFeeList.forEach((fee) => {
-              form[fee] = form[fee] ? float.round(form[fee] * 100) : 0
+              // form[fee] = form[fee] ? float.round(form[fee] * 100) : 0
+              form[fee] = multiplyFee(form[fee]) || 0
             })
             // 没有业务员 置空
             const res = this.salesmanList.some(el => {
               return el.id === form.salesmanId
             })
             if (!res) form.salesmanId = ''
+            // 未设置提货时 提货方式默认2
+            if (this.OrderSet.pickupOption !== 1 && !form.pickup) {
+              form.pickup = 2
+            }
             resolve(form)
           } else {
             vm.disabled = false

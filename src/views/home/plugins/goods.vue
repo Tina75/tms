@@ -22,9 +22,8 @@
 import BlankCard from '../components/BlankCard'
 import ECharts from 'vue-echarts/components/ECharts'
 import mixin from './mixin.js'
-import float from '@/libs/js/float'
 import url from '@/libs/constant/url'
-
+import { roundVolume, roundWeight } from '@/libs/js/config'
 const statusStr = {
   10: '待提货',
   20: '待调度',
@@ -116,8 +115,8 @@ export default {
               }
               self.weightData.push(obj)
               self.volumeData.push(obj2)
-              self.weight = float.round(self.weight + item.weight)
-              self.volume = float.round(self.volume + item.volume)
+              self.weight = roundWeight(self.weight + item.weight)
+              self.volume = roundVolume(self.volume + item.volume)
             })
           }
         })

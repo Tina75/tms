@@ -13,10 +13,11 @@
             <i slot="dot" class="map-timeline-dot"></i>
             <div>
               <div class="icon-box">
-                <i v-if="Number(item.positionType) !== 2" class="icon font_family icon-beidoudingwei"></i>
-                <Tooltip v-else :content="`此位置通过司机手机号查询，若偏差较大，请联系司机 ${item.phone}`" transfer placement="right-start" max-width="200">
-                  <i class="icon font_family icon-shoujidingwei"></i>
+                <FontIcon v-if="Number(item.positionType) === 1" type="beidoudingwei" size="35"></FontIcon>
+                <Tooltip v-else-if="Number(item.positionType) === 2" :content="`此位置通过司机手机号查询，若偏差较大，请联系司机 ${item.phone}`" transfer placement="right-start" max-width="200">
+                  <FontIcon type="shoujidingwei" size="35"></FontIcon>
                 </Tooltip>
+                <FontIcon v-else type="sijidingwei" size="35"></FontIcon>
               </div>
 
               <div :class="{'info-body-active': key === currentPointIndex}" class="info-body" @click="showTracePoint(key)">
@@ -43,8 +44,13 @@ import BMap from 'BMap'
 import MarkerOverlay from '../../home/libs/MarkerOverlay.js'
 import LabelOverlay from '../../home/libs/LabelOverlay.js'
 import truckMarker from '../../home/libs/getTruckMarker.js'
+// 1北斗   2手机    3司机
+import FontIcon from '@/components/FontIcon.vue'
 export default {
   name: 'Confirm',
+  components: {
+    FontIcon
+  },
   mixins: [ BaseDialog ],
   data () {
     return {

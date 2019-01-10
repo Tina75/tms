@@ -32,7 +32,7 @@
       <FormItem label="转出金额：" prop="changeAmount">
         <Row>
           <Col span="20">
-          <TagNumberInput v-model="transfer.changeAmount"  :length="moneyLength" :precision="precision" placeholder="请输入金额"></TagNumberInput>
+          <TagNumberInput v-model="transfer.changeAmount"  :length="moneyLength" placeholder="请输入金额"></TagNumberInput>
           </Col>
           <Col span="2" offset="1">
           <span>元</span>
@@ -61,7 +61,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 import contantmixin from '../mixin/contantmixin'
 import SelectInput from '@/components/SelectInput.vue'
 import { CARDTYPELIST, ISSUERLIST } from '../constant/enum'
-import float from '@/libs/js/float'
+import { multiplyFee } from '@/libs/js/config'
 export default {
   name: 'transfer',
   components: {
@@ -74,7 +74,6 @@ export default {
       cardTypeList: CARDTYPELIST,
       issuerList: ISSUERLIST,
       loading: false,
-      precision: 2,
       moneyLength: 9,
       transfer: {
         id: '',
@@ -99,7 +98,7 @@ export default {
         toCardId: [{ required: true, message: '请选择主卡下面的副卡', trigger: 'change', type: 'number' }],
         changeAmount: [
           { required: true, message: '请输入转出金额', trigger: 'change', type: 'number' },
-          { pattern: /^((0[.]\d{1,2})|(([1-9]\d{0,8})([.]\d{1,2})?))$/, message: '9位正数且最多两位小数' }
+          { pattern: /^((0[.]\d{1,4})|(([1-9]\d{0,8})([.]\d{1,4})?))$/, message: '九位正数且最多四位小数' }
         ],
         operateDate: { required: true, message: '请输入转账日期' }
       }
@@ -121,7 +120,7 @@ export default {
             data: {
               id: this.transfer.id || undefined,
               toCardId: (this.transfer.type === 1) ? this.transfer.toCardId : this.transfer.primaryCardId,
-              changeAmount: typeof this.transfer.changeAmount === 'number' ? float.round(this.transfer.changeAmount * 100) : undefined,
+              changeAmount: typeof this.transfer.changeAmount === 'number' ? multiplyFee(this.transfer.changeAmount) : undefined,
               operateDate: this.transfer.operateDate ? this.transfer.operateDate.Format('yyyy-MM-dd') : undefined,
               remark: this.transfer.remark || undefined
             }

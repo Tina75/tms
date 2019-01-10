@@ -43,7 +43,7 @@
           <label class="label-bar">图片：</label>
           <div class="flexBox">
             <span v-for="(item, index) in data.fileUrls"
-                  :key="index" :style="`background-image: url(${urlHandle(item)}) `"
+                  :key="index" :style="`background-image: url(${zoomImage(item)}) `"
                   style="background-position: center; background-size: 100%; background-repeat: no-repeat;"
                   class="img-bar" @click="showImg(index)">
             </span>
@@ -148,6 +148,9 @@
           </i-col>
         </Row>
         <div class="mgbt20 handle-info">
+          <Table v-if="data.abnormalCargolist.length" :columns="cargoColumns" :data="data.abnormalCargolist" style="width: 100%"></Table>
+        </div>
+        <div class="mgbt20 handle-info">
           <label class="label-bar">处理备注：</label>
           <span class="flexBox colorGrey">{{data.disposeDesc}}</span>
         </div>
@@ -159,10 +162,11 @@
 import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
 import openSwipe from '@/components/swipe/index'
-
+import cargoColumns from '../constant/cargoColumns'
+import { divideFee } from '@/libs/js/config'
+import { mapGetters } from 'vuex'
 const moneyFormate = (fee) => {
-  if (!fee) return 0
-  return fee / 100
+  return divideFee(fee)
 }
 export default {
   name: 'except-record',
@@ -299,6 +303,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'WeightOption' // 重量配置 1 吨  2 公斤
+    ]),
     imageItems () {
       const self = this
       const arr = this.data.fileUrls.map(item => {
@@ -308,6 +315,19 @@ export default {
         }
       })
       return arr
+    },
+    cargoColumns () {
+      let res = []
+      if (this.WeightOption === 2) {
+        res = cargoColumns.filter(el => {
+          return el.key !== 'weight'
+        })
+      } else {
+        res = cargoColumns.filter(el => {
+          return el.key !== 'weightKg'
+        })
+      }
+      return res
     }
   },
   mounted () {
@@ -360,6 +380,13 @@ export default {
     // 客户端上传没有阿里云前缀 手动加上
     urlHandle (item) {
       return item.indexOf('aliyuncs') > -1 ? item : this.IMG_URL + item
+    },
+    /**
+   * 缩放图片
+   */
+    zoomImage (item) {
+      item += '?x-oss-process=image/resize,w_160'
+      return this.urlHandle(item)
     }
   }
 }

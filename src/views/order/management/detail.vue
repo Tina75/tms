@@ -51,7 +51,7 @@
           </i-col>
           <i-col v-if="from === 'order'" span="4">
             <span>代收货款：</span>
-            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
+            <span v-if="detail.collectionMoney">{{detail.collectionMoney | toPoint}}元</span>
             <span v-else>0元</span>
           </i-col>
         </Row>
@@ -279,7 +279,8 @@ import _ from 'lodash'
 import float from '@/libs/js/float'
 import { mapGetters } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
-
+import { renderFee, roundFee, divideFee, roundVolume, roundWeight } from '@/libs/js/config'
+import NP from 'number-precision'
 export default {
   name: 'order-management-detail',
 
@@ -330,7 +331,8 @@ export default {
           title: '货值（元）',
           key: 'cargoCost',
           render: (h, params) => {
-            return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : 0)
+            return renderFee(h, params.row.cargoCost)
+            // return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : 0)
           }
         },
         {
@@ -391,16 +393,16 @@ export default {
     cargoCostTotal () {
       let total = 0
       this.detail.orderCargoList.map((item) => {
-        total += Number(item.cargoCost)
+        total = NP.plus(total, Number(item.cargoCost))
       })
-      total /= 100
-      return float.round(total) + '元'
+      total = divideFee(total)
+      return roundFee(total) + '元'
     },
     // 总数量
     quantityTotal () {
       let total = 0
       this.detail.orderCargoList.map((item) => {
-        total += Number(item.quantity)
+        total = NP.plus(total, Number(item.quantity))
       })
       return total
     },
@@ -408,9 +410,9 @@ export default {
     volumeTotal () {
       let total = 0
       this.detail.orderCargoList.map((item) => {
-        total += Number(item.volume)
+        total = NP.plus(total, Number(item.volume))
       })
-      return float.round(total, 4) + '方'
+      return roundVolume(total) + '方'
     },
     // 总重量
     weightTotal () {
@@ -418,21 +420,28 @@ export default {
       this.detail.orderCargoList.map((item) => {
         // 区分吨或公斤
         if (this.WeightOption === 1) {
-          total += Number(item.weight)
+          total = NP.plus(total, Number(item.weight))
         } else {
-          total += Number(item.weightKg)
+          total = NP.plus(total, Number(item.weightKg))
         }
       })
-      return float.round(total, 3) + (this.WeightOption === 1 ? '吨' : '公斤')
+      return roundWeight(total) + (this.WeightOption === 1 ? '吨' : '公斤')
     },
     // 总费用
     FeeTotal () {
       let total = 0
-      total += this.detail.freightFee
-      total += this.detail.loadFee
-      total += this.detail.unloadFee
-      total += this.detail.insuranceFee
-      total += this.detail.otherFee
+      total = NP.plus(
+        this.detail.freightFee,
+        this.detail.loadFee,
+        this.detail.unloadFee,
+        this.detail.insuranceFee,
+        this.detail.otherFee
+      )
+      // total += this.detail.freightFee
+      // total += this.detail.loadFee
+      // total += this.detail.unloadFee
+      // total += this.detail.insuranceFee
+      // total += this.detail.otherFee
       return total
     }
   },

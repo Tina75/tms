@@ -214,8 +214,9 @@ import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
 import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
+import { getFeeText } from '@/libs/js/config'
 export default {
-  name: 'profit',
+  name: 'report-profit',
   components: {
     TabHeader,
     PageTable,
@@ -310,7 +311,8 @@ export default {
           this.res = res.data.data
           this.onLoad(res.data.data)
           for (let key in this.res) {
-            this.res[key] = this.res[key] === '' ? '-' : (this.res[key] / 100).toFixed(2)
+            // this.res[key] = this.res[key] === '' ? '-' : (this.res[key] / 100).toFixed(2)
+            this.res[key] = getFeeText(this.res[key])
           }
         }
       })
@@ -424,7 +426,6 @@ export default {
         case 4:
           /* 当前年份 */
           let year = this.formatDate(now).slice(0, 4)
-          console.log(year)
           if (month > 6) {
             start = year + '-0' + (month - 5) + '-01'
           } else {
