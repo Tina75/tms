@@ -11,12 +11,12 @@
         <VerticalTabItem key="1" :icon="{type:'ico-discovery',color:'#00a4bd'}" label="test1" name="11">123</VerticalTabItem>
         <VerticalTabItem key="2" label="test2" name="22">456</VerticalTabItem>
       </VerticalTabs> -->
-      <VerticalTabs :value="rightKey != 3 ? rightTitle : '系统设置'" @clickLeftMenu="clickMenu">
+      <VerticalTabs :value="rightKey != '3' ? rightKey : '3'" @on-select="clickMenu">
         <VerticalTabItem
           v-for="menu in setUpMenu"
           v-if="hasPower(menu.code)"
           :key="menu.id"
-          :name="menu.name"
+          :name="menu.id"
           :label="menu.name">
         </VerticalTabItem>
       </VerticalTabs>
@@ -309,8 +309,8 @@ export default {
       }
     },
     clickMenu (param) {
-      this.rightTitle = param.name
-      this.rightKey = param.id
+      this.rightTitle = param.label
+      this.rightKey = parseInt(param.name)
       switch (this.rightKey) {
         case 1:
           this.initPerson()

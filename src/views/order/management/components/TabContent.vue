@@ -183,7 +183,7 @@ export default {
     },
     // 导入批次号id
     importId: {
-      type: String
+      type: [String, Number]
     },
     // 页面来源,默认订单管理页面
     source: {
@@ -962,13 +962,19 @@ export default {
 
   computed: {
     ...mapGetters([
-      'clients'
+      'clients',
+      'ImportId'
     ])
   },
 
   watch: {
     tabStatus (val) {
       this.handleTabChange(val)
+    },
+    ImportId () {
+      this.keywords.importId = this.ImportId
+      this.handleTabChange('全部')
+      this.$parent.getOrderNum() // 重新获取订单数量
     }
   },
 
@@ -996,8 +1002,8 @@ export default {
       ]
     }
     // 有导入批次号添加批次号搜索
-    if (this.importId) {
-      this.keywords.importId = this.importId
+    if (this.ImportId) {
+      this.keywords.importId = this.ImportId
       this.handleTabChange('全部')
     } else {
       this.handleTabChange(this.tabStatus)

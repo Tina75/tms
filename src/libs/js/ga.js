@@ -99,7 +99,7 @@ const install = (Vue) => {
           this.$route.path
         )
         if (!isProdEnv) {
-          console.log(`render time: ${getComponentNameAndRoutePath(this)} —> ${endTimestamp - timers[name]}`)
+          // console.log(`render time: ${getComponentNameAndRoutePath(this)} —> ${endTimestamp - timers[name]}`)
         }
         delete timers[name]
         delete this.$options.timerName
@@ -158,7 +158,7 @@ const install = (Vue) => {
     const timerName = [this.$options ? this.$options.name : '', name].join('__')
     if (!timers[timerName]) return
     if (!isProdEnv) {
-      console.log(`execute time: ${name} —> ${endTimestamp - timers[timerName]}`)
+      // console.log(`execute time: ${name} —> ${endTimestamp - timers[timerName]}`)
     }
     this.$ga.time(
       isUserInfo ? 'userInfo' : 'performance',
@@ -207,7 +207,7 @@ const install = (Vue) => {
    */
   Vue.prototype.$reportError = Vue.$reportError = function (error) {
     if (!(error instanceof Error)) {
-      console.warn('上报异常请传入一个Error对象')
+      // console.warn('上报异常请传入一个Error对象')
       return
     }
     const temp = getComponentNameAndRoutePath(this)
