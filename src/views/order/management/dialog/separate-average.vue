@@ -221,26 +221,90 @@ export default {
       vm.backupCargoList = []
       this.$refs.formInline.validateField('separateNum', (valid) => {
         if (!valid) {
-          // if (vm.cargoQuantity) {
-          //   // 基于数量拆分
-          //   vm.separateByQuantity()
-          // } else {
-          //   // 重量体积平均拆分
-          //   vm.separateByWeightAndVolume()
-          // }
-          vm.separateAverage()
+          if (vm.cargoQuantity) {
+            // 基于数量拆分，基于数量的话，需要将数量的基数算出平均值，体积和重量需要跟随数量进行计算
+            vm.separateByQuantity()
+          } else {
+            // 重量体积平均拆分
+            vm.separateByWeightAndVolume()
+          }
+          // vm.separateAverage()
         }
       })
     },
     /**
-     * 平均分摊
+     * 基于包装数量，平均拆分货物数量
+     * 重量，体积和货值都要基于货物数量分摊数值
      */
-    separateAverage () {
+    separateByQuantity () {
       const vm = this
       // 如包装数量为10，要拆成6单，不能平均拆。10/6=1.67，前5单每单的包装数量为1，第6单的包装数量为5；
       let separateNum = vm.formInline.separateNum
       let cargoCost = divideFee(vm.cargoCost)
-      let baseNum = float.floor(NP.divide(vm.cargoQuantity || 0, separateNum))
+      let baseNum = float.floor(NP.divide(vm.cargoQuantity, separateNum))
+      // 每个货物 体积比例
+      let volumePercent = float.floor(NP.divide(vm.cargoVolume, vm.cargoQuantity), this.$numberPrecesion.volume)
+      // 每个货物重量比例
+      let weightPercent = float.floor(NP.divide(vm.cargoWeight, vm.cargoQuantity), vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
+      // 货值比例
+      let costPercent = float.floor(NP.divide(cargoCost, vm.cargoQuantity), vm.$numberPrecesion.fee)
+      let i = 0
+      let baseAverageNum = parseInt(baseNum)
+      while (i < separateNum) {
+        let cargo = new Cargo(vm.cargoList[0])
+
+        if ((i + 1) !== separateNum) {
+          cargo.quantity = baseAverageNum
+          // 按照数量的比例，计算相应的货物体积和重量值
+          cargo.volume = roundVolume(NP.times(volumePercent, cargo.quantity))
+          cargo.cargoCost = multiplyFee(NP.times(costPercent, cargo.quantity))
+          if (vm.WeightOption === 1) {
+            cargo.weight = roundWeight(NP.times(weightPercent, cargo.quantity))
+          } else {
+            cargo.weightKg = roundWeightKg(NP.times(weightPercent, cargo.quantity))
+          }
+        } else {
+          // 最后一个，需要将剩下的全都赋值
+          cargo.quantity = NP.minus(vm.cargoQuantity, NP.times((separateNum - 1), parseInt(baseNum)))
+          /**
+           * 按照数量的比例，计算相应的货物体积和重量值
+           * ! 但是这样永远都有浮点数的缺陷，少0.0001,所以要用已有的数减去
+           */
+          // cargo.volume = roundVolume(NP.times(volumePercent, cargo.quantity))
+          // cargo.cargoCost = multiplyFee(NP.times(costPercent, cargo.quantity))
+          // if (vm.WeightOption === 1) {
+          //   cargo.weight = roundWeight(NP.times(weightPercent, cargo.quantity))
+          // } else {
+          //   cargo.weightKg = roundWeight(NP.times(weightPercent, cargo.quantity))
+          // }
+          /**
+           * 这里是将除最后一个货物信息外所有的货物和累计起来，用总和减去，剩下来的值就是最后一条货物的值
+           */
+          cargo.volume = NP.minus(vm.cargoVolume, roundVolume(NP.times(volumePercent, baseAverageNum, (separateNum - 1))))
+          cargo.cargoCost = multiplyFee(NP.minus(cargoCost, NP.times(costPercent, baseAverageNum, (separateNum - 1))))
+          if (vm.WeightOption === 1) {
+            cargo.weight = NP.minus(vm.cargoWeight, roundWeight(NP.times(weightPercent, baseAverageNum, (separateNum - 1))))
+          } else {
+            cargo.weightKg = NP.minus(vm.cargoWeight, roundWeight(NP.times(weightPercent, baseAverageNum, (separateNum - 1))))
+          }
+          // this.setCargoLeftValue(cargo, cargoCost)
+        }
+
+        vm.separateCargoList.push(cargo)
+        i++
+      }
+      vm.backupCargoList = _.cloneDeep(vm.separateCargoList)
+    },
+    /**
+     * 2000 / 3 6666.66666667
+     * 1. 如果四舍五入，会导致前面会多分配0.0001
+     * 2. 所以这里需要floor，不四舍五入
+     */
+    separateByWeightAndVolume () {
+      const vm = this
+      // 如包装数量为10，要拆成6单，不能平均拆。10/6=1.67，前5单每单的包装数量为1，第6单的包装数量为5；
+      let separateNum = vm.formInline.separateNum
+      let cargoCost = divideFee(vm.cargoCost)
       // 每个货物 体积比例
       let volumePercent = float.floor(NP.divide(vm.cargoVolume, separateNum), this.$numberPrecesion.volume)
       // 每个货物重量比例
@@ -252,7 +316,6 @@ export default {
         let cargo = new Cargo(vm.cargoList[0])
 
         if ((i + 1) !== separateNum) {
-          cargo.quantity = parseInt(baseNum)
           // 按照数量的比例，计算相应的货物体积和重量值
           cargo.volume = roundVolume(volumePercent)
           cargo.cargoCost = roundFee(multiplyFee(costPercent))
@@ -271,11 +334,6 @@ export default {
           }
           cargo.volume = roundVolume(NP.minus(vm.cargoVolume, NP.times((separateNum - 1), volumePercent)))
           cargo.cargoCost = roundFee(NP.minus(multiplyFee(cargoCost), NP.times((separateNum - 1), multiplyFee(costPercent))))
-          if (vm.cargoQuantity) {
-            cargo.quantity = NP.minus(vm.cargoQuantity, NP.times((separateNum - 1), parseInt(baseNum)))
-          } else {
-            cargo.quantity = 0
-          }
         }
 
         vm.separateCargoList.push(cargo)
