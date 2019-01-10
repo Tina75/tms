@@ -155,6 +155,7 @@ export default {
       if (type !== 'quantity') {
         return
       }
+      const self = this
       // 是否输入了货物名称
       let cargoName = this.record.cargoName
       // 查找货物名称，是否是已维护的货物信息
@@ -164,7 +165,7 @@ export default {
         if (matchCargo) {
           ['weight', 'volume', 'cargoCost'].forEach((key) => {
             let value = this.record[this.col.key] || 1
-            this.record[key] = float.round(value * matchCargo[key])
+            this.record[key] = float.round(value * matchCargo[key], self.$numberPrecesion.volume)
           })
         }
       }

@@ -2,15 +2,24 @@ import { renderFee } from '@/libs/js/config'
 const tableColumns = [
   {
     title: '订单号',
-    key: 'orderNo'
+    key: 'orderNo',
+    render: (h, p) => {
+      return h('span', p.row.orderNo || '-')
+    }
   },
   {
     title: '客户订单号',
-    key: 'customerOrderNo'
+    key: 'customerOrderNo',
+    render: (h, p) => {
+      return h('span', p.row.customerOrderNo || '-')
+    }
   },
   {
     title: '货物名称',
-    key: 'cargoName'
+    key: 'cargoName',
+    render: (h, p) => {
+      return h('span', p.row.cargoName || '-')
+    }
   },
   {
     title: '货物编号',
@@ -30,21 +39,21 @@ const tableColumns = [
     title: '包装数量',
     key: 'quantity',
     render: (h, p) => {
-      return h('span', p.row.quantity ? p.row.quantity : 0)
+      return h('span', p.row.quantity || 0)
     }
   },
   {
     title: '重量（吨）',
     key: 'weight',
     render: (h, p) => {
-      return h('span', p.row.weight || '-')
+      return h('span', p.row.weight || 0)
     }
   },
   {
     title: '体积（方）',
     key: 'volume',
     render: (h, p) => {
-      return h('span', p.row.volume ? p.row.volume : 0)
+      return h('span', p.row.volume || 0)
     }
   },
   {
