@@ -22,7 +22,7 @@
             <tr>
               <td>车型：{{item.waybill.carType|carTypeFormatter}} {{item.waybill.carLength|carLengthFormatter}}</td>
               <td>回单数：{{item.waybill.backbillCnt}}</td>
-              <td>代收货款：{{item.waybill.collectionMoney ? item.waybill.collectionMoney / 100 + '元' : '-'}}</td>
+              <td>代收货款：{{item.waybill.collectionMoney ? getFeeText(item.waybill.collectionMoney) + '元' : '-'}}</td>
             </tr>
           </tbody>
         </table>
@@ -44,19 +44,19 @@
               <td>{{cargo.cargoName}}</td>
               <td>{{cargo.unit}}</td>
               <td>{{cargo.quantity}}</td>
-              <td>{{cargo.cargoCost / 100}}</td>
+              <td>{{cargo.cargoCost | fee}}</td>
               <td>{{cargo.weight}}</td>
               <td>{{cargo.volume}}</td>
             </tr>
             <tr>
               <td colspan="6" class="table-footer">
-                <span class="table-footer-item">{{item.waybill.assignCarType === 1 ? '运输费':'油费'}}：{{item.waybill.freightFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">装货费：{{item.waybill.loadFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">卸货费：{{item.waybill.unloadFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">路桥费：{{item.waybill.tollFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">保险费：{{item.waybill.insuranceFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">其他：{{item.waybill.otherFee / 100 || 0}} 元</span>
-                <span class="table-footer-item">合计运费: {{item.waybill.totalFee / 100 || 0}} 元</span>
+                <span class="table-footer-item">{{item.waybill.assignCarType === 1 ? '运输费':'油费'}}：{{item.waybill.freightFee | fee}} 元</span>
+                <span class="table-footer-item">装货费：{{item.waybill.loadFee | fee}} 元</span>
+                <span class="table-footer-item">卸货费：{{item.waybill.unloadFee | fee}} 元</span>
+                <span class="table-footer-item">路桥费：{{item.waybill.tollFee | fee}} 元</span>
+                <span class="table-footer-item">保险费：{{item.waybill.insuranceFee | fee}} 元</span>
+                <span class="table-footer-item">其他：{{item.waybill.otherFee | fee}} 元</span>
+                <span class="table-footer-item">合计运费: {{item.waybill.totalFee | fee}} 元</span>
                 <span class="table-footer-item">结算方式：{{item.waybill.settlementType | payTypeFormatter}}</span>
               </td>
             </tr>
@@ -82,8 +82,11 @@
 <script>
 import TransportBase from '../mixin/transportBase'
 import Printd from 'printd'
-
+import { getFeeText } from '@/libs/js/config'
 export default {
+  filters: {
+    fee: getFeeText
+  },
   mixins: [ TransportBase ],
   props: {
     data: {
@@ -147,6 +150,9 @@ export default {
       this.$nextTick(() => {
         this.printer.print(this.$refs.htmlContent, this.cssText)
       })
+    },
+    getFeeText (val) {
+      return getFeeText(val)
     }
   }
 }
