@@ -191,7 +191,8 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          width: 140
+          width: 140,
+          tooltip: true
         },
         {
           title: '包装方式',
