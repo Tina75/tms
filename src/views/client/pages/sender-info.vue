@@ -401,6 +401,7 @@ export default {
                           unit: params.row.unit,
                           cargoCost: divideFee(params.row.cargoCost),
                           weight: String(params.row.weight),
+                          weightKg: String(params.row.weightKg),
                           volume: String(params.row.volume),
                           remark1: params.row.remark1,
                           remark2: params.row.remark2
@@ -473,16 +474,7 @@ export default {
         },
         {
           title: '包装方式',
-          key: 'unit',
-          render (h, params) {
-            let text = ''
-            if (params.row.unit === '' || params.row.unit === null) {
-              text = '-'
-            } else {
-              text = params.row.unit
-            }
-            return h('span', {}, text)
-          }
+          key: 'unit'
         },
         {
           title: '包装尺寸',
@@ -502,55 +494,23 @@ export default {
         },
         {
           title: '重量(吨)',
-          key: 'weight',
-          render (h, params) {
-            let text = ''
-            if (params.row.weight === '' || params.row.weight === null) {
-              text = '-'
-            } else {
-              text = params.row.weight
-            }
-            return h('span', {}, text)
-          }
+          key: 'weight'
+        },
+        {
+          title: '重量(公斤)',
+          key: 'weightKg'
         },
         {
           title: '体积(方)',
-          key: 'volume',
-          render (h, params) {
-            let text = ''
-            if (params.row.volume === '' || params.row.volume === null) {
-              text = '-'
-            } else {
-              text = params.row.volume
-            }
-            return h('span', {}, text)
-          }
+          key: 'volume'
         },
         {
           title: '备注1',
-          key: 'remark1',
-          render (h, params) {
-            let text = ''
-            if (params.row.remark1 === '' || params.row.remark1 === null) {
-              text = '-'
-            } else {
-              text = params.row.remark1
-            }
-            return h('span', {}, text)
-          }
+          key: 'remark1'
         },
         {
           title: '备注2',
-          key: 'remark2',
-          render (h, params) {
-            let text = ''
-            if (params.row.remark2 === '' || params.row.remark2 === null) {
-              text = '-'
-            } else {
-              text = params.row.remark2
-            }
-            return h('span', {}, text)
-          }
+          key: 'remark2'
         }
       ],
       data1: [],
