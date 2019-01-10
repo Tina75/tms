@@ -6,18 +6,19 @@
       transfer
       label-position="left"
       class="modal"
+      width="600"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="90" style="margin-left: -10px">
         <FormItem label="发货地址：">
           <Row>
-            <Col span="11">
+            <Col span="10">
             <FormItem prop="city">
               <CitySelect v-model="validate.city" clearable></CitySelect>
             </FormItem>
             </Col>
-            <Col span="13" style="padding-left: 5px">
+            <Col span="14" style="padding-left: 5px">
             <FormItem prop="address">
               <AreaInput
                 v-model="validate.address"
