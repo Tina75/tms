@@ -3,7 +3,7 @@
   <div class="sider">
     <Sider v-model="collapsed" :collapsed-width="50" hide-trigger collapsible class="sider-collapse" style="overflow:hidden">
       <Menu v-show="!collapsed" ref="menu" :active-name="$route.path" :open-names="openedNames" accordion width="200" theme="dark">
-        <div class="title"><font-icon type="logo-zjy1" size="24" color="white"/></div>
+        <div class="title"><font-icon type="logo-zjy1" size="32" color="white"/></div>
         <template v-for="item in menuList">
           <template v-if="item.children">
             <Submenu :name="item.path" :key="item.path">
