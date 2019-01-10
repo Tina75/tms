@@ -6,8 +6,10 @@
       </div>
       <div class="info">
         <div class="company">
-          <img v-if="UserInfo.logoUrl" :src="UserInfo.logoUrl" class="avatar" alt="">
-          <img v-else src="../../../assets/default-avatar.jpg" class="avatar" alt="">
+          <!-- <img v-if="UserInfo.logoUrl" :src="UserInfo.logoUrl" class="avatar" alt="">-->
+          <!--<img  src="../../../assets/company_logo.png" class="avatar" alt="">-->
+          <Avatar v-if="UserInfo.logoUrl" :style="'background-image: url(' + UserInfo.logoUrl +')'" class="avatar"></Avatar>
+          <Avatar v-else class="avatar"></Avatar>
           <!--公司简称-->
           <span v-if="UserInfo.shortName" class="title">{{UserInfo.shortName}}</span>
           <span v-else class="title">{{UserInfo.companyName}}</span>
@@ -564,16 +566,20 @@ export default {
     border-left 1px solid #3a424b
     overflow hidden
     .company
+      background none
       line-height 44px
       float left
       padding-left 10px
       padding-top 2px
       .avatar
+        border-radius 0
         display inline-block
         vertical-align middle
         border 1px solid #fff
         width 35px
         height 35px
+        background-image: url('../../../assets/company_logo.png')
+        background-size 33px
       .title
         margin-left 15px
         line-height 44px

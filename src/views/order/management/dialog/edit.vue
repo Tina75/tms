@@ -14,7 +14,7 @@
         <FormItem label="计费里程:" prop="mileage">
           <Row>
             <Col span="19">
-            <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1">
+            <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="$numberPrecesion.mileage">
             </TagNumberInput>
             </Col>
             <Col span="5" class="order-create__input-unit">公里</Col>
@@ -173,7 +173,8 @@ import FontIcon from '@/components/FontIcon'
 import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
 import _ from 'lodash'
-
+import NP from 'number-precision'
+import { roundFee, multiplyFee, divideFee, multiplyMileage, divideMileage, multiplyRate } from '@/libs/js/config'
 export default {
   name: 'order-edit',
   components: {
@@ -287,14 +288,21 @@ export default {
       return tips
     },
     totalFee () {
-      let total
-      total = Number(this.orderForm.freightFee) +
-              Number(this.orderForm.pickupFee) +
-              Number(this.orderForm.loadFee) +
-              Number(this.orderForm.unloadFee) +
-              Number(this.orderForm.insuranceFee) +
-              Number(this.orderForm.otherFee)
-      return float.round(total)
+      let total = NP.plus(
+        Number(this.orderForm.freightFee),
+        Number(this.orderForm.pickupFee),
+        Number(this.orderForm.loadFee),
+        Number(this.orderForm.unloadFee),
+        Number(this.orderForm.insuranceFee),
+        Number(this.orderForm.otherFee)
+      )
+      // total = Number(this.orderForm.freightFee) +
+      //         Number(this.orderForm.pickupFee) +
+      //         Number(this.orderForm.loadFee) +
+      //         Number(this.orderForm.unloadFee) +
+      //         Number(this.orderForm.insuranceFee) +
+      //         Number(this.orderForm.otherFee)
+      return roundFee(total)
     }
   },
 
@@ -312,9 +320,11 @@ export default {
           let cloneOrderForm = _.cloneDeep(this.orderForm)
           for (let key in cloneOrderForm) {
             if (key.indexOf('Fee') > -1 || key === 'collectionMoney') {
-              float.round(cloneOrderForm[key] *= 100, 0)
+              cloneOrderForm[key] = multiplyFee(cloneOrderForm[key])
+              // float.round(cloneOrderForm[key] *= 100, 0)
             } else if (key === 'mileage') {
-              float.round(cloneOrderForm[key] *= 1000, 0)
+              cloneOrderForm[key] = multiplyMileage(cloneOrderForm[key])
+              // float.round(cloneOrderForm[key] *= 1000, 0)
             } else if (key === 'invoiceRate') {
               cloneOrderForm[key] = float.round(cloneOrderForm[key] / 100, 4)
             }
@@ -350,11 +360,11 @@ export default {
         this.isCanChangeCollectionMoney = data.isCanChangeCollectionMoney
         for (let key in this.orderForm) {
           if (key.indexOf('Fee') > -1 || key === 'collectionMoney') {
-            this.orderForm[key] = float.round(data[key] / 100) || null
+            this.orderForm[key] = divideFee(data[key]) || null
           } else if (key === 'mileage') {
-            this.orderForm[key] = float.round(data[key] / 1000, 1) || null
+            this.orderForm[key] = divideMileage(data[key]) || null
           } else if (key === 'invoiceRate') {
-            this.orderForm[key] = float.round(data[key] * 100) || null
+            this.orderForm[key] = multiplyRate(data[key]) || null
           } else {
             this.orderForm[key] = data[key]
           }

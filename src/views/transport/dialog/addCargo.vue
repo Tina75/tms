@@ -47,7 +47,7 @@ export default {
       this.consignerCargoes = this.cargoLists.map((item) => new Cargo(item, true))
     } else {
       if (this.orders.length === 1) {
-        this.consignerCargoes = [new Cargo({ orderNo: '订单号2' })]
+        this.consignerCargoes = [new Cargo({ orderNo: this.orders[0].value })]
       } else {
         this.consignerCargoes = [new Cargo()]
       }

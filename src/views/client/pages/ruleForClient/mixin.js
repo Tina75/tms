@@ -359,7 +359,7 @@ export default {
                   // 选择车型，件时，起步价，起步量都没有
                   startNum: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startNum ? float.round(item.startNum * 100, 6) : ''),
                   // 选择起步量的时候，startPrice的值传startNum的值
-                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100, 6) : '') : (item.startNum ? float.round(item.startNum * 100) : '')),
+                  startPrice: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (item.startType === '1' ? (item.startPrice ? float.round(item.startPrice * 100, 6) : '') : (item.startNum ? float.round(item.startNum * 100, 6) : '')),
                   chargeRules: item.chargeRules.map(el => {
                     return {
                       base: (_this.ruleDetail.ruleType === '5' || _this.ruleDetail.ruleType === '8') ? undefined : (float.round(el.base * 100, 6)),
