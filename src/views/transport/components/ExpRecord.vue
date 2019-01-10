@@ -164,6 +164,7 @@ import TransportBase from '../mixin/transportBase'
 import openSwipe from '@/components/swipe/index'
 import cargoColumns from '../constant/cargoColumns'
 import { divideFee } from '@/libs/js/config'
+import { mapGetters } from 'vuex'
 const moneyFormate = (fee) => {
   return divideFee(fee)
 }
@@ -202,7 +203,6 @@ export default {
   },
   data () {
     return {
-      cargoColumns,
       hideDetail: this.listLength > 1,
       IMG_URL: process.env.VUE_APP_IMG_URL,
       columns: [
@@ -303,6 +303,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'WeightOption' // 重量配置 1 吨  2 公斤
+    ]),
     imageItems () {
       const self = this
       const arr = this.data.fileUrls.map(item => {
@@ -312,6 +315,19 @@ export default {
         }
       })
       return arr
+    },
+    cargoColumns () {
+      let res = []
+      if (this.WeightOption === 2) {
+        res = cargoColumns.filter(el => {
+          return el.key !== 'weight'
+        })
+      } else {
+        res = cargoColumns.filter(el => {
+          return el.key !== 'weightKg'
+        })
+      }
+      return res
     }
   },
   mounted () {
