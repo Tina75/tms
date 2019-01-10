@@ -259,7 +259,14 @@ export default {
           }
         } else {
           // 最后一个，需要将剩下的全都赋值
-          vm.setCargoLeftValue(cargo, cargoCost)
+          // vm.setCargoLeftValue(cargo, cargoCost)
+          if (vm.WeightOption === 1) {
+            cargo.weight = roundWeight(NP.minus(vm.cargoWeight, NP.times((separateNum - 1), weightPercent)))
+          } else {
+            cargo.weightKg = roundWeightKg(NP.minus(vm.cargoWeight, NP.times((separateNum - 1), weightPercent)))
+          }
+          cargo.volume = roundVolume(NP.minus(vm.cargoVolume, NP.times((separateNum - 1), volumePercent)))
+          cargo.cargoCost = roundFee(NP.minus(multiplyFee(cargoCost), NP.times((separateNum - 1), multiplyFee(costPercent))))
           if (vm.cargoQuantity) {
             cargo.quantity = NP.minus(vm.cargoQuantity, NP.times((separateNum - 1), parseInt(baseNum)))
           } else {
@@ -294,8 +301,8 @@ export default {
     },
     // 移除货物
     removeCargo (index) {
-      this.separateCargoList.splice(index, 1)
       this.backupCargoList.splice(index, 1)
+      this.separateCargoList = _.cloneDeep(this.backupCargoList)
     },
     save () {
       let vm = this
