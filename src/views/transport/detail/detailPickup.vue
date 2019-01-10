@@ -849,7 +849,8 @@ export default {
   beforeRouteUpdate (to, from, next) {
     this.$nextTick(() => {
       this.id = this.$route.query.id
-      this.$refs['tabs'].handleChange(0)
+      this.$refs['tabs'] && this.$refs['tabs'].handleChange(0)
+      this.inEditing = 'no'
       this.fetchData()
     })
     next()

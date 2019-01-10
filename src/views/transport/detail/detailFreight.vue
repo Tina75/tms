@@ -1332,7 +1332,8 @@ export default {
     this.$nextTick(() => {
       this.id = this.$route.query.id
       this.no = this.$route.query.no
-      this.$refs['tabs'].handleChange(0)
+      this.$refs['tabs'] && this.$refs['tabs'].handleChange(0)
+      this.inEditing = 'no'
       this.fetchData()
     })
     next()
