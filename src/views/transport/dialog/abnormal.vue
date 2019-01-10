@@ -32,8 +32,8 @@
             <Option v-for="item in abnormalTypeCodes" :value="item.abnormalTypeCode" :key="item.abnormalTypeCode">{{ item.abnormalTypeDesc }}</Option>
           </Select>
         </i-col>
-        <i-col v-if="abnormalTypeCode === 1 || abnormalTypeCode === 2" span="3">
-          <a @click="openCargoSeparateDialog">+添加异常货物信息</a>
+        <i-col v-if="abnormalTypeCode === 1 || abnormalTypeCode === 2 || abnormalTypeCode === 3" span="3">
+          <a @click="abnormalTypeCode === 3 ? openCargoAddDialog() : openCargoSeparateDialog()">+添加异常货物信息</a>
         </i-col>
         <i-col :offset="1" span="7">
           <span class="detail-field-title-sm detail-field-required" style="width: 125px;">是否修改运费：</span>
@@ -90,6 +90,17 @@
         <div class="border-dashed"></div>
       </div>
 
+      <div v-if="abnormalTypeCode === 3 && AbnormalAddCargoInfos.length > 0" style="padding-left: 8px;">
+        <div class="border-dashed"></div>
+        <div class="order-number">
+          异常货物信息
+        </div>
+        <div>
+          <Table :columns="headers" :data="AbnormalAddCargoInfos"></Table>
+        </div>
+        <div class="border-dashed"></div>
+      </div>
+
       <Row class="detail-field-group" style="margin: 25px 0 10px;">
         <i-col span="24" class="exception-distribution">
           <span class="detail-field-title-sm" style="vertical-align: unset;padding-left: 8px;width: 90px;line-height: 1.6;">异常描述：</span>
@@ -133,6 +144,7 @@ import { mapGetters } from 'vuex'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
 import { divideFee } from '@/libs/js/config'
+import OrderMap from '@/views/order/create/libs/orderMap'
 export default {
   name: 'SendCar',
   components: { TagNumberInput, UpLoad, PickupFee, SendFee, TableExtend },
@@ -274,15 +286,112 @@ export default {
       childOrderCargoList: [],
       parentOrderData: [], // 原单的订单号信息
       childOrderData: [], // 异常货物的订单号信息
-      originData: [] // 原始数据
+      originData: [], // 原始数据
+      // 异常信息表头
+      headersOption2: [
+        {
+          title: '订单号',
+          key: 'orderNo',
+          width: 140
+        },
+        {
+          title: '货物名称',
+          key: 'cargoName',
+          tooltip: true
+        },
+        {
+          title: '货物编号',
+          key: 'cargoNo'
+        },
+        {
+          title: '重量（吨）',
+          key: 'weight',
+          render: (h, p) => {
+            return h('span', p.row.weight ? float.round(p.row.weight, 3) : 0)
+          }
+        },
+        {
+          title: '重量（公斤）',
+          key: 'weightKg',
+          render: (h, p) => {
+            return h('span', p.row.weightKg ? p.row.weightKg : 0)
+          }
+        },
+        {
+          title: '体积（方）',
+          key: 'volume',
+          render: (h, p) => {
+            return h('div', p.row.volume ? float.round(p.row.volume, 6) : 0)
+          }
+        },
+        {
+          title: '货值（元）',
+          key: 'cargoCost',
+          render: (h, p) => {
+            return h('div', p.row.cargoCost ? float.round(p.row.cargoCost / 100) : 0)
+          }
+        },
+        {
+          title: '包装方式',
+          key: 'unit'
+        },
+        // {
+        //   title: '包装尺寸（毫米）',
+        //   key: 'dimension',
+        //   width: 140,
+        //   render: (h, p) => {
+        //     let text = ''
+        //     if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
+        //       text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
+        //     } else {
+        //       text = '-'
+        //     }
+        //     return h('span', text)
+        //   }
+        // },
+        {
+          title: '包装数量',
+          key: 'quantity',
+          render: (h, p) => {
+            return h('span', p.row.quantity ? p.row.quantity : 0)
+          }
+        },
+        {
+          title: '操作',
+          key: 'do',
+          render: (h, params) => {
+            return h('div', [
+              h('a', {
+                style: {
+                  color: '#00a4bd'
+                },
+                on: {
+                  click: () => {
+                    this.$store.commit('removeAbnormalAddCargoInfos', params.index)
+                  }
+                }
+              }, '移除')
+            ])
+          }
+        }
+      ]
     }
   },
 
   computed: {
     ...mapGetters([
+      'OrderSet',
       'WeightOption',
-      'AbnormalCargoInfos' // 异常货物信息
-    ])
+      'AbnormalCargoInfos', // 异常货物信息(少货、货损)
+      'AbnormalAddCargoInfos' // 异常货物信息(多货)
+    ]),
+    headers () {
+      const res = this.headersOption2.filter(el => {
+        const key = OrderMap[el.key]
+        return this.OrderSet[key] !== 2
+      })
+      return res
+    }
   },
 
   created () {
@@ -330,6 +439,7 @@ export default {
     fetchData () {
       const _this = this
       _this.$store.commit('resetAbnormalCargoInfos')
+      _this.$store.commit('clearAbnormalAddCargoInfos')
       _this.loading = true
       const data = {}
       if (_this.recordId) {
@@ -344,15 +454,6 @@ export default {
         data: data
       }).then(res => {
         _this.details = res.data.data
-        _this.childOrderCargoList = _this.details.abnormalCargolist
-        // 合并单元格需要
-        _this.mergeCell('childOrderCargoList', 'childOrderData')
-        // 修改vuex里的数据
-        let cargo = {
-          childOrderCargoList: _this.childOrderCargoList,
-          childOrderData: _this.childOrderData
-        }
-        _this.$store.commit('setAbnormalCargoInfos', cargo)
 
         // 分摊策略
         _this.allocationStrategy = _this.details.allocationStrategy
@@ -419,6 +520,19 @@ export default {
       let abnormalType = _.find(_this.abnormalTypeCodes, ['selected', 1])
       if (abnormalType) {
         _this.abnormalTypeCode = abnormalType.abnormalTypeCode // 带出selected=1的项的异常类型列表对应selected=1的值
+        if (_this.abnormalTypeCode === 3) {
+          _this.$store.commit('resetAbnormalAddCargoInfos', _this.details.abnormalCargolist)
+        } else if (_this.abnormalTypeCode === 1 || _this.abnormalTypeCode === 2) {
+          _this.childOrderCargoList = _this.details.abnormalCargolist
+          // 合并单元格需要
+          _this.mergeCell('childOrderCargoList', 'childOrderData')
+          // 修改vuex里的数据
+          let cargo = {
+            childOrderCargoList: _this.childOrderCargoList,
+            childOrderData: _this.childOrderData
+          }
+          _this.$store.commit('setAbnormalCargoInfos', cargo)
+        }
       } else {
         _this.abnormalTypeCode = _this.abnormalTypeCodes[0].abnormalTypeCode
       }
@@ -508,7 +622,8 @@ export default {
 
     // 切换类型选项后清空之前vuex里的数据
     handleChangeTypeCode () {
-      this.$store.commit('resetAbnormalCargoInfos')
+      // this.$store.commit('resetAbnormalCargoInfos')
+      // this.$store.commit('clearAbnormalAddCargoInfos')
     },
 
     // 提交
@@ -608,11 +723,13 @@ export default {
         data.billId = z.id
         data.billType = z.type
       }
-      if (data.abnormalTypeCode === 1 || data.abnormalTypeCode === 2 || data.abnormalTypeCode === 3) {
+      if (data.abnormalTypeCode === 1 || data.abnormalTypeCode === 2) {
         data.abnormalCargolist = this.AbnormalCargoInfos.childOrderCargoList
         for (let i = 0; i < data.abnormalCargolist.length; i++) {
           data.abnormalCargolist[i].weightKg = float.round(data.abnormalCargolist[i].weight * 1000)
         }
+      } else if (data.abnormalTypeCode === 3) {
+        data.abnormalCargolist = this.AbnormalAddCargoInfos
       }
       Server({
         url: z.recordId ? '/abnormal/update' : '/abnormal/create',
@@ -629,6 +746,7 @@ export default {
         }
         // 将vuex里的数据置为[]
         z.$store.commit('resetAbnormalCargoInfos')
+        z.$store.commit('clearAbnormalAddCargoInfos')
       }).catch(() => {
         z.btnLoading = false
       })
@@ -728,6 +846,38 @@ export default {
             // self.clearSelectedAndFetch()
           }
         }
+      })
+    },
+
+    // 多货弹窗
+    openCargoAddDialog () {
+      const z = this
+      Server({
+        url: '/abnormal/order/cargo/list',
+        method: 'post',
+        data: {
+          billId: z.id,
+          billType: z.type
+        }
+      }).then((res) => {
+        let list = res.data.data.list
+        list = list.map((item) => {
+          return {
+            label: item.orderNo,
+            value: item.orderId
+          }
+        })
+        z.openDialog({
+          name: 'transport/dialog/addCargo',
+          data: {
+            orders: list
+          },
+          methods: {
+            complete () {
+              // self.clearSelectedAndFetch()
+            }
+          }
+        })
       })
     }
   }

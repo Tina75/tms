@@ -24,5 +24,7 @@ export const SmsSet = (state) => state.smsSet
 export const AllocationStrategy = (state) => state.allocationStrategy
 /** 常发货物 */
 export const tmsCargoDto = (state) => state.tmsCargoDto
-/** 异常货物信息 */
+/** 异常货物信息（少货、货损） */
 export const AbnormalCargoInfos = (state) => state.abnormalCargoInfos
+/** 异常货物信息(多货) */
+export const AbnormalAddCargoInfos = (state) => state.abnormalAddCargoInfos
