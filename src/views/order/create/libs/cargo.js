@@ -161,6 +161,7 @@ export default class Cargo {
       cargoName: this.cargoName,
       orderId: this.orderNo,
       weight: this.weight,
+      weightKg: this.weightKg,
       volume: this.volume,
       cargoCost: multiplyFee(this.cargoCost),
       quantity: this.quantity,

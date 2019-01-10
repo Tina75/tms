@@ -112,6 +112,7 @@ export default {
     ok () {
       const z = this
       z.validate().then(data => {
+        // 将data中orderId与orders中value对应的订单号塞入data
         let obj = {}
         z.orders.map((order) => {
           obj[order['value']] = order['label']
