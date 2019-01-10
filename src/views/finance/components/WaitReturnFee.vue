@@ -13,7 +13,7 @@
         <p class="wait-verify__view-title">{{title}}</p>
         <p class="wait-verify__view-supName">
           <span>
-            返现总额 {{activeDriver ? (activeDriver.calcTotalFee / 100).toFixed(2) : 0}}
+            返现总额 {{activeDriver ? formatFee(activeDriver.calcTotalFee) : 0}}
           </span>
         </p>
       </div>
@@ -193,6 +193,9 @@ export default {
     this.fetch()
   },
   methods: {
+    formatFee (fee) {
+      return divideFee((fee))
+    },
     /**
      * 搜索
      */
