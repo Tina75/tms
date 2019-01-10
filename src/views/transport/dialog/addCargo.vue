@@ -67,7 +67,8 @@ export default {
      * @param {*} index
      */
     appendCargo (index) {
-      this.consignerCargoes.splice(index + 1, -1, new Cargo())
+      const cargo = this.orders.length === 1 ? new Cargo({ orderNo: this.orders[0].value }) : new Cargo()
+      this.consignerCargoes.splice(index + 1, -1, cargo)
     },
     /**
      * 删除一行
