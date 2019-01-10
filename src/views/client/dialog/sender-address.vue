@@ -6,7 +6,7 @@
       transfer
       label-position="left"
       class="modal"
-      width="600"
+      width="800"
       @on-visible-change="close"
     >
       <p slot="header" style="text-align:center">{{title}}</p>
