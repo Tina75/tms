@@ -80,32 +80,46 @@ export default{
    * 上报异常货物修改临时存储货物信息(多货)
    * @param {*} state
    * @param {*} cargo
+   * @param {*} order
    */
   setAbnormalAddCargoInfos (state, cargo) {
-    state.abnormalAddCargoInfos.push(...cargo)
+    state.abnormalAddCargoInfos.addCargoInfos.push(...cargo)
+    // state.abnormalAddCargoInfos.addOrderData = order
   },
   /**
-   * 上报异常货物修改临时存储货物信息(多货)
+   * 上报异常货物覆盖临时存储货物信息(多货)
    * @param {*} state
    * @param {*} cargo
+   * @param {*} order
    */
   resetAbnormalAddCargoInfos (state, cargo) {
-    state.abnormalAddCargoInfos = cargo
+    state.abnormalAddCargoInfos.addCargoInfos = cargo
+    // state.abnormalAddCargoInfos.addOrderData = order
   },
   /**
    * 移除上报异常货物修改临时存储货物信息(多货)
    * @param {*} state
    * @param {*} index
+   * @param {*} order
    */
   removeAbnormalAddCargoInfos (state, index) {
-    state.abnormalAddCargoInfos.splice(index, 1)
+    state.abnormalAddCargoInfos.addCargoInfos.splice(index, 1)
+    // state.abnormalAddCargoInfos.addOrderData = order
   },
   /**
    * 清空上报异常货物修改临时存储货物信息(多货)
    * @param {*} state
    */
   clearAbnormalAddCargoInfos (state) {
-    state.abnormalAddCargoInfos = []
+    state.abnormalAddCargoInfos.addCargoInfos = []
+    // state.abnormalAddCargoInfos.addOrderData = []
+  },
+  /**
+   * 设置当前导入订单批次号
+   * @param {*} id
+   */
+  setImported (state, id) {
+    state.importId = id
   }
 }
 

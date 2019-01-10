@@ -99,7 +99,12 @@ const state = {
     originData: [] // 原始数据
   },
   // 异常货物上报多货临时存储
-  abnormalAddCargoInfos: []
+  abnormalAddCargoInfos: {
+    addOrderData: [],
+    addCargoInfos: []
+  },
+  // 导入订单批次号
+  importId: null
 }
 
 export default new Vuex.Store({

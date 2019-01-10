@@ -4,7 +4,6 @@
     <tab-content
       :tab-status="curStatusName"
       :tab-key="tabKey"
-      :import-id="importId"
       @refresh-tab="getOrderNum">
     </tab-content>
   </div>
@@ -16,7 +15,8 @@ import TabHeader from '@/components/TabHeader'
 import Server from '@/libs/js/server'
 import TabContent from './components/TabContent'
 import SearchMixin from './searchMixin'
-import jsCookie from 'js-cookie'
+// import jsCookie from 'js-cookie'
+import { mapGetters } from 'vuex'
 export default {
   name: 'order-management',
 
@@ -40,18 +40,19 @@ export default {
       curStatusName: '',
       tabKey: {
         status: 10 // 默认待提货状态  传给pageTable可重新请求数据
-      },
-      importId: null
+      }
     }
   },
 
   computed: {
+    ...mapGetters([
+      'ImportId'
+    ])
   },
 
   created () {
-    let importId = jsCookie.get('imported_id')
     // 刷新页面停留当前tab页
-    if (!importId) {
+    if (!this.ImportId) {
       if (sessionStorage.getItem('ORDER_TAB_NAME')) {
         this.curStatusName = sessionStorage.getItem('ORDER_TAB_NAME')
         this.tabKey.status = this.statusToCode(this.curStatusName)
@@ -61,15 +62,17 @@ export default {
         this.tabKey.status = null
       }
     } else { // 批量导入点查看进入的传importId字段，订单列表显示《全部》tab页
-      this.importId = importId
       sessionStorage.setItem('ORDER_TAB_NAME', '全部')
       this.curStatusName = '全部'
-      jsCookie.remove('imported_id')
     }
   },
 
   mounted () {
     this.getOrderNum()
+  },
+
+  destroyed () {
+    this.$store.commit('setImported', null) // 将当前导入批次号置空
   },
 
   methods: {
@@ -79,7 +82,7 @@ export default {
         url: 'order/getOrderNumByStatus',
         method: 'get',
         data: {
-          importId: this.importId || null
+          importId: this.ImportId || null
         }
       }).then((res) => {
         let list = res.data.data

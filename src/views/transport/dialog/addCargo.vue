@@ -67,7 +67,8 @@ export default {
      * @param {*} index
      */
     appendCargo (index) {
-      this.consignerCargoes.splice(index + 1, -1, new Cargo())
+      const cargo = this.orders.length === 1 ? new Cargo({ orderNo: this.orders[0].value }) : new Cargo()
+      this.consignerCargoes.splice(index + 1, -1, cargo)
     },
     /**
      * 删除一行
@@ -112,6 +113,7 @@ export default {
     ok () {
       const z = this
       z.validate().then(data => {
+        // 将data中orderId与orders中value对应的订单号塞入data
         let obj = {}
         z.orders.map((order) => {
           obj[order['value']] = order['label']

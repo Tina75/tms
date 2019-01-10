@@ -3,18 +3,18 @@
     <table cellspacing="0" cellpadding="0" boder="0" class="ivu-table ivu-table-default">
       <colgroup>
         <col :width="colWidth">
-        <col :width="colWidth">
+        <col v-if="hasCustomerOrderNo" :width="colWidth">
       </colgroup>
       <tbody class="ivu-table-tbody">
         <tr class="ivu-table-row">
           <th class="ivu-table-cell">订单号</th>
-          <th class="ivu-table-cell">客户订单号</th>
+          <th v-if="hasCustomerOrderNo" class="ivu-table-cell">客户订单号</th>
         </tr>
         <tr v-for="(item, index) in orderList" :key="index">
           <td  :rowspan="item.cargoLength">
             <span style="position: relative;left: 26px;">{{ item.orderNo }}</span>
           </td>
-          <td  :rowspan="item.cargoLength">
+          <td  v-if="hasCustomerOrderNo" :rowspan="item.cargoLength">
             <span style="position: relative;left: 26px;">{{ item.customerOrderNo }}</span>
           </td>
         </tr>
@@ -36,6 +36,11 @@ export default {
     colWidth: {
       type: [String, Number],
       default: 160
+    },
+    // 是否展示客户订单号
+    hasCustomerOrderNo: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
