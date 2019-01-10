@@ -310,8 +310,10 @@ export default {
     compareOriginAndChild (index) {
       const z = this
       let bool = false
-      // 同步吨和公斤
+      // 同步吨和公斤,去掉_index、_rowKey
       z.childOrderCargoList.map((item) => {
+        delete item._index
+        delete item._rowKey
         if (this.WeightOption === 1) {
           item.weightKg = parseInt(float.round(item.weight * 1000))
         } else {
