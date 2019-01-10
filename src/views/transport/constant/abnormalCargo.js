@@ -274,9 +274,13 @@ export const TABLE_COLUMNS_ONE = vm => [
         ])
       } else {
         if (vm.parentOrderCargoList[params.index].quantity === 1 ||
-            float.round(vm.parentOrderCargoList[params.index].weight, 3) === 0.001 ||
-            float.round(vm.parentOrderCargoList[params.index].weightKg) === 1 ||
-            float.round(vm.parentOrderCargoList[params.index].volume, 6) === 0.000001) {
+          float.round(vm.parentOrderCargoList[params.index].weight, 3) === 0.001 ||
+          float.round(vm.parentOrderCargoList[params.index].weightKg) === 1 ||
+          float.round(vm.parentOrderCargoList[params.index].volume, 6) === 0.000001 ||
+          (vm.parentOrderCargoList[params.index].quantity === 0 &&
+            vm.parentOrderCargoList[params.index].weight === 0 &&
+            vm.parentOrderCargoList[params.index].weightKg === 0 &&
+            vm.parentOrderCargoList[params.index].volume === 0)) {
           return h('div', [
             h('a', {
               style: {
@@ -289,43 +293,29 @@ export const TABLE_COLUMNS_ONE = vm => [
               }
             }, '整笔异常')
           ])
-        } else {
-          if (!(!vm.parentOrderCargoList[params.index].quantity &&
-                     !vm.parentOrderCargoList[params.index].weight &&
-                     !vm.parentOrderCargoList[params.index].weightKg &&
-                     !vm.parentOrderCargoList[params.index].volume)) {
-            let renderBtn = [
-              h('a', {
-                style: {
-                  marginRight: '20px',
-                  color: '#00a4bd'
-                },
-                on: {
-                  click: () => {
-                    vm.isSeparate = true
-                    vm.currentId = params.row.cargoId
-                    let cloneData = vm.cloneData[params.index]
-                    vm.cargoCostVal = cloneData.cargoCost
-                    vm.quantityVal = cloneData.quantity
-                    vm.weightVal = vm.WeightOption === 1 ? cloneData.weight : cloneData.weightKg
-                    vm.volumeVal = cloneData.volume
-                  }
+        } else if (!(vm.parentOrderCargoList[params.index].quantity === 0 &&
+                    vm.parentOrderCargoList[params.index].weight === 0 &&
+                    vm.parentOrderCargoList[params.index].weightKg === 0 &&
+                    vm.parentOrderCargoList[params.index].volume === 0)) {
+          let renderBtn = [
+            h('a', {
+              style: {
+                marginRight: '20px',
+                color: '#00a4bd'
+              },
+              on: {
+                click: () => {
+                  vm.isSeparate = true
+                  vm.currentId = params.row.cargoId
+                  let cloneData = vm.cloneData[params.index]
+                  vm.cargoCostVal = cloneData.cargoCost
+                  vm.quantityVal = cloneData.quantity
+                  vm.weightVal = vm.WeightOption === 1 ? cloneData.weight : cloneData.weightKg
+                  vm.volumeVal = cloneData.volume
                 }
-              }, '部分异常'),
-              h('a', {
-                style: {
-                  color: '#00a4bd'
-                },
-                on: {
-                  click: () => {
-                    vm.separateWholeList(params.index)
-                  }
-                }
-              }, '整笔异常')
-            ]
-            return h('div', renderBtn)
-          } else {
-            return h('div', [h('a', {
+              }
+            }, '部分异常'),
+            h('a', {
               style: {
                 color: '#00a4bd'
               },
@@ -334,8 +324,9 @@ export const TABLE_COLUMNS_ONE = vm => [
                   vm.separateWholeList(params.index)
                 }
               }
-            }, '整笔异常')])
-          }
+            }, '整笔异常')
+          ]
+          return h('div', renderBtn)
         }
       }
     }

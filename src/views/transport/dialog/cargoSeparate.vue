@@ -139,7 +139,14 @@ export default {
         res.data.data.list.map((item) => {
           z.parentOrderCargoList.push(...item.cargoList)
         })
-
+        // 将数据库中带空字符串的数值转为0
+        z.parentOrderCargoList.map((item) => {
+          item.quantity = item.quantity ? item.quantity : 0
+          item.volume = item.volume ? item.volume : 0
+          item.weight = item.weight ? item.weight : 0
+          item.weightKg = item.weightKg ? item.weightKg : 0
+          item.cargoCost = item.cargoCost ? item.cargoCost : 0
+        })
         // 合并单元格需要
         z.mergeCell('parentOrderCargoList', 'parentOrderData')
         z.mergeCell('childOrderCargoList', 'childOrderData')

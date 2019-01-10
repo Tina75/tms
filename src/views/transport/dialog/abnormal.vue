@@ -902,7 +902,8 @@ export default {
 </script>
 <style lang='stylus'>
  @import "../style/detail.styl"
-
+  .ivu-tooltip-inner-with-width
+    word-break break-all
   .part
 
     .ivu-form-item-label
@@ -951,6 +952,7 @@ export default {
   .abnormal-table-extend
     th.ivu-table-cell
       padding-left 26px
+
 </style>
 <style lang='stylus' scoped>
   .part
