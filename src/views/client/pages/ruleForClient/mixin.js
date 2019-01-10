@@ -431,14 +431,14 @@ export default {
           return {
             departure: item.departure,
             destination: item.destination,
-            startPrice: typeof item.startPrice === 'number' ? (item.startPrice / 100) : null,
-            startNum: typeof item.startNum === 'number' ? (item.startNum / 100) : null,
+            startPrice: typeof item.startPrice === 'number' ? float.round(item.startPrice / 100, 6) : null,
+            startNum: typeof item.startNum === 'number' ? float.round(item.startNum / 100, 6) : null,
             startType: item.startType ? item.startType + '' : '2',
             showRule: (index + 1) + '',
             chargeRules: item.chargeRules.map(el => {
               return {
-                base: typeof el.base === 'number' ? (el.base / 100) : null,
-                price: typeof el.price === 'number' ? (el.price / 100) : null,
+                base: typeof el.base === 'number' ? float.round(el.base / 100, 6) : null,
+                price: typeof el.price === 'number' ? float.round(el.price / 100, 6) : null,
                 baseAndStart: el.base + ',' + item.startNum,
                 carType: el.carType,
                 carLength: el.carLength,
