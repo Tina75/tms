@@ -1,7 +1,7 @@
 <template>
   <div id="set-up-container" class="set-up-container temAll">
     <div id="temAll" :style="styleHeight">
-      <VerticalTabs :value="rightKey != '3' ? rightKey : '3'" @on-select="clickMenu">
+      <VerticalTabs :value="rightKey" @on-select="clickMenu">
         <VerticalTabItem key="0" name="0" label="修改密码">
           <Title size="16" border="solid" class="title">
             修改密码
@@ -93,7 +93,7 @@ export default {
   created () {
     // 受理开单来的
     if (this.isFromOrder) {
-      this.rightKey = 3
+      this.rightKey = '3'
       this.tabName = 'order'
     }
   },
