@@ -45,7 +45,7 @@ import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import { setToken, removeToken } from '@/libs/js/auth'
 import { mapMutations } from 'vuex'
-import { PSW_RIGHT } from '../pages/validator'
+import { PSW_RIGHT } from '../util/validator'
 export default {
   name: 'update-phone',
   mixins: [BaseDialog],

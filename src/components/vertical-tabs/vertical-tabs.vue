@@ -2,7 +2,7 @@
   <div class="vertical-tabs">
     <Row type="flex">
       <Col :style="styleHeight" class="vertical-tabs__menu" span="4">
-      <Menu ref="menu" :active-name="activeKey" width="180" @on-select="handleSelect">
+      <Menu ref="menu" :active-name="activeKey" width="160" @on-select="handleSelect">
         <template v-for="(tab, index) in tabList" >
           <MenuItem :key="index" :name="tab.name" class="vertical-tabs__menu-item">
           <FontIcon v-if="!!tab.icon" :key="index" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
@@ -104,10 +104,9 @@ export default {
 
 <style lang="stylus" scoped>
 .vertical-tabs
-  margin -20px -15px
   &__menu
     height auto
-    flex 0 0 180px
+    flex 0 0 160px
     background-color #f3f5f9
   &__menu-item
     padding: 14px 8px;
@@ -126,6 +125,8 @@ export default {
     padding-left 20px
     background-color #fff
     position relative
+    height 100%
+    overflow auto
   >>> .ivu-menu-light.ivu-menu-vertical
         .ivu-menu-item-active:not(.ivu-menu-submenu)
           color #333

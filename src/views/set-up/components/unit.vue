@@ -263,6 +263,6 @@ export default {
   margin-top 20px
 .order-set-footer
   text-align center
-  margin-top 50px
+  margin-top 40px
   margin-bottom 30px
 </style>
