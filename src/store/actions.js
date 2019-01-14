@@ -87,11 +87,12 @@ export const getConfiguration = ({ commit }) => {
     method: 'get'
   }).then((result) => {
     if (result.data.code === 10000) {
-      const { smsSetInfo, allocationStrategyInfo, tmsSetConfigDto, tmsCargoDto } = result.data.data
+      const { smsSetInfo, allocationStrategyInfo, tmsSetConfigDto, tmsCargoDto, tmsDispatchCarDto = {} } = result.data.data
       commit('smsSetting', smsSetInfo.smsCode)
       commit('allocationStrategySetting', allocationStrategyInfo)
-      commit('changeOrderConfiguration', tmsSetConfigDto)
+      commit('changeOrderConfiguration', tmsSetConfigDto) // 开单设置
       commit('tmsCargoDtoSetting', tmsCargoDto)
+      commit('changeDispatchConfiguration', tmsDispatchCarDto) // 派车设置
     }
   })
 }

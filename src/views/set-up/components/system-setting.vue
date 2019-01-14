@@ -15,6 +15,9 @@
           <Unit />
         </div>
       </TabPane>
+      <TabPane label="派车设置" name="delivery">
+        <DispatchSetting></DispatchSetting>
+      </TabPane>
     </Tabs>
   </div>
 </template>
@@ -25,12 +28,14 @@
  */
 import Unit from './unit.vue'
 import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
+import DispatchSetting from './dispatch-setting.vue'
 import { mapMutations } from 'vuex'
 import Server from '@/libs/js/server'
 export default {
   name: 'system-setting',
   components: {
     Unit,
+    DispatchSetting,
     AllocationStrategy
   },
   props: {

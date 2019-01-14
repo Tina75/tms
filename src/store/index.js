@@ -16,6 +16,74 @@ import upstream from './modules/upstream/store'
 
 Vue.use(Vuex)
 
+/**
+ * 默认派车设置
+ */
+export const defaultDispatchState = {
+  // 自送
+  selfSendOption: 2,
+  // 外转
+  outSendOption: 1,
+  // 提货油费    自送
+  pickSelfOilFeeOption: 1,
+  // 提货装卸费 自送
+  pickSelfLoadFeeOption: 1,
+  // 提货卸货费 自送
+  pickSelfUnloadFeeOption: 1,
+  // 提货保险费 自送
+  pickSelfInsuranceFeeOption: 1,
+  // 提货其他 自送
+  pickSelfOtherFeeOption: 1,
+  // 提货运输费  外转
+  pickOutFreightFeeOption: 1,
+  // 提货装卸费 外转
+  pickOutLoadFeeOption: 1,
+  // 提货卸货费 外转
+  pickOutUnloadFeeOption: 1,
+  // 提货保险费 外转
+  pickOutInsuranceFeeOption: 1,
+  // 提货其他 外转
+  pickOutOtherFeeOption: 1,
+  // 送货油费  自送
+  deliverSelfOilFeeOption: 1,
+  // 送货装卸费 自送
+  deliverSelfLoadFeeOption: 1,
+  // 送货卸货费 自送
+  deliverSelfUnloadFeeOption: 1,
+  // 送货路桥费 自送
+  deliverSelfTollFeeOption: 1,
+  // 送货住宿费 自送
+  deliverSelfAccommodationFeeOption: 1,
+  // 送货保险费 自送
+  deliverSelfInsuranceFeeOption: 1,
+  // 送货其他 自送
+  deliverSelfOtherFeeOption: 1,
+  // 送货油费  外转
+  deliverOutFreightFeeOption: 1,
+  // 送货装卸费 外转
+  deliverOutLoadFeeOption: 1,
+  // 送货卸货费 外转
+  deliverOutUnloadFeeOption: 1,
+  // 送货路桥费 外转
+  deliverOutTollFeeOption: 1,
+  // 送货保险费 外转
+  deliverOutInsuranceFeeOption: 1,
+  // 送货其他 外转
+  deliverOutOtherFeeOption: 1,
+  // 送货信息费 外转
+  deliverOutInfoFeeOption: 2,
+  // 送货返现费 外转
+  deliverOutCashBackFeeOption: 2,
+  // 预付
+  paySettlementAdvanceOption: 1,
+  // 到付
+  paySettlementArriveOption: 1,
+  // 回付
+  paySettlementReceiptOption: 1,
+  // 尾款
+  paySettlementTailOption: 2
+}
+
 const state = {
   userInfo: {}, // 用户信息
   permissions: [], // 权限列表
@@ -88,6 +156,10 @@ const state = {
     collectionMoneyOption: 1,
     // 订单备注
     orderRemarkOption: 1
+  },
+  // 派车设置
+  dispatchSet: {
+    ...defaultDispatchState
   },
   tmsCargoDto: {}, // 常发货物
   // 异常货物上报少货、货损临时存储
