@@ -69,7 +69,7 @@ export default {
         {
           title: '操作',
           key: 'id',
-          width: 150,
+          width: 130,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(190202)) {
@@ -155,11 +155,13 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNo'
+          key: 'carNo',
+          width: 80
         },
         {
           title: '状态',
           key: 'carStatus',
+          width: 80,
           render (h, params) {
             if (!params.row.carStatus) {
               return h('span', '-')
@@ -254,10 +256,12 @@ export default {
           }
         }, {
           title: '主司机',
-          key: 'driverName'
+          key: 'driverName',
+          width: 60
         }, {
           title: '副司机',
-          key: 'assistantDriverName'
+          key: 'assistantDriverName',
+          width: 60
         }, {
           title: '创建时间',
           key: 'createTime',

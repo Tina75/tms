@@ -157,6 +157,7 @@ export default {
         {
           title: '状态',
           key: 'driverStatus',
+          width: 80,
           render (h, params) {
             if (!params.row.driverStatus) {
               return h('span', '-')
