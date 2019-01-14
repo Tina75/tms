@@ -88,7 +88,20 @@ export const CAR_LENGTH1 = {
   16: '16米',
   17: '17.5米'
 }
-
+/**
+ * 车辆状态
+ */
+export const CAR_STATUS = {
+  1: '空闲',
+  2: '运输中'
+}
+/**
+ * 司机状态
+ */
+export const DRIVER_STATUS = {
+  1: '空闲',
+  2: '运输中'
+}
 export function getCarType (value) {
   for (let i = 0; i < CAR_TYPE.length; i++) {
     if (value === CAR_TYPE[i].value) {

@@ -37,15 +37,18 @@
   </div>
 </template>
 <script>
+import { DRIVER_STATUS } from '@/libs/constant/carInfo'
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import { mapActions } from 'vuex'
 import { CODE, deleteDriverById } from './client'
+import TagStatus from '../components/TagStatus.vue'
 export default {
   name: 'owned-car',
   components: {
+    TagStatus,
     PageTable
   },
   metaInfo: {
@@ -150,6 +153,21 @@ export default {
         {
           title: '司机姓名',
           key: 'driverName'
+        },
+        {
+          title: '状态',
+          key: 'driverStatus',
+          render (h, params) {
+            if (!params.row.driverStatus) {
+              return h('span', '-')
+            }
+            return h(TagStatus,
+              {
+                props: {
+                  type: params.row['driverStatus'] === '1' ? 'warning' : 'info'
+                }
+              }, DRIVER_STATUS[params.row['driverStatus']])
+          }
         },
         {
           title: '手机号',

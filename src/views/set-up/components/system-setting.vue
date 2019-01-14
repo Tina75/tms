@@ -15,7 +15,7 @@
           <Unit />
         </div>
       </TabPane>
-      <TabPane label="派车设置" name="delivery">
+      <TabPane label="派车设置" name="dispatch">
         <DispatchSetting></DispatchSetting>
       </TabPane>
     </Tabs>

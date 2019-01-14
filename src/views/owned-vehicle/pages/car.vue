@@ -36,16 +36,18 @@
   </div>
 </template>
 <script>
-import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH1, CAR_STATUS } from '@/libs/constant/carInfo'
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import { CODE, deleteCarById } from './client'
 import { mapActions } from 'vuex'
+import TagStatus from '../components/TagStatus.vue'
 export default {
   name: 'owned-car',
   components: {
+    TagStatus,
     PageTable
   },
   metaInfo: {
@@ -154,6 +156,21 @@ export default {
         {
           title: '车牌号',
           key: 'carNo'
+        },
+        {
+          title: '状态',
+          key: 'carStatus',
+          render (h, params) {
+            if (!params.row.carStatus) {
+              return h('span', '-')
+            }
+            return h(TagStatus,
+              {
+                props: {
+                  type: params.row['carStatus'] === '1' ? 'warning' : 'info'
+                }
+              }, CAR_STATUS[params.row.carStatus])
+          }
         },
         {
           title: '车型',
