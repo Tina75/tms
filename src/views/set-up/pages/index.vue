@@ -87,7 +87,11 @@ export default {
     },
     // 受理开单来的参数
     isFromOrder () {
-      return this.$route.query.tab
+      return this.$route.query.tab === 'order'
+    },
+    // 派车
+    isFromDispatch () {
+      return this.$route.query.tab === 'dispatch'
     }
   },
   created () {
@@ -95,6 +99,9 @@ export default {
     if (this.isFromOrder) {
       this.rightKey = '3'
       this.tabName = 'order'
+    } else if (this.isFromDispatch) {
+      this.rightKey = '3'
+      this.tabName = 'dispatch'
     }
   },
   mounted: function () {
