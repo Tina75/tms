@@ -379,7 +379,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
 import { formatePhone } from '@/libs/js/formate'
-import { roundFee, divideFee, multiplyFee, multiplyMileage, divideMileage } from '@/libs/js/config'
+import { roundFee, multiplyFeeOrNull, divideFeeOrNull, multiplyMileage, divideMileage } from '@/libs/js/config'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -750,7 +750,7 @@ export default {
           // 分转换元
           transferFeeList.forEach((fee) => {
             // vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
-            vm.orderForm[fee] = divideFee(vm.orderForm[fee])
+            vm.orderForm[fee] = divideFeeOrNull(vm.orderForm[fee])
           })
           // vm.orderForm.collectionMoney = vm.orderForm.collectionMoney ? vm.orderForm.collectionMoney / 100 : null
           if (vm.orderForm.deliveryTime) {
@@ -785,7 +785,7 @@ export default {
         // 分转换元
         transferFeeList.forEach((fee) => {
           // vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
-          vm.orderForm[fee] = divideFee(vm.orderForm[fee])
+          vm.orderForm[fee] = divideFeeOrNull(vm.orderForm[fee])
         })
         vm.orderForm.deliveryTime = ''
         vm.orderForm.arriveTime = ''
@@ -1234,7 +1234,7 @@ export default {
             // 转换成分单位
             transferFeeList.forEach((fee) => {
               // form[fee] = form[fee] ? float.round(form[fee] * 100) : 0
-              form[fee] = multiplyFee(form[fee]) || 0
+              form[fee] = multiplyFeeOrNull(form[fee])
             })
             // 没有业务员 置空
             const res = this.salesmanList.some(el => {

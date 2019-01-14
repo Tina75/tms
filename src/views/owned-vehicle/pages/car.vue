@@ -169,7 +169,7 @@ export default {
             return h(TagStatus,
               {
                 props: {
-                  type: params.row['carStatus'] === '1' ? 'warning' : 'info'
+                  type: params.row['carStatus'] === 1 ? 'warning' : 'info'
                 }
               }, CAR_STATUS[params.row.carStatus])
           }

@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-09 15:02:50
+ * @Last Modified time: 2019-01-14 18:17:54
  */
 import float from './float'
 import NP from 'number-precision'
@@ -38,6 +38,9 @@ export const FieldLength = {
   remark: 100, // 备注长度100
   cargoNo: 200 // 货物编号，200位
 }
+export const isNumber = (fee) => {
+  return /^\d+(\.\d+)?$/.test(fee)
+}
 /**
  * 费用计算，保留4位小数
  * v1.10保留4位小数
@@ -48,24 +51,43 @@ export const roundFee = (fee) => {
 }
 /**
  * 接口返回的费用需乘以100
+ * * 如果没有，自动转换0，返回，通常计算的时候使用
  * @param {number} fee 接口返回的值
  */
 export const multiplyFee = (fee) => {
   return float.round(NP.times(fee || 0, 100))
 }
 /**
+ * 提交的值乘以100
+ * * 如果没有，返回原值，通常在提交表单相关费用值时候用到
+ * @param {*} fee
+ */
+export const multiplyFeeOrNull = (fee) => {
+  return isNumber(fee) ? multiplyFee(fee) : fee
+}
+/**
  * 提交的值除以100
+ * * 如果没有，自动转换0，通常在计算的时候用到
  * @param {*} fee
  */
 export const divideFee = (fee) => {
   return roundFee(NP.divide(fee || 0, 100))
 }
 /**
+ * 提交的值除以100
+ * * 如果没有，返回原值，通常在读取接口返回的费用值时候用到
+ * @param {*} fee
+ */
+export const divideFeeOrNull = (fee) => {
+  return isNumber(fee) ? divideFee(fee) : fee
+}
+/**
  * 保留4位小数字符串类型
+ * * 表格渲染时用到
  * @param {number} value
  */
 export const getFeeText = (value) => {
-  return value ? divideFee(value) : '0'
+  return isNumber(value) ? divideFee(value) : '-'
 }
 /**
  * 税率乘100保留两位小数
@@ -115,7 +137,7 @@ export const divideMileage = (fee) => {
  * @param {*} value
  */
 export const getMileageText = (value) => {
-  return value ? divideMileage(value).toFixed(NumberPrecesion.mileage) : '-'
+  return isNumber(value) ? divideMileage(value) : '-'
 }
 /**
  * 列表中计费里程格式化
@@ -139,7 +161,7 @@ export const roundVolume = (value) => {
  * @param {*} value
  */
 export const renderVolume = (h, value) => {
-  return h('span', {}, value ? roundVolume(value) : '-')
+  return h('span', {}, isNumber(value) ? roundVolume(value) : '-')
 }
 
 /**
@@ -155,7 +177,7 @@ export const roundWeight = (value) => {
  * @param {*} value
  */
 export const renderWeight = (h, value) => {
-  return h('span', {}, value ? roundWeight(value) : '-')
+  return h('span', {}, isNumber(value) ? roundWeight(value) : '-')
 }
 /**
  * 重量公斤计算，保留整数
@@ -170,5 +192,5 @@ export const roundWeightKg = (value) => {
  * @param {*} value
  */
 export const renderWeightKg = (h, value) => {
-  return h('span', {}, value ? roundWeightKg(value) : '-')
+  return h('span', {}, isNumber(value) ? roundWeightKg(value) : '-')
 }
