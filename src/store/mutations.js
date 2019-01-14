@@ -34,6 +34,16 @@ export default{
     }
   },
   /**
+   * 系统设置-派车设置
+   * @param {*} state
+   * @param {*} option
+   */
+  changeDispatchConfiguration (state, option) {
+    for (let i in state.deliverySet) {
+      state.dispatchSet[i] = option[i]
+    }
+  },
+  /**
    * 保存短信配置
    * @param {*} state
    * @param {*} list
