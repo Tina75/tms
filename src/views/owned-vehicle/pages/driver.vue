@@ -157,6 +157,7 @@ export default {
         {
           title: '状态',
           key: 'driverStatus',
+          width: 80,
           render (h, params) {
             if (!params.row.driverStatus) {
               return h('span', '-')
@@ -164,7 +165,7 @@ export default {
             return h(TagStatus,
               {
                 props: {
-                  type: params.row['driverStatus'] === '1' ? 'warning' : 'info'
+                  type: params.row['driverStatus'] === 1 ? 'warning' : 'info'
                 }
               }, DRIVER_STATUS[params.row['driverStatus']])
           }
