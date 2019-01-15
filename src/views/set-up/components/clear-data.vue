@@ -95,6 +95,10 @@ import { mapGetters } from 'vuex'
 import Server from '@/libs/js/server'
 export default {
   name: 'clear-data',
+  props: {
+    begin: '',
+    end: ''
+  },
   data () {
     return {
       active: 1,
@@ -165,6 +169,14 @@ export default {
       }
     }
   },
+  mounted () {
+    if (this.begin && this.end) {
+      // this.beginTime = this.timeFormatter(this.begin)
+      // this.endTime = this.timeFormatter(this.endTime)
+      this.dateRange = [this.timeFormatter(this.begin), this.timeFormatter(this.end)]
+      this.handleTimeChange(this.dateRange)
+    }
+  },
   methods: {
     async toSecond () {
       if (!this.password) {
@@ -224,6 +236,11 @@ export default {
           this.loading = false
           throw error
         })
+    },
+    // 格式化时间
+    timeFormatter (timestamp) {
+      if (!timestamp) return ''
+      return new Date(timestamp).Format('yyyy-MM-dd')
     }
   }
 }
