@@ -381,55 +381,52 @@ export default {
         }
       })
     },
+    /* 生成对账单 */
     createBill () {
-      if (this.selectedList.length > 1) {
-        // 统计多段付单子
-        let monthList = []
-        // 统计非多段付单子
-        let notMulList = []
-        this.selectedList.map(item => {
-          if (item.isMultiPay === 1) {
-            monthList.push(item.orderNo)
-          } else if (item.isMultiPay === 0) {
-            notMulList.push(item.id)
-          }
+      // 统计多段付单子
+      let monthList = []
+      // 统计非多段付单子
+      let notMulList = []
+      this.selectedList.map(item => {
+        if (item.isMultiPay === 1) {
+          monthList.push(item.orderNo)
+        } else if (item.isMultiPay === 0) {
+          notMulList.push(item.id)
+        }
+      })
+      let errList = []
+      if (monthList.length > 0) { // 存在多段付
+        errList.push({
+          title: '以下单据是多段付，不能生成对账单',
+          arr: monthList
         })
-        let errList = []
-        if (monthList.length > 0) { // 存在多段付
+      }
+      if (notMulList.length === 0) { // 都是多段付，不用判断异常，直接弹窗提示存在多段付单子
+        if (errList.length > 0) this.errDialog(errList)
+        return
+      }
+      Server({
+        url: '/finance/reconcile/checkReconcile',
+        method: 'post',
+        data: {
+          idList: notMulList,
+          partnerType: this.scene,
+          partnerName: this.currentPartner.partnerName
+        }
+      }).then(res => {
+        if (res.data.data && res.data.data.operateCode === 1) {
+          // 存在异常
           errList.push({
-            title: '以下单据是多段付，不能生成对账单',
-            arr: monthList
+            title: '以下单据存在异常，无法生成对账单',
+            arr: res.data.data.orderNos
           })
         }
-        if (notMulList.length === 0) { // 都是多段付，不用判断异常，直接弹窗提示存在多段付单子
-          if (errList.length > 0) this.errDialog(errList)
-          return
+        if (errList.length === 0) { // 不存在异常且不存在多段付，可以批量生成对账单
+          this.createBillOk()
+        } else {
+          this.errDialog(errList)
         }
-        Server({
-          url: '/finance/reconcile/checkReconcile',
-          method: 'post',
-          data: {
-            idList: notMulList,
-            partnerType: this.scene,
-            partnerName: this.currentPartner.partnerName
-          }
-        }).then(res => {
-          if (res.data.data && res.data.data.operateCode === 1) {
-            // 存在异常
-            errList.push({
-              title: '以下单据存在异常，无法生成对账单',
-              arr: res.data.data.orderNos
-            })
-          }
-          if (errList.length === 0) { // 不存在异常且不存在多段付，可以批量生成对账单
-            this.createBillOk()
-          } else {
-            this.errDialog(errList)
-          }
-        })
-      } else {
-        this.$Message.warning('两条以上才能生成对账单')
-      }
+      })
     },
     startQuery () {
       this.orderData = []

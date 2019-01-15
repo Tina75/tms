@@ -66,7 +66,7 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return this.orderData.list.length > 2 ? h('a', {
+            return this.orderData.list.length > 0 ? h('a', {
               on: {
                 click: () => {
                   this.removeOrder(params)
