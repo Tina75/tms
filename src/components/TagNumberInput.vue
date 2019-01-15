@@ -207,7 +207,7 @@ export default {
       if (val && !isNaN(this.precision)) val = float.floor(val, this.precision)
 
       const { min, max } = this
-      if (val !== null) {
+      if (val !== null && val !== '') {
         if (val > max) {
           val = max
         } else if (val < min) {
@@ -262,7 +262,8 @@ export default {
 
       const isEmptyString = (val === null || val === '') ? true : val.length === 0
       if (isEmptyString) {
-        this.setValue(null)
+        // 空的话，默认值设置成空字符串，而不是null
+        this.setValue('')
         return
       }
       if (event.type === 'input' && val.toString().match(/^-?\.?$|\.$/)) return // prevent fire early if decimal. If no more input the change event will fire later
