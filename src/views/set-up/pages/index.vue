@@ -27,7 +27,7 @@
           <Title size="16" border="solid" class="title">
             清除数据
           </Title>
-          <clearData></clearData>
+          <clearData :begin="beginTime" :end="endTime"></clearData>
         </VerticalTabItem>
       </VerticalTabs>
     </div>
@@ -80,7 +80,9 @@ export default {
       rightTitle: '修改密码',
       rightKey: '0',
 
-      tabName: 'apport'
+      tabName: 'apport',
+      beginTime: '',
+      endTime: ''
     }
   },
   computed: {
@@ -95,6 +97,10 @@ export default {
     // 派车
     isFromDispatch () {
       return this.$route.query.tab === 'dispatch'
+    },
+    // 清除数据
+    isClearData () {
+      return this.$route.query.tab === 'clear'
     }
   },
   created () {
@@ -105,6 +111,10 @@ export default {
     } else if (this.isFromDispatch) {
       this.rightKey = '3'
       this.tabName = 'dispatch'
+    } else if (this.isClearData) {
+      this.rightKey = '4'
+      this.beginTime = this.$route.query.beginTime
+      this.endTime = this.$route.query.endTime
     }
   },
   mounted: function () {
