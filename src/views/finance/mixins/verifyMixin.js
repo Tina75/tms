@@ -90,7 +90,7 @@ export default {
     }
   },
   mounted () {
-    this.writeOffForm.actualFee = this.needPay
+    this.writeOffForm.actualFee = Math.abs(this.needPay)
     // 初始为银行卡号，先给银行卡号赋初始值
     if (this.writeOffForm.payType === '2') {
       let accountObj = this.getAccount()
