@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-15 09:48:00
+ * @Last Modified time: 2019-01-15 14:26:00
  */
 import float from './float'
 import NP from 'number-precision'
@@ -40,7 +40,7 @@ export const FieldLength = {
   cargoNo: 200 // 货物编号，200位
 }
 export const isNumber = (fee) => {
-  return /^\d+(\.\d+)?$/.test(fee)
+  return /^-?\d+(\.\d+)?$/.test(fee)
 }
 /**
  * 费用计算，保留4位小数
