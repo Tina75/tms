@@ -39,7 +39,7 @@ export default{
    * @param {*} option
    */
   changeDispatchConfiguration (state, option) {
-    for (let i in state.deliverySet) {
+    for (let i in state.dispatchSet) {
       state.dispatchSet[i] = option[i]
     }
   },
