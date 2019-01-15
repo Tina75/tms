@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-14 18:17:54
+ * @Last Modified time: 2019-01-15 09:48:00
  */
 import float from './float'
 import NP from 'number-precision'
@@ -15,6 +15,7 @@ import NP from 'number-precision'
  * 组件内可通过: this.$numberPrecesion.weight 访问重量精度
  */
 export const NumberPrecesion = {
+  rate: 2, // 开票税率
   weight: 3, // 重量精确3位小数
   weightKg: 0, // 重量公斤，保留整数
   volume: 6, // 体积精确6位小数
@@ -94,13 +95,13 @@ export const getFeeText = (value) => {
  * @param {number} value
  */
 export const multiplyRate = (value) => {
-  return float.round(NP.times(value, 100), 2)
+  return float.round(NP.times(value, 100), NumberPrecesion.rate)
 }
 /**
  * 税率
  */
 export const getRateText = (value) => {
-  return value ? float.round(NP.times(value, 100), 2) : '-'
+  return value ? float.round(NP.times(value, 100), NumberPrecesion.rate) : '-'
 }
 /**
  * 列表中费用格式化
