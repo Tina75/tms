@@ -87,22 +87,45 @@ export default {
           width: 120,
           key: 'action',
           render: (h, params) => {
-            return [(this.scene === 1 && this.hasPower(170103)) || (this.scene === 2 && this.hasPower(170203)) || (this.scene === 3 && this.hasPower(170303)) ? h('a', {
-              on: {
-                click: () => {
-                  this.writeOff(params)
+            let renderHtml = []
+            if ((this.scene === 1 && this.hasPower(170103)) || (this.scene === 2 && this.hasPower(170203)) || (this.scene === 3 && this.hasPower(170303))) {
+              renderHtml.push(h('a', {
+                on: {
+                  click: () => {
+                    this.writeOff(params)
+                  }
+                },
+                style: {
+                  marginRight: '10px'
                 }
-              },
-              style: {
-                marginRight: '10px'
-              }
-            }, '核销') : '', (this.scene === 1 && this.hasPower(170104)) || (this.scene === 2 && this.hasPower(170204)) || (this.scene === 3 && this.hasPower(170304)) ? h('a', {
-              on: {
-                click: () => {
-                  this.exportOrder(params)
+              }, '核销'))
+            }
+            if ((this.scene === 1 && this.hasPower(170104)) || (this.scene === 2 && this.hasPower(170204)) || (this.scene === 3 && this.hasPower(170304))) {
+              renderHtml.push(h('a', {
+                on: {
+                  click: () => {
+                    this.exportOrder(params)
+                  }
                 }
-              }
-            }, '导出') : '']
+              }, '导出'))
+            }
+            return renderHtml
+            // return [(this.scene === 1 && this.hasPower(170103)) || (this.scene === 2 && this.hasPower(170203)) || (this.scene === 3 && this.hasPower(170303)) ? h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.writeOff(params)
+            //     }
+            //   },
+            //   style: {
+            //     marginRight: '10px'
+            //   }
+            // }, '核销') : '', (this.scene === 1 && this.hasPower(170104)) || (this.scene === 2 && this.hasPower(170204)) || (this.scene === 3 && this.hasPower(170304)) ? h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.exportOrder(params)
+            //     }
+            //   }
+            // }, '导出') : '']
           }
         },
         {
@@ -222,7 +245,6 @@ export default {
           reconcileId: data.row.reconcileId
         },
         fileName: '对账单'
-      }).then(res => {
       })
     },
     toDetail (data) {
