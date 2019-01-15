@@ -24,9 +24,10 @@
           <SystemSetting :value="tabName" class="setting"></SystemSetting>
         </VerticalTabItem>
         <VerticalTabItem key="4" name="4" label="清除数据">
-          <div>
+          <Title size="16" border="solid" class="title">
             清除数据
-          </div>
+          </Title>
+          <clearData></clearData>
         </VerticalTabItem>
       </VerticalTabs>
     </div>
@@ -41,6 +42,7 @@ import Password from '../components/password.vue'
 import PersonSetting from '../components/person-setting.vue'
 import SmsSetting from '../components/sms-setting.vue'
 import SystemSetting from '../components/system-setting.vue'
+import clearData from '../components/clear-data.vue'
 import Title from '@/components/Title'
 export default {
   name: 'set-up',
@@ -51,7 +53,8 @@ export default {
     PersonSetting,
     SmsSetting,
     SystemSetting,
-    Title
+    Title,
+    clearData
   },
   mixins: [ BasePage ],
   metaInfo: {
