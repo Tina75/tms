@@ -54,6 +54,11 @@ export default {
   watch: {
     activeKey (key) {
       this.updateVisibility(this.getTabIndex(this.activeKey))
+    },
+    value (newValue) {
+      if (newValue !== this.activeKey) {
+        this.activeKey = newValue
+      }
     }
   },
   mounted () {
