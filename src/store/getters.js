@@ -32,3 +32,5 @@ export const AbnormalCargoInfos = (state) => state.abnormalCargoInfos
 export const AbnormalAddCargoInfos = (state) => state.abnormalAddCargoInfos
 /** 导入订单批次号 */
 export const ImportId = (state) => state.importId
+/** 公司设置 */
+export const CompanyInfo = (state) => state.companyInfo

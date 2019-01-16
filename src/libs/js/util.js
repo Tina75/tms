@@ -131,60 +131,48 @@ export const money2chinese = (number) => {
 
 // 将金额简体字转为繁体字
 export const zncn2znhant = (str) => {
-  let arr = str.split(',')
+  let arr = str.split('')
   for (let i = 0; i < arr.length; i++) {
     switch (arr[i]) {
       case '一':
-        // str[i] = '壹'
-        arr.replace(i, 1, '壹')
+        arr.splice(i, 1, '壹')
         break
       case '二':
-        // str[i] = '贰'
-        arr.replace(i, 1, '贰')
+        arr.splice(i, 1, '贰')
         break
       case '三':
-        // str[i] = '叁'
-        arr.replace(i, 1, '叁')
+        arr.splice(i, 1, '叁')
         break
       case '四':
-        // str[i] = '肆'
-        arr.replace(i, 1, '肆')
+        arr.splice(i, 1, '肆')
         break
       case '五':
-        // str[i] = '伍'
-        arr.replace(i, 1, '伍')
+        arr.splice(i, 1, '伍')
         break
       case '六':
-        // str[i] = '陆'
-        arr.replace(i, 1, '陆')
+        arr.splice(i, 1, '陆')
         break
       case '七':
-        // str[i] = '柒'
-        arr.replace(i, 1, '柒')
+        arr.splice(i, 1, '柒')
         break
       case '八':
-        // str[i] = '捌'
-        arr.replace(i, 1, '捌')
+        arr.splice(i, 1, '捌')
         break
       case '九':
-        // str[i] = '玖'
-        arr.replace(i, 1, '玖')
+        arr.splice(i, 1, '玖')
         break
       case '十':
-        // str[i] = '拾'
-        arr.replace(i, 1, '拾')
+        arr.splice(i, 1, '拾')
         break
       case '百':
-        // str[i] = '佰'
-        arr.replace(i, 1, '佰')
+        arr.splice(i, 1, '佰')
         break
       case '千':
-        // str[i] = '仟'
-        arr.replace(i, 1, '仟')
+        arr.splice(i, 1, '仟')
         break
     }
   }
-  return arr.join(',')
+  return arr.join('')
 }
 /**
  * 清空文件上传INPUT
