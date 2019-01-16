@@ -167,7 +167,8 @@ export default {
         otherFee: 0,
         tollFee: 0,
         totalFee: 0,
-        accommodation: 0 // 住宿费 v1.08 新增
+        accommodation: 0, // 住宿费 v1.08 新增
+        infoFee: null // 信息费 v1.11 新增
       },
       clonePayment: {}, // 复制一份费用数据，用来比较有没有修改费用
       // settlementType: '1',
@@ -348,20 +349,20 @@ export default {
             return h('span', p.row.unit ? p.row.unit : '-')
           }
         },
-        // {
-        //   title: '包装尺寸（毫米）',
-        //   key: 'dimension',
-        //   width: 140,
-        //   render: (h, p) => {
-        //     let text = ''
-        //     if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
-        //       text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
-        //     } else {
-        //       text = '-'
-        //     }
-        //     return h('span', text)
-        //   }
-        // },
+        {
+          title: '包装尺寸（毫米）',
+          key: 'dimension',
+          width: 140,
+          render: (h, p) => {
+            let text = ''
+            if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
+              text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
+            } else {
+              text = '-'
+            }
+            return h('span', text)
+          }
+        },
         {
           title: '包装数量',
           key: 'quantity',

@@ -166,12 +166,12 @@ export default class Cargo {
       cargoCost: multiplyFee(this.cargoCost),
       quantity: this.quantity,
       unit: this.unit,
-      cargoNo: this.cargoNo || '-'
-      // dimension: {
-      //   height: this.dimension.height || null,
-      //   width: this.dimension.width || null,
-      //   length: this.dimension.length || null
-      // }
+      cargoNo: this.cargoNo || '-',
+      dimension: {
+        height: this.dimension.height || null,
+        width: this.dimension.width || null,
+        length: this.dimension.length || null
+      }
     }
   }
   validateExp () {

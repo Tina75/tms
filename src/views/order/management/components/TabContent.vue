@@ -619,7 +619,7 @@ export default {
                   props: {
                     placement: 'bottom',
                     maxWidth: 152,
-                    content: p.row.waybillNo
+                    content: waybillNoArr.join('\n')
                   }
                 }, [
                   h('span', waybillNoArr[0] + ' ...')
@@ -704,6 +704,31 @@ export default {
           title: '体积（方）',
           key: 'volume',
           minWidth: 100
+        },
+        {
+          title: '货物名称',
+          key: 'cargoNames',
+          minWidth: 160,
+          render: (h, p) => {
+            if (p.row.cargoNames) {
+              let cargoNamesArr = p.row.cargoNames.split(',')
+              if (cargoNamesArr.length > 1) {
+                return h('Tooltip', {
+                  props: {
+                    placement: 'bottom',
+                    maxWidth: 152,
+                    content: cargoNamesArr.join('\n')
+                  }
+                }, [
+                  h('span', cargoNamesArr[0] + ' ...')
+                ])
+              } else {
+                return h('span', p.row.cargoNames)
+              }
+            } else {
+              return h('span', '-')
+            }
+          }
         },
         {
           title: '重量（吨）',
@@ -805,6 +830,12 @@ export default {
             // return h('span', params.row.freightFee ? float.round(params.row.freightFee / 100) : 0)
             return renderFee(h, params.row.freightFee)
           }
+        },
+        {
+          title: '计费规则',
+          key: 'chargeRule',
+          minWidth: 130,
+          tooltip: true
         },
         {
           title: '提货费',
