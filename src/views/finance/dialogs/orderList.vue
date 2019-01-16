@@ -107,7 +107,10 @@ export default {
           title: ' ',
           width: 1
         },
-        {
+        this.scene === 2 ? {
+          title: '合计金额',
+          key: 'totalFeeText'
+        } : {
           title: '合计运费',
           key: 'totalFeeText'
         },

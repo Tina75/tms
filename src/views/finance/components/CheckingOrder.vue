@@ -153,7 +153,10 @@ export default {
           title: this.sceneMap[this.scene],
           key: 'partnerName'
         },
-        {
+        this.scene === 2 ? {
+          title: '合计金额',
+          key: 'totalFeeText'
+        } : {
           title: '合计运费',
           key: 'totalFeeText'
         },
