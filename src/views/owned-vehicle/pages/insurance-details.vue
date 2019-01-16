@@ -54,13 +54,15 @@
             <Col span="6">
             <div>
               <span class="label">交强险金额：</span>
-              {{divideFee(infoData.trafficFee)}}<span>元</span>
+              <span v-if="infoData.trafficFee || infoData.trafficFee === 0">{{infoData.trafficFee | toPoint}}元</span>
+              <span v-else>-</span>
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">商业险金额:</span>
-              {{divideFee(infoData.businessFee)}}<span>元</span>
+              <span v-if="infoData.businessFee || infoData.businessFee === 0">{{infoData.businessFee | toPoint}}元</span>
+              <span v-else>-</span>
             </div>
             </Col>
           </Row>
@@ -68,7 +70,7 @@
             <Col span="6">
             <div>
               <span class="label">总金额：</span>
-              {{divideFee(infoData.totalFee)}}<span>元</span>
+              {{infoData.totalFee | toPoint}}<span>元</span>
             </div>
             </Col>
           </Row>
@@ -119,7 +121,6 @@ import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { mapActions } from 'vuex'
-import { divideFee } from '@/libs/js/config'
 export default {
   name: 'insurance-details',
   components: { RecordList, prepareOpenSwipe },
@@ -142,9 +143,6 @@ export default {
   },
   methods: {
     ...mapActions(['insuranceQueryById', 'insuranceDeleteById']),
-    divideFee (fee) {
-      return divideFee(fee)
-    },
     queryById () {
       let vm = this
       this.insuranceQueryById({ id: vm.infoData.id }).then(res => {
