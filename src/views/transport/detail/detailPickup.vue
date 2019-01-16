@@ -108,28 +108,28 @@
             <div class="detail-part-title">
               <span>应付费用</span>
             </div>
-            <Row class="detail-field-group">
-              <i-col span="4">
+            <ul class="detail-field-group">
+              <li>
                 <span class="detail-field-title-sm">{{ info.assignCarType === 1 ? '运输费：' : '油费：' }}</span>
                 <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
-              </i-col>
-              <i-col span="4" offset="1">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">装货费：</span>
                 <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
-              </i-col>
-              <i-col span="4" offset="1">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">卸货费：</span>
                 <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
-              </i-col>
-              <i-col span="4" offset="1">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">保险费：</span>
                 <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
-              </i-col>
-              <i-col span="4" offset="1">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">其他：</span>
                 <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
-              </i-col>
-            </Row>
+              </li>
+            </ul>
             <Row class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
@@ -433,6 +433,14 @@ export default {
           }
         },
         {
+          title: '货物编号',
+          key: 'cargoNo',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.cargoNo)
+          }
+        },
+        {
           title: '包装',
           key: 'unit',
           width: 120,
@@ -463,6 +471,19 @@ export default {
           width: 120,
           render: (h, p) => {
             return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
+          }
+        },
+        {
+          title: '包装尺寸（毫米）',
+          key: 'dimension',
+          render: (h, p) => {
+            let text = ''
+            if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
+              text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
+            } else {
+              text = '-'
+            }
+            return h('span', text)
           }
         },
         {
@@ -872,4 +893,10 @@ export default {
       vertical-align middle
     .ivu-radio-group-item
       margin-right 41px
+  .detail-field-group
+    li
+      display inline-block
+      width 20%
+      padding 5px 0
+      line-height 32px
 </style>

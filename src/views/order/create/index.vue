@@ -531,7 +531,8 @@ export default {
         // 备注
         remark: '',
         isSaveOrderTemplate: 0,
-        status: '' // 编辑时 status = 20 pickUp = 1时 不可编辑
+        status: '', // 编辑时 status = 20 pickUp = 1时 不可编辑
+        chargeRule: null // （V1.11新增）计费规则区间
       },
       orderPrint: [],
       rules: {
@@ -950,11 +951,13 @@ export default {
           // distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
           distance: multiplyMileage(this.orderForm.mileage),
           startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
-          endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude }
+          endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude },
+          source: 'order' // 计费规则来自订单
         },
         methods: {
-          ok (value) {
+          ok (value, chargeRule) {
             vm.orderForm.freightFee = value || 0
+            vm.orderForm.chargeRule = chargeRule
           }
         }
       })
@@ -1000,6 +1003,7 @@ export default {
       this.orderForm.consignerAddressLatitude = ''
       this.orderForm.consigneeAddressLongitude = ''
       this.orderForm.consigneeAddressLatitude = ''
+      this.orderForm.chargeRule = null // 重置计费规则命中区间
       this.isSaveOrderTemplate = false
 
       this.$refs.orderForm.resetFields()

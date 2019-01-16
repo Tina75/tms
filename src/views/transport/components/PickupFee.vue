@@ -1,38 +1,38 @@
 <template>
   <Form ref="pickUpFeeForm" :label-width="62" :model="payment" :rules="rules" class="transport-detail" label-position="right">
     <div :class="sendWay === '1' ? 'outer-fee' : 'own-fee'" class="part" style="padding-bottom: 5px;">
-      <Row class="detail-field-group">
-        <i-col span="5">
+      <ul class="detail-field-group">
+        <li>
           <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="fee-fix">
             <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="5">
+        </li>
+        <li>
           <FormItem label="装货费：" prop="loadFee" class="fee-fix">
             <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="5">
+        </li>
+        <li>
           <FormItem label="卸货费：" prop="unloadFee" class="fee-fix">
             <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="5">
+        </li>
+        <li>
           <FormItem label="保险费：" prop="insuranceFee" class="fee-fix">
             <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="4">
+        </li>
+        <li>
           <FormItem label="其他：" prop="otherFee" class="other-fee-fix">
             <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-      </Row>
+        </li>
+      </ul>
       <Row class="detail-field-group">
         <i-col span="24">
           <span class="detail-field-title-sm" style="vertical-align: unset;margin-left: 10px;">费用合计：</span>
@@ -324,4 +324,9 @@ export default {
     border-bottom none
   .row-margin
     margin 20px 0 35px 0
+  li
+    display inline-block
+    width 20%
+    padding 5px 0
+    line-height 32px
 </style>
