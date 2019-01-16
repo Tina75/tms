@@ -1,7 +1,6 @@
 <template>
   <div class="frequent-order">
     <div class="right header">
-      <!-- <span class="search-label">客户名称：</span> -->
       <SelectInput
         v-model="keyword.consignerName"
         :maxlength="20"
@@ -403,14 +402,9 @@ export default {
 .header
   margin-bottom 14px
   text-align right
-.search-label
-  display inline-block
-  width 80px
-  margin-right 11px
-  vertical-align middle
 .search-input
   display inline-block
-  width 200px
+  width 200px !important
   vertical-align middle
   text-align left
 .search-btn

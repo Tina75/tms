@@ -41,7 +41,7 @@
     </div>
     <!-- 包装方式 -->
     <div v-else-if="col.type == 'package'">
-      <SelectPackageType v-model="record[col.key]" clearable/>
+      <SelectPackageType v-model="record[col.key]" :maxlength="col.max" clearable/>
     </div>
     <!-- 订单下拉框 -->
     <Select v-else-if="col.type === 'orderSelect'" v-model="record[col.key]" clearable>
