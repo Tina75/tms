@@ -101,7 +101,7 @@ import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { mapActions } from 'vuex'
 export default {
-  name: 'insurance-details',
+  name: 'tyre-details',
   components: { RecordList, prepareOpenSwipe },
   mixins: [ BasePage ],
   props: {
