@@ -217,10 +217,10 @@ export default {
     },
     // 日期格式化
     formatDateTime (value, format) {
-      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '-' }
     },
     formatDate (value, format) {
-      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '-' }
     },
     edit () {
       let vm = this

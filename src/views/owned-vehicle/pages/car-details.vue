@@ -48,7 +48,7 @@
             <Col span="6">
             <div>
               <span class="label">载重：</span>
-              <span v-if="infoData.shippingWeight || infoData.shippingWeight === 0">{{infoData.shippingWeight}}吨</span>
+              <span v-if="infoData.shippingWeight !== ''">{{infoData.shippingWeight}}吨</span>
               <span v-else>-</span>
             </div>
             </Col>
@@ -57,7 +57,7 @@
             <Col span="6">
             <div>
               <span class="label">净空：</span>
-              <span v-if="infoData.shippingVolume || infoData.shippingVolume === 0">{{infoData.shippingVolume}}吨</span>
+              <span v-if="infoData.shippingVolume !== ''">{{infoData.shippingVolume}}吨</span>
               <span v-else>-</span>
             </div>
             </Col>

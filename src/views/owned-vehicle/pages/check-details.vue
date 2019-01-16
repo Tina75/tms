@@ -22,7 +22,7 @@
             <Col span="6">
             <div>
               <span class="label">金额：</span>
-              <span v-if="infoData.cost || infoData.cost === 0">{{infoData.cost | toPoint}}元</span>
+              <span v-if="infoData.cost !== ''">{{infoData.cost | toPoint}}元</span>
               <span v-else>-</span>
             </div>
             </Col>
