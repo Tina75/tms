@@ -66,13 +66,17 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return this.orderData.list.length > 0 ? h('a', {
+            return h('a', {
               on: {
                 click: () => {
-                  this.removeOrder(params)
+                  if (this.orderData.list.length > 1) {
+                    this.removeOrder(params)
+                  } else {
+                    this.deleteOrder(params)
+                  }
                 }
               }
-            }, '移除') : ''
+            }, '移除')
           }
         },
         {
@@ -155,6 +159,28 @@ export default {
         }
       })
     },
+    deleteOrder (data) {
+      const _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '确认从对账单中删除该条订单吗？',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          Server({
+            url: '/finance/reconcile/delete',
+            method: 'get',
+            data: {
+              reconcileId: data.row.reconcileId
+            }
+          }).then(res => {
+            // _this.getOrderList()
+            _this.close()
+            _this.ok()
+          }).catch()
+        }
+      })
+    },
     getOrderList () {
       Server({
         url: '/finance/reconcile/detail',
@@ -169,6 +195,7 @@ export default {
         this.orderData.totalFeeText = getFeeText(res.data.data.totalFee)
         this.orderData.list = res.data.data.subOrderInfos.map(item => {
           return Object.assign({}, item, {
+            reconcileId: res.data.data.reconcileId,
             totalFeeText: getFeeText(item.totalFee),
             orderTimeText: new Date(item.orderTime).Format('yyyy-MM-dd hh:mm')
           })

@@ -106,8 +106,21 @@ export default {
                   click: () => {
                     this.exportOrder(params)
                   }
+                },
+                style: {
+                  marginRight: '10px'
                 }
               }, '导出'))
+            }
+            if ((this.scene === 1 && this.hasPower(170107)) || (this.scene === 2 && this.hasPower(170208))) {
+              // this.scene === 1 && this.hasPower(170107)) || (this.scene === 2 && this.hasPower(170208))
+              renderHtml.push(h('a', {
+                on: {
+                  click: () => {
+                    this.delete(params)
+                  }
+                }
+              }, '删除'))
             }
             return renderHtml
             // return [(this.scene === 1 && this.hasPower(170103)) || (this.scene === 2 && this.hasPower(170203)) || (this.scene === 3 && this.hasPower(170303)) ? h('a', {
@@ -299,6 +312,28 @@ export default {
       this.checkingOrderQuerySave.pageNo = 1
       this.checkingOrderQuerySave.pageSize = size
       this.getCheckList()
+    },
+    // 删除
+    delete (data) {
+      const _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '是否确定删除对账单？',
+        okText: '是',
+        cancelText: '否',
+        async onOk () {
+          Server({
+            url: '/finance/reconcile/delete',
+            method: 'get',
+            data: {
+              reconcileId: data.row.reconcileId
+            }
+          }).then(res => {
+            _this.getCheckList()
+            // _this.ok()
+          }).catch()
+        }
+      })
     }
   }
 }
