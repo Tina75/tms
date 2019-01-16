@@ -512,7 +512,8 @@ export default {
         { title: '对账单核销', code: '170103', parentId: '170100', grandId: '170000', disabled: true },
         { title: '对账单导出', code: '170104', parentId: '170100', grandId: '170000', disabled: true },
         { title: '查看核销单详情', code: '170105', parentId: '170100', grandId: '170000', disabled: true },
-        { title: '核销单导出', code: '170106', parentId: '170100', grandId: '170000', disabled: true }
+        { title: '核销单导出', code: '170106', parentId: '170100', grandId: '170000', disabled: true },
+        { title: '删除对账单', code: '170107', parentId: '170100', grandId: '170000', disabled: true }
       ]
     }, {
       title: '承运商对账',
@@ -529,7 +530,8 @@ export default {
         { title: '对账单核销', code: '170203', parentId: '170200', grandId: '170000', disabled: true },
         { title: '对账单导出', code: '170204', parentId: '170200', grandId: '170000', disabled: true },
         { title: '查看核销单详情', code: '170205', parentId: '170200', grandId: '170000', disabled: true },
-        { title: '核销单导出', code: '170206', parentId: '170200', grandId: '170000', disabled: true }
+        { title: '核销单导出', code: '170206', parentId: '170200', grandId: '170000', disabled: true },
+        { title: '删除对账单', code: '170208', parentId: '170200', grandId: '170000', disabled: true }
       ]
     },
     // {
