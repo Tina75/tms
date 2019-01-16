@@ -66,13 +66,17 @@ export default {
           width: 60,
           key: 'action',
           render: (h, params) => {
-            return this.orderData.list.length > 0 ? h('a', {
+            return h('a', {
               on: {
                 click: () => {
-                  this.removeOrder(params)
+                  if (this.orderData.list.length > 1) {
+                    this.removeOrder(params)
+                  } else {
+                    this.deleteOrder(params)
+                  }
                 }
               }
-            }, '移除') : ''
+            }, '移除')
           }
         },
         {
@@ -151,6 +155,27 @@ export default {
           }).then(res => {
             _this.getOrderList()
             _this.ok()
+          }).catch()
+        }
+      })
+    },
+    deleteOrder (data) {
+      const _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '确认从对账单中删除该条订单吗？',
+        okText: '确认',
+        cancelText: '取消',
+        async onOk () {
+          Server({
+            url: '/finance/reconcile/delete',
+            method: 'get',
+            data: {
+              reconcileId: data.row.id
+            }
+          }).then(res => {
+            _this.getOrderList()
+            // _this.ok()
           }).catch()
         }
       })
