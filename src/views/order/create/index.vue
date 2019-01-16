@@ -356,7 +356,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import api from './libs/api'
 import distance from '@/libs/js/distance'
 import validator, { validatePhone } from '@/libs/js/validate'
@@ -968,9 +967,9 @@ export default {
         this.validPermit()
           .then(form => {
             return api.submitOrder(form)
-          }).then(() => {
+          }).then(res => {
             this.refreshForm(e)
-            resolve()
+            resolve(res.data.data)
           }).catch(err => {
             this.disabled = false
             reject(err)
@@ -1017,25 +1016,21 @@ export default {
     // 打印
     print () {
       this.handleSubmit()
-        .then(() => {
-          let orderPrint = _.cloneDeep(this.orderForm)
-          orderPrint.orderCargoList = _.cloneDeep(this.consignerCargoes)
-          orderPrint.totalFee = this.totalFee
-          this.salesmanList.map(el => {
-            if (el.id === orderPrint.salesmanId) {
-              orderPrint.salesmanName = el.name
-            }
-          })
-          this.orderPrint = [orderPrint]
+        .then(orderId => {
+          return api.getPrintDetail([orderId])
+        })
+        .then(res => {
+          this.orderPrint = res.data.data
 
           this.$refs.printer.print()
-          if (!orderPrint.id) {
+          if (!this.orderPrint.id) {
             // 创建订单页面
             this.resetForm()
           } else {
             this.closeTab()
           }
-        }).catch(() => {})
+        }).catch(() => {
+        })
     },
     dateChange (type, date) {
       const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
@@ -1072,10 +1067,6 @@ export default {
         }
       }
       this.distanceCp()
-    },
-    // 城市code设置
-    setCityCode () {
-
     },
     distanceCp () {
       const p1 = {
