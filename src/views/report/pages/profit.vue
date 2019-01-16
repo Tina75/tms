@@ -53,139 +53,128 @@
     </div>
     <!--公司利润-->
     <template v-if="tabStatus===1">
-      <div class="table">
-        <Row type="flex" justify="start" class="small-height bg" style="font-size: 12px">
-          <Col span="6">方向</Col>
-          <Col span="6">来源</Col>
-          <Col span="6">费用明细</Col>
-          <Col span="6">本期发生额</Col>
-        </Row>
-        <Row type="flex" justify="start" class="big-height" style="border-top: 0">
-          <Col span="6">收入</Col>
-          <Col span="6">
-          <Row class="middle-height border-top-none border-right-none">
-            <Col>上游运费收入</Col>
-          </Row>
-          <Row class="small-height border-top-none border-right-none border-bottom-none">
-            <Col>返现运费收入</Col>
-          </Row>
-          </Col>
-          <Col span="12" >
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
-            <Col span="12">运输费</Col>
-            <Col span="12" class="num">{{res.orderFreightFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
-            <Col span="12">提货费</Col>
-            <Col span="12" class="num">{{res.orderPickupFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">装货费</Col>
-            <Col span="12" class="num">{{res.orderLoadFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">卸货费</Col>
-            <Col span="12" class="num">{{res.orderUnloadFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">保险费</Col>
-            <Col span="12" class="num">{{res.orderInsuranceFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none">
-            <Col span="12">其他费用</Col>
-            <Col span="12" class="num">{{res.orderOtherFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-bottom-none border-right-none">
-            <Col span="12">返现运费</Col>
-            <Col span="12" class="num">{{res.orderCashBack}}</Col>
-          </Row>
-          </Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height bg border-top-none">
-          <Col span="24"  style="text-align: right">主营业务收入合计<span class="money">{{res.orderTotalFee}}</span></Col>
-        </Row>
-        <Row type="flex" justify="start"  class="big-height-2 border-top-none">
-          <Col span="6">支出</Col>
-          <Col span="6">
-          <Row class="middle-height border-top-none border-right-none">
-            <Col>承运商运费支出</Col>
-          </Row>
-          <Row class="middle-height-3 border-top-none border-bottom-none border-right-none">
-            <Col>自有车运费支出</Col>
-          </Row>
-          <Row class="small-height border-right-none border-bottom-none">
-            <Col>开票税费</Col>
-          </Row>
-          </Col>
-          <Col span="12" >
-          <!-- 承运商运费支出 -->
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
-            <Col span="12">运输费</Col>
-            <Col span="12" class="num">{{res.carrierFreightFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">装货费</Col>
-            <Col span="12" class="num">{{res.carrierLoadFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">卸货费</Col>
-            <Col span="12" class="num">{{res.carrierUnloadFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">保险费</Col>
-            <Col span="12" class="num">{{res.carrierInsuranceFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">路桥费</Col>
-            <Col span="12" class="num">{{res.carrierTollFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">其他费用</Col>
-            <Col span="12" class="num">{{res.carrierOtherFee}}</Col>
-          </Row>
-          <!-- 自有车运费支出 -->
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none" >
-            <Col span="12">油费</Col>
-            <Col span="12" class="num">{{res.myFuelFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">路桥费</Col>
-            <Col span="12" class="num">{{res.myTollFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">装货费</Col>
-            <Col span="12" class="num">{{res.myLoadFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">卸货费</Col>
-            <Col span="12" class="num">{{res.myUnloadFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">保险费</Col>
-            <Col span="12" class="num">{{res.myInsuranceFee}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none">
-            <Col span="12">住宿费</Col>
-            <Col span="12" class="num">{{res.myAccommodation}}</Col>
-          </Row>
-          <Row type="flex" justify="start" class="small-height border-top-none border-right-none border-bottom-none">
-            <Col span="12">其他费用</Col>
-            <Col span="12" class="num">{{res.myOtherFee}}</Col>
-          </Row>
-          <!-- 开票税费 -->
-          <Row type="flex" justify="start" class="small-height  border-bottom-none border-right-none">
-            <Col span="12">开票税费</Col>
-            <Col span="12" class="num">{{res.orderInvoiceFee}}</Col>
-          </Row>
-          </Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height bg border-top-none">
-          <Col span="24"  style="text-align: right">主营业务支出合计<span class="money">{{res.carrierTotalFee}}</span></Col>
-        </Row>
-        <Row type="flex" justify="start" class="small-height bg border-top-none">
-          <Col span="24"  style="text-align: right">利润<span class="money">{{res.profits}}</span></Col>
-        </Row>
-      </div>
+      <table class="table-list"  cellpadding="0" cellspacing="0" style="width: 100%;text-align: center">
+        <tr class="total">
+          <td>方向</td>
+          <td>来源</td>
+          <td>费用明细</td>
+          <td>本期发生额</td>
+        </tr>
+        <tr>
+          <td rowspan="8">收入</td>
+          <td rowspan="6">上游运费收入</td>
+          <td>运输费</td>
+          <td class="money"><div>{{res.orderFreightFee}}</div></td>
+        </tr>
+        <tr>
+          <td>提货费</td>
+          <td class="money"><div>{{res.orderPickupFee}}</div></td>
+        </tr>
+        <tr>
+          <td>装货费</td>
+          <td class="money"><div>{{res.orderLoadFee}}</div></td>
+        </tr>
+        <tr>
+          <td>卸货费</td>
+          <td class="money"><div>{{res.orderUnloadFee}}</div></td>
+        </tr>
+        <tr>
+          <td>保险费</td>
+          <td class="money"><div>{{res.orderInsuranceFee}}</div></td>
+        </tr>
+        <tr>
+          <td>其他费用</td>
+          <td class="money"><div>{{res.orderOtherFee}}</div></td>
+        </tr>
+        <tr>
+          <td>返现运费收入</td>
+          <td>返现运费</td>
+          <td class="money"><div>{{res.orderCashBack}}</div></td>
+        </tr>
+        <tr>
+          <td>信息费收入</td>
+          <td>信息费</td>
+          <td class="money"><div>{{res.infoFee}}</div></td>
+        </tr>
+        <tr class="total">
+          <td></td>
+          <td></td>
+          <td>主营业务收入合计</td>
+          <td class="money totalMoney"><div>{{res.orderTotalFee}}</div></td>
+        </tr>
+        <tr>
+          <td rowspan="14">支出</td>
+          <td rowspan="6">承运商运费支出</td>
+          <td>运输费</td>
+          <td class="money"><div>{{res.carrierFreightFee}}</div></td>
+        </tr>
+        <tr>
+          <td>装货费</td>
+          <td class="money"><div>{{res.carrierLoadFee}}</div></td>
+        </tr>
+        <tr>
+          <td>卸货费</td>
+          <td class="money"><div>{{res.carrierUnloadFee}}</div></td>
+        </tr>
+        <tr>
+          <td>保险费</td>
+          <td class="money"><div>{{res.carrierInsuranceFee}}</div></td>
+        </tr>
+        <tr>
+          <td>路桥费</td>
+          <td class="money"><div>{{res.carrierTollFee}}</div></td>
+        </tr>
+        <tr>
+          <td>其他费用</td>
+          <td class="money"><div>{{res.carrierOtherFee}}</div></td>
+        </tr>
+        <tr>
+          <td rowspan="7">自有车运费支出</td>
+          <td>油费</td>
+          <td class="money"><div>{{res.myFuelFee}}</div></td>
+        </tr>
+        <tr>
+          <td>路桥费</td>
+          <td class="money"><div>{{res.myTollFee}}</div></td>
+        </tr>
+        <tr>
+          <td>装货费</td>
+          <td class="money"><div>{{res.myLoadFee}}</div></td>
+        </tr>
+        <tr>
+          <td>卸货费</td>
+          <td class="money"><div>{{res.myUnloadFee}}</div></td>
+        </tr>
+        <tr>
+          <td>保险费</td>
+          <td class="money"><div>{{res.myInsuranceFee}}</div></td>
+        </tr>
+        <tr>
+          <td>住宿费</td>
+          <td class="money"><div>{{res.myAccommodation}}</div></td>
+        </tr>
+        <tr>
+          <td>其他费用</td>
+          <td class="money"><div>{{res.myOtherFee}}</div></td>
+        </tr>
+        <tr>
+          <td>开票税费</td>
+          <td>开票税费</td>
+          <td class="money"><div>{{res.orderInvoiceFee}}</div></td>
+        </tr>
+        <tr class="total">
+          <td></td>
+          <td></td>
+          <td>主营业务支出合计</td>
+          <td class="money totalMoney"><div>{{res.carrierTotalFee}}</div></td>
+        </tr>
+        <tr class="total">
+          <td></td>
+          <td></td>
+          <td>利润</td>
+          <td class="money totalMoney"><div>{{res.profits}}</div></td>
+        </tr>
+      </table>
     </template>
     <!--发货方利润、整车利润、单票利润-->
     <template v-else>
@@ -265,6 +254,8 @@ export default {
   computed: {
     ...mapGetters([
       'clients'
+      // 'DispatchSet',
+      // 'OrderSet'
     ]),
     headType () {
       switch (this.tabStatus) {
@@ -535,49 +526,26 @@ export default {
       margin-top 15px
       button
         height 32px
-  .table
-    text-align center
-    font-size 11px
+ table.table-list
     color #333
-    .num
-      text-align right
-      padding-right 23%
-    .money
-      color #00A4BD
-      margin-left 5%
-      text-align right
-      padding-right 11.5%
-    .border-bottom-none
-      border-bottom none!important
-    .border-top-none
-      border-top none!important
-    .border-right-none
-      border-right none!important
-    .bg
-      background:rgba(248,248,248,1)
-      font-weight bold
-    .middle-height
-      height 270px
-      line-height 314px
-      border 1px solid #C9CED9
-    .middle-height-2
-      height 270px
-      line-height 270px
-      border 1px solid #C9CED9
-    .middle-height-3
-      height 315px
-      line-height 315px
-      border 1px solid #C9CED9
-    .small-height
-      border 1px solid #C9CED9
+    border-right 1px solid #C9CED9
+    border-bottom 1px solid #C9CED9
+    tr.total
+      background #f8f8f8
+      td
+        font-weight bold
+        border-left none
+        &:first-child
+          border-left 1px solid #C9CED9
+    td
+      width 25%
       height 45px
-      line-height 45px
-    .big-height
-      border 1px solid #C9CED9
-      height 314px
-      line-height 314px
-    .big-height-2
-      border 1px solid #C9CED9
-      height 630px
-      line-height 630px
+      border-left 1px solid #C9CED9
+      border-top 1px solid #C9CED9
+    td.money
+      div
+        text-align right
+        padding-right 46%
+      &.totalMoney
+        color #00A4BD
 </style>

@@ -1,9 +1,11 @@
 <template>
-  <Table :columns="columns"
-         :data="tableData"
-         :loading="loading"
-         class="payment-info-table"
-         width="350"></Table>
+  <div>
+    <Table :columns="columns" :data="tableData" :loading="loading" class="payment-info-table" width="350"></Table>
+    <div v-if="mode === 'edit' && payInfoTotal !== total" class="more-tips">
+      <div v-if="payInfoTotal < total">剩余未填金额<span>{{ more }}</span>元</div>
+      <div v-else>输入金额超出合计费<span>{{ more }}</span>元</div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -136,16 +138,34 @@ export default {
             })
           }
         }
-      ]
+      ],
+      more: 0 // 剩余或多出得金额
+    }
+  },
+  computed: {
+    // payInfo 组件输入费用总计
+    payInfoTotal () {
+      let total = 0
+      this.tableDataBack.forEach(item => {
+        total = roundFee(NP.plus(total, roundFee(Number(item.cashAmount) + Number(item.fuelCardAmount))))
+      })
+      return total
     }
   },
   watch: {
     data (value) {
       this.tableData = Object.assign([], value)
       this.tableDataBack = Object.assign([], value)
+    },
+    payInfoTotal () {
+      this.more = Math.abs(roundFee(NP.minus(Number(this.total), Number(this.payInfoTotal)))) // 取绝对值，确保为正数
+    },
+    total () {
+      this.more = Math.abs(roundFee(NP.minus(Number(this.total), Number(this.payInfoTotal)))) // 取绝对值，确保为正数
     }
   },
   mounted () {
+    this.more = Math.abs(roundFee(NP.minus(Number(this.total), Number(this.payInfoTotal)))) // 取绝对值，确保为正数
   },
   methods: {
     getPayInfo () {
@@ -167,11 +187,7 @@ export default {
       })
     },
     validate () {
-      let total = 0
-      this.tableDataBack.forEach(item => {
-        total = roundFee(NP.plus(total, roundFee(Number(item.cashAmount) + Number(item.fuelCardAmount))))
-      })
-      if (total !== Number(this.total)) {
+      if (this.payInfoTotal !== Number(this.total)) {
         this.$Message.error('结算总额应与费用合计相等')
         return false
       }
@@ -199,4 +215,14 @@ export default {
 >>> .ivu-table
       .ivu-table-cell
         overflow inherit
+.more-tips
+  font-size 12px
+  font-family 'PingFangSC-Regular'
+  color #333
+  margin 5px 0 0 23px
+  span
+    margin 0 5px 0 20px
+    font-family 'PingFangSC-Medium'
+    font-weight 500
+    color #00A4BD
 </style>

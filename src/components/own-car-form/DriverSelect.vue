@@ -3,7 +3,7 @@
     <Option v-for="(opt, index) in data" :key="'normal-'+index" :label="opt.value" :value="opt.value" :title="opt.name" :disabled="disabledOption(opt)">
       <span class="select-driver__option-name">{{opt.name}}</span>
       <span class="select-driver__option">{{opt.driverPhone}}</span>
-      <span  :class="['i-ml-10',opt.driverStatus === '1' ? 'i-status-warning':'i-status-info']">
+      <span  :class="['i-ml-10',opt.driverStatus === 1 ? 'i-status-warning':'i-status-info']">
         {{driverStatus(opt.driverStatus)}}
       </span>
     </Option>

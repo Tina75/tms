@@ -103,20 +103,6 @@ export default {
       return this.$route.query.tab === 'clear'
     }
   },
-  created () {
-    // 受理开单来的
-    if (this.isFromOrder) {
-      this.rightKey = '3'
-      this.tabName = 'order'
-    } else if (this.isFromDispatch) {
-      this.rightKey = '3'
-      this.tabName = 'dispatch'
-    } else if (this.isClearData) {
-      this.rightKey = '4'
-      this.beginTime = this.$route.query.beginTime
-      this.endTime = this.$route.query.endTime
-    }
-  },
   mounted: function () {
     if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
       document.getElementById('set-up-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
@@ -125,7 +111,7 @@ export default {
   methods: {
     clickMenu (param) {
       this.rightTitle = param.label
-      this.rightKey = parseInt(param.name)
+      this.rightKey = param.name
       // switch (this.rightKey) {
       //   case 1:
       //     this.initPerson()
@@ -135,6 +121,27 @@ export default {
       //     break
       // }
     }
+  },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      if (to.query.tab) {
+        switch (to.query.tab) {
+          case 'order':
+            vm.rightKey = '3'
+            vm.tabName = 'order'
+            break
+          case 'dispatch':
+            vm.rightKey = '3'
+            vm.tabName = 'dispatch'
+            break
+          case 'clear':
+            vm.rightKey = '4'
+            vm.beginTime = vm.$route.query.beginTime
+            vm.endTime = vm.$route.query.endTime
+            break
+        }
+      }
+    })
   }
 }
 </script>

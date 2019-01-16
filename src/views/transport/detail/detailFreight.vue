@@ -127,38 +127,44 @@
             <div class="detail-part-title">
               <span>费用明细</span>
             </div>
-            <Row class="detail-field-group">
-              <i-col span="6">
+            <ul class="detail-field-group">
+              <li>
                 <span class="detail-field-title-sm">计费里程：</span>
                 <span class="detail-field-fee">{{ payment.mileage || 0 }}公里</span>
-              </i-col>
-              <i-col span="6">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">{{ info.assignCarType === 1 ? '运输费：' : '油费：' }}</span>
                 <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">装货费：</span>
                 <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">卸货费：</span>
                 <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">路桥费：</span>
                 <span class="detail-field-fee">{{ payment.tollFee || 0 }}元</span>
-              </i-col>
-              <i-col v-if="info.assignCarType === 2" span="6">
+              </li>
+              <li v-if="info.assignCarType === 2">
                 <span class="detail-field-title-sm">住宿费：</span>
                 <span class="detail-field-fee">{{ payment.accommodation || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">保险费：</span>
                 <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+              </li>
+              <li>
                 <span class="detail-field-title-sm">其他：</span>
                 <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
+              </li>
+            </ul>
+            <Row class="detail-field-group">
+              <i-col span="6">
+                <span class="detail-field-title-sm">信息费：</span>
+                <span class="detail-field-fee">{{ payment.infoFee || 0 }}元</span>
               </i-col>
             </Row>
             <Row class="detail-field-group">
@@ -412,7 +418,8 @@ export default {
         cashBack: null,
         tollFee: null, // 路桥费
         mileage: null, // 计费里程 v1.06 新增
-        accommodation: null // 住宿费 v1.08 新增
+        accommodation: null, // 住宿费 v1.08 新增
+        infoFee: null // 信息费 v1.11 新增
       },
       rules: {
         start: [
@@ -586,6 +593,14 @@ export default {
           }
         },
         {
+          title: '货物编号',
+          key: 'cargoNo',
+          width: 120,
+          render: (h, p) => {
+            return this.tableDataRender(h, p.row.cargoNo)
+          }
+        },
+        {
           title: '包装',
           key: 'unit',
           width: 120,
@@ -622,6 +637,19 @@ export default {
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'volume', 0)
             //  return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
+          }
+        },
+        {
+          title: '包装尺寸（毫米）',
+          key: 'dimension',
+          render: (h, p) => {
+            let text = ''
+            if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
+              text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
+            } else {
+              text = '-'
+            }
+            return h('span', text)
           }
         },
         {
@@ -1355,4 +1383,10 @@ export default {
       vertical-align middle
     .ivu-radio-group-item
       margin-right 41px
+  .detail-field-group
+    li
+      display inline-block
+      width 25%
+      padding 5px 0
+      line-height 32px
 </style>

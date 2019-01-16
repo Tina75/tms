@@ -1,8 +1,8 @@
 <template>
   <ExtraSelect ref="$select" :transfer="true" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" filterable clearable @on-change="handleChange">
-    <Option v-for="car in ownCars" :key="car.id" :value="car.value">
-      {{car.name}}
-      <span :class="['i-ml-20',car.carStatus === '1' ? 'i-status-warning':'i-status-info']">
+    <Option v-for="car in ownCars" :key="car.id" :label="car.value" :value="car.value">
+      <span>{{car.name}}</span>
+      <span :class="['i-ml-20',car.carStatus === 1 ? 'i-status-warning':'i-status-info']">
         {{carStatus(car.carStatus)}}
       </span>
     </Option>

@@ -45,7 +45,7 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import Export from '@/libs/js/export'
 import { mapActions } from 'vuex'
-import { divideFee } from '@/libs/js/config'
+import { renderFee, renderMileage } from '@/libs/js/config'
 export default {
   name: 'owner-tyre',
   components: {
@@ -142,7 +142,8 @@ export default {
           title: '金额（元）',
           key: 'cost',
           render: (h, params) => {
-            return h('div', divideFee(params.row.cost))
+            return renderFee(h, params.row.cost)
+            // return h('div', divideFee(params.row.cost))
           }
         },
         {
@@ -158,7 +159,8 @@ export default {
           key: 'setupMileage',
           width: 150,
           render: (h, params) => {
-            return h('div', Number(params.row.setupMileage) / 1000)
+            return renderMileage(h, params.row.setupMileage)
+            // return h('div', Number(params.row.setupMileage) / 1000)
           }
         },
         {
@@ -166,7 +168,8 @@ export default {
           key: 'uninstallMileage',
           width: 150,
           render: (h, params) => {
-            return h('div', Number(params.row.uninstallMileage) / 1000)
+            return renderMileage(h, params.row.uninstallMileage)
+            // return h('div', Number(params.row.uninstallMileage) / 1000)
           }
         },
         {

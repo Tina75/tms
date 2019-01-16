@@ -1,14 +1,14 @@
 <template>
   <Form ref="sendFeeForm" :label-width="82" :model="payment" :rules="rules" class="transport-detail" label-position="right">
     <div class="part" style="padding-bottom: 5px;">
-      <Row class="detail-field-group">
-        <i-col v-if="source !== 'abnormal'" span="6">
+      <ul class="detail-field-group">
+        <li v-if="source !== 'abnormal'">
           <FormItem label="计费里程：" prop="mileage">
             <TagNumberInput :show-chinese="false" :min="0" v-model="payment.mileage" :precision="1" class="detail-payment-input-send"></TagNumberInput>
             <span class="unit-yuan">公里</span>
           </FormItem>
-        </i-col>
-        <i-col span="6">
+        </li>
+        <li>
           <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
@@ -16,63 +16,74 @@
             <span class="unit-yuan">元</span>
             <a v-if="sendWay === '1' && source !== 'abnormal'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
           </FormItem>
-        </i-col>
-        <i-col span="6">
+        </li>
+        <li>
           <FormItem label="装货费：" prop="loadFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="6">
+        </li>
+        <li>
           <FormItem label="卸货费：" prop="unloadFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col v-if="source === 'abnormal'" span="6">
+        </li>
+        <li v-if="source === 'abnormal'">
           <FormItem label="路桥费：" prop="tollFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-      </Row>
-      <Row class="detail-field-group">
-        <i-col v-if="source !== 'abnormal'" span="6">
+        </li>
+        <li v-if="source !== 'abnormal'">
           <FormItem label="路桥费：" prop="tollFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col v-if="sendWay === '2'" span="6">
+        </li>
+        <li v-if="sendWay === '2'">
           <FormItem label="住宿费：" prop="accommodation">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.accommodation" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="6">
+        </li>
+        <li>
           <FormItem label="保险费：" prop="insuranceFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="6">
+        </li>
+        <li>
           <FormItem label="其他：" prop="otherFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
             <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+      </ul>
+      <Row class="detail-field-group">
+        <i-col v-if="sendWay === '1'" span="6">
+          <FormItem label="信息费：" prop="infoFee">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.infoFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+            <Tooltip placement="right" transfer content="信息费是收取司机的费用，费用合计会减去信息费。" max-width="500">
+              <Icon type="ios-alert" size="20" color="#FFBB44" style="margin-left: 14px;"/>
+            </Tooltip>
           </FormItem>
         </i-col>
       </Row>
@@ -80,6 +91,9 @@
         <i-col span="24">
           <span class="detail-field-title-sm" style="vertical-align: unset;margin-left: 10px;">费用合计：</span>
           <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
+          <Tooltip placement="right" transfer content="费用合计为负值时，结算方式不能选择按单结,默认为月结" max-width="500">
+            <Icon type="ios-alert" size="20" color="#FFBB44" style="margin-left: 14px;vertical-align: sub"/>
+          </Tooltip>
         </i-col>
       </Row>
     </div>
@@ -90,7 +104,7 @@
           <span class="detail-field-title detail-field-required" style="width: 92px;">结算方式：</span>
           <div class="detail-payment-way">
             <RadioGroup v-model="settlementTypeFee">
-              <Radio :disabled="isDisabled" label="1">按单结</Radio>
+              <Radio :disabled="isDisabled || infoFeeDisabled" label="1">按单结</Radio>
               <Radio :disabled="isDisabled" label="2">月结</Radio>
             </RadioGroup>
             <PayInfo
@@ -205,7 +219,8 @@ export default {
           cashBack: null, // 返现运费
           tollFee: null, // 路桥费
           mileage: null, // 计费里程
-          accommodation: null// 住宿费
+          accommodation: null, // 住宿费
+          infoFee: null // 信息费
         }
       }
     },
@@ -313,11 +328,16 @@ export default {
         // 住宿费用
         accommodation: [
           { validator: validateFee }
+        ],
+        // 信息费
+        infoFee: [
+          { validator: validateFee }
         ]
       },
       settlementTypeFee: '1',
       // settlementPayInfo: [],
-      carrierInfo: {}
+      carrierInfo: {},
+      infoFeeDisabled: false
     }
   },
   computed: {
@@ -341,12 +361,22 @@ export default {
       //         Number(this.payment.otherFee) +
       //         Number(this.payment.tollFee)
       if (this.sendWay === '2') total = NP.plus(total, Number(this.payment.accommodation)) // 自送要算住宿费
+      if (this.sendWay === '1') total = NP.minus(total, Number(this.payment.infoFee)) // 外转减掉信息费
       return roundFee(total)
     }
   },
   watch: {
     settlementType (val) {
       this.settlementTypeFee = val
+    },
+    paymentTotal (val) {
+      if (val < 0) {
+        this.settlementTypeFee = '2'
+        this.infoFeeDisabled = true
+      } else {
+        this.settlementTypeFee = '1'
+        this.infoFeeDisabled = false
+      }
     }
   },
   created () {
@@ -430,6 +460,9 @@ export default {
       if (this.sendWay === '1') { // 外转去掉住宿费
         delete temp.accommodation
       }
+      if (this.sendWay === '2') { // 自送去掉信息费
+        delete temp.infoFee
+      }
       return temp
     },
     // 获取分摊策略
@@ -480,4 +513,9 @@ export default {
     border-bottom none
   .row-margin
     margin 20px 0 35px 0
+  li
+    display inline-block
+    width 25%
+    padding 5px 0
+    line-height 32px
 </style>

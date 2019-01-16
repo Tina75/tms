@@ -22,7 +22,8 @@
             <Col span="6">
             <div>
               <span class="label">金额：</span>
-              {{divideFee(infoData.cost)}}<span>元</span>
+              <span v-if="infoData.cost || infoData.cost === 0">{{infoData.cost | toPoint}}元</span>
+              <span v-else>-</span>
             </div>
             </Col>
             <Col span="6">
@@ -78,9 +79,8 @@ import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { mapActions } from 'vuex'
-import { divideFee } from '@/libs/js/config'
 export default {
-  name: 'insurance-details',
+  name: 'check-details',
   components: { RecordList, prepareOpenSwipe },
   mixins: [ BasePage ],
   props: {
@@ -101,9 +101,7 @@ export default {
   },
   methods: {
     ...mapActions(['checkQueryById', 'checkDeleteById']),
-    divideFee (fee) {
-      return divideFee(fee)
-    },
+
     queryById () {
       let vm = this
       this.checkQueryById({ id: vm.infoData.id }).then(res => {

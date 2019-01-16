@@ -25,6 +25,7 @@ export const res = {
   carrierTollFee: '0',
   orderCashBack: '0',
   orderInvoiceFee: '0',
+  infoFee: '0',
   myAccommodation: '0'
 }
 export const TAB_LIST = [
@@ -39,6 +40,7 @@ export const URL = {
   4: '/report/orderProfit'
 }
 export const TABLECOLUMNS = {
+  // 客户利润
   2: [
     {
       title: '客户名称',
@@ -80,6 +82,15 @@ export const TABLECOLUMNS = {
       }
     },
     {
+      title: '返现运费',
+      key: 'cashBack',
+      width: 200,
+      render: (h, params) => {
+        // return h('span', (params.row.totalFee / 100).toFixed(2))
+        return renderFee(h, params.row.cashBack)
+      }
+    },
+    {
       title: '提货费合计',
       key: 'pickupBillFee',
       width: 200,
@@ -95,6 +106,14 @@ export const TABLECOLUMNS = {
       render: (h, params) => {
         // return h('span', (params.row.wayBillFee / 100).toFixed(2))
         return renderFee(h, params.row.wayBillFee)
+      }
+    },
+    {
+      title: '开票税费',
+      key: 'invoiceAmount',
+      width: 200,
+      render: (h, params) => {
+        return renderFee(h, params.row.invoiceAmount)
       }
     },
     {
@@ -116,6 +135,7 @@ export const TABLECOLUMNS = {
       }
     }
   ],
+  // 整车利润
   3: [
     {
       title: '运单号',
@@ -166,8 +186,15 @@ export const TABLECOLUMNS = {
       key: 'orderFee',
       width: 150,
       render: (h, params) => {
-        // return h('span', (params.row.orderFee / 100).toFixed(2))
         return renderFee(h, params.row.orderFee)
+      }
+    },
+    {
+      title: '返现运费',
+      key: 'cashBack',
+      width: 150,
+      render: (h, params) => {
+        return renderFee(h, params.row.cashBack)
       }
     },
     {
@@ -184,8 +211,15 @@ export const TABLECOLUMNS = {
       key: 'waybillFee',
       width: 150,
       render: (h, params) => {
-        // return h('span', (params.row.waybillFee / 100).toFixed(2))
         return renderFee(h, params.row.waybillFee)
+      }
+    },
+    {
+      title: '开票税费',
+      key: 'invoiceAmount',
+      width: 150,
+      render: (h, params) => {
+        return renderFee(h, params.row.invoiceAmount)
       }
     },
     {
@@ -233,6 +267,7 @@ export const TABLECOLUMNS = {
       width: 250
     }
   ],
+  // 单票利润
   4: [
     {
       title: '订单号',
@@ -288,6 +323,14 @@ export const TABLECOLUMNS = {
       }
     },
     {
+      title: '返现运费',
+      key: 'cashBack',
+      width: 200,
+      render: (h, params) => {
+        return renderFee(h, params.row.cashBack)
+      }
+    },
+    {
       title: '提货费合计',
       key: 'pickupBillFee',
       width: 200,
@@ -303,6 +346,15 @@ export const TABLECOLUMNS = {
       render: (h, params) => {
         // return h('span', (params.row.wayBillFee / 100).toFixed(2))
         return renderFee(h, params.row.wayBillFee)
+      }
+    },
+    {
+      title: '开票税费',
+      key: 'invoiceAmount',
+      width: 200,
+      render: (h, params) => {
+        // return h('span', (params.row.wayBillFee / 100).toFixed(2))
+        return renderFee(h, params.row.invoiceAmount)
       }
     },
     {

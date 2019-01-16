@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-15 14:26:00
+ * @Last Modified time: 2019-01-15 17:31:22
  */
 import float from './float'
 import NP from 'number-precision'
@@ -64,7 +64,7 @@ export const multiplyFee = (fee) => {
  * @param {*} fee
  */
 export const multiplyFeeOrNull = (fee) => {
-  return isNumber(fee) ? multiplyFee(fee) : fee
+  return isNumber(fee) ? multiplyFee(fee) : ''
 }
 /**
  * 提交的值除以100
@@ -80,7 +80,7 @@ export const divideFee = (fee) => {
  * @param {*} fee
  */
 export const divideFeeOrNull = (fee) => {
-  return isNumber(fee) ? divideFee(fee) : fee
+  return isNumber(fee) ? divideFee(fee) : ''
 }
 /**
  * 保留4位小数字符串类型

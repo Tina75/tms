@@ -104,5 +104,14 @@ export default {
       url: '/order/config/get',
       data
     })
+  },
+  getPrintDetail (orderIds) {
+    return server({
+      method: 'post',
+      url: '/order/getOrderAndDetailList',
+      data: {
+        orderIds
+      }
+    })
   }
 }

@@ -125,6 +125,7 @@
 </template>
 
 <script>
+import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
@@ -142,6 +143,7 @@ export default {
     PageTable,
     SelectInputForCity
   },
+  mixins: [ BasePage ],
   metaInfo: {
     title: '运营报表'
   },
@@ -214,7 +216,34 @@ export default {
           title: '订单号',
           key: 'orderNo',
           fixed: 'left',
-          width: 150
+          width: 150,
+          render: (h, params) => {
+            let renderHtml = [
+              h('a', {
+                props: {
+                  type: 'text'
+                },
+                style: {
+                  marginRight: '5px',
+                  color: '#418DF9'
+                },
+                on: {
+                  click: () => {
+                    this.openTab({
+                      path: '/order-management/order-detail',
+                      query: {
+                        id: params.row.orderNo,
+                        orderId: params.row.orderId,
+                        from: 'order',
+                        source: 'order'
+                      }
+                    })
+                  }
+                }
+              }, params.row.orderNo)
+            ]
+            return h('div', renderHtml)
+          }
         },
         {
           title: '客户订单号',
@@ -297,6 +326,11 @@ export default {
             // return h('span', (params.row.orderTotalFee / 100).toFixed(2))
             return renderFee(h, params.row.orderTotalFee)
           }
+        },
+        {
+          title: '开票税额',
+          key: 'invoiceAmountStr',
+          width: 180
         },
         {
           title: '代收货款',
@@ -434,16 +468,24 @@ export default {
             return renderFee(h, params.row.cashBack)
           }
         },
+        {
+          title: '利润',
+          key: 'profit',
+          width: 150,
+          render: (h, params) => {
+            return renderFee(h, params.row.profit)
+          }
+        },
         // {
         //   title: '外转方',
         //   key: 'transfereeName',
         //   width: 150
         // },
-        {
-          title: '回单号',
-          key: 'receiptNo',
-          width: 150
-        },
+        // {
+        //   title: '回单号',
+        //   key: 'receiptNo',
+        //   width: 150
+        // },
         {
           title: '回单状态',
           key: 'receiptStatus',

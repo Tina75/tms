@@ -103,7 +103,8 @@ export default {
         cashBack: null,
         tollFee: null, // 路桥费
         mileage: null, // 计费里程 v1.06 新增
-        accommodation: null // 住宿费 v1.08 新增
+        accommodation: null, // 住宿费 v1.08 新增
+        infoFee: null // 信息费 v1.11 新增
       },
       settlementType: '',
       settlementPayInfo: [],
@@ -135,6 +136,7 @@ export default {
         delete this.payment.tollFee // 提货去掉路桥费
         delete this.payment.mileage // 提货去掉计费里程
         delete this.payment.accommodation // 提货去掉住宿费
+        delete this.payment.infoFee // 提货去掉信息费
       } else {
         for (let key in this.financeRulesInfo) {
           this.financeRulesInfo[key] = this.orderCreate[key]
@@ -209,6 +211,7 @@ export default {
           delete this.payment.tollFee // 提货去掉路桥费
           delete this.payment.tollFee // 提货去掉计费里程
           delete this.payment.accommodation // 提货去掉住宿费
+          delete this.payment.infoFee // 提货去掉信息费
         }
 
         this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'

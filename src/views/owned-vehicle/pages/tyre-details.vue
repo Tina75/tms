@@ -22,7 +22,7 @@
             <Col span="6">
             <div>
               <span class="label">金额：</span>
-              {{divideFee(infoData.cost)}}<span>元</span>
+              {{infoData.cost | toPoint}}<span>元</span>
             </div>
             </Col>
             <Col span="6">
@@ -42,14 +42,14 @@
             <Col span="6">
             <div>
               <span class="label">换上公里数：</span>
-              <span v-if="infoData.setupMileage">{{infoData.setupMileage / 1000}}<span>公里</span></span>
+              <span v-if="infoData.setupMileage || infoData.setupMileage === 0">{{infoData.setupMileage | mileage}}<span>公里</span></span>
               <span v-else>-</span>
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">换下公里数：</span>
-              <span v-if="infoData.uninstallMileage">{{infoData.uninstallMileage / 1000}}<span>公里</span></span>
+              <span v-if="infoData.uninstallMileage || infoData.uninstallMileage === 0">{{infoData.uninstallMileage | mileage}}<span>公里</span></span>
               <span v-else>-</span>
             </div>
             </Col>
@@ -100,9 +100,8 @@ import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { mapActions } from 'vuex'
-import { divideFee } from '@/libs/js/config'
 export default {
-  name: 'insurance-details',
+  name: 'tyre-details',
   components: { RecordList, prepareOpenSwipe },
   mixins: [ BasePage ],
   props: {
@@ -123,9 +122,6 @@ export default {
   },
   methods: {
     ...mapActions(['tyreQueryById', 'tyreDeleteById']),
-    divideFee (fee) {
-      return divideFee(fee)
-    },
     queryById () {
       let vm = this
       vm.tyreQueryById({ id: vm.infoData.id }).then(res => {

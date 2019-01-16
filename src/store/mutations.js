@@ -7,7 +7,7 @@ export default{
   },
   updateMsgCount (state, payload) {
     const msg = { ...payload }
-    msg.all = msg.sysNum + msg.orderNum + msg.carrierNum
+    msg.all = (msg.sysNum || 0) + (msg.orderNum || 0) + (msg.carrierNum || 0)
     state.messageCount = msg
   },
   initTableColumns (state, list) {
