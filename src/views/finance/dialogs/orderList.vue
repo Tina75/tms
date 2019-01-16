@@ -171,11 +171,12 @@ export default {
             url: '/finance/reconcile/delete',
             method: 'get',
             data: {
-              reconcileId: data.row.id
+              reconcileId: data.row.reconcileId
             }
           }).then(res => {
-            _this.getOrderList()
-            // _this.ok()
+            // _this.getOrderList()
+            _this.close()
+            _this.ok()
           }).catch()
         }
       })
@@ -194,6 +195,7 @@ export default {
         this.orderData.totalFeeText = getFeeText(res.data.data.totalFee)
         this.orderData.list = res.data.data.subOrderInfos.map(item => {
           return Object.assign({}, item, {
+            reconcileId: res.data.data.reconcileId,
             totalFeeText: getFeeText(item.totalFee),
             orderTimeText: new Date(item.orderTime).Format('yyyy-MM-dd hh:mm')
           })
