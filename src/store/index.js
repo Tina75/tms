@@ -176,7 +176,9 @@ const state = {
     addCargoInfos: []
   },
   // 导入订单批次号
-  importId: null
+  importId: null,
+  // 公司信息
+  companyInfo: {}
 }
 
 export default new Vuex.Store({

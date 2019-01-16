@@ -10,6 +10,12 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
     const { permission, ...userInfo } = data.data
     commit('initUserInfo', userInfo)
     commit('initPermissions', permission || [])
+    // 受理开单打印需要
+    commit('setCompanyInfo', {
+      name: userInfo.companyName,
+      shortName: userInfo.shortName,
+      logoUrl: userInfo.logoUrl
+    })
     return data.data
   }).catch(e => {
     return Promise.reject(e)

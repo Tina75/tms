@@ -131,7 +131,7 @@ export const multiplyMileage = (fee) => {
  * @param {*} fee
  */
 export const divideMileage = (fee) => {
-  return roundMileage(NP.divide(fee || 0, 1000))
+  return isNumber(fee) ? roundMileage(NP.divide(fee || 0, 1000)) : ''
 }
 /**
  * 字符串化，保留小数

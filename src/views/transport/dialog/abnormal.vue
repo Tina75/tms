@@ -398,7 +398,8 @@ export default {
       'OrderSet',
       'WeightOption',
       'AbnormalCargoInfos', // 异常货物信息(少货、货损)
-      'AbnormalAddCargoInfos' // 异常货物信息(多货)
+      'AbnormalAddCargoInfos', // 异常货物信息(多货)
+      'DispatchSet'
     ]),
     headers () {
       const res = this.headersOption2.filter(el => {
@@ -410,14 +411,32 @@ export default {
   },
 
   created () {
-    this.settlementPayInfo = this.type === 3 ? [
-      { payType: 1, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
-      { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
-      { payType: 3, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 },
-      { payType: 4, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
-    ] : [
-      { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
-    ]
+    if (this.type === 3) {
+      if (this.DispatchSet.paySettlementAdvanceOption === 1) { // 预付
+        this.settlementPayInfo.push(
+          { payType: 1, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
+        )
+      }
+      if (this.DispatchSet.paySettlementArriveOption === 1) { // 到付
+        this.settlementPayInfo.push(
+          { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
+        )
+      }
+      if (this.DispatchSet.paySettlementReceiptOption === 1) { // 回付
+        this.settlementPayInfo.push(
+          { payType: 3, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
+        )
+      }
+      if (this.DispatchSet.paySettlementTailOption === 1) { // 尾款
+        this.settlementPayInfo.push(
+          { payType: 4, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
+        )
+      }
+    } else {
+      this.settlementPayInfo = [
+        { payType: 2, fuelCardAmount: '', cashAmount: '', isCardDisabled: 0, isCashDisabled: 0 }
+      ]
+    }
     this.fetchData()
     // 动态添加吨或公斤列
     if (this.WeightOption === 1) {

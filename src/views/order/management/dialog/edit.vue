@@ -124,7 +124,7 @@
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
-          <span class="tips" style="position: absolute;margin-left: 0;">{{ collectTips }}</span>
+          <span class="tips" style="position: absolute;left: -88px;">{{ collectTips }}</span>
         </FormItem>
         </Col>
         <Col span="6">

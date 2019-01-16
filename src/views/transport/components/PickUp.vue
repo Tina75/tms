@@ -24,6 +24,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import PickupFee from './PickupFee'
 import SendCarrierInfo from './SendCarrierInfo'
 import OwnSendInfo from './ownSendInfo'
+import { mapGetters } from 'vuex'
 // import Server from '@/libs/js/server'
 
 export default {
@@ -48,7 +49,14 @@ export default {
       sendWay: '1'
     }
   },
-
+  computed: {
+    ...mapGetters([
+      'DispatchSet'
+    ])
+  },
+  created () {
+    this.sendWay = this.DispatchSet.selfSendOption === 1 ? '2' : '1' // 派车方式优先读取配置
+  },
   methods: {
     // 承运商info传参
     getCarrierInfo () {

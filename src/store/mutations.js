@@ -130,6 +130,13 @@ export default{
    */
   setImported (state, id) {
     state.importId = id
+  },
+  /**
+   * 设置公司信息
+   * @param {*} company
+   */
+  setCompanyInfo (state, company) {
+    state.companyInfo = company
   }
 }
 

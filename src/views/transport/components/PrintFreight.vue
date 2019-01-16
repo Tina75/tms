@@ -58,6 +58,7 @@
                 <span class="table-footer-item">其他：{{item.waybill.otherFee | fee}} 元</span>
                 <span class="table-footer-item">合计运费: {{item.waybill.totalFee | fee}} 元</span>
                 <span class="table-footer-item">结算方式：{{item.waybill.settlementType | payTypeFormatter}}</span>
+                <span class="table-footer-item">信息费：{{item.waybill.infoFee | fee}}元</span>
               </td>
             </tr>
           </tbody>

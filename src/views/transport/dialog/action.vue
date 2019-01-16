@@ -59,7 +59,7 @@ import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
 import _ from 'lodash'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'SendOrPickAction',
   components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee },
@@ -113,14 +113,33 @@ export default {
       allocationStrategy: null // 编辑的时候需要带入的分摊策略，1、按订单数  2、按件数 3、按重量 4、按体积
     }
   },
+  computed: {
+    ...mapGetters([
+      'DispatchSet'
+    ])
+  },
   created () {
     if (this.type === 'sendCar') {
-      this.settlementPayInfo = [
-        { payType: 1, fuelCardAmount: '', cashAmount: '' },
-        { payType: 2, fuelCardAmount: '', cashAmount: '' },
-        { payType: 3, fuelCardAmount: '', cashAmount: '' },
-        { payType: 4, fuelCardAmount: '', cashAmount: '' }
-      ]
+      if (this.DispatchSet.paySettlementAdvanceOption === 1) { // 预付
+        this.settlementPayInfo.push(
+          { payType: 1, fuelCardAmount: '', cashAmount: '' }
+        )
+      }
+      if (this.DispatchSet.paySettlementArriveOption === 1) { // 到付
+        this.settlementPayInfo.push(
+          { payType: 2, fuelCardAmount: '', cashAmount: '' }
+        )
+      }
+      if (this.DispatchSet.paySettlementReceiptOption === 1) { // 回付
+        this.settlementPayInfo.push(
+          { payType: 3, fuelCardAmount: '', cashAmount: '' }
+        )
+      }
+      if (this.DispatchSet.paySettlementTailOption === 1) { // 尾款
+        this.settlementPayInfo.push(
+          { payType: 4, fuelCardAmount: '', cashAmount: '' }
+        )
+      }
     } else {
       this.settlementPayInfo = [
         { payType: 2, fuelCardAmount: '', cashAmount: '' }
