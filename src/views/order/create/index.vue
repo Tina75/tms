@@ -742,7 +742,7 @@ export default {
         .then((orderDetail) => {
           vm.loading = false
           for (let key in vm.orderForm) {
-            vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
+            vm.orderForm[key] = orderDetail[key]
           }
           this.consignerCargoes = orderDetail.orderCargoList.map((item) => new Cargo(item, true))
           // 加上id
