@@ -34,7 +34,7 @@
             <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" class="ruleBasic" inline>
               <span>按</span>
               <FormItem prop="ruleType" style="width: 120px">
-                <Select v-model="ruleDetail.ruleType" transfer @on-change="ruleTypeChange()">
+                <Select v-model="ruleDetail.ruleType" transfer >
                   <Option v-for="(value, key) in ruleTypeMap"  :key="key" :value="key">{{value}}</Option>
                 </Select>
               </FormItem>
@@ -117,18 +117,6 @@
                             <span>{{unitMap[ruleDetail.ruleType]}}</span>
                           </Form>
                         </div>
-                        <div v-show="ruleDetail.ruleType!=='5'&&ruleDetail.ruleType!=='8'">
-                          <span>单价</span>
-                          <span style="margin-left: 5px">=</span>
-                          <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
-                                inline>
-                            <FormItem prop="price" inline style="margin-bottom: 0">
-                              <!--<Input v-model="el.price" />-->
-                              <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
-                            </FormItem>
-                            <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
-                          </Form>
-                        </div>
                         <!--车型-->
                         <div v-show="ruleDetail.ruleType==='5'">
                           <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
@@ -154,17 +142,6 @@
                             </FormItem>
                           </Form>
                         </div>
-                        <div v-show="ruleDetail.ruleType==='5'">
-                          <span>包车价</span>
-                          <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
-                                inline>
-                            <FormItem prop="price" inline style="margin-bottom: 0">
-                              <!--<Input v-model="el.price" />-->
-                              <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
-                            </FormItem>
-                            <span>元</span>
-                          </Form>
-                        </div>
                         <!--件数-->
                         <div v-show="ruleDetail.ruleType==='8'">
                           <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
@@ -177,8 +154,9 @@
                             <span>{{unitMap[ruleDetail.ruleType]}}</span>
                           </Form>
                         </div>
-                        <div v-show="ruleDetail.ruleType==='8'">
-                          <span>单价</span>
+                        <div>
+                          <span v-if="ruleDetail.ruleType==='5'">包车价</span>
+                          <span v-else>单价</span>
                           <span style="margin-left: 5px">=</span>
                           <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
                                 inline>
@@ -186,7 +164,8 @@
                               <!--<Input v-model="el.price" />-->
                               <TagNumberInput v-model="el.price" :show-chinese="false"></TagNumberInput>
                             </FormItem>
-                            <span>元/{{valueMap[ruleDetail.ruleType]}}</span>
+                            <span v-if="ruleDetail.ruleType==='5'">元</span>
+                            <span v-else>元/{{valueMap[ruleDetail.ruleType]}}</span>
                           </Form>
                         </div>
                         <div class="add_decrease">
