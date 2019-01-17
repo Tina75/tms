@@ -47,7 +47,24 @@ export default {
       this.consignerCargoes = this.cargoLists.map((item) => new Cargo(item, true))
     } else {
       if (this.orders.length === 1) {
-        this.consignerCargoes = [new Cargo({ orderNo: this.orders[0].value })]
+        const cargo = {
+          orderNo: this.orders[0].value,
+          cargoName: '',
+          cargoNo: '',
+          cargoCost: '',
+          unit: '',
+          weight: '',
+          volume: '',
+          quantity: '',
+          dimension: {
+            length: '',
+            width: '',
+            height: ''
+          },
+          remark1: '',
+          remark2: ''
+        }
+        this.consignerCargoes = [new Cargo(cargo)]
       } else {
         this.consignerCargoes = [new Cargo()]
       }

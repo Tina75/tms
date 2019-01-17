@@ -1,23 +1,23 @@
 <template>
   <Form ref="sendFeeForm" :label-width="82" :model="payment" :rules="rules" class="transport-detail" label-position="right">
     <div class="part" style="padding-bottom: 5px;">
-      <ul class="detail-field-group">
+      <ul v-if="sendWay === '1'" class="detail-field-group">
         <li v-if="source !== 'abnormal'">
           <FormItem label="计费里程：" prop="mileage">
             <TagNumberInput :show-chinese="false" :min="0" v-model="payment.mileage" :precision="1" class="detail-payment-input-send"></TagNumberInput>
             <span class="unit-yuan">公里</span>
           </FormItem>
         </li>
-        <li>
-          <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee">
+        <li v-if="DispatchSet.deliverOutFreightFeeOption === 1">
+          <FormItem label="运输费：" prop="freightFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
             <span class="unit-yuan">元</span>
-            <a v-if="sendWay === '1' && source !== 'abnormal'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
+            <a v-if="source !== 'abnormal'" class="detail-payment-calc" @click.prevent="showChargeRules"><i class="icon font_family icon-jisuanqi1"></i></a>
           </FormItem>
         </li>
-        <li>
+        <li v-if="DispatchSet.deliverOutLoadFeeOption === 1">
           <FormItem label="装货费：" prop="loadFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
@@ -25,7 +25,7 @@
             <span class="unit-yuan">元</span>
           </FormItem>
         </li>
-        <li>
+        <li v-if="DispatchSet.deliverOutUnloadFeeOption === 1">
           <FormItem label="卸货费：" prop="unloadFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
@@ -33,7 +33,7 @@
             <span class="unit-yuan">元</span>
           </FormItem>
         </li>
-        <li v-if="source === 'abnormal'">
+        <li v-if="DispatchSet.deliverOutTollFeeOption === 1">
           <FormItem label="路桥费：" prop="tollFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
@@ -41,23 +41,7 @@
             <span class="unit-yuan">元</span>
           </FormItem>
         </li>
-        <li v-if="source !== 'abnormal'">
-          <FormItem label="路桥费：" prop="tollFee">
-            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
-              <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
-            </Tooltip>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-        </li>
-        <li v-if="sendWay === '2'">
-          <FormItem label="住宿费：" prop="accommodation">
-            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
-              <TagNumberInput v-model="payment.accommodation" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
-            </Tooltip>
-            <span class="unit-yuan">元</span>
-          </FormItem>
-        </li>
-        <li>
+        <li v-if="DispatchSet.deliverOutInsuranceFeeOption === 1">
           <FormItem label="保险费：" prop="insuranceFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
@@ -65,7 +49,7 @@
             <span class="unit-yuan">元</span>
           </FormItem>
         </li>
-        <li>
+        <li v-if="DispatchSet.deliverOutOtherFeeOption === 1">
           <FormItem label="其他：" prop="otherFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
@@ -74,8 +58,72 @@
           </FormItem>
         </li>
       </ul>
-      <Row class="detail-field-group">
-        <i-col v-if="sendWay === '1'" span="6">
+      <ul v-else class="detail-field-group">
+        <li v-if="source !== 'abnormal'">
+          <FormItem label="计费里程：" prop="mileage">
+            <TagNumberInput :show-chinese="false" :min="0" v-model="payment.mileage" :precision="1" class="detail-payment-input-send"></TagNumberInput>
+            <span class="unit-yuan">公里</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.deliverSelfOilFeeOption === 1">
+          <FormItem label="油费：" prop="freightFee">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.deliverSelfLoadFeeOption === 1">
+          <FormItem label="装货费：" prop="loadFee">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.deliverSelfUnloadFeeOption === 1">
+          <FormItem label="卸货费：" prop="unloadFee">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.deliverSelfTollFeeOption === 1">
+          <FormItem label="路桥费：" prop="tollFee">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.tollFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.deliverSelfAccommodationFeeOption === 1">
+          <FormItem label="住宿费：" prop="accommodation">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.accommodation" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.deliverSelfInsuranceFeeOption === 1">
+          <FormItem label="保险费：" prop="insuranceFee">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.deliverSelfOtherFeeOption === 1">
+          <FormItem label="其他：" prop="otherFee">
+            <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
+              <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
+            </Tooltip>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+      </ul>
+      <Row v-if="sendWay === '1' && DispatchSet.deliverOutInfoFeeOption === 1" class="detail-field-group">
+        <i-col span="6">
           <FormItem label="信息费：" prop="infoFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.infoFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
@@ -123,7 +171,7 @@
         <i-col v-if="sendFeeOrders.length > 1" span="8">
           <allocation-strategy ref="allocationStrategy" :allocation-orders="sendFeeOrders" :pass-allocation="feePassAllocation"></allocation-strategy>
         </i-col>
-        <i-col span="8">
+        <i-col v-if="DispatchSet.deliverOutCashBackFeeOption === 1" span="8">
           <FormItem label="返现运费：" prop="cashBack" class="detail-form-label">
             <TagNumberInput v-model="payment.cashBack" class="detail-payment-input" style="width: 180px;"></TagNumberInput>
             <span class="unit-yuan">元</span>
@@ -174,7 +222,7 @@ import { mapGetters } from 'vuex'
 import $bus from '@/libs/js/eventBus.js'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
-import { roundFee, multiplyMileage, multiplyFee } from '@/libs/js/config'
+import { roundFee, multiplyMileage, multiplyFeeOrNull } from '@/libs/js/config'
 import NP from 'number-precision'
 export default {
   name: 'SendFeeComponent',
@@ -216,8 +264,8 @@ export default {
           unloadFee: null,
           insuranceFee: null,
           otherFee: null,
-          cashBack: null, // 返现运费
           tollFee: null, // 路桥费
+          cashBack: null, // 返现运费
           mileage: null, // 计费里程
           accommodation: null, // 住宿费
           infoFee: null // 信息费
@@ -342,26 +390,34 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'carriers'
+      'carriers',
+      'DispatchSet'
     ]),
     // 计算总费用
     paymentTotal () {
-      let total = NP.plus(
-        Number(this.payment.freightFee),
-        Number(this.payment.loadFee),
-        Number(this.payment.unloadFee),
-        Number(this.payment.insuranceFee),
-        Number(this.payment.otherFee),
-        Number(this.payment.tollFee)
-      )
-      // total = Number(this.payment.freightFee) +
-      //         Number(this.payment.loadFee) +
-      //         Number(this.payment.unloadFee) +
-      //         Number(this.payment.insuranceFee) +
-      //         Number(this.payment.otherFee) +
-      //         Number(this.payment.tollFee)
-      if (this.sendWay === '2') total = NP.plus(total, Number(this.payment.accommodation)) // 自送要算住宿费
-      if (this.sendWay === '1') total = NP.minus(total, Number(this.payment.infoFee)) // 外转减掉信息费
+      let total
+      if (this.sendWay === '1') {
+        total = NP.plus(
+          Number(this.DispatchSet.deliverOutFreightFeeOption === 1 ? this.payment.freightFee : 0),
+          Number(this.DispatchSet.deliverOutLoadFeeOption === 1 ? this.payment.loadFee : 0),
+          Number(this.DispatchSet.deliverOutUnloadFeeOption === 1 ? this.payment.unloadFee : 0),
+          Number(this.DispatchSet.deliverOutTollFeeOption === 1 ? this.payment.tollFee : 0),
+          Number(this.DispatchSet.deliverOutInsuranceFeeOption === 1 ? this.payment.insuranceFee : 0),
+          Number(this.DispatchSet.deliverOutOtherFeeOption === 1 ? this.payment.otherFee : 0)
+        )
+        total = NP.minus(total, Number(this.DispatchSet.deliverOutInfoFeeOption === 1 ? this.payment.infoFee : 0)) // 外转减掉信息费
+      } else {
+        total = NP.plus(
+          Number(this.DispatchSet.deliverSelfOilFeeOption === 1 ? this.payment.freightFee : 0),
+          Number(this.DispatchSet.deliverSelfLoadFeeOption === 1 ? this.payment.loadFee : 0),
+          Number(this.DispatchSet.deliverSelfUnloadFeeOption === 1 ? this.payment.unloadFee : 0),
+          Number(this.DispatchSet.deliverSelfTollFeeOption === 1 ? this.payment.tollFee : 0),
+          Number(this.DispatchSet.deliverSelfAccommodationFeeOption === 1 ? this.payment.accommodation : 0),
+          Number(this.DispatchSet.deliverSelfInsuranceFeeOption === 1 ? this.payment.insuranceFee : 0),
+          Number(this.DispatchSet.deliverSelfOtherFeeOption === 1 ? this.payment.otherFee : 0)
+        )
+      }
+
       return roundFee(total)
     }
   },
@@ -444,24 +500,39 @@ export default {
     },
     // 格式化金额单位为分
     formatMoney () {
+      if (this.sendWay === '1') {
+        this.payment.freightFee = this.DispatchSet.deliverOutFreightFeeOption === 1 ? this.payment.freightFee : ''
+        this.payment.loadFee = this.DispatchSet.deliverOutLoadFeeOption === 1 ? this.payment.loadFee : ''
+        this.payment.unloadFee = this.DispatchSet.deliverOutUnloadFeeOption === 1 ? this.payment.unloadFee : ''
+        this.payment.tollFee = this.DispatchSet.deliverOutTollFeeOption === 1 ? this.payment.tollFee : ''
+        this.payment.insuranceFee = this.DispatchSet.deliverOutInsuranceFeeOption === 1 ? this.payment.insuranceFee : ''
+        this.payment.otherFee = this.DispatchSet.deliverOutOtherFeeOption === 1 ? this.payment.otherFee : ''
+        this.payment.infoFee = this.DispatchSet.deliverOutInfoFeeOption === 1 ? this.payment.infoFee : ''
+        this.payment.cashBack = this.DispatchSet.deliverOutCashBackFeeOption === 1 ? this.payment.cashBack : ''
+        delete this.payment.accommodation // 外转去掉住宿费
+      } else {
+        this.payment.freightFee = this.DispatchSet.deliverSelfOilFeeOption === 1 ? this.payment.freightFee : ''
+        this.payment.loadFee = this.DispatchSet.deliverSelfLoadFeeOption === 1 ? this.payment.loadFee : ''
+        this.payment.unloadFee = this.DispatchSet.deliverSelfUnloadFeeOption === 1 ? this.payment.unloadFee : ''
+        this.payment.tollFee = this.DispatchSet.deliverSelfTollFeeOption === 1 ? this.payment.tollFee : ''
+        this.payment.accommodation = this.DispatchSet.deliverSelfAccommodationFeeOption === 1 ? this.payment.accommodation : ''
+        this.payment.insuranceFee = this.DispatchSet.deliverSelfInsuranceFeeOption === 1 ? this.payment.insuranceFee : ''
+        this.payment.otherFee = this.DispatchSet.deliverSelfOtherFeeOption === 1 ? this.payment.otherFee : ''
+        delete this.payment.infoFee // 自送去掉信息费
+        delete this.payment.cashBack // 自送去掉返现费
+      }
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
         if (key === 'mileage') {
           temp[key] = multiplyMileage(temp[key])
         } else {
-          temp[key] = multiplyFee(temp[key])
+          temp[key] = multiplyFeeOrNull(temp[key])
         }
       }
-      temp.totalFee = multiplyFee(this.paymentTotal)
+      temp.totalFee = multiplyFeeOrNull(this.paymentTotal)
       if (this.source === 'abnormal') { // 异常没有计费里程和返现
         delete temp.cashBack
         delete temp.mileage
-      }
-      if (this.sendWay === '1') { // 外转去掉住宿费
-        delete temp.accommodation
-      }
-      if (this.sendWay === '2') { // 自送去掉信息费
-        delete temp.infoFee
       }
       return temp
     },

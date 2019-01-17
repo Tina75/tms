@@ -6,7 +6,7 @@ import _ from 'lodash'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/pages/client'
 import { mapActions, mapGetters } from 'vuex'
-import { roundFee, roundVolume, roundWeight, roundWeightKg, divideFee } from '@/libs/js/config'
+import { roundFee, roundVolume, roundWeight, roundWeightKg, divideFee, divideFeeOrNull } from '@/libs/js/config'
 import NP from 'number-precision'
 export default {
   data () {
@@ -241,7 +241,7 @@ export default {
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
       // return typeof money === 'number' ? money / 100 : null
-      return (typeof money === 'number' && money !== 0) ? divideFee(money) : null
+      return divideFeeOrNull(money)
     },
 
     // 格式化金额单位为分

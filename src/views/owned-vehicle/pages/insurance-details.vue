@@ -54,14 +54,14 @@
             <Col span="6">
             <div>
               <span class="label">交强险金额：</span>
-              <span v-if="infoData.trafficFee || infoData.trafficFee === 0">{{infoData.trafficFee | toPoint}}元</span>
+              <span v-if="infoData.trafficFee !== ''">{{infoData.trafficFee | toPoint}}元</span>
               <span v-else>-</span>
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">商业险金额:</span>
-              <span v-if="infoData.businessFee || infoData.businessFee === 0">{{infoData.businessFee | toPoint}}元</span>
+              <span v-if="infoData.businessFee !== ''">{{infoData.businessFee | toPoint}}元</span>
               <span v-else>-</span>
             </div>
             </Col>

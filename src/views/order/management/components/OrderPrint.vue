@@ -2,7 +2,13 @@
   <Modal v-model="visible" transfer @on-cancel="visible=false">
     <div ref="htmlContent">
       <div v-for="(data, index) in list" :key="index" class="order-detail">
-        <h3 class="order-title">{{ data.companyInfo.shortName || data.companyInfo.name }}公司货物托运单</h3>
+        <h3 class="order-title">
+          <!-- <span :style="'display: inline-block;width: 69px;height: 40px;background-image: url(' + CompanyInfo.logoUrl + '?x-oss-process=image/resize,w_69);background-repeat: no-repeat;background-position: center;vertical-align: middle;margin-right: 10px;'"></span> -->
+          <img
+            v-if="CompanyInfo.logoUrl"
+            :src="CompanyInfo.logoUrl" alt="" class="logo-url">
+          <span>{{ CompanyInfo.shortName || CompanyInfo.name }}公司货物托运单</span>
+        </h3>
         <ul class="order-sub-title">
           <li>托运时间：
             <span v-if="data.deliveryTime">{{data.deliveryTime | datetime('yyyy-MM-dd')}}</span>
@@ -199,6 +205,7 @@ import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
 import { multiplyFee, getFeeText, multiplyRate, divideFee } from '@/libs/js/config'
 import { money2chinese, zncn2znhant } from '@/libs/js/util'
+import { mapGetters } from 'vuex'
 export default {
   filters: {
     fee: getFeeText
@@ -227,6 +234,12 @@ export default {
           color: #333;
           letter-spacing: 2px;
           margin: 37px 0 42px 0;
+        }
+        .logo-url {
+          width: 69px;
+          height: 40px;
+          vertical-align: middle;
+          margin-right: 10px;
         }
         .order-sub-title {
           padding: 0;
@@ -319,6 +332,11 @@ export default {
       `,
       visible: false
     }
+  },
+  computed: {
+    ...mapGetters([
+      'CompanyInfo'
+    ])
   },
   mounted () {
     this.printer = new Printd()

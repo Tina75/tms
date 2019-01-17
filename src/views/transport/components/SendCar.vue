@@ -15,7 +15,8 @@
         ref="sendFee"
         :mileage="mileage"
         :send-fee-orders="sendOrders"
-        :finance-rules-info="financeRulesInfo">
+        :finance-rules-info="financeRulesInfo"
+        :settlement-pay-info="settlementPayInfo">
       </send-fee>
     </div>
     <div v-else>
@@ -33,6 +34,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import SendFee from './SendFee'
 import SendCarrierInfo from './SendCarrierInfo'
 import OwnSendInfo from './ownSendInfo'
+import { mapGetters } from 'vuex'
 // import Server from '@/libs/js/server'
 
 export default {
@@ -60,10 +62,38 @@ export default {
   },
   data () {
     return {
-      sendWay: '1'
+      sendWay: '1',
+      settlementPayInfo: []
     }
   },
-
+  computed: {
+    ...mapGetters([
+      'DispatchSet'
+    ])
+  },
+  created () {
+    this.sendWay = this.DispatchSet.selfSendOption === 1 ? '2' : '1' // 派车方式优先读取配置
+    if (this.DispatchSet.paySettlementAdvanceOption === 1) { // 预付
+      this.settlementPayInfo.push(
+        { payType: 1, fuelCardAmount: '', cashAmount: '' }
+      )
+    }
+    if (this.DispatchSet.paySettlementArriveOption === 1) { // 到付
+      this.settlementPayInfo.push(
+        { payType: 2, fuelCardAmount: '', cashAmount: '' }
+      )
+    }
+    if (this.DispatchSet.paySettlementReceiptOption === 1) { // 回付
+      this.settlementPayInfo.push(
+        { payType: 3, fuelCardAmount: '', cashAmount: '' }
+      )
+    }
+    if (this.DispatchSet.paySettlementTailOption === 1) { // 尾款
+      this.settlementPayInfo.push(
+        { payType: 4, fuelCardAmount: '', cashAmount: '' }
+      )
+    }
+  },
   methods: {
     // 外转info传参
     getCarrierInfo () {

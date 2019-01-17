@@ -217,8 +217,8 @@ export default {
     // 设置查询参数
     setFetchParams () {
       let params = {
-        status: this.tabStatus,
-        order: this.order === 'asc' ? 'asc' : 'desc'
+        status: this.tabStatus
+        // order: this.order === 'asc' ? 'asc' : 'desc'
       }
       if (this.inSearching) {
         if (this.isEasySearch) {

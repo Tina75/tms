@@ -57,7 +57,7 @@
               <Form ref="ruleBasic" :model="ruleDetail" :rules="basicValidate" class="ruleBasic" inline>
                 <span>按</span>
                 <FormItem prop="ruleType" style="width: 120px">
-                  <Select v-model="ruleDetail.ruleType" transfer>
+                  <Select v-model="ruleDetail.ruleType" transfer @on-change="ruleTypeChange()">
                     <Option v-for="(value, key) in ruleTypeMap"
                             :key="key" :value="key">{{value}}
                     </Option>
@@ -134,7 +134,7 @@
                     <div slot="content">
                       <ul class="rule-detail">
                         <li v-for="(el, no) in item.chargeRules" :key="no" class="rule-detail-item">
-                          <div v-if="ruleDetail.ruleType!=='5'&&ruleDetail.ruleType!=='8'">
+                          <div v-show="ruleDetail.ruleType!=='5'&&ruleDetail.ruleType!=='8'">
                             <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
                             <span style="margin-left: 5px">≥</span>
                             <Form ref="ruleBase" :model="el" :rules="baseValidate" style="display: inline-block"
@@ -147,7 +147,7 @@
                               <span>{{unitMap[ruleDetail.ruleType]}}</span>
                             </Form>
                           </div>
-                          <div v-if="ruleDetail.ruleType!=='5'&&ruleDetail.ruleType!=='8'">
+                          <div v-show="ruleDetail.ruleType!=='5'&&ruleDetail.ruleType!=='8'">
                             <span>单价</span>
                             <span style="margin-left: 5px">=</span>
                             <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
@@ -160,7 +160,7 @@
                             </Form>
                           </div>
                           <!--车型-->
-                          <div v-if="ruleDetail.ruleType==='5'">
+                          <div v-show="ruleDetail.ruleType==='5'">
                             <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
                             <Form ref="ruleCar" :model="el" :rules="carValidate"   style="display: inline-block"
                                   inline>
@@ -184,7 +184,7 @@
                               </FormItem>
                             </Form>
                           </div>
-                          <div v-if="ruleDetail.ruleType==='5'">
+                          <div v-show="ruleDetail.ruleType==='5'">
                             <span>包车价</span>
                             <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"
                                   inline>
@@ -196,7 +196,7 @@
                             </Form>
                           </div>
                           <!--件数-->
-                          <div v-if="ruleDetail.ruleType==='8'">
+                          <div v-show="ruleDetail.ruleType==='8'">
                             <span>{{valueTypeMap[ruleDetail.ruleType]}}</span>
                             <span style="margin-left: 5px"></span>
                             <Form ref="cargoName" :model="el" :rules="cargoNameValidate" style="display: inline-block"
@@ -207,7 +207,7 @@
                               <span>{{unitMap[ruleDetail.ruleType]}}</span>
                             </Form>
                           </div>
-                          <div v-if="ruleDetail.ruleType==='8'">
+                          <div v-show="ruleDetail.ruleType==='8'">
                             <span>单价</span>
                             <span style="margin-left: 5px">=</span>
                             <Form ref="rulePrice" :model="el" :rules="priceValidate" style="display: inline-block"

@@ -93,7 +93,7 @@
             <div class="detail-part-title">
               <span>货物明细</span>
             </div>
-            <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
+            <Table :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading" class="detail-field-table"></Table>
             <div class="table-footer">
               <span class="table-footer-title">总计</span>
               <span>总货值：{{ orderTotal.cargoCost }}元</span>
@@ -108,26 +108,58 @@
             <div class="detail-part-title">
               <span>应付费用</span>
             </div>
-            <ul class="detail-field-group">
-              <li>
-                <span class="detail-field-title-sm">{{ info.assignCarType === 1 ? '运输费：' : '油费：' }}</span>
-                <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
+            <ul v-if="info.assignCarType === 1" class="detail-field-group">
+              <li v-if="DispatchSet.pickOutFreightFeeOption === 1">
+                <span class="detail-field-title-sm">运输费：</span>
+                <span v-if="payment.freightFee !== ''" class="detail-field-fee">{{ payment.freightFee }}元</span>
+                <span v-else>-</span>
               </li>
-              <li>
+              <li v-if="DispatchSet.pickOutLoadFeeOption === 1">
                 <span class="detail-field-title-sm">装货费：</span>
-                <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
+                <span v-if="payment.loadFee !== ''" class="detail-field-fee">{{ payment.loadFee }}元</span>
+                <span v-else>-</span>
               </li>
-              <li>
+              <li v-if="DispatchSet.pickOutUnloadFeeOption === 1">
                 <span class="detail-field-title-sm">卸货费：</span>
-                <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
+                <span v-if="payment.unloadFee !== ''" class="detail-field-fee">{{ payment.unloadFee }}元</span>
+                <span v-else>-</span>
               </li>
-              <li>
+              <li v-if="DispatchSet.pickOutInsuranceFeeOption === 1">
                 <span class="detail-field-title-sm">保险费：</span>
-                <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
+                <span v-if="payment.insuranceFee !== ''" class="detail-field-fee">{{ payment.insuranceFee }}元</span>
+                <span v-else>-</span>
               </li>
-              <li>
+              <li v-if="DispatchSet.pickOutOtherFeeOption === 1">
                 <span class="detail-field-title-sm">其他：</span>
-                <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
+                <span v-if="payment.otherFee !== ''" class="detail-field-fee">{{ payment.otherFee }}元</span>
+                <span v-else>-</span>
+              </li>
+            </ul>
+            <ul v-else class="detail-field-group">
+              <li v-if="DispatchSet.pickSelfOilFeeOption === 1">
+                <span class="detail-field-title-sm">油费：</span>
+                <span v-if="payment.freightFee !== ''" class="detail-field-fee">{{ payment.freightFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickSelfLoadFeeOption === 1">
+                <span class="detail-field-title-sm">装货费：</span>
+                <span v-if="payment.loadFee !== ''" class="detail-field-fee">{{ payment.loadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickSelfUnloadFeeOption === 1">
+                <span class="detail-field-title-sm">卸货费：</span>
+                <span v-if="payment.unloadFee !== ''" class="detail-field-fee">{{ payment.unloadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickSelfInsuranceFeeOption === 1">
+                <span class="detail-field-title-sm">保险费：</span>
+                <span v-if="payment.insuranceFee !== ''" class="detail-field-fee">{{ payment.insuranceFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickSelfOtherFeeOption === 1">
+                <span class="detail-field-title-sm">其他：</span>
+                <span v-if="payment.otherFee !== ''" class="detail-field-fee">{{ payment.otherFee }}元</span>
+                <span v-else>-</span>
               </li>
             </ul>
             <Row class="detail-field-group">
@@ -231,7 +263,7 @@
         </div>
         <Button class="detail-field-button" type="primary"
                 @click="addOrder('pickup')">添加订单</Button>
-        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <Table :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}元</span>
@@ -288,7 +320,7 @@ import _ from 'lodash'
 import Exception from './exception.vue'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import allocationStrategy from '../constant/allocation.js'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import CarPhoto from './components/car-photo.vue'
 import { divideFee } from '@/libs/js/config'
@@ -429,7 +461,7 @@ export default {
           key: 'cargoName',
           minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoName)
+            return this.scopedSlotsRender(h, p, 'cargoName')
           }
         },
         {
@@ -437,7 +469,7 @@ export default {
           key: 'cargoNo',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoNo)
+            return this.scopedSlotsRender(h, p, 'cargoNo')
           }
         },
         {
@@ -445,7 +477,7 @@ export default {
           key: 'unit',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.unit)
+            return this.scopedSlotsRender(h, p, 'unit')
           }
         },
         {
@@ -453,7 +485,7 @@ export default {
           key: 'quantity',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
+            return this.scopedSlotsRender(h, p, 'quantity', 0)
           }
         },
         {
@@ -461,7 +493,8 @@ export default {
           key: 'cargoCost',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, divideFee(p.row.cargoCost))
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', divideFee(cargo.cargoCost))))
             // return this.tableDataRender(h, p.row.cargoCost / 100)
           }
         },
@@ -470,12 +503,13 @@ export default {
           key: 'volume',
           width: 120,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
+            return this.scopedSlotsRender(h, p, 'volume', 0)
           }
         },
         {
           title: '包装尺寸（毫米）',
           key: 'dimension',
+          width: 180,
           render: (h, p) => {
             let text = ''
             if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
@@ -483,7 +517,7 @@ export default {
             } else {
               text = '-'
             }
-            return h('span', text)
+            return this.scopedSlotsRender(h, p, '', text)
           }
         },
         {
@@ -524,7 +558,50 @@ export default {
       imageItems: [] // 需要展示的车况照片list
     }
   },
-
+  computed: {
+    ...mapGetters([
+      'DispatchSet'
+    ]),
+    cargoGroupByOrderNo () {
+      // 以orderNo分组后的货物明细数据
+      let _cargoMapById = {}
+      this.detail.forEach((cargo) => {
+        // 单独提取货物的字段
+        let {
+          cargoCost,
+          cargoName,
+          packing,
+          quantity,
+          remark1,
+          remark2,
+          unit,
+          volume,
+          weight,
+          weightKg,
+          cargoNo,
+          ...rest
+        } = cargo
+        if (!_cargoMapById[cargo.orderId]) {
+          _cargoMapById[cargo.orderId] = rest
+          _cargoMapById[cargo.orderId].cargoList = []
+        }
+        _cargoMapById[cargo.orderId].cargoList.push({
+          cargoCost,
+          cargoName,
+          packing,
+          quantity,
+          remark1,
+          remark2,
+          unit,
+          volume,
+          weight,
+          weightKg,
+          cargoNo
+        })
+      })
+      return Object.values(_cargoMapById)
+    }
+  },
   mounted () {
     // 判断显示吨列或公斤列
     if (this.WeightOption === 1) {

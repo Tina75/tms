@@ -233,15 +233,29 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 40,
+          width: 50,
           render: (h, params) => {
-            return (this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301)) ? h('a', {
-              on: {
-                click: () => {
-                  this.writeOff(params)
+            let renderHtml = []
+            if ((this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301))) {
+              renderHtml.push(h('a', {
+                on: {
+                  click: () => {
+                    this.writeOff(params)
+                  }
+                },
+                style: {
+                  marginRight: '10px'
                 }
-              }
-            }, '核销') : ''
+              }, '核销'))
+            }
+            return renderHtml
+            // return (this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301)) ? h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.writeOff(params)
+            //     }
+            //   }
+            // }, '核销') : ''
           }
         },
         {
