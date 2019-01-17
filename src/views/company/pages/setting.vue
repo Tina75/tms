@@ -157,6 +157,7 @@
             <span class="imageLogo">
               <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
               <div
+                v-imgFormat="formCompany.logoUrl"
                 :style="(formCompany.logoUrl && !isEdit) ? 'height: 90px;width: 96px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position:center;cursor:pointer;' : ''"
                 class="imageLogoDiv"
                 @click="handleView(0, 'logo')">
@@ -185,6 +186,7 @@
             </image-title>
             <div v-for="(img,index) in busiIntroducePic" v-show="!isEdit" :key="img.key" class="infoImage">
               <div
+                v-imgFormat="img.url"
                 :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
                 class="fileImage"
                 @click="handleView(index, 'InfoIntro')">
@@ -214,6 +216,7 @@
             </image-title>
             <div v-for="(img,index) in busiAdvantcePic" v-show="!isEdit" :key="img.key" class="infoImage">
               <div
+                v-imgFormat="img.url"
                 :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
                 class="fileImage"
                 @click="handleView(index, 'Advantce')">
@@ -241,6 +244,7 @@
             </image-title>
             <div v-for="(img,index) in companyPhoto" v-show="!isEdit" :key="img.key" class="infoImage">
               <div
+                v-imgFormat="img.url"
                 :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
                 class="fileImage"
                 @click="handleView(index, 'company')">
@@ -271,6 +275,7 @@
               </image-title>
               <div v-for="(img,index) in wxQrPic" v-show="!isEdit" :key="img.key" class="infoImage">
                 <div
+                  v-imgFormat="img.url"
                   :style="'height: 90px;width: 96px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
                   class="fileImage"
                   @click="handleView(index, 'wx')">
@@ -292,6 +297,7 @@
             <up-load v-show="isEdit" ref="upLoadsBanner" max-count="1" max-size="10"></up-load>
             <div v-if="formCompany.homeBanner && !isEdit" class="infoImage">
               <div
+                v-imgFormat="formCompany.homeBanner"
                 :style="'height: 90px;background-image: url(' + formCompany.homeBanner + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
                 class="fileImage"
                 @click="handleView(0, 'banner')">

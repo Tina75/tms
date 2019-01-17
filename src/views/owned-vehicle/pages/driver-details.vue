@@ -47,6 +47,7 @@
           <div v-for="img in imageItems" :key="img.index" class="infoImage">
             <div :v-if="img">
               <div
+                v-imgFormat="img.src"
                 :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
                 class="fileImage"
                 @click="handleView(img.count)">

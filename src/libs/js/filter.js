@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import City from './city.js'
 import { getMileageText, getFeeText } from './config'
+const URL_HOST = process.env.VUE_APP_IMG_HOST
 /**
  * 时间格式化
  */
@@ -71,4 +72,11 @@ Vue.filter('mileage', function (mileage) {
 Vue.filter('cityFormatter', function (code) {
   if (!code) return ''
   return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
+})
+
+Vue.directive('imgFormat', {
+  bind: function (el, binding) {
+    if (binding.value.indexOf('aliyuncs.com') > 0) return
+    el.style.backgroundImage = 'url(' + `${URL_HOST}${binding.value}?x-oss-process=image/resize,m_fill,h_220,w_220` + ')'
+  }
 })
