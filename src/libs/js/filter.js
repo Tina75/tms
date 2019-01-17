@@ -74,9 +74,8 @@ Vue.filter('cityFormatter', function (code) {
   return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
 })
 
-Vue.directive('imgFormat', {
-  bind: function (el, binding) {
-    if (binding.value.indexOf('aliyuncs.com') > 0) return
-    el.style.backgroundImage = 'url(' + `${URL_HOST}${binding.value}?x-oss-process=image/resize,m_fill,h_220,w_220` + ')'
-  }
+Vue.directive('imgFormat', function (el, binding) {
+  if (!binding.value) return
+  if (binding.value.indexOf('aliyuncs.com') > 0) return
+  el.style.backgroundImage = 'url(' + `${URL_HOST}${binding.value}?x-oss-process=image/resize,m_fill,h_220,w_220` + ')'
 })
