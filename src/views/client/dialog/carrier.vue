@@ -167,6 +167,12 @@
       </Row>
       <Row>
         <Col span="8">
+        <FormItem label="客服联系电话：" prop="customerCarrierPhone">
+          <!-- <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/> -->
+          <SelectInput v-model="validate.company.customerCarrierPhone" :maxlength="phoneLength(validate.company.customerCarrierPhone)" :formatter="formatePhoneNum" ></SelectInput>
+        </FormItem>
+        </Col>
+        <Col span="8">
         <FormItem label="结算方式：">
           <Select v-model="validate.company.payType" transfer clearable>
             <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
@@ -258,6 +264,7 @@ export default {
           carrierName: '',
           carrierPrincipal: '',
           carrierPhone: '',
+          customerCarrierPhone: '', // 客户联系电话，v1.11新增
           payType: '', // 支付方式1：现付 2：到付 3：回单付 4：月结
           remark: ''
         }
@@ -296,6 +303,9 @@ export default {
           ],
           carrierPhone: [
             { required: true, message: '联系电话不能为空', trigger: 'blur' },
+            { validator: validatePhone, trigger: 'blur' }
+          ],
+          customerCarrierPhone: [
             { validator: validatePhone, trigger: 'blur' }
           ]
         }
@@ -406,6 +416,7 @@ export default {
         carrierName: this.validate.company.carrierName,
         carrierPrincipal: this.validate.company.carrierPrincipal,
         carrierPhone: this.validate.company.carrierPhone,
+        customerCarrierPhone: this.validate.company.customerCarrierPhone,
         payType: this.validate.company.payType,
         remark: this.validate.company.remark
       }
@@ -436,6 +447,7 @@ export default {
       let data = {
         carrierName: this.validate.company.carrierName,
         carrierPrincipal: this.validate.company.carrierPrincipal,
+        customerCarrierPhone: this.validate.company.customerCarrierPhone,
         carrierPhone: this.validate.company.carrierPhone,
         payType: this.validate.company.payType,
         remark: this.validate.company.remark,
