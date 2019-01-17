@@ -53,8 +53,8 @@
               </i-col>
               <i-col v-if="from === 'order'" span="4">
                 <span>代收货款：</span>
-                <span v-if="detail.collectionMoney">{{detail.collectionMoney | toPoint}}元</span>
-                <span v-else>0元</span>
+                <span v-if="detail.collectionMoney !== ''">{{ getDivideFee(detail.collectionMoney) }}元</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
             <Row>
@@ -80,7 +80,8 @@
             <Row v-if="from === 'order'">
               <i-col span="7">
                 <span>对接业务员：</span>
-                <span>{{detail.salesmanName}}</span>
+                <span v-if="detail.salesmanName">{{detail.salesmanName}}</span>
+                <span v-else>-</span>
               </i-col>
               <i-col span="7">
                 <span>是否开票：</span>
@@ -88,7 +89,8 @@
               </i-col>
               <i-col span="7">
                 <span>开票税额：</span>
-                <span>{{detail.invoiceAmount | toPoint}}元</span>
+                <span v-if="detail.invoiceAmount !== ''">{{ getDivideFee(detail.invoiceAmount) }}元</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
             <Row style="margin-top:18px">
@@ -136,13 +138,15 @@
             <Row>
               <i-col>
                 <span>收货人单位：</span>
-                <span>{{detail.consigneeCompanyName}}</span>
+                <span v-if="detail.consigneeCompanyName">{{detail.consigneeCompanyName}}</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
             <Row style="margin-top: 18px;">
               <i-col span="24">
                 <span>备注：</span>
-                <span>{{detail.remark}}</span>
+                <span v-if="detail.remark">{{detail.remark}}</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
           </div>
@@ -194,38 +198,31 @@
             <Row style="padding-top: 17px;">
               <i-col span="4">
                 <span style="width: 72px;">计费里程：</span>
-                <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage | mileage}}公里</span>
-                <span v-else>-</span>
+                <span style="font-weight:bold;">{{ detail.mileage | mileage('公里')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">运输费：</span>
-                <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.freightFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">提货费：</span>
-                <span v-if="detail.pickupFee" style="font-weight:bold;">{{detail.pickupFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.pickupFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">装货费：</span>
-                <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.loadFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">卸货费：</span>
-                <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.unloadFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">保险费：</span>
-                <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.insuranceFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">其他：</span>
-                <span v-if="detail.otherFee" style="font-weight:bold;">{{detail.otherFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.otherFee | toPoint('元')}}</span>
               </i-col>
             </Row>
             <Row>
@@ -293,7 +290,7 @@ import float from '@/libs/js/float'
 import { mapGetters } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import OrderChange from './components/OrderChange'
-import { renderFee, roundFee, divideFee, roundVolume, roundWeight } from '@/libs/js/config'
+import { renderFee, roundFee, divideFee, roundVolume, roundWeight, renderVolume, renderQuantity, renderWeight, renderWeightKg } from '@/libs/js/config'
 import NP from 'number-precision'
 export default {
   name: 'order-management-detail',
@@ -347,14 +344,14 @@ export default {
           title: '体积（方）',
           key: 'volume',
           render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : 0)
+            return renderVolume(h, p.row.volume)
           }
         },
         {
           title: '数量',
           key: 'quantity',
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : 0)
+            return renderQuantity(h, p.row.quantity)
           }
         },
         {
@@ -403,14 +400,14 @@ export default {
         title: '重量（吨）',
         key: 'weight',
         render: (h, p) => {
-          return h('span', p.row.weight ? p.row.weight : 0)
+          return renderWeight(h, p.row.weight)
         }
       },
       columnWeightKg: {
         title: '重量（公斤）',
         key: 'weightKg',
         render: (h, p) => {
-          return h('span', p.row.weightKg ? p.row.weightKg : 0)
+          return renderWeightKg(h, p.row.weightKg)
         }
       },
       activeTab: 'detail',
@@ -442,7 +439,7 @@ export default {
         // total += Number(item.cargoCost)
         total = NP.plus(total, Number(item.cargoCost))
       })
-      total = divideFee(total)
+      total = this.getDivideFee(total)
       return roundFee(total) + '元'
     },
     // 总数量
@@ -509,6 +506,9 @@ export default {
   },
 
   methods: {
+    getDivideFee (val) {
+      return divideFee(val)
+    },
     getDetailChange () {
       Server({
         url: '/order/getOrderChangeRecordNum',

@@ -67,6 +67,13 @@ export const multiplyFeeOrNull = (fee) => {
   return isNumber(fee) ? multiplyFee(fee) : ''
 }
 /**
+ * 接口返回的计费里程需乘以1000
+ * @param {number} fee 通常在提交表单计费里程时候用到
+ */
+export const multiplyMileageOrNull = (fee) => {
+  return isNumber(fee) ? multiplyMileage(fee) : ''
+}
+/**
  * 提交的值除以100
  * * 如果没有，自动转换0，通常在计算的时候用到
  * @param {*} fee
@@ -166,6 +173,15 @@ export const renderVolume = (h, value) => {
 }
 
 /**
+ * 列表中数量格式化
+ * @param {*} h
+ * @param {*} value
+ */
+export const renderQuantity = (h, value) => {
+  return h('span', {}, isNumber(value) ? value : '-')
+}
+
+/**
  * 重量计算，保留3位小数
  * @param {number} 重量吨
  */
@@ -194,4 +210,11 @@ export const roundWeightKg = (value) => {
  */
 export const renderWeightKg = (h, value) => {
   return h('span', {}, isNumber(value) ? roundWeightKg(value) : '-')
+}
+/**
+ * 数量、重量、体积等数字类型的属性格式化（费用除外）
+ * @param {*} value
+ */
+export const renderNumberAttr = (value) => {
+  return isNumber(value) ? value : '-'
 }

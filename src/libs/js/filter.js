@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import City from './city.js'
-import { getMileageText, getFeeText } from './config'
+import { getMileageText, getFeeText, isNumber } from './config'
 /**
  * 时间格式化
  */
@@ -53,14 +53,20 @@ Vue.filter('codeToName', function (cityId) {
 /**
  * 将元转为分
  */
-Vue.filter('toPoint', function (money) {
+Vue.filter('toPoint', function (money, yuan = '') {
+  if (isNumber(money)) {
+    return getFeeText(money) + yuan
+  }
   return getFeeText(money)
 })
 
 /**
  * 计费里程格式化
  */
-Vue.filter('mileage', function (mileage) {
+Vue.filter('mileage', function (mileage, km = '') {
+  if (isNumber(mileage)) {
+    return getMileageText(mileage) + km
+  }
   return getMileageText(mileage)
 })
 /**

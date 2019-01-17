@@ -3,7 +3,7 @@
     <Table :columns="columns" :data="tableData" :loading="loading" class="payment-info-table" width="350"></Table>
     <div v-if="mode === 'edit' && payInfoTotal !== total" class="more-tips">
       <div v-if="payInfoTotal < total">剩余未填金额<span>{{ more }}</span>元</div>
-      <div v-else>输入金额超出合计费<span>{{ more }}</span>元</div>
+      <div v-else>输入金额超出合计费<span style="color: #EE2017;">{{ more }}</span>元</div>
     </div>
   </div>
 </template>
@@ -12,7 +12,7 @@
 import MoneyInput from './MoneyInput'
 import float from '@/libs/js/float'
 import NP from 'number-precision'
-import { roundFee } from '@/libs/js/config'
+import { roundFee, multiplyFeeOrNull } from '@/libs/js/config'
 export default {
   name: 'PayInfo',
   props: {
@@ -69,17 +69,15 @@ export default {
                   placeholder: 'bottom',
                   transfer: false
                 }
-              }, [h('span', {}, p.row.cashAmount || 0), h('div', {
+              }, [h('span', {}, p.row.cashAmount !== '' ? p.row.cashAmount : '-'), h('div', {
                 slot: 'content',
                 style: {
                   whiteSpace: 'normal'
                 }
               }, str)])
             }
-            // 展示表格 不显示 0 - 改单展示
-            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change' && p.row.cashAmount === '') return h('span', '')
             // 展示表格 可以显示 0
-            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount || 0)
+            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount !== '' ? p.row.cashAmount : '-')
             // 编辑状态
             return h(MoneyInput, {
               props: {
@@ -109,15 +107,14 @@ export default {
                   placeholder: 'bottom',
                   transfer: false
                 }
-              }, [h('span', {}, p.row.fuelCardAmount || 0), h('div', {
+              }, [h('span', {}, p.row.fuelCardAmount !== '' ? p.row.fuelCardAmount : '-'), h('div', {
                 slot: 'content',
                 style: {
                   whiteSpace: 'normal'
                 }
               }, str)])
             }
-            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change' && p.row.fuelCardAmount === '') return h('span', '')
-            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount || 0)
+            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount !== '' ? p.row.fuelCardAmount : '-')
 
             return h(MoneyInput, {
               props: {
@@ -172,8 +169,8 @@ export default {
       return this.tableDataBack.map(item => {
         return {
           payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? float.round(item.fuelCardAmount * 100) : void 0,
-          cashAmount: typeof item.cashAmount === 'number' ? float.round(item.cashAmount * 100) : void 0
+          fuelCardAmount: multiplyFeeOrNull(item.fuelCardAmount),
+          cashAmount: multiplyFeeOrNull(item.cashAmount)
         }
       })
     },

@@ -225,6 +225,13 @@ export default {
           'order': 120,
           'span': 12
         },
+        'infoFee': {
+          'type': 'fee',
+          'description': '信息费',
+          'ways': 1,
+          'order': 121,
+          'span': 12
+        },
         'totalFee': {
           'type': 'fee',
           'description': '合计费用',

@@ -4,10 +4,14 @@
       <div v-for="(data, index) in list" :key="index" class="order-detail">
         <h3 class="order-title">
           <!-- <span :style="'display: inline-block;width: 69px;height: 40px;background-image: url(' + CompanyInfo.logoUrl + '?x-oss-process=image/resize,w_69);background-repeat: no-repeat;background-position: center;vertical-align: middle;margin-right: 10px;'"></span> -->
-          <img
+          <div
             v-if="CompanyInfo.logoUrl"
-            :src="CompanyInfo.logoUrl" alt="" class="logo-url">
-          <span>{{ CompanyInfo.shortName || CompanyInfo.name }}公司货物托运单</span>
+            :style="'width: 30px;height:30px;border-radius: 50%;margin-right: 10px;background-image: url(' + CompanyInfo.logoUrl + ');background-repeat: no-repeat;background-position: center;background-size: cover;'">
+          </div>
+          <!-- <div v-else class="logo-url">
+            <FontIcon type="ico-comp" size="16" color="#C9CED9"></FontIcon>
+          </div> -->
+          <div>{{ CompanyInfo.name || CompanyInfo.shortName }}公司货物托运单</div>
         </h3>
         <ul class="order-sub-title">
           <li>托运时间：
@@ -15,23 +19,15 @@
             <span v-else>-</span>
           </li>
           <li>
-            <div v-if="source === 'order'" class="city-style">
+            <div class="city-style">
               <div>发货城市：</div>
               <div>{{data.startName}}</div>
             </div>
-            <div v-else class="city-style">
-              <div>发货城市：</div>
-              <div>{{ cityFormatter(data.start) }}</div>
-            </div>
           </li>
           <li>
-            <div v-if="source === 'order'" class="city-style">
+            <div class="city-style">
               <div>收货城市：</div>
               <div>{{data.endName}}</div>
-            </div>
-            <div v-else class="city-style">
-              <div>收货城市：</div>
-              <div>{{ cityFormatter(data.end) }}</div>
             </div>
           </li>
           <li>
@@ -73,7 +69,7 @@
               </tr>
               <tr>
                 <td>
-                  <span class="spacing-letter">发货人：</span>
+                  <span class="spacing-letter">收货人：</span>
                   <span>{{data.consigneeContact + ' ' + data.consigneePhone}}</span>
                 </td>
               </tr>
@@ -86,7 +82,8 @@
               <th>货物名称</th>
               <th>货物编号</th>
               <th>包装数量</th>
-              <th>重量（吨）</th>
+              <th v-if="WeightOption === 1">重量（吨）</th>
+              <th v-else>重量（公斤）</th>
               <th>体积（方）</th>
               <th>货值（元）</th>
               <th>包装方式</th>
@@ -98,14 +95,26 @@
             <tr v-for="(cargo, index) in data.orderCargoList" :key="index" class="table-content">
               <td>{{cargo.cargoName}}</td>
               <td>{{cargo.cargoNo || '-'}}</td>
-              <td>{{cargo.quantity || 0}}</td>
-              <td>{{cargo.weight || 0}}</td>
-              <td>{{cargo.volume || 0}}</td>
-              <td v-if="source === 'order'">{{cargo.cargoCost | fee}}</td>
-              <td v-else>{{cargo.cargoCost}}</td>
+              <td>{{getRenderNumberAttr(cargo.quantity)}}</td>
+              <td v-if="WeightOption === 1">{{getRenderNumberAttr(cargo.weight)}}</td>
+              <td v-else>{{getRenderNumberAttr(cargo.weightKg)}}</td>
+              <td>{{getRenderNumberAttr(cargo.volume)}}</td>
+              <td>{{cargo.cargoCost | fee}}</td>
               <td>{{cargo.unit || '-'}}</td>
               <td>{{renderDimension(cargo.dimension)}}</td>
               <td>{{cargo.remark1 || '-'}}</td>
+            </tr>
+            <tr class="table-row-total">
+              <td>合计：</td>
+              <td></td>
+              <td>{{ quantityTotal(data.orderCargoList) }}</td>
+              <td v-if="WeightOption === 1">{{ weightTotal(data.orderCargoList) }}</td>
+              <td v-else>{{ weightTotal(data.orderCargoList) }}</td>
+              <td>{{ volumeTotal(data.orderCargoList) }}</td>
+              <td>{{ cargoCostTotal(data.orderCargoList) }}</td>
+              <td></td>
+              <td></td>
+              <td></td>
             </tr>
           </tbody>
         </table>
@@ -122,7 +131,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-if="source === 'order'" class="table-content">
+            <tr class="table-content">
               <td>{{ data.mileage | mileage }}</td>
               <td>
                 <span>{{ data.freightFee | fee }}</span>
@@ -134,19 +143,9 @@
               <td>{{ data.insuranceFee | fee }}</td>
               <td>{{ data.otherFee | fee }}</td>
             </tr>
-            <tr v-else class="table-content">
-              <td>{{ data.mileage | mileage }}</td>
-              <td>{{ data.freightFee !== null ? data.freightFee : '-' }}</td>
-              <td>{{ data.pickupFee !== null ? data.pickupFee : '-' }}</td>
-              <td>{{ data.loadFee !== null ? data.loadFee : '-' }}</td>
-              <td>{{ data.unloadFee !== null ? data.unloadFee : '-' }}</td>
-              <td>{{ data.insuranceFee !== null ? data.insuranceFee : '-' }}</td>
-              <td>{{ data.otherFee !== null ? data.otherFee : '-' }}</td>
-            </tr>
             <tr>
               <td colspan="7" class="total-fee">
-                <span v-if="source === 'order'">费用合计：{{ data.totalFee | fee }}元</span>
-                <span v-else>费用合计：{{ data.totalFee !== null ? data.totalFee : '-' }}元</span>
+                <span>费用合计：{{ data.totalFee | fee }}元</span>
                 <span style="margin-left: 22px;">{{ getMoney2chinese(data.totalFee) }}</span>
               </td>
             </tr>
@@ -155,8 +154,7 @@
                 <div class="total-row-right">
                   <span>结算方式：{{ settlement(data) || '-' }}</span>
                   <span>是否开票：{{ data.isInvoice === 1 ? `是（${getMultiplyRate(data.invoiceRate)}%）` : '否'}}</span>
-                  <span v-if="source === 'order'">代收货款：{{ data.collectionMoney | fee }}</span>
-                  <span v-else>代收货款：{{ data.collectionMoney !== null ? data.collectionMoney : '-' }}</span>
+                  <span>代收货款：{{ data.collectionMoney | fee }}</span>
                 </div>
               </td>
             </tr>
@@ -203,8 +201,9 @@ import Printd from 'printd'
 import City from '@/libs/js/city'
 import settlements from '@/libs/constant/settlement.js'
 import pickups from '@/libs/constant/pickup.js'
-import { multiplyFee, getFeeText, multiplyRate, divideFee } from '@/libs/js/config'
+import { multiplyFee, getFeeText, multiplyRate, divideFee, renderNumberAttr, roundFee, roundVolume, roundWeight, roundWeightKg } from '@/libs/js/config'
 import { money2chinese, zncn2znhant } from '@/libs/js/util'
+import NP from 'number-precision'
 import { mapGetters } from 'vuex'
 export default {
   filters: {
@@ -227,18 +226,24 @@ export default {
           page-break-after: always;
         }
         .order-title {
-          text-align: center;
           font-size: 20px;
           font-family: PingFangSC-Semibold;
           font-weight: 600;
           color: #333;
           letter-spacing: 2px;
           margin: 37px 0 42px 0;
+          display: flex;
+          display: -ms-flexbox;
+          justify-content: center;
+          -ms-flex-pack: center;
+          align-items: center;
+          -ms-flex-align: center;
         }
         .logo-url {
-          width: 69px;
-          height: 40px;
-          vertical-align: middle;
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+          background-color: #EFEFEF;
           margin-right: 10px;
         }
         .order-sub-title {
@@ -329,13 +334,22 @@ export default {
         .table-content {
           text-align: center;
         }
+        .table-row-total {
+          font-size: 16px;
+          font-family: PingFangSC-Medium;
+          font-weight: bold;
+          color: #333;
+          text-align: center;
+          line-height: 1.5;
+        }
       `,
       visible: false
     }
   },
   computed: {
     ...mapGetters([
-      'CompanyInfo'
+      'CompanyInfo',
+      'WeightOption'
     ])
   },
   mounted () {
@@ -384,6 +398,54 @@ export default {
     },
     getMoney2chinese (val) {
       return zncn2znhant(money2chinese(divideFee(val)))
+    },
+    getRenderNumberAttr (val) {
+      return renderNumberAttr(val)
+    },
+    // 总货值
+    cargoCostTotal (orderCargoList) {
+      let total = 0
+      orderCargoList.map((item) => {
+        // total += Number(item.cargoCost)
+        total = NP.plus(total, Number(item.cargoCost))
+      })
+      total = divideFee(total)
+      return roundFee(total)
+    },
+    // 总数量
+    quantityTotal (orderCargoList) {
+      let total = 0
+      orderCargoList.map((item) => {
+        // total += Number(item.quantity)
+        total = NP.plus(total, Number(item.quantity))
+      })
+      return total
+    },
+    // 总体积
+    volumeTotal (orderCargoList) {
+      let total = 0
+      orderCargoList.map((item) => {
+        // total += Number(item.volume)
+        total = NP.plus(total, Number(item.volume))
+      })
+      return roundVolume(total)
+    },
+    // 总重量
+    weightTotal (orderCargoList) {
+      let total = 0
+      orderCargoList.map((item) => {
+        // 区分吨或公斤
+        if (this.WeightOption === 1) {
+          // total += Number(item.weight)
+          total = NP.plus(total, Number(item.weight))
+          total = roundWeight(total)
+        } else {
+          // total += Number(item.weightKg)
+          total = NP.plus(total, Number(item.weightKg))
+          total = roundWeightKg(total)
+        }
+      })
+      return total
     }
   }
 }
