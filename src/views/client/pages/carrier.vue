@@ -139,6 +139,7 @@ export default {
                                 carrierName: _this.company.carrierName,
                                 carrierPrincipal: _this.company.carrierPrincipal,
                                 carrierPhone: _this.company.carrierPhone,
+                                customerCarrierPhone: _this.company.customerCarrierPhone,
                                 payType: _this.company.payType + '',
                                 remark: _this.company.remark
                               }
@@ -308,6 +309,7 @@ export default {
         carrierName: '',
         carrierPrincipal: '',
         carrierPhone: '',
+        customerCarrierPhone: '',
         payType: '',
         remark: ''
       }
@@ -362,6 +364,7 @@ export default {
             carrierName: res.data.data.carrierInfo.carrierName,
             carrierPrincipal: res.data.data.carrierInfo.carrierPrincipal,
             carrierPhone: res.data.data.carrierInfo.carrierPhone,
+            customerCarrierPhone: res.data.data.carrierInfo.customerCarrierPhone,
             payType: res.data.data.carrierInfo.payType,
             remark: res.data.data.carrierInfo.remark
           }

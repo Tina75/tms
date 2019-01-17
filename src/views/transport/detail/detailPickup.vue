@@ -83,7 +83,7 @@
             <Row class="detail-field-group">
               <i-col span="13">
                 <span class="detail-field-title">备注：</span>
-                <span>{{ info.remark || '无' }}</span>
+                <span>{{ info.remark || '-' }}</span>
               </i-col>
             </Row>
           </div>

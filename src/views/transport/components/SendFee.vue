@@ -139,7 +139,7 @@
         <i-col span="24">
           <span class="detail-field-title-sm" style="vertical-align: unset;margin-left: 10px;">费用合计：</span>
           <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
-          <Tooltip placement="right" transfer content="费用合计为负值时，结算方式不能选择按单结,默认为月结" max-width="500">
+          <Tooltip v-if="source !== 'abnormal'" placement="right" transfer content="费用合计为负值时，结算方式不能选择按单结,默认为月结" max-width="500">
             <Icon type="ios-alert" size="20" color="#FFBB44" style="margin-left: 14px;vertical-align: sub"/>
           </Tooltip>
         </i-col>
@@ -222,8 +222,9 @@ import { mapGetters } from 'vuex'
 import $bus from '@/libs/js/eventBus.js'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
-import { roundFee, multiplyMileage, multiplyFeeOrNull } from '@/libs/js/config'
+import { roundFee, multiplyMileageOrNull, multiplyFeeOrNull } from '@/libs/js/config'
 import NP from 'number-precision'
+import _ from 'lodash'
 export default {
   name: 'SendFeeComponent',
   components: { TagNumberInput, PayInfo, AllocationStrategy },
@@ -383,6 +384,7 @@ export default {
         ]
       },
       settlementTypeFee: '1',
+      cloneSettlementTypeFee: null,
       // settlementPayInfo: [],
       carrierInfo: {},
       infoFeeDisabled: false
@@ -426,18 +428,31 @@ export default {
       this.settlementTypeFee = val
     },
     paymentTotal (val) {
-      if (val < 0) {
-        this.settlementTypeFee = '2'
-        this.infoFeeDisabled = true
-      } else {
-        this.settlementTypeFee = '1'
-        this.infoFeeDisabled = false
+      if (this.source !== 'abnormal') { // 异常除外
+        if (val < 0) {
+          this.settlementTypeFee = '2'
+          this.infoFeeDisabled = true
+        } else {
+          if (this.cloneSettlementTypeFee === '2') {
+            this.settlementTypeFee = '2'
+            this.infoFeeDisabled = false
+          } else {
+            this.settlementTypeFee = '1'
+            this.infoFeeDisabled = false
+          }
+        }
       }
     }
   },
   created () {
     this.mileage && (this.payment.mileage = this.mileage)
     this.settlementTypeFee = this.settlementType
+    if (this.source !== 'abnormal') { // 异常除外
+      this.cloneSettlementTypeFee = _.cloneDeep(this.settlementTypeFee) // 克隆一份结算方式，用于信息费为负数时切换判断
+      if (this.paymentTotal < 0) {
+        this.infoFeeDisabled = true
+      }
+    }
     // 获取SendCarrierInfo组件传入的carrierInfo
     $bus.$on('carrierInfoChange', carrierInfo => {
       this.carrierInfo = carrierInfo
@@ -483,7 +498,7 @@ export default {
           carType: self.carrierInfo.carType,
           carLength: self.carrierInfo.carLength,
           // distance: self.payment.mileage ? float.round(self.payment.mileage * 1000) : 0,
-          distance: multiplyMileage(self.payment.mileage),
+          distance: multiplyMileageOrNull(self.payment.mileage),
           ...self.financeRulesInfo
         },
         methods: {
@@ -509,7 +524,7 @@ export default {
         this.payment.otherFee = this.DispatchSet.deliverOutOtherFeeOption === 1 ? this.payment.otherFee : ''
         this.payment.infoFee = this.DispatchSet.deliverOutInfoFeeOption === 1 ? this.payment.infoFee : ''
         this.payment.cashBack = this.DispatchSet.deliverOutCashBackFeeOption === 1 ? this.payment.cashBack : ''
-        delete this.payment.accommodation // 外转去掉住宿费
+        this.payment.accommodation = '' // 外转住宿费默认为''
       } else {
         this.payment.freightFee = this.DispatchSet.deliverSelfOilFeeOption === 1 ? this.payment.freightFee : ''
         this.payment.loadFee = this.DispatchSet.deliverSelfLoadFeeOption === 1 ? this.payment.loadFee : ''
@@ -518,13 +533,13 @@ export default {
         this.payment.accommodation = this.DispatchSet.deliverSelfAccommodationFeeOption === 1 ? this.payment.accommodation : ''
         this.payment.insuranceFee = this.DispatchSet.deliverSelfInsuranceFeeOption === 1 ? this.payment.insuranceFee : ''
         this.payment.otherFee = this.DispatchSet.deliverSelfOtherFeeOption === 1 ? this.payment.otherFee : ''
-        delete this.payment.infoFee // 自送去掉信息费
-        delete this.payment.cashBack // 自送去掉返现费
+        this.payment.infoFee = '' // 自送信息费默认为''
+        this.payment.cashBack = '' // 自送返现费默认为''
       }
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
         if (key === 'mileage') {
-          temp[key] = multiplyMileage(temp[key])
+          temp[key] = multiplyMileageOrNull(temp[key])
         } else {
           temp[key] = multiplyFeeOrNull(temp[key])
         }

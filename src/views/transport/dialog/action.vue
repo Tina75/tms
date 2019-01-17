@@ -44,6 +44,9 @@
     <div slot="footer" style="text-align: center;">
       <Button :loading="btnLoading" type="primary" @click="submit">确定</Button>
       <Button type="default" @click.native="close">取消</Button>
+      <Button type="default" style="width: 35px; height: 35px;min-width: 0;padding: 0;vertical-align: top;" @click.native="toSetting">
+        <FontIcon type="shezhi" size="20" color="#999"></FontIcon>
+      </Button>
     </div>
   </Modal>
 </template>
@@ -58,11 +61,14 @@ import PickupFee from '../components/PickupFee'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
+import TMSURL from '@/libs/constant/url'
+import { divideMileage, divideFeeOrNull } from '@/libs/js/config'
 import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'SendOrPickAction',
-  components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee },
+  components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee, FontIcon },
   mixins: [ BaseDialog ],
 
   data () {
@@ -221,7 +227,7 @@ export default {
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
           if (key === 'mileage') {
-            this.payment[key] = billInfo[key] / 1000 || null
+            this.payment[key] = divideMileage(billInfo[key])
           }
         }
 
@@ -252,8 +258,7 @@ export default {
 
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
-      // return typeof money === 'number' ? money / 100 : null
-      return (typeof money === 'number' && money !== 0) ? money / 100 : null
+      return divideFeeOrNull(money)
     },
     // 格式化金额单位为分
     formatMoney () {
@@ -503,6 +508,17 @@ export default {
           }
         }
       })
+    },
+    // 跳转派车设置页面
+    toSetting () {
+      this.openTab({
+        path: TMSURL.SETTING,
+        title: '设置',
+        query: {
+          tab: 'dispatch'
+        }
+      })
+      this.close()
     }
   }
 }
