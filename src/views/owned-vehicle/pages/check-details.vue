@@ -55,12 +55,11 @@
         <Row class="list-info">
           <div v-for="img in imageItems" :key="img.index" class="infoImage">
             <div :v-if="img">
-              <div
-                v-imgFormat="img.src"
-                :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              <div-image
+                :src="img.src"
                 class="fileImage"
-                @click="handleView(img.count)">
-              </div>
+                @click.native="handleView(img.count)">
+              </div-image>
             </div>
           </div>
         </Row>
@@ -80,9 +79,10 @@ import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { mapActions } from 'vuex'
+import DivImage from '@/components/DivImage.vue'
 export default {
   name: 'check-details',
-  components: { RecordList, prepareOpenSwipe },
+  components: { RecordList, prepareOpenSwipe, DivImage },
   mixins: [ BasePage ],
   props: {
   },

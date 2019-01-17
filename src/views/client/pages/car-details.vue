@@ -97,12 +97,10 @@
       <Row class="list-info">
         <div v-for="img in imageItems" :key="img.index" class="infoImage">
           <div :v-if="img">
-            <div
-              v-imgFormat="img.src"
-              :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-              class="fileImage"
-              @click="handleView(img.count)">
-            </div>
+            <div-image
+              :src="img.src"
+              @click.native="handleView(img.count)">
+            </div-image>
             <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
           </div>
         </div>
@@ -123,9 +121,10 @@ import BasePage from '@/basic/BasePage'
 import { CODE, carrierDeleteDriver, queryByIdCarrier } from './client'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
+import DivImage from '@/components/DivImage.vue'
 export default {
   name: 'car-details',
-  components: { RecordList, prepareOpenSwipe },
+  components: { RecordList, prepareOpenSwipe, DivImage },
   mixins: [ BasePage ],
   props: {
   },

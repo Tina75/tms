@@ -155,13 +155,13 @@
           </FormItem>
           <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
             <span class="imageLogo">
-              <up-load v-show="isEdit" ref="uploadLogo" max-size="10" crop></up-load>
-              <div
-                v-imgFormat="formCompany.logoUrl"
-                :style="(formCompany.logoUrl && !isEdit) ? 'height: 90px;width: 96px;background-image: url(' + formCompany.logoUrl + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position:center;cursor:pointer;' : ''"
-                class="imageLogoDiv"
-                @click="handleView(0, 'logo')">
-              </div>
+              <up-load v-show="isEdit" ref="uploadLogo" :width="96" max-size="10" crop></up-load>
+              <div-image
+                v-if="formCompany.logoUrl && !isEdit"
+                :src="formCompany.logoUrl"
+                :width="96"
+                @click.native="handleView(0, 'logo')">
+              </div-image>
             </span>
           </FormItem>
           </Col>
@@ -185,12 +185,10 @@
               multiple-width="style='width:100%'">
             </image-title>
             <div v-for="(img,index) in busiIntroducePic" v-show="!isEdit" :key="img.key" class="infoImage">
-              <div
-                v-imgFormat="img.url"
-                :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-                class="fileImage"
-                @click="handleView(index, 'InfoIntro')">
-              </div>
+              <div-image
+                :src="img.url"
+                @click.native="handleView(index, 'InfoIntro')">
+              </div-image>
               <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
             </div>
           </FormItem>
@@ -215,12 +213,10 @@
               multiple-width="style='width:100%'">
             </image-title>
             <div v-for="(img,index) in busiAdvantcePic" v-show="!isEdit" :key="img.key" class="infoImage">
-              <div
-                v-imgFormat="img.url"
-                :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-                class="fileImage"
-                @click="handleView(index, 'Advantce')">
-              </div>
+              <div-image
+                :src="img.url"
+                @click.native="handleView(index, 'Advantce')">
+              </div-image>
               <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
             </div>
           </FormItem>
@@ -243,12 +239,10 @@
               multiple-width="style='width:100%'">
             </image-title>
             <div v-for="(img,index) in companyPhoto" v-show="!isEdit" :key="img.key" class="infoImage">
-              <div
-                v-imgFormat="img.url"
-                :style="'height: 90px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-                class="fileImage"
-                @click="handleView(index, 'company')">
-              </div>
+              <div-image
+                :src="img.url"
+                @click.native="handleView(index, 'company')">
+              </div-image>
               <p v-show="!isEdit" class="titleInput">{{ img.title }}</p>
             </div>
           </FormItem>
@@ -274,12 +268,10 @@
                 multiple-width="style='width:50%'">
               </image-title>
               <div v-for="(img,index) in wxQrPic" v-show="!isEdit" :key="img.key" class="infoImage">
-                <div
-                  v-imgFormat="img.url"
-                  :style="'height: 90px;width: 96px;background-image: url(' + img.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-                  class="fileImage"
-                  @click="handleView(index, 'wx')">
-                </div><br/>
+                <div-image
+                  :src="img.url"
+                  @click.native="handleView(index, 'wx')">
+                </div-image><br/>
                 <p v-show="!isEdit" class="titleInput wxTitle">{{ img.title }}</p>
               </div>
             </FormItem>
@@ -296,12 +288,10 @@
           <FormItem :class="isEdit ? 'imageFontItem' : 'imageFontItemBlock'">
             <up-load v-show="isEdit" ref="upLoadsBanner" max-count="1" max-size="10"></up-load>
             <div v-if="formCompany.homeBanner && !isEdit" class="infoImage">
-              <div
-                v-imgFormat="formCompany.homeBanner"
-                :style="'height: 90px;background-image: url(' + formCompany.homeBanner + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-                class="fileImage"
-                @click="handleView(0, 'banner')">
-              </div>
+              <div-image
+                :src="formCompany.homeBanner"
+                @click.native="handleView(index, 'banner')">
+              </div-image>
             </div>
           </FormItem>
           </Col>
@@ -328,6 +318,7 @@ import FontIcon from '@/components/FontIcon'
 import TextAreaNumber from '@/components/TextAreaNumber'
 import { formatePhone } from '@/libs/js/formate'
 import SelectInput from '@/components/SelectInput.vue'
+import DivImage from '@/components/DivImage.vue'
 import { mapActions } from 'vuex'
 export default {
   name: 'company-setting',
@@ -339,7 +330,8 @@ export default {
     ImageTitle,
     FontIcon,
     TextAreaNumber,
-    SelectInput
+    SelectInput,
+    DivImage
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -668,6 +660,7 @@ export default {
 .infoImage
   float left
   text-align center
+  margin-right 15px
 .titleInput
   width 160px
   display block

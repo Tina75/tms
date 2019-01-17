@@ -97,7 +97,11 @@
       <Row class="row">
         <Col v-for="img in imageItems" :key="img.count" span="5">
         <div :v-if="img.src">
-          <div v-imgFormat="img.src" :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'" class="imageDiv" @click="handleView(img.count)"></div>
+          <div-image
+            :src="img.src"
+            class="imageDiv"
+            @click.native="handleView(img.count)">
+          </div-image>
           <p class="uploadLabel">{{img.title}}</p>
         </div>
         </Col>
@@ -124,9 +128,10 @@ import BasePage from '@/basic/BasePage'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { CODE, carrierDelete, carrierDetailsForDriver } from './client'
+import DivImage from '@/components/DivImage.vue'
 export default {
   name: 'driver-details',
-  components: {},
+  components: { DivImage },
   mixins: [ BasePage ],
   metaInfo: {
     title: '承运商详情'

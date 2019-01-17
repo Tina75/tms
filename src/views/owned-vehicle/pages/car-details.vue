@@ -115,12 +115,11 @@
         <Row class="list-info">
           <div v-for="img in imageItems" :key="img.index" class="infoImage">
             <div :v-if="img">
-              <div
-                v-imgFormat="img.src"
-                :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              <div-image
+                :src="img.src"
                 class="fileImage"
-                @click="handleView(img.count)">
-              </div>
+                @click.native="handleView(img.count)">
+              </div-image>
               <p class="titleInput">{{ img.title }}</p>
             </div>
           </div>
@@ -217,9 +216,10 @@ import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import { mapActions } from 'vuex'
 import { renderFee, renderMileage } from '@/libs/js/config'
+import DivImage from '@/components/DivImage.vue'
 export default {
   name: 'owned-car-details',
-  components: { RecordList, prepareOpenSwipe, pageTable, Export },
+  components: { RecordList, prepareOpenSwipe, pageTable, Export, DivImage },
   mixins: [ BasePage ],
   metaInfo: {
     title: '车辆详情'
