@@ -5,7 +5,7 @@
         <div style="display: flex;flex-direction: column;">
           <div class="demo-upload-list">
             <!-- <img :src="pic.url"> -->
-            <div :style="'height: 90px;background-image: url(' + pic.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
+            <div v-imgFormat="pic.url" :style="'height: 90px;background-image: url(' + pic.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
             <div class="demo-upload-list-cover">
               <div style="cursor: pointer;" @click="handleView(index)">
                 <div class="eye-circle">

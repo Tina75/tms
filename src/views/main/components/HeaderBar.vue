@@ -6,7 +6,7 @@
       </div>
       <div class="info">
         <div class="company">
-          <Avatar v-if="UserInfo.logoUrl" :style="'background-image: url(' + UserInfo.logoUrl +')'" class="avatar"></Avatar>
+          <Avatar v-imgFormat="UserInfo.logoUrl" v-if="UserInfo.logoUrl" :style="'background-image: url(' + UserInfo.logoUrl +')'" class="avatar"></Avatar>
           <!--<Avatar v-else class="avatar"></Avatar>-->
           <!--公司简称-->
           <span v-if="UserInfo.shortName" class="title">{{UserInfo.shortName}}</span>
