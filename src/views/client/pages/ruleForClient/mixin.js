@@ -454,6 +454,34 @@ export default {
     },
     startTypeChange (item) {
       item.startPrice = null
+    },
+    ruleTypeChange () {
+      // this.$refs.formInline.resetFields()
+
+      this.ruleDetail.details.forEach(item => {
+        item.chargeRules.forEach(el => {
+          el.baseAndStart = el.base + ',' + item.startNum
+        })
+      })
+      // debugger
+      if (this.ruleDetail.ruleType === '5' || this.ruleDetail.ruleType === '8') {
+        for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
+          this.$refs['ruleBase'][j].resetFields()
+          this.$refs['rulePrice'][j].resetFields()
+        }
+      }
+      if (this.ruleDetail.ruleType !== '5') {
+        for (let j = 0; j < this.$refs['ruleCar'].length; j++) {
+          this.$refs['ruleCar'][j].resetFields()
+          this.$refs['rulePrice'][j].resetFields()
+        }
+      }
+      if (this.ruleDetail.ruleType !== '8') {
+        for (let j = 0; j < this.$refs['cargoName'].length; j++) {
+          this.$refs['cargoName'][j].resetFields()
+          this.$refs['rulePrice'][j].resetFields()
+        }
+      }
     }
     // async ruleTypeChange () {
     // @on-change="ruleTypeChange"
