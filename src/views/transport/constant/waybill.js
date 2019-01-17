@@ -1,6 +1,6 @@
 import TMSUrl from '@/libs/constant/url'
 import IconLabel from '@/components/IconLabel'
-import { getMileageText, getFeeText } from '@/libs/js/config'
+import { getMileageText, getFeeText, renderVolume, renderWeight, renderWeightKg } from '@/libs/js/config'
 export const TAB_LIST = [
   // { name: '全部', count: '' },
   { name: '待调度', count: '' },
@@ -263,17 +263,26 @@ export const TABLE_COLUMNS = vm => [
   {
     title: '体积(方)',
     key: 'volume',
-    width: 120
+    width: 120,
+    render: (h, params) => {
+      return renderVolume(h, params.row.volume)
+    }
   },
   {
     title: '重量(吨)',
     key: 'weight',
-    width: 120
+    width: 120,
+    render: (h, params) => {
+      return renderWeight(h, params.row.weight)
+    }
   },
   {
     title: '重量（公斤）',
     key: 'weightKg',
-    minWidth: 120
+    minWidth: 120,
+    render: (h, params) => {
+      return renderWeightKg(h, params.row.weightKg)
+    }
   },
   {
     title: '创建时间',

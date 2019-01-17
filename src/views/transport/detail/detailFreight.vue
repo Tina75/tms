@@ -88,8 +88,7 @@
                 </i-col>
                 <i-col span="8">
                   <span class="detail-field-title">代收货款：</span>
-                  <span v-if="info.collectionMoney">{{info.collectionMoney | toPoint}}元</span>
-                  <span v-else>-</span>
+                  <span>{{info.collectionMoney | toPoint('元')}}</span>
                 </i-col>
               </Row>
               <Row v-if="info.assignCarType === 1 && DispatchSet.deliverOutCashBackFeeOption === 1" class="detail-field-group">
@@ -103,7 +102,7 @@
             <Row class="detail-field-group">
               <i-col span="13">
                 <span class="detail-field-title">备注：</span>
-                <span>{{ info.remark || '无' }}</span>
+                <span>{{ info.remark || '-' }}</span>
               </i-col>
             </Row>
           </div>

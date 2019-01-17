@@ -149,7 +149,7 @@ import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMix
 import { mapGetters } from 'vuex'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
-import { divideFee } from '@/libs/js/config'
+import { divideFeeOrNull, multiplyFeeOrNull } from '@/libs/js/config'
 import OrderMap from '@/views/order/create/libs/orderMap'
 export default {
   name: 'SendCar',
@@ -714,7 +714,7 @@ export default {
           // 将payment 设置为初始值
           for (let key in _this.clonePayment) {
             // _this.clonePayment[key] / 100
-            _this.clonePayment[key] = divideFee(_this.clonePayment[key])
+            _this.clonePayment[key] = divideFeeOrNull(_this.clonePayment[key])
           }
         }
       })
@@ -751,7 +751,7 @@ export default {
         abnormalTiming: z.abnormalTiming,
         abnormalTypeCode: z.abnormalTypeCode,
         abnormalDesc: z.details.abnormalDesc,
-        updateFee: z.isChangeSubmitFee() ? 2 : 1,
+        // updateFee: z.isChangeSubmitFee() ? 2 : 1,
         assignCarType: z.details.assignCarType
       }
       if (z.recordId) {
@@ -794,24 +794,20 @@ export default {
       const z = this
       if (z.isChangeFee === 2) return false
       for (let key in z.clonePayment) {
-        if (typeof z.clonePayment[key] === 'number') {
-          z.clonePayment[key] = float.round(z.clonePayment[key] * 100)
-        } else {
-          z.clonePayment[key] = 0
-        }
+        z.clonePayment[key] = multiplyFeeOrNull(z.clonePayment[key])
       }
       if (z.details.abnormalPayInfos.length > 0) {
         let cloneTableData = []
         z.cloneSettlementPayInfo.map((item, i) => {
           cloneTableData.push({
             payType: item.payType,
-            fuelCardAmount: float.round(item.fuelCardAmount * 100) || void 0,
-            cashAmount: float.round(item.cashAmount * 100) || void 0
+            fuelCardAmount: multiplyFeeOrNull(item.fuelCardAmount),
+            cashAmount: multiplyFeeOrNull(item.cashAmount)
           })
         })
         if (z.type === 3) {
           if (z.sendWay === '1') {
-            delete z.clonePayment.accommodation // 外转去掉住宿费
+            z.clonePayment.accommodation = '' // 外转住宿费默认为''
           }
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment) && _.isEqual(cloneTableData, z.$refs.sendFee.getSettlementPayInfo()) // 费用输入框和多段付
         } else {
@@ -820,7 +816,7 @@ export default {
       } else {
         if (z.type === 3) {
           if (z.sendWay === '1') {
-            delete z.clonePayment.accommodation // // 外转去掉住宿费
+            z.clonePayment.accommodation = '' // 外转住宿费默认为''
           }
           return _.isEqual(z.$refs.sendFee.formatMoney(), z.clonePayment)
         } else {
@@ -831,7 +827,7 @@ export default {
 
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
-      return (typeof money === 'number' && money !== 0) ? divideFee(money) : null
+      return divideFeeOrNull(money)
     },
     // 格式化金额单位为分
     formatMoney () {
