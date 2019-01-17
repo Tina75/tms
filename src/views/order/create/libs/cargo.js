@@ -1,6 +1,6 @@
 import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
-import { NumberPrecesion, divideFee, multiplyFee } from '@/libs/js/config'
+import { NumberPrecesion, divideFeeOrNull, multiplyFeeOrNull, isNumber } from '@/libs/js/config'
 let uniqueIndex = 0
 export default class Cargo {
   /**
@@ -62,26 +62,26 @@ export default class Cargo {
       this.cargoNo = props.cargoNo
 
       if (props.dimension) {
-        this.dimension._length = props.dimension.length || null
-        this.dimension._width = props.dimension.width || null
-        this.dimension._height = props.dimension.height || null
+        this.dimension._length = props.dimension.length
+        this.dimension._width = props.dimension.width
+        this.dimension._height = props.dimension.height
       }
       if (!transfer) {
         // 货值，整数
-        this.cargoCost = props.cargoCost || null
+        this.cargoCost = props.cargoCost
       } else {
-        this.cargoCost = divideFee(props.cargoCost || 0)
+        this.cargoCost = divideFeeOrNull(props.cargoCost)
       }
-      this._weight = props.weight || null
-      this.volume = props.volume || null
+      this._weight = props.weight
+      this.volume = props.volume
       // 数量
-      this.quantity = props.quantity || null
+      this.quantity = props.quantity
       // 包装
-      this.unit = props.unit || null
+      this.unit = props.unit
       // 备注 100
-      this.remark1 = props.remark1 || null
-      this.remark2 = props.remark2 || null
-      this.orderNo = props.orderNo || null
+      this.remark1 = props.remark1
+      this.remark2 = props.remark2
+      this.orderNo = props.orderNo
     }
   }
   get weight () {
@@ -91,7 +91,7 @@ export default class Cargo {
     this._weight = value
   }
   get weightKg () {
-    return this._weight === null ? null : float.round(this._weight * 1000)
+    return isNumber(this._weight) ? float.round(this._weight * 1000) : ''
   }
   set weightKg (value) {
     this._weight = float.round(value / 1000, NumberPrecesion.weight)
@@ -142,16 +142,16 @@ export default class Cargo {
       cargoName: this.cargoName,
       weight: this.weight,
       volume: this.volume,
-      cargoCost: multiplyFee(this.cargoCost),
+      cargoCost: multiplyFeeOrNull(this.cargoCost),
       quantity: this.quantity,
       unit: this.unit,
       remark1: this.remark1,
       remark2: this.remark2,
       cargoNo: this.cargoNo,
       dimension: {
-        height: this.dimension.height || null,
-        width: this.dimension.width || null,
-        length: this.dimension.length || null
+        height: this.dimension.height,
+        width: this.dimension.width,
+        length: this.dimension.length
       }
     }
   }
@@ -163,14 +163,14 @@ export default class Cargo {
       weight: this.weight,
       weightKg: this.weightKg,
       volume: this.volume,
-      cargoCost: multiplyFee(this.cargoCost),
+      cargoCost: multiplyFeeOrNull(this.cargoCost),
       quantity: this.quantity,
       unit: this.unit,
       cargoNo: this.cargoNo || '-',
       dimension: {
-        height: this.dimension.height || null,
-        width: this.dimension.width || null,
-        length: this.dimension.length || null
+        height: this.dimension.height,
+        width: this.dimension.width,
+        length: this.dimension.length
       }
     }
   }
