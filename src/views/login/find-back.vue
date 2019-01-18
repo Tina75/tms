@@ -53,6 +53,7 @@
 import Server from '@/libs/js/server'
 import mixin from './mixin'
 import { VALIDATOR_PHONE, VALIDATOR_PASSWORD, VALIDATOR_CONFIRM_PASSWORD } from './validator'
+import md5 from 'md5'
 
 export default {
   name: 'FindBack',
@@ -103,8 +104,8 @@ export default {
           data: {
             phone: this.form.phone,
             smsCode: this.form.smsCode,
-            password: this.form.password,
-            confirmPassword: this.form.confirmPassword
+            password: md5(this.form.password),
+            confirmPassword: md5(this.form.confirmPassword)
           }
         }).then(res => {
           this.$Message.success('密码设置成功')
@@ -112,7 +113,7 @@ export default {
             // this.changeMode('signin')
             this.$router.replace({ path: '/login' })
           }, 2000)
-        }).catch(err => console.error(err))
+        })
       })
     }
   }
