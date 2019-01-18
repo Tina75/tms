@@ -254,11 +254,13 @@ export default {
           'order': 141,
           'span': 12
         },
-        // 'cashBack': {
-        //   'type': 'fee',
-        //   'description': '返现费用',
-        //   'ways': 1
-        // },
+        'cashBack': {
+          'type': 'fee',
+          'description': '返现费用',
+          'ways': 1,
+          'order': 142,
+          'span': 12
+        },
         'tollFee': {
           'type': 'fee',
           'description': '路桥费',
