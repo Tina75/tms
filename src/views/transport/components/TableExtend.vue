@@ -35,7 +35,7 @@ export default {
     // 表格列宽
     colWidth: {
       type: [String, Number],
-      default: 160
+      default: 150
     },
     // 是否展示客户订单号
     hasCustomerOrderNo: {
