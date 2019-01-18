@@ -36,6 +36,7 @@
         :style="`width: 31%`"
         :placeholder="el.title"
         :precision="el.point"
+        :min="el.min"
         style="margin: 0 1%">
       </TagNumberInput>
     </div>

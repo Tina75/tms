@@ -175,6 +175,7 @@ export default {
           type: 'multi',
           children: [
             {
+              min: 0,
               required: false,
               title: '长',
               key: 'length',
@@ -182,6 +183,7 @@ export default {
               point: NumberPrecesion.dimension
             },
             {
+              min: 0,
               required: false,
               title: '宽',
               key: 'width',
@@ -189,6 +191,7 @@ export default {
               point: NumberPrecesion.dimension
             },
             {
+              min: 0,
               required: false,
               title: '高',
               key: 'height',
