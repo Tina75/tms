@@ -43,7 +43,10 @@ export default {
       type: Boolean,
       default: false
     },
-    maxlength: '',
+    maxlength: {
+      type: Number,
+      default: 10
+    },
     transfer: '',
     type: '', // type 默认【车型/车厂/包装方式】，如有自定义传入listMapData集合
     listMapData: Array // 外部传入的Array格式，必须为{ value: '纸箱', label: '纸箱' }格式
