@@ -30,7 +30,7 @@ export default {
         /** 受理开单 */
         { x: '74px', y: '133px', type: 'kaidan', poptip: '单个录入上游客户的订单信息', access: this.hasPower(100100), link: { path: TMSUrl.CREATE_ORDER, title: '手工开单' }, text: '手工开单' },
         { x: '74px', y: '262px', type: 'piliangdaoru', poptip: '通过Excel批量导入上游客户的订单信息', access: this.hasPower(100200), link: { path: TMSUrl.IMPORT_ORDER, title: '批量导入' }, text: '批量导入' },
-        { x: '232px', y: '199px', type: 'dingdan', poptip: '对已经录入到系统中的客户订单进行查看管理', access: this.hasPower(100300), link: { path: TMSUrl.ORDER_MANAGEMENT, title: '订单管理' }, text: '订单管理' },
+        { x: '232px', y: '196px', type: 'dingdan', poptip: '对已经录入到系统中的客户订单进行查看管理', access: this.hasPower(100300), link: { path: TMSUrl.ORDER_MANAGEMENT, title: '订单管理' }, text: '订单管理' },
         /** 提货管理 */
         { x: '475px', y: '104px', type: 'tihuotiaodu', poptip: '对上门提货的客户订单，安排承运商或外转方去提货', access: this.hasPower(120200), link: { path: TMSUrl.PICKUP_ORDER, query: { tab: 0 }, title: '提货管理' }, text: '提货调度' },
         { x: '603px', y: '104px', type: 'paiche', poptip: '填写承运商费用信息，确认提货', access: this.hasPower(120200), link: { path: TMSUrl.PICKUP_ORDER, query: { tab: 1 }, title: '提货管理' }, text: '派车' },
@@ -67,7 +67,7 @@ export default {
 
 <style lang="stylus" scoped>
 .process-center
-  background url('../../../assets/process.png') no-repeat
+  background url('../../../assets/process@3x.png') no-repeat
   width 1134px
   height 650px
   background-size 1134px 650px
