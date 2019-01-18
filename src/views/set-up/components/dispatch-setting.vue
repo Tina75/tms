@@ -18,119 +18,132 @@
       提货费用
       </Col>
     </Row>
-    <Row :gutter="16" class="delivery-set-row">
-      <Col span="2" class="set-title1" offset="1">自送：</Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickSelfOilFeeOption">油费</Checkbox>
+    <CheckboxGroup v-model="pickSelf">
+      <Row :gutter="16" class="delivery-set-row">
+        <Col span="2" class="set-title1" offset="1">自送：</Col>
+        <Col span="3">
+        <Checkbox   label="pickSelfOilFeeOption" >油费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickSelfLoadFeeOption">装货费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="pickSelfLoadFeeOption">装货费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickSelfUnloadFeeOption">卸货费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="pickSelfUnloadFeeOption">卸货费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickSelfInsuranceFeeOption">保险费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="pickSelfInsuranceFeeOption">保险费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickSelfOtherFeeOption">其他</Checkbox>
+        <Col span="3">
+        <Checkbox   label="pickSelfOtherFeeOption" >其他</Checkbox>
       </Col>
-    </Row>
-    <Row :gutter="16" class="delivery-set-row">
-      <Col span="2" class="set-title1" offset="1">外转：</Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickOutFreightFeeOption">运输费</Checkbox>
+      </Row>
+    </CheckboxGroup>
+    <CheckboxGroup v-model="pickOut">
+      <Row :gutter="16" class="delivery-set-row">
+        <Col span="2" class="set-title1" offset="1">外转：</Col>
+        <Col span="3">
+        <Checkbox   label="pickOutFreightFeeOption" >运输费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickOutLoadFeeOption">装货费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="pickOutLoadFeeOption" >装货费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickOutUnloadFeeOption">卸货费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="pickOutUnloadFeeOption" >卸货费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickOutInsuranceFeeOption">保险费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="pickOutInsuranceFeeOption" >保险费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.pickOutOtherFeeOption">其他</Checkbox>
+        <Col span="3">
+        <Checkbox   label="pickOutOtherFeeOption">其他</Checkbox>
       </Col>
-    </Row>
+      </Row>
+    </CheckboxGroup>
     <Row :gutter="16"  class="set-title1 i-mt-40 i-pl-20">
       <Col span="4">
       送货费用
       </Col>
     </Row>
-    <Row :gutter="16" class="delivery-set-row">
-      <Col span="2" class="set-title1" offset="1">自送：</Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverSelfOilFeeOption">油费</Checkbox>
+    <CheckboxGroup v-model="deliverSelf">
+      <Row :gutter="16" class="delivery-set-row">
+        <Col span="2" class="set-title1" offset="1">自送：</Col>
+
+        <Col span="3">
+        <Checkbox   label="deliverSelfOilFeeOption">油费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverSelfLoadFeeOption">装货费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverSelfLoadFeeOption">装货费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverSelfUnloadFeeOption">卸货费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverSelfUnloadFeeOption">卸货费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverSelfTollFeeOption">路桥费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverSelfTollFeeOption">路桥费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverSelfAccommodationFeeOption">住宿费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverSelfAccommodationFeeOption">住宿费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverSelfInsuranceFeeOption">保险费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverSelfInsuranceFeeOption">保险费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverSelfOtherFeeOption">其他</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverSelfOtherFeeOption">其他</Checkbox>
       </Col>
-    </Row>
-    <Row :gutter="16" class="delivery-set-row">
-      <Col span="2" class="set-title1" offset="1">外转：</Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverOutFreightFeeOption">运输费</Checkbox>
+      </Row>
+    </CheckboxGroup>
+    <CheckboxGroup v-model="deliverOut">
+
+      <Row :gutter="16" class="delivery-set-row">
+        <Col span="2" class="set-title1" offset="1">外转：</Col>
+
+        <Col span="3">
+        <Checkbox   label="deliverOutFreightFeeOption">运输费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverOutLoadFeeOption">装货费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverOutLoadFeeOption">装货费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverOutUnloadFeeOption">卸货费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverOutUnloadFeeOption">卸货费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverOutTollFeeOption">路桥费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverOutTollFeeOption">路桥费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverOutInsuranceFeeOption">保险费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverOutInsuranceFeeOption">保险费</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverOutOtherFeeOption">其他</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverOutOtherFeeOption">其他</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverOutInfoFeeOption">信息费</Checkbox>
+        <Col span="3">
+        <Checkbox   label="deliverOutInfoFeeOption">信息费</Checkbox>
       </Col>
-    </Row>
-    <Row :gutter="16" class="delivery-set-row">
-      <Col span="2" offset="1">&nbsp;</Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.deliverOutCashBackFeeOption">返现费</Checkbox>
+      </Row>
+      <Row :gutter="16" class="delivery-set-row">
+        <Col span="2" offset="1">&nbsp;</Col>
+        <Col span="3">
+        <Checkbox   label="deliverOutCashBackFeeOption">返现费</Checkbox>
       </Col>
-    </Row>
+      </Row>
+    </CheckboxGroup>
     <p class="delivery-set-title">付款方式</p>
-    <Row :gutter="16" class="delivery-set-row">
-      <Col span="3" class="set-title1">
-      送货外转：
+    <CheckboxGroup v-model="paySettlement">
+      <Row :gutter="16" class="delivery-set-row">
+        <Col span="3" class="set-title1">
+        送货外转：
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.paySettlementAdvanceOption">预付</Checkbox>
+        <Col span="3">
+        <Checkbox   label="paySettlementAdvanceOption">预付</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.paySettlementArriveOption">到付</Checkbox>
+        <Col span="3">
+        <Checkbox   label="paySettlementArriveOption">到付</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.paySettlementReceiptOption">回付</Checkbox>
+        <Col span="3">
+        <Checkbox   label="paySettlementReceiptOption">回付</Checkbox>
       </Col>
-      <Col span="3">
-      <Checkbox :true-value="1" :false-value="2" v-model="form.paySettlementTailOption">尾款</Checkbox>
+        <Col span="3">
+        <Checkbox   label="paySettlementTailOption">尾款</Checkbox>
       </Col>
-    </Row>
+      </Row>
+    </CheckboxGroup>
     <div class="delivery-set-footer">
       <Button type="primary" class="save-button" @click="save">保存</Button>
       <Button type="default" class="i-ml-10" @click="reset">恢复默认</Button>
@@ -145,7 +158,7 @@
  */
 import Server from '@/libs/js/server'
 import { mapGetters, mapMutations } from 'vuex'
-
+import _ from 'lodash'
 import { defaultDispatchState as DELIVERY_SET } from '@/store/index'
 export default {
   name: 'delivery-setting',
@@ -153,20 +166,109 @@ export default {
     return {
       form: {
         ...DELIVERY_SET
-      }
+      },
+      pickSelf: [], // 提货自送配置
+      pickOut: [], // 提货外转
+      deliverSelf: [], // 送货自送
+      deliverOut: [], // 送货外转
+      paySettlement: [] // 四段付
     }
   },
   computed: {
     ...mapGetters(['DispatchSet'])
+
+  },
+  watch: {
+    pickSelf (newValues, oldValues) {
+      if (newValues.length === 0) {
+        this.$Message.warning('提货自送费用至少保留一项')
+        this.$nextTick(() => {
+          this.pickSelf = oldValues
+        })
+        return
+      }
+      this.syncFormState(newValues, oldValues)
+    },
+    pickOut (newValues, oldValues) {
+      if (newValues.length === 0) {
+        this.$Message.warning('提货外转费用至少保留一项')
+        this.$nextTick(() => {
+          this.pickOut = oldValues
+        })
+        return
+      }
+      this.syncFormState(newValues, oldValues)
+    },
+    deliverSelf (newValues, oldValues) {
+      if (newValues.length === 0) {
+        this.$Message.warning('送货自送费用至少保留一项')
+        this.$nextTick(() => {
+          this.deliverSelf = oldValues
+        })
+        return
+      }
+      this.syncFormState(newValues, oldValues)
+    },
+    deliverOut (newValues, oldValues) {
+      if (newValues.length === 0) {
+        this.$Message.warning('送货外转费用至少保留一项')
+        this.$nextTick(() => {
+          this.deliverOut = oldValues
+        })
+        return
+      }
+      this.syncFormState(newValues, oldValues)
+    },
+    paySettlement (newValues, oldValues) {
+      if (newValues.length === 0) {
+        this.$Message.warning('送货外转付款方式费用至少保留一项')
+        this.$nextTick(() => {
+          this.paySettlement = oldValues
+        })
+        return
+      }
+      this.syncFormState(newValues, oldValues)
+    }
   },
   mounted () {
     const store = this.DispatchSet
-    for (let i in store) {
-      this.form[i] = store[i]
+    for (let key in store) {
+      this.form[key] = store[key]
+      if (store[key] === 1) {
+        if (key.startsWith('pickSelf')) {
+        // 提货自送
+          this.pickSelf.push(key)
+        } else if (key.startsWith('pickOut')) {
+          // 提货外转
+          this.pickOut.push(key)
+        } else if (key.startsWith('deliverSelf')) {
+          // 送货费用自送
+          this.deliverSelf.push(key)
+        } else if (key.startsWith('deliverOut')) {
+          // 送货外转
+          this.deliverOut.push(key)
+        } else if (key.startsWith('paySettlement')) {
+          this.paySettlement.push(key)
+        }
+      }
     }
   },
   methods: {
     ...mapMutations(['changeDispatchConfiguration']),
+    /**
+     * 同步formstate的值
+     */
+    syncFormState (newValues, oldValues) {
+      if (newValues.length > oldValues.length) {
+        // 选中一个
+        let addedKey = _.difference(newValues, oldValues)
+        this.form[addedKey] = 1
+      } else {
+        // 取消选中一个
+        let removeedKey = _.difference(oldValues, newValues)
+        this.form[removeedKey] = 2
+      }
+    },
     /**
      * 自送 radio change
      */

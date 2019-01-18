@@ -32,7 +32,8 @@ export const PACKAGE_TYPE = [
   { value: '铁桶', label: '铁桶' },
   { value: '纤袋', label: '纤袋' },
   { value: '麻袋', label: '麻袋' },
-  { value: '木架', label: '木架' }
+  { value: '木架', label: '木架' },
+  { value: '托盘', label: '托盘' }
 ]
 
 export const DRIVER_TYPE = [

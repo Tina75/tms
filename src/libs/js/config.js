@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-15 17:31:22
+ * @Last Modified time: 2019-01-18 14:03:28
  */
 import float from './float'
 import NP from 'number-precision'
@@ -37,6 +37,7 @@ export const FieldLength = {
   telephone: 20, // 手机固话长度，1-20
   extraAddress: 50, // 补充地址,门派楼,收货人单位,长度：50
   remark: 100, // 备注长度100
+  cargoName: 200, // 货物名称
   cargoNo: 200 // 货物编号，200位
 }
 export const isNumber = (fee) => {

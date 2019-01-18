@@ -110,7 +110,7 @@ export default {
           title: '货物名称',
           key: 'cargoName',
           type: 'select',
-          max: 200,
+          max: this.$fieldLength.cargoName,
           width: 180
         },
         {
@@ -118,7 +118,7 @@ export default {
           title: '货物编号',
           key: 'cargoNo',
           type: 'text',
-          max: 200
+          max: this.$fieldLength.cargoNo
         },
         {
           required: false,
@@ -205,14 +205,14 @@ export default {
           title: '备注1',
           key: 'remark1',
           type: 'text',
-          max: 100
+          max: this.$fieldLength.remark
         },
         {
           required: false,
           title: '备注2',
           key: 'remark2',
           type: 'text',
-          max: 100
+          max: this.$fieldLength.remark
         }
       ],
       // 异常信息表头

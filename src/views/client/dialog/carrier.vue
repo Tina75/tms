@@ -209,7 +209,7 @@ import TagNumberInput from '@/components/TagNumberInput'
 import SelectCarLength from '@/components/SelectCarLength'
 import SelectCarType from '@/components/SelectCarType'
 import { formatePhone } from '@/libs/js/formate'
-import { validatePhone } from '@/libs/js/validate'
+import validator, { validatePhone } from '@/libs/js/validate'
 import _ from 'lodash'
 export default {
   name: 'carrier',
@@ -306,7 +306,18 @@ export default {
             { validator: validatePhone, trigger: 'blur' }
           ],
           customerCarrierPhone: [
-            { validator: validatePhone, trigger: 'blur' }
+            { validator: (rule, value, callback) => {
+              if (value) {
+                if (validator.phone(value) || validator.telphone(value)) {
+                  callback()
+                } else {
+                  callback(new Error('请输入正确的手机号或座机号'))
+                }
+              } else {
+                callback()
+              }
+            },
+            trigger: 'blur' }
           ]
         }
       }

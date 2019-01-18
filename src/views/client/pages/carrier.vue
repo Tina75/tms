@@ -261,6 +261,11 @@ export default {
           width: 120
         },
         {
+          title: '客服联系电话',
+          key: 'customerCarrierPhone',
+          width: 120
+        },
+        {
           title: '司机数',
           key: 'driverCnt'
         },
