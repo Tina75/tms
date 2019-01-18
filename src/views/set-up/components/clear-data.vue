@@ -310,7 +310,7 @@ export default {
     color #333
     font-size 14px
     .operation
-      width 330px
+      width 335px
       margin 0 auto
       text-align left
       /deep/
