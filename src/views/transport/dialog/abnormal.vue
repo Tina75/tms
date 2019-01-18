@@ -143,13 +143,13 @@ import Server from '@/libs/js/server'
 import SendFee from '../components/SendFee'
 import PickupFee from '../components/PickupFee'
 import UpLoad from '@/components/upLoad/index.vue'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 import TableExtend from '../components/TableExtend.vue'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import { mapGetters } from 'vuex'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
-import { divideFeeOrNull, multiplyFeeOrNull } from '@/libs/js/config'
+import { divideFeeOrNull, multiplyFeeOrNull, roundFee, roundWeight, roundVolume, roundWeightKg } from '@/libs/js/config'
 import OrderMap from '@/views/order/create/libs/orderMap'
 export default {
   name: 'SendCar',
@@ -192,31 +192,38 @@ export default {
         {
           title: '货物名称',
           key: 'cargoName',
-          width: 140,
+          width: 110,
+          tooltip: true
+        },
+        {
+          title: '货物编号',
+          key: 'cargoNo',
+          width: 100,
           tooltip: true
         },
         {
           title: '包装方式',
           key: 'unit',
-          width: 100
+          width: 100,
+          tooltip: true
         },
         {
           title: '包装数量',
           key: 'quantity',
-          width: 120
+          width: 110
         },
         {
           title: '体积（方）',
           key: 'volume',
-          width: 120,
+          width: 110,
           render: (h, params) => {
-            return h('div', float.round(params.row.volume, 6))
+            return h('div', roundVolume(params.row.volume))
           }
         },
         {
           title: '操作',
           key: 'do',
-          width: 128,
+          width: 88,
           className: 'padding-left-30',
           render: (h, params) => {
             return h('div', [
@@ -241,14 +248,14 @@ export default {
                       // 找到原单对应数组的下标
                       let index = _.findIndex(z.parentOrderCargoList, hasParentList)
                       hasParentList.quantity += params.row.quantity
-                      hasParentList.cargoCost = float.round(hasParentList.cargoCost + params.row.cargoCost)
+                      hasParentList.cargoCost = roundFee(hasParentList.cargoCost + params.row.cargoCost)
                       // 区分吨和公斤
                       if (z.WeightOption === 1) {
-                        hasParentList.weight = float.round(hasParentList.weight + params.row.weight, 3)
+                        hasParentList.weight = roundWeight(hasParentList.weight + params.row.weight)
                       } else {
-                        hasParentList.weightKg += params.row.weightKg
+                        hasParentList.weightKg = roundWeightKg(hasParentList.weightKg + params.row.weightKg)
                       }
-                      hasParentList.volume = float.round(hasParentList.volume + params.row.volume, 6)
+                      hasParentList.volume = roundVolume(hasParentList.volume + params.row.volume)
 
                       z.$set(z.parentOrderCargoList, index, hasParentList)
                       z.childOrderCargoList.splice(params.index, 1)
@@ -279,17 +286,17 @@ export default {
       columnWeight: {
         title: '重量（吨）',
         key: 'weight',
-        width: 120,
+        width: 110,
         render: (h, p) => {
-          return h('span', p.row.weight ? float.round(p.row.weight, 3) : 0)
+          return h('span', roundWeight(p.row.weight))
         }
       },
       columnWeightKg: {
         title: '重量（公斤）',
         key: 'weightKg',
-        width: 120,
+        width: 110,
         render: (h, p) => {
-          return h('span', p.row.weightKg ? p.row.weightKg : 0)
+          return h('span', roundWeightKg(p.row.weightKg))
         }
       },
       parentOrderCargoList: [],
@@ -318,28 +325,28 @@ export default {
           title: '重量（吨）',
           key: 'weight',
           render: (h, p) => {
-            return h('span', p.row.weight ? float.round(p.row.weight, 3) : 0)
+            return h('span', roundWeight(p.row.weight))
           }
         },
         {
           title: '重量（公斤）',
           key: 'weightKg',
           render: (h, p) => {
-            return h('span', p.row.weightKg ? p.row.weightKg : 0)
+            return h('span', roundWeightKg(p.row.weightKg))
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
           render: (h, p) => {
-            return h('div', p.row.volume ? float.round(p.row.volume, 6) : 0)
+            return h('div', roundVolume(p.row.volume))
           }
         },
         {
           title: '货值（元）',
           key: 'cargoCost',
           render: (h, p) => {
-            return h('div', p.row.cargoCost ? float.round(p.row.cargoCost / 100, 4) : 0)
+            return h('div', roundFee(p.row.cargoCost))
           }
         },
         {
@@ -440,9 +447,9 @@ export default {
     this.fetchData()
     // 动态添加吨或公斤列
     if (this.WeightOption === 1) {
-      this.triggerWeightColumn(this.childDataColumns, this.columnWeight, 3)
+      this.triggerWeightColumn(this.childDataColumns, this.columnWeight, 4)
     } else {
-      this.triggerWeightColumn(this.childDataColumns, this.columnWeightKg, 3)
+      this.triggerWeightColumn(this.childDataColumns, this.columnWeightKg, 4)
     }
   },
 
@@ -518,6 +525,7 @@ export default {
         if (_this.type !== 3) {
           delete _this.payment.tollFee // 去掉路桥费
           delete _this.payment.accommodation // 去掉住宿费
+          delete _this.payment.infoFee // 去掉信息费
         }
         // _this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
         // 将收费信息中的金额单位转为元
@@ -736,8 +744,8 @@ export default {
           z.cloneSettlementPayInfo.map((item, i) => {
             tableData.push({
               payType: item.payType,
-              cashAmount: float.round(item.cashAmount * 100 || 0),
-              fuelCardAmount: float.round(item.fuelCardAmount * 100 || 0)
+              cashAmount: multiplyFeeOrNull(item.cashAmount),
+              fuelCardAmount: multiplyFeeOrNull(item.fuelCardAmount)
             })
           })
         }
@@ -755,18 +763,22 @@ export default {
         assignCarType: z.details.assignCarType
       }
       if (z.recordId) {
-        data.recordId = this.recordId
+        data.recordId = z.recordId
       } else {
         data.billId = z.id
         data.billType = z.type
       }
       if (data.abnormalTypeCode === 1 || data.abnormalTypeCode === 2) {
-        data.abnormalCargolist = this.AbnormalCargoInfos.childOrderCargoList
+        data.abnormalCargolist = z.AbnormalCargoInfos.childOrderCargoList
         for (let i = 0; i < data.abnormalCargolist.length; i++) {
-          data.abnormalCargolist[i].weightKg = float.round(data.abnormalCargolist[i].weight * 1000)
+          if (z.WeightOption === 1) {
+            data.abnormalCargolist[i].weightKg = parseInt(roundWeightKg(data.abnormalCargolist[i].weight * 1000))
+          } else {
+            data.abnormalCargolist[i].weight = roundWeight(data.abnormalCargolist[i].weightKg / 1000)
+          }
         }
       } else if (data.abnormalTypeCode === 3) {
-        data.abnormalCargolist = this.AbnormalAddCargoInfos.addCargoInfos
+        data.abnormalCargolist = z.AbnormalAddCargoInfos.addCargoInfos
       }
       Server({
         url: z.recordId ? '/abnormal/update' : '/abnormal/create',
@@ -835,11 +847,7 @@ export default {
       if (this.isChangeFee === 2) {
         temp = Object.assign({}, this.clonePayment)
         for (let key in temp) {
-          if (typeof temp[key] === 'number') {
-            temp[key] = float.round(temp[key] * 100)
-          } else {
-            temp[key] = 0
-          }
+          temp[key] = multiplyFeeOrNull(temp[key])
         }
       } else {
         if (this.type === 3) {

@@ -8,21 +8,22 @@
         <table cellspacing="0" cellpadding="10" border="0" style="width:100%">
           <tbody>
             <tr>
-              <td>承运商：{{item.waybill.carrierName}}</td>
-              <td>始发地：{{item.waybill.startName}}</td>
-              <td>目的地：{{item.waybill.endName}}</td>
+              <td>承运商：{{item.waybill.carrierName || '-'}}</td>
+              <td>始发地：{{item.waybill.startName || '-'}}</td>
+              <td>目的地：{{item.waybill.endName || '-'}}</td>
             </tr>
             <tr>
-              <td>车牌号：{{item.waybill.carNo}}</td>
-              <td v-if="item.waybill.assignCarType === 1">司机：{{item.waybill.driverName}}</td>
-              <td v-if="item.waybill.assignCarType === 1">手机号码：{{item.waybill.driverPhone}}</td>
+              <td>车牌号：{{item.waybill.carNo || '-'}}</td>
+              <td v-if="item.waybill.assignCarType === 1">司机：{{item.waybill.driverName || '-'}}</td>
+              <td v-if="item.waybill.assignCarType === 1">手机号码：{{item.waybill.driverPhone || '-'}}</td>
               <td v-if="item.waybill.assignCarType === 2">主司机：{{getDriver(item.waybill)}}</td>
               <td v-if="item.waybill.assignCarType === 2">副司机：{{getAssistantDriver(item.waybill)}}</td>
             </tr>
             <tr>
-              <td>车型：{{item.waybill.carType|carTypeFormatter}} {{item.waybill.carLength|carLengthFormatter}}</td>
+              <td v-if="item.waybill.carType || item.waybill.carLength">车型：{{item.waybill.carType|carTypeFormatter}} {{item.waybill.carLength|carLengthFormatter}}</td>
+              <td v-else>车型：-</td>
               <td>回单数：{{item.waybill.backbillCnt}}</td>
-              <td>代收货款：{{item.waybill.collectionMoney ? getFeeText(item.waybill.collectionMoney) + '元' : '-'}}</td>
+              <td>代收货款：{{item.waybill.collectionMoney | toPoint('元')}}</td>
             </tr>
           </tbody>
         </table>
@@ -42,29 +43,30 @@
             <tr v-for="(cargo, key) in item.cargoList" :key="key"
                 class="table-content">
               <td>{{cargo.cargoName}}</td>
-              <td>{{cargo.unit}}</td>
-              <td>{{cargo.quantity}}</td>
+              <td>{{cargo.unit || '-'}}</td>
+              <td>{{getRenderNumberAttr(cargo.quantity)}}</td>
               <td>{{cargo.cargoCost | fee}}</td>
-              <td>{{cargo.weight}}</td>
-              <td>{{cargo.volume}}</td>
+              <td v-if="WeightOption === 1">{{getRenderNumberAttr(cargo.weight)}}</td>
+              <td v-else>{{getRenderNumberAttr(cargo.weightKg)}}</td>
+              <td>{{getRenderNumberAttr(cargo.volume)}}</td>
             </tr>
             <tr>
               <td colspan="6" class="table-footer">
-                <span class="table-footer-item">{{item.waybill.assignCarType === 1 ? '运输费':'油费'}}：{{item.waybill.freightFee | fee}} 元</span>
-                <span class="table-footer-item">装货费：{{item.waybill.loadFee | fee}} 元</span>
-                <span class="table-footer-item">卸货费：{{item.waybill.unloadFee | fee}} 元</span>
-                <span class="table-footer-item">路桥费：{{item.waybill.tollFee | fee}} 元</span>
-                <span class="table-footer-item">保险费：{{item.waybill.insuranceFee | fee}} 元</span>
-                <span class="table-footer-item">其他：{{item.waybill.otherFee | fee}} 元</span>
-                <span class="table-footer-item">合计运费: {{item.waybill.totalFee | fee}} 元</span>
-                <span class="table-footer-item">结算方式：{{item.waybill.settlementType | payTypeFormatter}}</span>
-                <span class="table-footer-item">信息费：{{item.waybill.infoFee | fee}}元</span>
+                <span class="table-footer-item">{{item.waybill.assignCarType === 1 ? '运输费':'油费'}}：{{item.waybill.freightFee | toPoint('元')}}</span>
+                <span class="table-footer-item">装货费：{{item.waybill.loadFee | toPoint('元')}}</span>
+                <span class="table-footer-item">卸货费：{{item.waybill.unloadFee | toPoint('元')}}</span>
+                <span class="table-footer-item">路桥费：{{item.waybill.tollFee | toPoint('元')}}</span>
+                <span class="table-footer-item">保险费：{{item.waybill.insuranceFee | toPoint('元')}}</span>
+                <span class="table-footer-item">其他：{{item.waybill.otherFee | toPoint('元')}}</span>
+                <span class="table-footer-item">合计运费: {{item.waybill.totalFee | toPoint('元')}}</span>
+                <span class="table-footer-item">结算方式：{{settlement(item.waybill.settlementType) || '-'}}</span>
+                <span class="table-footer-item">信息费：{{item.waybill.infoFee | toPoint('元')}}</span>
               </td>
             </tr>
           </tbody>
         </table>
         <div class="remark-line">
-          备注：{{item.waybill.remark || '无'}}
+          备注：{{item.waybill.remark || '-'}}
         </div>
         <table style="width:100%">
           <tbody>
@@ -83,7 +85,9 @@
 <script>
 import TransportBase from '../mixin/transportBase'
 import Printd from 'printd'
-import { getFeeText } from '@/libs/js/config'
+import { mapGetters } from 'vuex'
+import settlements from '@/libs/constant/settlement.js'
+import { getFeeText, renderNumberAttr } from '@/libs/js/config'
 export default {
   filters: {
     fee: getFeeText
@@ -130,7 +134,11 @@ export default {
       visible: false
     }
   },
-
+  computed: {
+    ...mapGetters([
+      'WeightOption'
+    ])
+  },
   mounted () {
     this.printer = new Printd()
   },
@@ -139,13 +147,13 @@ export default {
       if (item.driverName) {
         return `${item.driverName}  ${item.driverPhone}`
       }
-      return ''
+      return '-'
     },
     getAssistantDriver (item) {
       if (item.assistantDriverName) {
         return `${item.assistantDriverName}  ${item.assistantDriverPhone}`
       }
-      return ''
+      return '-'
     },
     print () {
       this.$nextTick(() => {
@@ -154,6 +162,16 @@ export default {
     },
     getFeeText (val) {
       return getFeeText(val)
+    },
+    getRenderNumberAttr (val) {
+      return renderNumberAttr(val)
+    },
+    settlement (data) {
+      let type = settlements.find(item => item.value === data.settlementType)
+      if (type) {
+        return type.name
+      }
+      return settlements[0].name
     }
   }
 }

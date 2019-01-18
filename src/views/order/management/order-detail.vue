@@ -247,7 +247,7 @@
               <div
                 v-for="(item, index) in detail.receiptOrder.receiptUrl"
                 :key="index"
-                :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + item + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+                :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + $handleImgUrl(item) + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
                 @click="handleView(index)">
               </div>
             </div>

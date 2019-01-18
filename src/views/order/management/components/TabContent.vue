@@ -713,20 +713,19 @@ export default {
           key: 'cargoNames',
           minWidth: 160,
           render: (h, p) => {
-            if (p.row.cargoNames) {
-              let cargoNamesArr = p.row.cargoNames.split(',')
-              if (cargoNamesArr.length > 1) {
+            if (p.row.cargoNames.length > 0) {
+              if (p.row.cargoNames.length > 1) {
                 return h('Tooltip', {
                   props: {
                     placement: 'bottom',
-                    maxWidth: 152,
-                    content: cargoNamesArr.join('\n')
+                    maxWidth: 500,
+                    content: p.row.cargoNames.join('\n')
                   }
                 }, [
-                  h('span', cargoNamesArr[0] + ' ...')
+                  h('span', p.row.cargoNames[0] + ' ...')
                 ])
               } else {
-                return h('span', p.row.cargoNames)
+                return h('span', p.row.cargoNames.join('\n'))
               }
             } else {
               return h('span', '-')
