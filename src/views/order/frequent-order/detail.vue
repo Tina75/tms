@@ -167,7 +167,8 @@ import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
 import settlement from '@/libs/constant/settlement.js'
-import { divideFee, NumberPrecesion, divideMileage, renderFee } from '@/libs/js/config'
+import { divideFee, NumberPrecesion, divideMileage } from '@/libs/js/config'
+import * as CargoInfo from '@/libs/constant/cargoInfoTable'
 export default {
   name: 'frequent-order-detail',
   filters: {
@@ -181,79 +182,16 @@ export default {
         orderCargoTemplateList: []
       },
       tableColumns: [
-        {
-          title: '货物名称',
-          key: 'cargoName'
-        },
-        {
-          title: '货物编号',
-          key: 'cargoNo',
-          render: (h, p) => {
-            return h('span', p.row.cargoNo || '-')
-          }
-        },
-        {
-          title: '重量（吨）',
-          key: 'weight',
-          render: (h, p) => {
-            return h('span', p.row.weight || '-')
-          }
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          render: (h, p) => {
-            return h('span', p.row.volume || '-')
-          }
-        },
-        {
-          title: '货值（元）',
-          key: 'cargoCost',
-          render: (h, params) => {
-            return renderFee(h, params.row.cargoCost)
-          }
-        },
-        {
-          title: '包装数量',
-          key: 'quantity',
-          render: (h, p) => {
-            return h('span', p.row.quantity || '-')
-          }
-        },
-        {
-          title: '包装方式',
-          key: 'unit',
-          render: (h, p) => {
-            return h('span', p.row.unit || '-')
-          }
-        },
-        {
-          title: '包装尺寸（毫米）',
-          key: 'dimension',
-          render: (h, p) => {
-            let text = ''
-            if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
-              text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
-            } else {
-              text = '-'
-            }
-            return h('span', text)
-          }
-        },
-        {
-          title: '备注1',
-          key: 'remark1',
-          render: (h, p) => {
-            return h('span', p.row.remark1 || '-')
-          }
-        },
-        {
-          title: '备注2',
-          key: 'remark2',
-          render: (h, p) => {
-            return h('span', p.row.remark2 || '-')
-          }
-        }
+        CargoInfo.cargoName,
+        CargoInfo.cargoNo,
+        CargoInfo.weight,
+        CargoInfo.volume,
+        CargoInfo.cargoCost,
+        CargoInfo.quantity,
+        CargoInfo.unit,
+        CargoInfo.dimension,
+        CargoInfo.remark1,
+        CargoInfo.remark2
       ]
     }
   },

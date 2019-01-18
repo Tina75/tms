@@ -290,7 +290,8 @@ import float from '@/libs/js/float'
 import { mapGetters } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import OrderChange from './components/OrderChange'
-import { renderFee, roundFee, divideFee, roundVolume, roundWeight, renderVolume, renderQuantity, renderWeight, renderWeightKg } from '@/libs/js/config'
+import { roundFee, divideFee, roundVolume, roundWeight } from '@/libs/js/config'
+import * as CargoInfo from '@/libs/constant/cargoInfoTable'
 import NP from 'number-precision'
 export default {
   name: 'order-management-detail',
@@ -320,74 +321,15 @@ export default {
       btnGroup: [],
       operateValue: 5,
       tableColumns: [
-        {
-          title: '货物名称',
-          key: 'cargoName'
-          // className: 'padding-left-45'
-        },
-        {
-          title: '货物编号',
-          key: 'cargoNo',
-          render: (h, p) => {
-            return h('span', p.row.cargoNo ? p.row.cargoNo : '-')
-          }
-        },
-        {
-          title: '货值（元）',
-          key: 'cargoCost',
-          render: (h, params) => {
-            return renderFee(h, params.row.cargoCost)
-            // return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : 0)
-          }
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          render: (h, p) => {
-            return renderVolume(h, p.row.volume)
-          }
-        },
-        {
-          title: '数量',
-          key: 'quantity',
-          render: (h, p) => {
-            return renderQuantity(h, p.row.quantity)
-          }
-        },
-        {
-          title: '包装方式',
-          key: 'unit',
-          render: (h, p) => {
-            return h('span', p.row.unit ? p.row.unit : '-')
-          }
-        },
-        {
-          title: '包装尺寸（毫米）',
-          key: 'dimension',
-          render: (h, p) => {
-            let text = ''
-            if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
-              text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
-            } else {
-              text = '-'
-            }
-            return h('span', text)
-          }
-        },
-        {
-          title: '备注1',
-          key: 'remark1',
-          render: (h, p) => {
-            return h('span', p.row.remark1 ? p.row.remark1 : '-')
-          }
-        },
-        {
-          title: '备注2',
-          key: 'remark2',
-          render: (h, p) => {
-            return h('span', p.row.remark2 ? p.row.remark2 : '-')
-          }
-        }
+        CargoInfo.cargoName,
+        CargoInfo.cargoNo,
+        CargoInfo.cargoCost,
+        CargoInfo.volume,
+        CargoInfo.quantity,
+        CargoInfo.unit,
+        CargoInfo.dimension,
+        CargoInfo.remark1,
+        CargoInfo.remark2
       ],
       tableData: [],
       currentStep: 0,
@@ -396,20 +338,8 @@ export default {
       orderLog: [],
       orderPrint: [],
       imgViewFunc: null,
-      columnWeight: {
-        title: '重量（吨）',
-        key: 'weight',
-        render: (h, p) => {
-          return renderWeight(h, p.row.weight)
-        }
-      },
-      columnWeightKg: {
-        title: '重量（公斤）',
-        key: 'weightKg',
-        render: (h, p) => {
-          return renderWeightKg(h, p.row.weightKg)
-        }
-      },
+      columnWeight: CargoInfo.weight,
+      columnWeightKg: CargoInfo.weightKg,
       activeTab: 'detail',
       changeOrderCnt: 0,
       cngLabel: (h) => {
