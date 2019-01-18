@@ -2,6 +2,10 @@ import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
 import { NumberPrecesion, divideFeeOrNull, multiplyFeeOrNull, isNumber } from '@/libs/js/config'
 let uniqueIndex = 0
+// 过滤undefined和null
+const propFilter = (val) => {
+  return val === undefined || val === null ? '' : val
+}
 export default class Cargo {
   /**
    *
@@ -9,16 +13,19 @@ export default class Cargo {
    * @param {Boolean} transfer 需要除以100转换为元
    */
   constructor (props, transfer = false) {
-    this.quantity = null
+    const self = this
     this.editable = false
+    this.hasError = false
+    this.errorMsg = {}
 
     this.cargoCost = null
     this._weight = null
     this.volume = null
-    this.hasError = false
-    this.errorMsg = {}
+    this.quantity = null
+    this.cargoNo = null
+    this.unit = null
+    this.orderNo = null
 
-    const self = this
     this.dimension = {
       _length: null,
       _width: null,
@@ -51,37 +58,28 @@ export default class Cargo {
         return this._height
       }
     }
-    this.cargoNo = null
-    this.unit = null
-
-    this.orderNo = null
-
     if (props) {
       this.id = props.id || uniqueIndex++
-      this.cargoName = props.cargoName
-      this.cargoNo = props.cargoNo
-
+      this.cargoName = propFilter(props.cargoName)
+      this.cargoNo = propFilter(props.cargoNo)
       if (props.dimension) {
-        this.dimension._length = props.dimension.length
-        this.dimension._width = props.dimension.width
-        this.dimension._height = props.dimension.height
+        this.dimension._length = propFilter(props.dimension.length)
+        this.dimension._width = propFilter(props.dimension.width)
+        this.dimension._height = (props.dimension.height)
       }
       if (!transfer) {
         // 货值，整数
-        this.cargoCost = props.cargoCost
+        this.cargoCost = propFilter(props.cargoCost)
       } else {
         this.cargoCost = divideFeeOrNull(props.cargoCost)
       }
-      this._weight = props.weight
-      this.volume = props.volume
-      // 数量
-      this.quantity = props.quantity
-      // 包装
-      this.unit = props.unit
-      // 备注 100
-      this.remark1 = props.remark1
-      this.remark2 = props.remark2
-      this.orderNo = props.orderNo
+      this._weight = propFilter(props.weight)
+      this.volume = propFilter(props.volume)
+      this.quantity = propFilter(props.quantity)
+      this.unit = propFilter(props.unit)
+      this.remark1 = propFilter(props.remark1)
+      this.remark2 = propFilter(props.remark2)
+      this.orderNo = propFilter(props.orderNo)
     }
   }
   get weight () {
@@ -122,13 +120,6 @@ export default class Cargo {
         delete this.errorMsg[field]
       }
     }
-    // if (field === 'orderNo') {
-    //   if (!this.orderNo) {
-    //     this.errorMsg[field] = '请输入订单号'
-    //   } else {
-    //     delete this.errorMsg[field]
-    //   }
-    // }
     this.hasError = false
     for (let name in this.errorMsg) {
       if (name) {
