@@ -51,7 +51,7 @@
       <div v-if="active === 2" class="operation">
         <div class="verify">
           <p class="label">请选择需要清除数据的时间段</p>
-          <DatePicker v-model="dateRange" format="yyyy-MM-dd" type="daterange" placeholder="请选择起始日期" style="width: 261px" @on-change="handleTimeChange"></DatePicker>
+          <DatePicker v-model="dateRange" format="yyyy-MM-dd" type="daterange" placeholder="请选择起始日期" style="width: 261px"></DatePicker>
         </div>
         <div class="data-type">
           <p class="tips">请选择需要删除的数据类型，数据删除后不可恢复</p>
@@ -68,7 +68,7 @@
       </div>
       <!-- 第三步 确认清除 -->
       <div v-if="active === 3" class="operation">
-        <p class="confirm">您选择清除的数据日期是：<span class="stand">{{beginTime}}-{{endTime}}</span></p>
+        <p class="confirm">您选择清除的数据日期是：<span class="stand">{{dateRange[0] | date}}-{{dateRange[1] | date}}</span></p>
         <p class="confirm">
           <span class="show_left">您选择的数据范围是：</span>
           <span class="stand show_right">
@@ -133,8 +133,8 @@ export default {
       types: [],
       dateRange: ['', ''],
       loading: false,
-      beginTime: '',
-      endTime: '',
+      // beginTime: '',
+      // endTime: '',
       second: 3,
       timer: null
     }
@@ -174,7 +174,7 @@ export default {
       // this.beginTime = this.timeFormatter(this.begin)
       // this.endTime = this.timeFormatter(this.endTime)
       this.dateRange = [this.timeFormatter(this.begin), this.timeFormatter(this.end)]
-      this.handleTimeChange(this.dateRange)
+      // this.handleTimeChange(this.dateRange)
     }
   },
   methods: {
@@ -222,8 +222,10 @@ export default {
         method: 'post',
         data: {
           types: this.types,
-          endTime: this.endTime,
-          beginTime: this.beginTime
+          // endTime: this.endTime,
+          beginTime: this.dateRange[0].getTime(),
+          // beginTime: this.beginTime
+          endTime: this.dateRange[1].getTime() + 86399999
         }
       })
         .then((resp) => {
