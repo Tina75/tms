@@ -433,7 +433,7 @@ export default {
           this.settlementTypeFee = '2'
           this.infoFeeDisabled = true
         } else {
-          if (this.cloneSettlementTypeFee === '2') {
+          if (this.cloneSettlementTypeFee === '2' || (this.cloneSettlementTypeFee === '1' && this.settlementTypeFee === '2')) {
             this.settlementTypeFee = '2'
             this.infoFeeDisabled = false
           } else {

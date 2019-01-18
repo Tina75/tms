@@ -1,4 +1,4 @@
-
+import md5 from 'md5'
 import Server from '@/libs/js/server'
 
 export const CHECK_PWD = function (rule, value, cb) {
@@ -60,10 +60,10 @@ export const CHECK_PHONE = function (rule, value, callback) {
 export const PSW_RIGHT = function (rule, value, callback) {
   if (value) {
     let params = {}
-    params.oldPassword = value
+    params.oldPassword = md5(value)
     Server({
       url: 'set/pswRight',
-      method: 'get',
+      method: 'post',
       data: params
     }).then(({ data }) => {
       callback()

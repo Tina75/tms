@@ -68,7 +68,7 @@
       </div>
       <!-- 第三步 确认清除 -->
       <div v-if="active === 3" class="operation">
-        <p class="confirm">您选择清除的数据日期是：<span class="stand">{{dateRange[0] | date}}-{{dateRange[1] | date}}</span></p>
+        <p class="confirm">您选择清除的数据日期是：<span class="stand">{{dateRange[0] | date}}~{{dateRange[1] | date}}</span></p>
         <p class="confirm">
           <span class="show_left">您选择的数据范围是：</span>
           <span class="stand show_right">
@@ -93,6 +93,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import Server from '@/libs/js/server'
+import md5 from 'md5'
 export default {
   name: 'clear-data',
   props: {
@@ -189,9 +190,9 @@ export default {
       let flag = false
       await Server({
         url: 'set/pswRight',
-        method: 'get',
+        method: 'post',
         data: {
-          oldPassword: value
+          oldPassword: md5(value)
         }
       }).then(({ data }) => {
         flag = true

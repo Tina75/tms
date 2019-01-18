@@ -25,6 +25,7 @@
  */
 import { PSW_RIGHT, CHECK_PWD, CHECK_PWD_SAME } from '../util/validator.js'
 import Server from '@/libs/js/server'
+import md5 from 'md5'
 export default {
   name: 'change-password',
   components: {
@@ -67,7 +68,12 @@ export default {
           Server({
             url: 'set/updatePsw',
             method: 'post',
-            data: this.formPwd
+            data: {
+              oldPassword: md5(this.formPwd.oldPassword),
+              password: md5(this.formPwd.password),
+              confirmPassword: md5(this.formPwd.confirmPassword)
+            }
+            // data: this.formPwd
           }).then(({ data }) => {
             this.$Message.success('保存成功!')
             this.formPwd = {}

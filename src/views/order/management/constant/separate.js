@@ -257,7 +257,8 @@ export const TABLE_COLUMNS_ONE = vm => [
           ])
         } else {
           let renderBtn = []
-          if (vm.muiltyOrderCargoList.length === 0) {
+          if (vm.muiltyOrderCargoList.length === 0 &&
+            !(!params.row.quantity && !params.row.weight && !params.row.weightKg && !params.row.volume)) { // 重量数量体积都为0没有拆部分按钮
             renderBtn = [
               h('a', {
                 style: {

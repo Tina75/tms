@@ -6,7 +6,7 @@
           <!-- <span :style="'display: inline-block;width: 69px;height: 40px;background-image: url(' + CompanyInfo.logoUrl + '?x-oss-process=image/resize,w_69);background-repeat: no-repeat;background-position: center;vertical-align: middle;margin-right: 10px;'"></span> -->
           <div
             v-if="CompanyInfo.logoUrl"
-            :style="'width: 30px;height:30px;border-radius: 50%;margin-right: 10px;background-image: url(' + CompanyInfo.logoUrl + ');background-repeat: no-repeat;background-position: center;background-size: cover;'">
+            :style="'width: 30px;height:30px;border-radius: 50%;margin-right: 10px;background-image: url(' + $handleImgUrl(CompanyInfo.logoUrl) + ');background-repeat: no-repeat;background-position: center;background-size: cover;'">
           </div>
           <!-- <div v-else class="logo-url">
             <FontIcon type="ico-comp" size="16" color="#C9CED9"></FontIcon>
@@ -15,7 +15,7 @@
         </h3>
         <ul class="order-sub-title">
           <li>托运时间：
-            <span v-if="data.deliveryTime">{{data.deliveryTime | datetime('yyyy-MM-dd')}}</span>
+            <span v-if="data.createTime">{{data.createTime | datetime('yyyy-MM-dd')}}</span>
             <span v-else>-</span>
           </li>
           <li>
@@ -118,7 +118,7 @@
             </tr>
           </tbody>
         </table>
-        <table cellspacing="0" cellpadding="10" border="1" class="cargo-info">
+        <table cellspacing="0" cellpadding="5" border="1" class="cargo-info">
           <thead>
             <tr>
               <th>里程（公里）</th>
@@ -224,6 +224,7 @@ export default {
       cssText: `
         .order-detail {
           page-break-after: always;
+          -webkit-print-color-adjust: 'exact';
         }
         .order-title {
           font-size: 20px;
@@ -451,6 +452,6 @@ export default {
 }
 </script>
 
-<style>
+<style lang='stylus'>
 
 </style>
