@@ -225,7 +225,7 @@ export default {
           // endTime: this.endTime,
           beginTime: this.dateRange[0].getTime(),
           // beginTime: this.beginTime
-          endTime: this.dateRange[1].getTime() + 86400000
+          endTime: this.dateRange[1].getTime() + 86399999
         }
       })
         .then((resp) => {
