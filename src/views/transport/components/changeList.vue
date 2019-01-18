@@ -81,14 +81,15 @@ import PayInfo from '../components/PayInfo'
 import { getCarType, getCarLength } from '@/libs/constant/carInfo'
 import allocationStrategy from '../constant/allocation.js'
 import _ from 'lodash'
+import { divideMileage, divideFee } from '@/libs/js/config'
 
 const moneyFormate = (fee) => {
-  if (!fee) return '-'
-  return fee / 100
+  if (typeof fee !== 'number') return '-'
+  return divideFee(fee)
 }
 const mileageFormate = (mileage) => {
-  if (!mileage) return '-'
-  return mileage / 1000
+  if (typeof mileage !== 'number') return '-'
+  return divideMileage(mileage)
 }
 export default {
   name: 'except-record',
@@ -253,11 +254,13 @@ export default {
           'order': 141,
           'span': 12
         },
-        // 'cashBack': {
-        //   'type': 'fee',
-        //   'description': '返现费用',
-        //   'ways': 1
-        // },
+        'cashBack': {
+          'type': 'fee',
+          'description': '返现费用',
+          'ways': 1,
+          'order': 142,
+          'span': 12
+        },
         'tollFee': {
           'type': 'fee',
           'description': '路桥费',
