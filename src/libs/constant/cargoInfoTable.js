@@ -17,32 +17,33 @@ export const customerOrderNo = {
 export const cargoName = {
   title: '货物名称',
   key: 'cargoName',
-  render: (h, params) => {
-    let text = ''
-    if (params.row.cargoName.length > 12) { // 显示tooltip
-      text = params.row.cargoName.slice(0, 12) + '...'
-      return h('div', [
-        h('Tooltip', {
-          props: {
-            placeholder: 'bottom',
-            transfer: false
-          }
-        }, [
-          h('span', {
-          }, text),
-          h('div', {
-            slot: 'content',
-            style: {
-              whiteSpace: 'normal'
-            }
-          }, params.row.cargoName)
-        ])
-      ])
-    } else {
-      return h('span', {
-      }, params.row.cargoName || '-')
-    }
-  }
+  tooltip: true
+  // render: (h, params) => {
+  //   let text = ''
+  //   if (params.row.cargoName.length > 12) { // 显示tooltip
+  //     text = params.row.cargoName.slice(0, 12) + '...'
+  //     return h('div', [
+  //       h('Tooltip', {
+  //         props: {
+  //           placeholder: 'bottom',
+  //           transfer: false
+  //         }
+  //       }, [
+  //         h('span', {
+  //         }, text),
+  //         h('div', {
+  //           slot: 'content',
+  //           style: {
+  //             whiteSpace: 'normal'
+  //           }
+  //         }, params.row.cargoName)
+  //       ])
+  //     ])
+  //   } else {
+  //     return h('span', {
+  //     }, params.row.cargoName || '-')
+  //   }
+  // }
 }
 export const cargoNo = {
   title: '货物编号',

@@ -360,3 +360,7 @@ export default {
     color #00A4BD
     font-size 20px
 </style>
+<style lang="stylus">
+.ivu-tooltip-inner-with-width
+    word-break break-all
+</style>

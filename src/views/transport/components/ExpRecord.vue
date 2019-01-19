@@ -476,3 +476,7 @@ export default {
     display: flex
     display -ms-flexbox
 </style>
+<style lang="stylus">
+.ivu-tooltip-inner-with-width
+    word-break break-all
+</style>

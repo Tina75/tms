@@ -378,7 +378,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
 import { formatePhone } from '@/libs/js/formate'
-import { roundFee, multiplyFeeOrNull, divideFeeOrNull, multiplyMileage, divideMileage } from '@/libs/js/config'
+import { roundFee, multiplyFeeOrNull, divideFeeOrNull, multiplyMileageOrNull, divideMileage } from '@/libs/js/config'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -948,7 +948,7 @@ export default {
           weight: statics.weight,
           volume: statics.volume,
           // distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
-          distance: multiplyMileage(this.orderForm.mileage),
+          distance: multiplyMileageOrNull(this.orderForm.mileage),
           startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
           endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude },
           source: 'order' // 计费规则来自订单
@@ -1221,7 +1221,7 @@ export default {
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
               // mileage: orderForm.mileage * 1000,
-              mileage: multiplyMileage(orderForm.mileage),
+              mileage: multiplyMileageOrNull(orderForm.mileage),
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
               consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
               invoiceRate: orderForm.isInvoice === 1 ? rate.set(orderForm.invoiceRate) : null
