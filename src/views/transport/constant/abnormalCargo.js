@@ -19,7 +19,8 @@ export const TABLE_COLUMNS_ONE = vm => [
   {
     title: '包装方式',
     key: 'unit',
-    width: 90
+    width: 90,
+    tooltip: true
   },
   {
     title: '包装数量',
@@ -359,7 +360,8 @@ export const TABLE_COLUMNS_TWO = vm => [
   {
     title: '包装方式',
     key: 'unit',
-    width: 90
+    width: 90,
+    tooltip: true
   },
   {
     title: '包装数量',
