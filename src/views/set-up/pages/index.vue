@@ -88,7 +88,7 @@ export default {
   computed: {
     ...mapGetters(['DocumentHeight']),
     styleHeight () {
-      return { height: this.DocumentHeight + 'px' }
+      return { minHeight: this.DocumentHeight + 'px' }
     },
     // 受理开单来的参数
     isFromOrder () {

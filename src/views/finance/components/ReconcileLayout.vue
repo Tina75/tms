@@ -105,6 +105,7 @@ export default {
     position absolute
   &__flex-left
     flex 0 0 269px
+    -ms-flex 0 0 269px
     border-right 1px solid #E4E7EC
   &__flex-right
     flex 1

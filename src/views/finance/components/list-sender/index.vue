@@ -1,10 +1,11 @@
 <template>
-  <div class="list-sender">
+  <div :style="styles" class="list-sender">
     <slot></slot>
   </div>
 </template>
 
 <script>
+import browser from '@/libs/js/browser'
 export default {
   components: {
   },
@@ -22,6 +23,20 @@ export default {
   data () {
     return {
       activeKey: ''
+    }
+  },
+  computed: {
+    styles () {
+      // ie10兼容性问题
+      if (browser.ie && (browser.ie10Compat || browser.ie9Compat)) {
+        return {
+          width: 'auto',
+          overflowX: 'hidden'
+        }
+      }
+      return {
+        width: '269px'
+      }
     }
   },
   methods: {
@@ -66,7 +81,6 @@ export default {
 
 <style lang="stylus" scoped>
 .list-sender
-  width 269px
   overflow-y hidden
   &:hover
     overflow-y auto

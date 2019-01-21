@@ -47,7 +47,7 @@ export default {
     ...mapGetters(['DocumentHeight']),
     styleHeight () {
       return {
-        height: this.DocumentHeight + 'px'
+        minHeight: this.DocumentHeight + 'px'
       }
     }
   },
@@ -91,11 +91,12 @@ export default {
     },
     updateVisibility (index) {
       this.getTabs().forEach((el, i) => {
-        if (i === index) {
-          el.fadeIn()
-        } else {
+        if (i !== index) {
           el.fadeOut()
         }
+      })
+      this.$nextTick(() => {
+        this.children[index].fadeIn()
       })
     },
     handleSelect (name) {
@@ -109,6 +110,8 @@ export default {
 
 <style lang="stylus" scoped>
 .vertical-tabs
+  zoom 1
+  position relative
   &__menu
     height auto
     flex 0 0 160px
@@ -126,12 +129,12 @@ export default {
     top 12px
   &__content-wrapper
     flex 1
+    -ms-flex 1
   &__content
     padding-left 20px
     background-color #fff
     position relative
     height 100%
-    overflow auto
   >>> .ivu-menu-light.ivu-menu-vertical
         .ivu-menu-item-active:not(.ivu-menu-submenu)
           color #333
