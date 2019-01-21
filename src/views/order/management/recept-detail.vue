@@ -240,11 +240,11 @@
           </i-col>
         </Row>
       </div>
-      <div v-if="from === 'receipt' && receiptStatus > 0">
+      <div v-if="from === 'receipt' && detail.receiptOrder.receiptUrl.length > 0">
         <div class="title">
           <span>回单照片</span>
         </div>
-        <div v-if="detail.receiptOrder.receiptUrl.length > 0" style="width: 900px;margin-top: 31px;">
+        <div style="width: 900px;margin-top: 31px;">
           <div
             v-for="(item, index) in detail.receiptOrder.receiptUrl"
             :key="index"
