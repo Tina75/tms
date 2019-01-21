@@ -48,32 +48,33 @@ export const cargoName = {
 export const cargoNo = {
   title: '货物编号',
   key: 'cargoNo',
-  render: (h, params) => {
-    let text = ''
-    if (params.row.cargoNo.length > 12) { // 显示tooltip
-      text = params.row.cargoNo.slice(0, 12) + '...'
-      return h('div', [
-        h('Tooltip', {
-          props: {
-            placeholder: 'bottom',
-            transfer: false
-          }
-        }, [
-          h('span', {
-          }, text),
-          h('div', {
-            slot: 'content',
-            style: {
-              whiteSpace: 'normal'
-            }
-          }, params.row.cargoNo)
-        ])
-      ])
-    } else {
-      return h('span', {
-      }, params.row.cargoNo || '-')
-    }
-  }
+  tooltip: true
+  // render: (h, params) => {
+  //   let text = ''
+  //   if (params.row.cargoNo.length > 12) { // 显示tooltip
+  //     text = params.row.cargoNo.slice(0, 12) + '...'
+  //     return h('div', [
+  //       h('Tooltip', {
+  //         props: {
+  //           placeholder: 'bottom',
+  //           transfer: false
+  //         }
+  //       }, [
+  //         h('span', {
+  //         }, text),
+  //         h('div', {
+  //           slot: 'content',
+  //           style: {
+  //             whiteSpace: 'normal'
+  //           }
+  //         }, params.row.cargoNo)
+  //       ])
+  //     ])
+  //   } else {
+  //     return h('span', {
+  //     }, params.row.cargoNo || '-')
+  //   }
+  // }
 }
 export const weight = {
   title: '重量（吨）',
