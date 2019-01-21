@@ -180,11 +180,12 @@ export default {
       isExport: false,
       /* 订单状态 */
       orderStatusMap: {
-        10: '提货',
+        10: '待提货',
         20: '待调度',
         30: '在途 ',
         40: '已到货',
-        50: '已回单'
+        50: '已回单',
+        100: '删除'
       },
       /* 提货单状态 */
       loadbillStatusMap: {
