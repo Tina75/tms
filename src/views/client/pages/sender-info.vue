@@ -133,7 +133,7 @@ import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, co
 import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
 import headType from '@/libs/constant/headtype'
-import { divideFee } from '@/libs/js/config'
+import { divideFee, renderFee } from '@/libs/js/config'
 // 是否包含省市
 const hasCity = (val, cityName) => {
   return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
@@ -469,7 +469,8 @@ export default {
           title: '货值',
           key: 'cargoCost',
           render (h, params) {
-            return h('div', {}, divideFee(params.row.cargoCost))
+            // return h('div', {}, divideFee(params.row.cargoCost))
+            return renderFee(h, params.row.cargoCost)
           }
         },
         {
