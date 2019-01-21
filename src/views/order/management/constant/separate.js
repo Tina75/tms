@@ -5,7 +5,8 @@ import TagNumberInput from '@/components/TagNumberInput'
 export const TABLE_COLUMNS_ONE = vm => [
   {
     title: '货物名称',
-    key: 'cargoName'
+    key: 'cargoName',
+    tooltip: true
   },
   {
     title: '包装数量',
@@ -98,7 +99,8 @@ export const TABLE_COLUMNS_ONE = vm => [
   {
     title: '包装方式',
     key: 'unit',
-    width: 100
+    width: 100,
+    tooltip: true
   },
   {
     title: '操作',
@@ -327,7 +329,8 @@ export const TABLE_COLUMNS_ONE = vm => [
 export const TABLE_COLUMNS_TWO = vm => [
   {
     title: '货物名称',
-    key: 'cargoName'
+    key: 'cargoName',
+    tooltip: true
   },
   {
     title: '包装数量',
@@ -352,7 +355,8 @@ export const TABLE_COLUMNS_TWO = vm => [
   {
     title: '包装方式',
     key: 'unit',
-    width: 100
+    width: 100,
+    tooltip: true
   },
   {
     title: '操作',
@@ -595,7 +599,8 @@ export const COLUMNS_THREE_WEIGHTKG = vm => {
 export const TABLE_COLUMNS_AVERAGE = (vm) => [
   {
     title: '货物名称',
-    key: 'cargoName'
+    key: 'cargoName',
+    tooltip: true
   },
   {
     title: '包装数量',
@@ -623,14 +628,16 @@ export const TABLE_COLUMNS_AVERAGE = (vm) => [
   {
     title: '包装方式',
     key: 'unit',
-    width: 100
+    width: 100,
+    tooltip: true
   }
 ]
 export const TABLE_COLUMNS_AVERAGE_EDIT = (vm) => {
   return [
     {
       title: '货物名称',
-      key: 'cargoName'
+      key: 'cargoName',
+      tooltip: true
     },
     {
       title: '包装数量',
@@ -682,7 +689,8 @@ export const TABLE_COLUMNS_AVERAGE_EDIT = (vm) => {
     {
       title: '包装方式',
       key: 'unit',
-      width: 100
+      width: 100,
+      tooltip: true
     },
     {
       title: '操作',

@@ -1,5 +1,5 @@
 /* 按钮表格变量 */
-import { divideFee } from '@/libs/js/config'
+import { renderFee } from '@/libs/js/config'
 // 油卡列表按钮
 import { CARDTYPELIST, ISSUERLIST, STATUSLIST } from '../constant/enum'
 export const OILBTN = vm => [
@@ -225,7 +225,8 @@ export const oilTableColumns = vm => [
     width: 150,
     render: (h, params) => {
       // return h('span', typeof params.row.amount === 'number' ? (params.row.amount / 100).toFixed(2) : '0.00')
-      return h('div', {}, divideFee(params.row.amount))
+      // return h('div', {}, divideFee(params.row.amount))
+      return renderFee(h, params.row.amount)
     }
   },
   {
@@ -319,7 +320,8 @@ export const usedTableColumns = vm => [
     key: 'beforeAmount',
     render: (h, params) => {
       // return h('span', typeof params.row.beforeAmount === 'number' ? (params.row.beforeAmount / 100).toFixed(2) : '0.00')
-      return h('div', {}, divideFee(params.row.beforeAmount))
+      // return h('div', {}, divideFee(params.row.beforeAmount))
+      return renderFee(h, params.row.beforeAmount)
     }
   },
   {
@@ -328,7 +330,8 @@ export const usedTableColumns = vm => [
     key: 'afterAmount',
     render: (h, params) => {
       // return h('span', typeof params.row.afterAmount === 'number' ? (params.row.afterAmount / 100).toFixed(2) : '0.00')
-      return h('div', {}, divideFee(params.row.afterAmount))
+      // return h('div', {}, divideFee(params.row.afterAmount))
+      return renderFee(h, params.row.afterAmount)
     }
   },
   {
@@ -397,7 +400,8 @@ export const usedTableColumns = vm => [
     key: 'deposit',
     render: (h, params) => {
       // return h('span', typeof params.row.deposit === 'number' ? (params.row.deposit / 100).toFixed(2) : '0.00')
-      return h('div', {}, divideFee(params.row.deposit))
+      // return h('div', {}, divideFee(params.row.deposit))
+      return renderFee(h, params.row.deposit)
     }
   },
   {

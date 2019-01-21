@@ -106,6 +106,13 @@ export const multiplyRate = (value) => {
   return float.round(NP.times(value, 100), NumberPrecesion.rate)
 }
 /**
+ * 税率乘100保留两位小数
+ * @param {number} fee 通常在读取接口返回的税率值时候用到
+ */
+export const multiplyRateOrNull = (fee) => {
+  return isNumber(fee) ? multiplyRate(fee) : ''
+}
+/**
  * 税率
  */
 export const getRateText = (value) => {

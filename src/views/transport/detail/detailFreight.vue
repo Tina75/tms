@@ -402,7 +402,7 @@ import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import allocationStrategy from '../constant/allocation.js'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import CarPhoto from './components/car-photo.vue'
-import { divideFee, divideMileage } from '@/libs/js/config'
+import { divideMileage, isNumber, getFeeText } from '@/libs/js/config'
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
@@ -654,8 +654,9 @@ export default {
           key: 'quantity',
           width: 120,
           render: (h, p) => {
-            return this.scopedSlotsRender(h, p, 'quantity', 0)
-            // return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
+            // return this.scopedSlotsRender(h, p, 'quantity', 0)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', isNumber(cargo.quantity) ? cargo.quantity : '-')))
           }
         },
         {
@@ -664,10 +665,7 @@ export default {
           width: 120,
           render: (h, p) => {
             return h('div', {},
-              p.row.cargoList.map((cargo) => h('div', divideFee(cargo.cargoCost))))
-            // p.row.cargoList.map((cargo) => h('div', cargo.cargoCost / 100 || '0'))
-
-            // return this.tableDataRender(h, p.row.cargoCost / 100)
+              p.row.cargoList.map((cargo) => h('div', getFeeText(cargo.cargoCost))))
           }
         },
         {
@@ -675,8 +673,8 @@ export default {
           key: 'volume',
           width: 120,
           render: (h, p) => {
-            return this.scopedSlotsRender(h, p, 'volume', 0)
-            //  return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', isNumber(cargo.volume) ? cargo.volume : '-')))
           }
         },
         {
@@ -684,13 +682,9 @@ export default {
           key: 'dimension',
           width: 180,
           render: (h, p) => {
-            let text = ''
-            if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
-              text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
-            } else {
-              text = '-'
-            }
-            return this.scopedSlotsRender(h, p, '', text)
+            // return this.scopedSlotsRender(h, p, '', text)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', this.formatDimension(cargo))))
           }
         },
         {
@@ -819,6 +813,7 @@ export default {
           weight,
           weightKg,
           cargoNo,
+          dimension,
           ...rest
         } = cargo
         if (!_cargoMapById[cargo.orderId]) {
@@ -836,7 +831,8 @@ export default {
           volume,
           weight,
           weightKg,
-          cargoNo
+          cargoNo,
+          dimension
         })
       })
       return Object.values(_cargoMapById)
@@ -867,9 +863,9 @@ export default {
   mounted () {
     // 判断显示吨列或公斤列
     if (this.WeightOption === 1) {
-      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 7)
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 8)
     } else {
-      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 7)
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 8)
     }
   },
 
