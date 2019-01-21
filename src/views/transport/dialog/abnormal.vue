@@ -149,7 +149,7 @@ import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMix
 import { mapGetters } from 'vuex'
 // import { ABNORMAL_TYPE_CODES } from '../constant/abnormal.js'
 import _ from 'lodash'
-import { divideFeeOrNull, multiplyFeeOrNull, roundFee, roundWeight, roundVolume, roundWeightKg } from '@/libs/js/config'
+import { divideFeeOrNull, multiplyFeeOrNull, roundFee, roundWeight, roundVolume, roundWeightKg, isNumber, getFeeText, renderVolume, renderWeight, renderWeightKg } from '@/libs/js/config'
 import OrderMap from '@/views/order/create/libs/orderMap'
 export default {
   name: 'SendCar',
@@ -210,14 +210,18 @@ export default {
         {
           title: '包装数量',
           key: 'quantity',
-          width: 110
+          width: 110,
+          render: (h, p) => {
+            return h('span', isNumber(p.row.quantity) ? p.row.quantity : '-')
+          }
         },
         {
           title: '体积（方）',
           key: 'volume',
           width: 110,
-          render: (h, params) => {
-            return h('div', roundVolume(params.row.volume))
+          render: (h, p) => {
+            // return h('div', roundVolume(params.row.volume))
+            return renderVolume(h, p.row.volume)
           }
         },
         {
@@ -288,7 +292,8 @@ export default {
         key: 'weight',
         width: 110,
         render: (h, p) => {
-          return h('span', roundWeight(p.row.weight))
+          // return h('span', roundWeight(p.row.weight))
+          return renderWeight(h, p.row.weight)
         }
       },
       columnWeightKg: {
@@ -296,7 +301,8 @@ export default {
         key: 'weightKg',
         width: 110,
         render: (h, p) => {
-          return h('span', roundWeightKg(p.row.weightKg))
+          // return h('span', roundWeightKg(p.row.weightKg))
+          return renderWeightKg(h, p.row.weightKg)
         }
       },
       parentOrderCargoList: [],
@@ -325,28 +331,31 @@ export default {
           title: '重量（吨）',
           key: 'weight',
           render: (h, p) => {
-            return h('span', roundWeight(p.row.weight))
+            // return h('span', roundWeight(p.row.weight))
+            return renderWeight(h, p.row.weight)
           }
         },
         {
           title: '重量（公斤）',
           key: 'weightKg',
           render: (h, p) => {
-            return h('span', roundWeightKg(p.row.weightKg))
+            // return h('span', roundWeightKg(p.row.weightKg))
+            return renderWeightKg(h, p.row.weightKg)
           }
         },
         {
           title: '体积（方）',
           key: 'volume',
           render: (h, p) => {
-            return h('div', roundVolume(p.row.volume))
+            // return h('div', roundVolume(p.row.volume))
+            return renderVolume(h, p.row.volume)
           }
         },
         {
           title: '货值（元）',
           key: 'cargoCost',
           render: (h, p) => {
-            return h('div', roundFee(p.row.cargoCost))
+            return h('div', getFeeText(p.row.cargoCost))
           }
         },
         {
@@ -362,8 +371,8 @@ export default {
           width: 140,
           render: (h, p) => {
             let text = ''
-            if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
-              text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
+            if (isNumber(p.row.dimension.length) || isNumber(p.row.dimension.width) || isNumber(p.row.dimension.height)) {
+              text = (isNumber(p.row.dimension.length) ? p.row.dimension.length : '-') + ' x ' + (isNumber(p.row.dimension.width) ? p.row.dimension.width : '-') + ' x ' + (isNumber(p.row.dimension.height) ? p.row.dimension.height : '-')
             } else {
               text = '-'
             }
@@ -374,7 +383,7 @@ export default {
           title: '包装数量',
           key: 'quantity',
           render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : 0)
+            return h('span', isNumber(p.row.quantity) ? p.row.quantity : '-')
           }
         },
         {
