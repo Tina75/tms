@@ -5,9 +5,11 @@
       <Row :gutter="16">
         <Col span="6">
         <FormItem label="结算方式:" prop="settlementType">
-          <Select :disabled="isCanChangeFee !== 1" v-model="orderForm.settlementType" transfer>
-            <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
-          </Select>
+          <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">
+            <Select :disabled="isCanChangeFee !== 1" v-model="orderForm.settlementType" transfer style="width: 155px;">
+              <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            </Select>
+          </Tooltip>
         </FormItem>
         </Col>
         <Col span="6">
@@ -25,7 +27,9 @@
         <FormItem label="运输费用:" prop="freightFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.freightFee"></TagNumberInput>
+            <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">
+              <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.freightFee"></TagNumberInput>
+            </Tooltip>
             </Col>
             <Col span="5" class="order-create__input-unit">
             <span style="vertical-align:middle">元</span>
@@ -40,7 +44,9 @@
         <FormItem label="提货费用:" prop="pickupFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.pickupFee"></TagNumberInput>
+            <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">
+              <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.pickupFee"></TagNumberInput>
+            </Tooltip>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
@@ -52,7 +58,9 @@
         <FormItem label="装货费用:" prop="loadFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.loadFee"></TagNumberInput>
+            <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">
+              <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.loadFee"></TagNumberInput>
+            </Tooltip>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
@@ -62,7 +70,9 @@
         <FormItem label="卸货费用:" prop="unloadFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.unloadFee"></TagNumberInput>
+            <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">
+              <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.unloadFee"></TagNumberInput>
+            </Tooltip>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
@@ -72,7 +82,9 @@
         <FormItem label="保险费用:" prop="insuranceFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.insuranceFee"></TagNumberInput>
+            <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">
+              <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.insuranceFee"></TagNumberInput>
+            </Tooltip>
             </Col>
             <Col span="4" class="order-create__input-unit">元</Col>
           </Row>
@@ -82,7 +94,9 @@
         <FormItem label="其他费用:" prop="otherFee">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.otherFee"></TagNumberInput>
+            <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">
+              <TagNumberInput :min="0" :disabled="isCanChangeFee !== 1" v-model="orderForm.otherFee"></TagNumberInput>
+            </Tooltip>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
@@ -93,8 +107,13 @@
         <Col span="10">
         <FormItem label="费用合计:">
           <span class="order-create__font-total">{{totalFee}}</span>元
-          <span class="tips">{{ feeTips }}</span>
+          <!-- <span class="tips">{{ feeTips }}</span> -->
         </FormItem>
+        </Col>
+      </Row>
+      <Row v-if="orderForm.disassembleStatus && !orderForm.totalFee" :gutter="16">
+        <Col span="10">
+        <allocation-strategy ref="allocationStrategy" source="order" class="order-edit-allocation" @changeAllocationStrategy="onChangeAllocation"></allocation-strategy>
         </Col>
       </Row>
       <Row :gutter="16">
@@ -120,11 +139,13 @@
         <FormItem label="代收货款:" prop="collectionMoney">
           <Row>
             <Col span="19">
-            <TagNumberInput :min="0" :disabled="isCanChangeCollectionMoney !== 1" v-model="orderForm.collectionMoney"></TagNumberInput>
+            <Tooltip :disabled="isCanChangeCollectionMoney === 1" :content="collectTips" transfer placement="top">
+              <TagNumberInput :min="0" :disabled="isCanChangeCollectionMoney !== 1" v-model="orderForm.collectionMoney"></TagNumberInput>
+            </Tooltip>
             </Col>
             <Col span="5" class="order-create__input-unit">元</Col>
           </Row>
-          <span class="tips" style="position: absolute;left: -88px;">{{ collectTips }}</span>
+          <!-- <span class="tips" style="position: absolute;left: -88px;">{{ collectTips }}</span> -->
         </FormItem>
         </Col>
         <Col span="6">
@@ -138,7 +159,7 @@
         <FormItem v-if="orderForm.isInvoice === 1" label="开票税率:" prop="invoiceRate">
           <Row>
             <Col span="20">
-            <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :min="0" :max="100">
+            <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="2" :min="0" :max="100">
             </TagNumberInput>
             </Col>
             <Col span="4" class="order-create__input-unit">%</Col>
@@ -174,12 +195,14 @@ import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
 import _ from 'lodash'
 import NP from 'number-precision'
-import { roundFee, multiplyFee, divideFee, multiplyMileage, divideMileage, multiplyRate } from '@/libs/js/config'
+import AllocationStrategy from '@/views/transport/components/AllocationStrategy.vue'
+import { roundFee, multiplyFeeOrNull, divideFeeOrNull, multiplyMileageOrNull, divideMileage, multiplyRateOrNull } from '@/libs/js/config'
 export default {
   name: 'order-edit',
   components: {
     FontIcon,
-    TagNumberInput
+    TagNumberInput,
+    AllocationStrategy
   },
   mixins: [BaseDialog],
   data () {
@@ -220,11 +243,14 @@ export default {
         unloadFee: null, // 卸货
         insuranceFee: null, // 保险
         otherFee: null, // 其他费用
+        totalFee: 0,
         receiptCount: 1,
         isInvoice: 0,
         invoiceRate: null,
         collectionMoney: null,
-        remark: ''
+        remark: '',
+        disassembleStatus: null, // 是否拆单  V1.11新增
+        allocationStrategy: void 0 // 分摊策略 V1.11新增
       },
       rules: {
         settlementType: [
@@ -274,16 +300,16 @@ export default {
       if (this.isCanChangeFee === 2) {
         tips = '已加入对账单'
       } else if (this.isCanChangeFee === 3) {
-        tips = '已核销'
+        tips = '应收费用已核销，不支持修改'
       }
       return tips
     },
     collectTips () {
       let tips = ''
       if (this.isCanChangeCollectionMoney === 2) {
-        tips = '已收款'
+        tips = '代收货款已收款，不支持修改'
       } else if (this.isCanChangeCollectionMoney === 3) {
-        tips = '已拆单'
+        tips = '订单已拆单，代收货款不支持修改'
       }
       return tips
     },
@@ -320,13 +346,13 @@ export default {
           let cloneOrderForm = _.cloneDeep(this.orderForm)
           for (let key in cloneOrderForm) {
             if (key.indexOf('Fee') > -1 || key === 'collectionMoney') {
-              cloneOrderForm[key] = multiplyFee(cloneOrderForm[key])
+              cloneOrderForm[key] = multiplyFeeOrNull(cloneOrderForm[key])
               // float.round(cloneOrderForm[key] *= 100, 0)
             } else if (key === 'mileage') {
-              cloneOrderForm[key] = multiplyMileage(cloneOrderForm[key])
+              cloneOrderForm[key] = multiplyMileageOrNull(cloneOrderForm[key])
               // float.round(cloneOrderForm[key] *= 1000, 0)
             } else if (key === 'invoiceRate') {
-              cloneOrderForm[key] = float.round(cloneOrderForm[key] / 100, 4)
+              cloneOrderForm[key] = (cloneOrderForm[key] !== '' ? float.round(cloneOrderForm[key] / 100, 4) : '')
             }
           }
           Server({
@@ -360,17 +386,20 @@ export default {
         this.isCanChangeCollectionMoney = data.isCanChangeCollectionMoney
         for (let key in this.orderForm) {
           if (key.indexOf('Fee') > -1 || key === 'collectionMoney') {
-            this.orderForm[key] = divideFee(data[key]) || null
+            this.orderForm[key] = divideFeeOrNull(data[key])
           } else if (key === 'mileage') {
-            this.orderForm[key] = divideMileage(data[key]) || null
+            this.orderForm[key] = divideMileage(data[key])
           } else if (key === 'invoiceRate') {
-            this.orderForm[key] = multiplyRate(data[key]) || null
+            this.orderForm[key] = multiplyRateOrNull(data[key])
           } else {
             this.orderForm[key] = data[key]
           }
         }
         this.cloneData = _.cloneDeep(this.orderForm)
       })
+    },
+    onChangeAllocation (val) {
+      this.orderForm.allocationStrategy = val
     }
   }
 }
@@ -385,6 +414,9 @@ export default {
         padding-right 0
       .ivu-form-item-content
         margin-left 90px !important
+    &-allocation
+      .ivu-form-item-label
+        width 90px !important
 </style>
 <style lang='stylus' scoped>
   .dialog-title

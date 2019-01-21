@@ -1,7 +1,7 @@
 /**
  * 货物信息表格
  */
-import { renderFee, renderVolume, renderQuantity, renderWeight, renderWeightKg } from '@/libs/js/config'
+import { renderFee, renderVolume, renderQuantity, renderWeight, renderWeightKg, isNumber } from '@/libs/js/config'
 export const orderNo = {
   title: '订单号',
   key: 'orderNo',
@@ -123,8 +123,8 @@ export const dimension = {
   key: 'dimension',
   render: (h, p) => {
     let text = ''
-    if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
-      text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
+    if (isNumber(p.row.dimension.length) || isNumber(p.row.dimension.width) || isNumber(p.row.dimension.height)) {
+      text = (isNumber(p.row.dimension.length) ? p.row.dimension.length : '-') + ' x ' + (isNumber(p.row.dimension.width) ? p.row.dimension.width : '-') + ' x ' + (isNumber(p.row.dimension.height) ? p.row.dimension.height : '-')
     } else {
       text = '-'
     }
