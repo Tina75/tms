@@ -1,6 +1,6 @@
 // import TMSUrl from '@/libs/constant/url'
 import float from '@/libs/js/float'
-import { divideFee } from '@/libs/js/config'
+import { renderFee } from '@/libs/js/config'
 import IconLabel from '@/components/IconLabel'
 import { renderMileage, renderVolume, renderWeight } from './util'
 
@@ -184,7 +184,8 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 120,
     render: (h, params) => {
       // return h('span', params.row.freightFee ? (params.row.freightFee / 100).toFixed(2) : '-')
-      return h('div', {}, divideFee(params.row.freightFee))
+      // return h('div', {}, divideFee(params.row.freightFee))
+      return renderFee(h, params.row.freightFee)
     }
   },
   {
@@ -193,7 +194,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 120,
     render: (h, params) => {
       // return h('span', params.row.pickFee ? (params.row.pickFee / 100).toFixed(2) : '-')
-      return h('div', {}, divideFee(params.row.pickFee))
+      return renderFee(h, params.row.pickFee)
     }
   },
   {
@@ -202,7 +203,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 120,
     render: (h, params) => {
       // return h('span', params.row.loadFee ? (params.row.loadFee / 100).toFixed(2) : '-')
-      return h('div', {}, divideFee(params.row.loadFee))
+      return renderFee(h, params.row.loadFee)
     }
   },
   {
@@ -211,7 +212,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 120,
     render: (h, params) => {
       // return h('span', params.row.unloadFee ? (params.row.unloadFee / 100).toFixed(2) : '-')
-      return h('div', {}, divideFee(params.row.unloadFee))
+      return renderFee(h, params.row.unloadFee)
     }
   },
   {
@@ -220,7 +221,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 120,
     render: (h, params) => {
       // return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '-')
-      return h('div', {}, divideFee(params.row.insuranceFee))
+      return renderFee(h, params.row.insuranceFee)
     }
   },
   {
@@ -229,7 +230,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 120,
     render: (h, params) => {
       // return h('span', params.row.otherFee ? (params.row.otherFee / 100).toFixed(2) : '-')
-      return h('div', {}, divideFee(params.row.otherFee))
+      return renderFee(h, params.row.otherFee)
     }
   },
   {
@@ -238,7 +239,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 120,
     render: (h, params) => {
       // return h('span', params.row.totalFee ? (params.row.totalFee / 100).toFixed(2) : '-')
-      return h('div', {}, divideFee(params.row.totalFee))
+      return renderFee(h, params.row.totalFee)
     }
   },
   {
@@ -257,7 +258,7 @@ export const TABLE_COLUMNS = vm => [
     minWidth: 120,
     render: (h, params) => {
       // return h('span', params.row.collectionMoney ? (params.row.collectionMoney / 100).toFixed(2) : '-')
-      return h('div', {}, divideFee(params.row.collectionMoney))
+      return renderFee(h, params.row.collectionMoney)
     }
   },
   {
