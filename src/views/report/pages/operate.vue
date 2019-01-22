@@ -347,7 +347,7 @@ export default {
           key: 'orderStatus',
           width: 150,
           render: (h, params) => {
-            return h('span', params.row.orderStatus ? this.orderStatusMap[params.row.orderStatus] : '-')
+            return h('span', typeof params.row.orderStatus === 'number' ? this.orderStatusMap[params.row.orderStatus] : '-')
           }
         },
         {
@@ -360,7 +360,7 @@ export default {
           key: 'loadbillStatus',
           width: 150,
           render: (h, params) => {
-            return h('span', params.row.loadbillStatus ? this.loadbillStatusMap[params.row.loadbillStatus] : '-')
+            return h('span', typeof params.row.loadbillStatus === 'number' ? this.loadbillStatusMap[params.row.loadbillStatus] : '-')
           }
         },
         {
@@ -402,7 +402,7 @@ export default {
           key: 'waybillStatus',
           width: 150,
           render: (h, params) => {
-            return h('span', params.row.waybillStatus ? this.waybillStatusMap[params.row.waybillStatus] : '-')
+            return h('span', typeof params.row.waybillStatus === 'number' ? this.waybillStatusMap[params.row.waybillStatus] : '-')
           }
         },
         {
@@ -492,7 +492,7 @@ export default {
           key: 'receiptStatus',
           width: 150,
           render: (h, params) => {
-            return h('span', params.row.receiptStatus ? this.receiptStatusMap[params.row.receiptStatus] : '-')
+            return h('span', typeof params.row.receiptStatus === 'number' ? this.receiptStatusMap[params.row.receiptStatus] : '-')
           }
         }
       ],
