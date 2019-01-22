@@ -12,10 +12,16 @@
         </tr>
         <tr v-for="(item, index) in orderList" :key="index">
           <td  :rowspan="item.cargoLength">
-            <span style="position: relative;left: 26px;">{{ item.orderNo }}</span>
+            <span v-if="item.orderNo.length < 20" style="position: relative;left: 26px;">{{ item.orderNo }}</span>
+            <Tooltip v-else :content="item.orderNo" transfer placement="bottom">
+              <span style="position: relative;left: 26px;">{{ formatterString(item.orderNo, 20) }}</span>
+            </Tooltip>
           </td>
           <td  v-if="hasCustomerOrderNo" :rowspan="item.cargoLength">
-            <span style="position: relative;left: 26px;">{{ item.customerOrderNo }}</span>
+            <span v-if="item.customerOrderNo.length < 15" style="position: relative;left: 26px;">{{ item.customerOrderNo }}</span>
+            <Tooltip v-else :content="item.customerOrderNo" transfer placement="bottom">
+              <span style="position: relative;left: 26px;">{{ formatterString(item.customerOrderNo, 14) }}</span>
+            </Tooltip>
           </td>
         </tr>
       </tbody>
@@ -49,6 +55,10 @@ export default {
   },
 
   methods: {
+    // 将字符串超出固定长度后替换成...
+    formatterString (str, len) {
+      return str.slice(0, len) + ' ...'
+    }
   }
 }
 
