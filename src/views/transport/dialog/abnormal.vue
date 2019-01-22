@@ -10,7 +10,7 @@
           {{ (details.billType === 1 ? '提货单号：' : (details.billType === 2 ? '外转单号：' : '运单号：')) + details.billNo }}
         </i-col>
         <i-col span="8">
-          {{ (details.billType === 2 ? '外转方：' : '承运商：') + details.carrierName }}
+          {{ (details.billType === 2 ? '外转方：' : '承运商：') + (details.carrierName || '-') }}
         </i-col>
         <i-col span="9">
           车牌号：{{ details.carNo || '-' }}
@@ -79,13 +79,12 @@
         <div class="order-number">
           异常货物信息
         </div>
-        <div>
+        <div class="table-group">
           <table-extend
             :order-list="AbnormalCargoInfos.childOrderData"
             :col-width="140"
-            class="abnormal-table-extend"
-            style="float: left"></table-extend>
-          <Table :columns="childDataColumns" :data="AbnormalCargoInfos.childOrderCargoList"></Table>
+            class="abnormal-table-extend"></table-extend>
+          <Table :columns="childDataColumns" :data="AbnormalCargoInfos.childOrderCargoList" class="table-cargo"></Table>
         </div>
         <div class="border-dashed"></div>
       </div>
@@ -478,7 +477,7 @@ export default {
         obj[key] = obj[key].map((item, index) => {
           return {
             orderNo: index === 0 ? item.orderNo : '',
-            customerOrderNo: index === 0 ? item.customerOrderNo : '',
+            customerOrderNo: index === 0 ? (item.customerOrderNo || '-') : '',
             cargoLength: index === 0 ? obj[key].length : 1
           }
         })
@@ -1013,4 +1012,9 @@ export default {
   .border-dashed
     border-top 1px dashed rgba(203,206,211,1)
     margin 32px 0
+  .table-group
+    display flex
+    display -ms-flexbox
+    .table-cargo
+      border-left none
 </style>

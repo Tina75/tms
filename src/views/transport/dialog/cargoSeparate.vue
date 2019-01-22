@@ -7,9 +7,9 @@
       <div class="order-number">
         运单货物信息
       </div>
-      <div>
-        <table-extend :order-list="parentOrderData" style="float: left"></table-extend>
-        <Table :columns="columns1" :data="parentOrderCargoList"></Table>
+      <div class="table-group">
+        <table-extend :order-list="parentOrderData"></table-extend>
+        <Table :columns="columns1" :data="parentOrderCargoList" class="table-cargo"></Table>
       </div>
     </div>
     <div v-if="childOrderCargoList.length">
@@ -17,9 +17,9 @@
       <div class="order-number">
         异常货物信息
       </div>
-      <div>
-        <table-extend :order-list="childOrderData" style="float: left"></table-extend>
-        <Table :columns="columns2" :data="childOrderCargoList"></Table>
+      <div class="table-group">
+        <table-extend :order-list="childOrderData"></table-extend>
+        <Table :columns="columns2" :data="childOrderCargoList" class="table-cargo"></Table>
       </div>
     </div>
     <div slot="footer">
@@ -299,7 +299,7 @@ export default {
         obj[key] = obj[key].map((item, index) => {
           return {
             orderNo: index === 0 ? item.orderNo : '',
-            customerOrderNo: index === 0 ? item.customerOrderNo : '',
+            customerOrderNo: index === 0 ? (item.customerOrderNo || '-') : '',
             cargoLength: index === 0 ? obj[key].length : 1
           }
         })
@@ -355,6 +355,11 @@ export default {
 .ivu-btn-primary[disabled]
   background-color rgba(0,164,189,0.3)
   color #fff
+.table-group
+  display flex
+  display -ms-flexbox
+  .table-cargo
+    border-left none
 </style>
 <style lang='stylus'>
 .padding-left-30
