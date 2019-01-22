@@ -46,6 +46,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import { setToken, removeToken } from '@/libs/js/auth'
 import { mapMutations } from 'vuex'
 import { PSW_RIGHT } from '../util/validator'
+import md5 from 'md5'
 export default {
   name: 'update-phone',
   mixins: [BaseDialog],
@@ -141,7 +142,7 @@ export default {
           let param = {}
           param.phone = vm.formModal.phone
           param.smsCode = vm.formModal.smsCode
-          param.password = vm.formPwd.password
+          param.password = md5(vm.formPwd.password)
           Server({
             url: '/set/userPhone',
             method: 'post',
