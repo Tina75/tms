@@ -46,10 +46,10 @@ export default {
           trigger: 'axis'
         },
         grid: {
-          left: 25,
-          right: 30,
+          left: 0,
+          right: 0,
           top: 30,
-          bottom: 12,
+          bottom: 5,
           containLabel: true
         },
         xAxis: [
@@ -73,11 +73,11 @@ export default {
         yAxis: [
           {
             name: '营业额',
-            offset: 10,
+            offset: 0,
             type: 'value',
-            nameTextStyle: {
-              padding: [0, 0, 0, 25]
-            },
+            // nameTextStyle: {
+            //   padding: [0, 0, 0, 0]
+            // },
             axisLine: {
               show: false
             },
@@ -85,7 +85,7 @@ export default {
               show: false
             },
             axisLabel: {
-              align: 'left'
+              align: 'right'
             },
             splitLine: {
               show: false
@@ -94,9 +94,9 @@ export default {
           {
             name: '单量',
             type: 'value',
-            nameTextStyle: {
-              padding: [0, 0, 0, 35]
-            },
+            // nameTextStyle: {
+            //   padding: [0, 0, 0, 10]
+            // },
             axisLabel: {
               align: 'left'
             },
