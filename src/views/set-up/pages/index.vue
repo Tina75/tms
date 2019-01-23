@@ -23,7 +23,7 @@
         <VerticalTabItem key="3" name="3" label="系统设置">
           <SystemSetting :value="tabName" class="setting"></SystemSetting>
         </VerticalTabItem>
-        <VerticalTabItem key="4" name="4" label="清除数据">
+        <VerticalTabItem v-if="UserInfo.type === 1" key="4" name="4" label="清除数据">
           <Title size="16" border="solid" class="title">
             清除数据
           </Title>
@@ -86,7 +86,7 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['DocumentHeight']),
+    ...mapGetters(['DocumentHeight', 'UserInfo']),
     styleHeight () {
       return { height: this.DocumentHeight + 'px' }
     },

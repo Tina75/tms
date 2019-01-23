@@ -109,20 +109,20 @@ export const TABLECOLUMNS = {
       }
     },
     {
-      title: '开票税费',
-      key: 'invoiceAmount',
-      width: 200,
-      render: (h, params) => {
-        return renderFee(h, params.row.invoiceAmount)
-      }
-    },
-    {
       title: '应付总费用',
       key: 'payableTotalFee',
       width: 200,
       render: (h, params) => {
         // return h('span', (params.row.payableTotalFee / 100).toFixed(2))
         return renderFee(h, params.row.payableTotalFee)
+      }
+    },
+    {
+      title: '开票税费',
+      key: 'invoiceAmount',
+      width: 200,
+      render: (h, params) => {
+        return renderFee(h, params.row.invoiceAmount)
       }
     },
     {
@@ -215,20 +215,20 @@ export const TABLECOLUMNS = {
       }
     },
     {
-      title: '开票税费',
-      key: 'invoiceAmount',
-      width: 150,
-      render: (h, params) => {
-        return renderFee(h, params.row.invoiceAmount)
-      }
-    },
-    {
       title: '应付总费用',
       key: 'payTotalFee',
       width: 150,
       render: (h, params) => {
         // return h('span', (params.row.payTotalFee / 100).toFixed(2))
         return renderFee(h, params.row.payTotalFee)
+      }
+    },
+    {
+      title: '开票税费',
+      key: 'invoiceAmount',
+      width: 150,
+      render: (h, params) => {
+        return renderFee(h, params.row.invoiceAmount)
       }
     },
     {
@@ -349,21 +349,21 @@ export const TABLECOLUMNS = {
       }
     },
     {
-      title: '开票税费',
-      key: 'invoiceAmount',
-      width: 200,
-      render: (h, params) => {
-        // return h('span', (params.row.wayBillFee / 100).toFixed(2))
-        return renderFee(h, params.row.invoiceAmount)
-      }
-    },
-    {
       title: '应付总费用',
       key: 'payableTotalFee',
       width: 200,
       render: (h, params) => {
         // return h('span', (params.row.payableTotalFee / 100).toFixed(2))
         return renderFee(h, params.row.payableTotalFee)
+      }
+    },
+    {
+      title: '开票税费',
+      key: 'invoiceAmount',
+      width: 200,
+      render: (h, params) => {
+        // return h('span', (params.row.wayBillFee / 100).toFixed(2))
+        return renderFee(h, params.row.invoiceAmount)
       }
     },
     {
