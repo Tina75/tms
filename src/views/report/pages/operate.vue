@@ -406,7 +406,7 @@ export default {
           }
         },
         {
-          title: '合计应付',
+          title: '运单合计应付',
           key: 'waybillTotalFee',
           width: 150,
           render: (h, params) => {

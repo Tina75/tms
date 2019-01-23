@@ -145,9 +145,13 @@ export default {
     typesValue () {
       let arr = []
       if (this.types.length > 0) {
-        let _this = this
-        this.types.map((item, index) => {
-          if (item === _this.typesList[index].value) arr.push(_this.typesList[index].label)
+        // let _this = this
+        // this.types.forEach((item, index) => {
+        //   debugger
+        //   if (item === _this.typesList[index].value) arr.push(_this.typesList[index].label)
+        // })
+        this.typesList.forEach((item) => {
+          if (this.types.includes(item.value)) arr.push(item.label)
         })
       }
       return arr
