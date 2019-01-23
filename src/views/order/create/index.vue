@@ -288,8 +288,8 @@
       <FormItem label="回单数量:" prop="receiptCount">
         <Row>
           <Col span="19">
-          <InputNumber v-model="orderForm.receiptCount" :max="999999999" :min="0" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
-          </InputNumber>
+          <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :precision="0" clearable>
+          </TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">份</Col>
         </Row>
