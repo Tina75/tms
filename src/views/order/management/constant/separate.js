@@ -1,6 +1,6 @@
 
 import float from '@/libs/js/float'
-import { roundFee, renderFee, renderVolume, roundVolume, roundWeight, renderWeight, roundWeightKg, renderWeightKg } from '@/libs/js/config'
+import { isNumber, roundFee, renderFee, renderVolume, roundVolume, roundWeight, renderWeight, roundWeightKg, renderWeightKg } from '@/libs/js/config'
 import TagNumberInput from '@/components/TagNumberInput'
 export const TABLE_COLUMNS_ONE = vm => [
   {
@@ -606,7 +606,7 @@ export const TABLE_COLUMNS_AVERAGE = (vm) => [
     title: '包装数量',
     key: 'quantity',
     render (h, params) {
-      return h('span', params.row.quantity ? params.row.quantity : '-')
+      return h('span', isNumber(params.row.quantity) ? params.row.quantity : '-')
     }
   },
   {
