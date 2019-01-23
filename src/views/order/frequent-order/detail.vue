@@ -43,7 +43,7 @@
         </Col>
         <Col span="6">
         <FormItem label="代收货款：">
-          {{detail.collectionMoney | toPoint}}元
+          {{detail.collectionMoney | toPoint('元') }}
         </FormItem>
         </Col>
         <Col span="6">
@@ -119,44 +119,42 @@
         </Col>
         <Col span="6">
         <FormItem label="运输费用：">
-          <span class="blod-font">{{detail.freightFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.freightFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="提货费用：">
-          <span class="blod-font">{{detail.pickupFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.pickupFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="装货费用：">
-          <span class="blod-font">{{detail.loadFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.loadFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
       </Row>
       <Row :gutter="16">
         <Col span="6">
         <FormItem label="卸货费用：">
-          <span class="blod-font">{{detail.unloadFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.unloadFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="保险费用：">
-          <span class="blod-font">{{detail.insuranceFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.insuranceFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="其他费用：">
-          <span class="blod-font">{{detail.otherFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.otherFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
       </Row>
       <Row :gutter="16">
-        <Col span="6">
         <FormItem label="费用合计：">
-          <span class="blod-font totalFee">{{detail.totalFee | toPoint}}</span>
-          <span class="blod-font"> 元 （{{settleMap[detail.settlementType]}}）</span>
+          <span class="blod-font totalFee">{{detail.totalFee | toPoint('元') }}</span>
+          <span class="blod-font">  （{{settleMap[detail.settlementType]}}）</span>
         </FormItem>
-        </Col>
       </Row>
     </Form>
   </div>
