@@ -46,12 +46,17 @@
                 </td>
               </tr>
               <tr>
-                <td style="height: 60px;line-height: 1.5;">发货地址：{{data.consignerAddress + data.consignerHourseNumber}}</td>
+                <td style="height: 60px;line-height: 1.5;">
+                  <div class="city-style">
+                    <div>发货地址：</div>
+                    <div>{{data.consignerAddress + data.consignerHourseNumber}}</div>
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>
-                  <span class="spacing-letter">发货人：</span>
-                  <span>{{data.consignerContact + ' ' + data.consignerPhone}}</span>
+                  <span class="spacing-letter">发货人:</span>
+                  <span style="margin-left: 5px;">{{data.consignerContact + ' ' + data.consignerPhone}}</span>
                 </td>
               </tr>
             </tbody>
@@ -65,12 +70,17 @@
                 </td>
               </tr>
               <tr>
-                <td style="height: 60px;line-height: 1.5;">收货地址：{{data.consigneeAddress + data.consigneeHourseNumber}}</td>
+                <td style="height: 60px;line-height: 1.5;">
+                  <div class="city-style">
+                    <div>收货地址：</div>
+                    <div>{{data.consigneeAddress + data.consigneeHourseNumber}}</div>
+                  </div>
+                </td>
               </tr>
               <tr>
                 <td>
-                  <span class="spacing-letter">收货人：</span>
-                  <span>{{data.consigneeContact + ' ' + data.consigneePhone}}</span>
+                  <span class="spacing-letter">收货人:</span>
+                  <span style="margin-left: 5px;">{{data.consigneeContact + ' ' + data.consigneePhone}}</span>
                 </td>
               </tr>
             </tbody>
@@ -105,7 +115,7 @@
               <td>{{cargo.remark1 || '-'}}</td>
             </tr>
             <tr class="table-row-total">
-              <td>合计：</td>
+              <td>合计</td>
               <td></td>
               <td>{{ quantityTotal(data.orderCargoList) }}</td>
               <td v-if="WeightOption === 1">{{ weightTotal(data.orderCargoList) }}</td>
@@ -225,6 +235,8 @@ export default {
         .order-detail {
           page-break-after: always;
           -webkit-print-color-adjust: 'exact';
+          width: 100%;
+          margin: 0 auto;
         }
         .order-title {
           font-size: 20px;
