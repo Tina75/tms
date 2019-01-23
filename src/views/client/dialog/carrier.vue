@@ -159,7 +159,7 @@
         </FormItem>
         </Col>
         <Col span="8">
-        <FormItem label="联系电话：" prop="carrierPhone">
+        <FormItem label="负责人电话：" prop="carrierPhone">
           <!-- <Input v-model="validate.company.carrierPhone" :maxlength="11" placeholder="请输入"/> -->
           <SelectInput v-model="validate.company.carrierPhone" :maxlength="phoneLength(validate.company.carrierPhone)" :formatter="formatePhoneNum" placeholder="必填"></SelectInput>
         </FormItem>

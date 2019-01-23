@@ -256,7 +256,7 @@ export default {
           tooltip: true
         },
         {
-          title: '联系电话',
+          title: '负责人电话',
           key: 'carrierPhone',
           width: 120
         },

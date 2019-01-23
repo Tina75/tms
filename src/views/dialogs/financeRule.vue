@@ -75,7 +75,10 @@ export default {
         params: {
           partnerId: this.partnerId,
           partnerType: this.partnerType,
-          partnerName: this.partnerName
+          partnerName: this.partnerName,
+          // v1.11 添加始发和目的城市，保持和app统一，过滤掉不符合的城市路线计费规则数据
+          departure: this.start,
+          destination: this.end
         }
       }).then((res) => {
         this.ruleOptions = res.data.data
