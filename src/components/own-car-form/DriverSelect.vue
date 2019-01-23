@@ -3,7 +3,7 @@
     <Option v-for="(opt, index) in data" :key="'normal-'+index" :label="opt.value" :value="opt.value" :title="opt.name" :disabled="disabledOption(opt)">
       <span class="select-driver__option-name">{{opt.name}}</span>
       <span class="select-driver__option">{{opt.driverPhone}}</span>
-      <span  :class="['i-ml-10',opt.driverStatus === 1 ? 'i-status-warning':'i-status-info']">
+      <span  :class="['i-ml-10',opt.driverStatus === 1 ? 'i-status-warning select-driver__option-status':'i-status-info select-driver__option-status']">
         {{driverStatus(opt.driverStatus)}}
       </span>
     </Option>
@@ -132,6 +132,9 @@ export default {
     width 48px
     text-overflow ellipsis
     white-space nowrap
+    overflow hidden
+  &__option-status
+    display inline-block
     overflow hidden
   &__extra-option
     text-align center

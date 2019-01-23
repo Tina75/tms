@@ -169,7 +169,7 @@ export default {
     border 1px solid #EEEFF1
     margin-left 17px
     margin-top 8px
-    border-radius 4px
+    border-radius 2px
   .labelSpan .ivu-dropdown-item:hover
     color #00A4BD
   .labelSpan.active
