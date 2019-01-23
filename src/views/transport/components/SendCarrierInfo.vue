@@ -47,7 +47,9 @@
           </i-col>
           <i-col span="8">
             <span class="detail-field-title" style="width: 82px;text-align: right;">车型：</span>
-            <Select v-model="carrierInfo.carType"
+            <SelectCarType v-model="carrierInfo.carType" class="detail-info-input-half" style="margin-right: 12px;"></SelectCarType>
+            <SelectCarLength v-model="carrierInfo.carLength" class="detail-info-input-half"></SelectCarLength>
+            <!-- <Select v-model="carrierInfo.carType"
                     transfer
                     class="detail-info-input-half"
                     style="margin-right: 12px;">
@@ -57,7 +59,7 @@
                     transfer
                     class="detail-info-input-half">
               <Option v-for="item in carLength" :value="item.value" :key="item.value">{{ item.label }}</Option>
-            </Select>
+            </Select> -->
           </i-col>
           <i-col v-if="sourceType === 'sendCar'" span="8">
             <FormItem label="承运商运单号：" class="label-width">
@@ -83,14 +85,16 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from './SelectInput.vue'
 import SelectInputMixin from '../mixin/selectInputMixin'
 import TagNumberInput from '@/components/TagNumberInput'
+import SelectCarLength from '@/components/SelectCarLength'
+import SelectCarType from '@/components/SelectCarType'
 // import Server from '@/libs/js/server'
-import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
+// import { CAR_TYPE, CAR_LENGTH } from '@/libs/constant/carInfo'
 import $bus from '@/libs/js/eventBus.js'
 import { CAR } from '@/views/client/pages/client'
 
 export default {
   name: 'SendCarComponent',
-  components: { SelectInput, TagNumberInput },
+  components: { SelectInput, TagNumberInput, SelectCarLength, SelectCarType },
   mixins: [ BaseDialog, SelectInputMixin ],
   props: {
     // 引用页面来源
@@ -121,8 +125,8 @@ export default {
   },
   data () {
     return {
-      carType: CAR_TYPE,
-      carLength: CAR_LENGTH,
+      // carType: CAR_TYPE,
+      // carLength: CAR_LENGTH,
 
       // 运单校验规则
       rules: {
@@ -173,7 +177,6 @@ export default {
     // },
     carrierInfo: {
       handler (newVal, oldVal) {
-        console.log(newVal)
         $bus.$emit('carrierInfoChange', newVal)
       },
       deep: true

@@ -1,7 +1,7 @@
 <template>
   <ExtraSelect ref="$select" :transfer="true" :value="currentValue" placeholder="请选择" not-found-text="暂无此车，请新增车辆" filterable clearable @on-change="handleChange">
     <Option v-for="car in ownCars" :key="car.id" :label="car.value" :value="car.value">
-      <span>{{car.name}}</span>
+      <span class="select-car__carno">{{car.name}}</span>
       <span :class="['i-ml-20',car.carStatus === 1 ? 'i-status-warning':'i-status-info']">
         {{carStatus(car.carStatus)}}
       </span>
@@ -122,6 +122,9 @@ export default {
 
 <style lang="stylus" scoped>
 .select-car
+  &__carno
+    display inline-block
+    width 60px
   &__option
     text-align center
     border-top 1px solid #f8f8f8
