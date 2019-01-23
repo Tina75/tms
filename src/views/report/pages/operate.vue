@@ -125,6 +125,7 @@
 </template>
 
 <script>
+import BasePage from '@/basic/BasePage'
 import PageTable from '@/components/page-table'
 import SelectInputForCity from '@/components/SelectInputForCity'
 import SelectInput from '@/components/SelectInput.vue'
@@ -142,6 +143,7 @@ export default {
     PageTable,
     SelectInputForCity
   },
+  mixins: [ BasePage ],
   metaInfo: {
     title: '运营报表'
   },
@@ -178,11 +180,12 @@ export default {
       isExport: false,
       /* 订单状态 */
       orderStatusMap: {
-        10: '提货',
+        10: '待提货',
         20: '待调度',
         30: '在途 ',
         40: '已到货',
-        50: '已回单'
+        50: '已回单',
+        100: '删除'
       },
       /* 提货单状态 */
       loadbillStatusMap: {
@@ -214,7 +217,34 @@ export default {
           title: '订单号',
           key: 'orderNo',
           fixed: 'left',
-          width: 150
+          width: 150,
+          render: (h, params) => {
+            let renderHtml = [
+              h('a', {
+                props: {
+                  type: 'text'
+                },
+                style: {
+                  marginRight: '5px',
+                  color: '#418DF9'
+                },
+                on: {
+                  click: () => {
+                    this.openTab({
+                      path: '/order-management/order-detail',
+                      query: {
+                        id: params.row.orderNo,
+                        orderId: params.row.orderId,
+                        from: 'order',
+                        source: 'order'
+                      }
+                    })
+                  }
+                }
+              }, params.row.orderNo)
+            ]
+            return h('div', renderHtml)
+          }
         },
         {
           title: '客户订单号',
@@ -299,6 +329,11 @@ export default {
           }
         },
         {
+          title: '开票税额',
+          key: 'invoiceAmountStr',
+          width: 180
+        },
+        {
           title: '代收货款',
           key: 'collectionMoney',
           width: 150,
@@ -312,7 +347,7 @@ export default {
           key: 'orderStatus',
           width: 150,
           render: (h, params) => {
-            return h('span', params.row.orderStatus ? this.orderStatusMap[params.row.orderStatus] : '-')
+            return h('span', typeof params.row.orderStatus === 'number' ? this.orderStatusMap[params.row.orderStatus] : '-')
           }
         },
         {
@@ -325,7 +360,7 @@ export default {
           key: 'loadbillStatus',
           width: 150,
           render: (h, params) => {
-            return h('span', params.row.loadbillStatus ? this.loadbillStatusMap[params.row.loadbillStatus] : '-')
+            return h('span', typeof params.row.loadbillStatus === 'number' ? this.loadbillStatusMap[params.row.loadbillStatus] : '-')
           }
         },
         {
@@ -367,11 +402,11 @@ export default {
           key: 'waybillStatus',
           width: 150,
           render: (h, params) => {
-            return h('span', params.row.waybillStatus ? this.waybillStatusMap[params.row.waybillStatus] : '-')
+            return h('span', typeof params.row.waybillStatus === 'number' ? this.waybillStatusMap[params.row.waybillStatus] : '-')
           }
         },
         {
-          title: '合计应付',
+          title: '运单合计应付',
           key: 'waybillTotalFee',
           width: 150,
           render: (h, params) => {
@@ -434,22 +469,30 @@ export default {
             return renderFee(h, params.row.cashBack)
           }
         },
+        {
+          title: '利润',
+          key: 'profit',
+          width: 150,
+          render: (h, params) => {
+            return renderFee(h, params.row.profit)
+          }
+        },
         // {
         //   title: '外转方',
         //   key: 'transfereeName',
         //   width: 150
         // },
-        {
-          title: '回单号',
-          key: 'receiptNo',
-          width: 150
-        },
+        // {
+        //   title: '回单号',
+        //   key: 'receiptNo',
+        //   width: 150
+        // },
         {
           title: '回单状态',
           key: 'receiptStatus',
           width: 150,
           render: (h, params) => {
-            return h('span', params.row.receiptStatus ? this.receiptStatusMap[params.row.receiptStatus] : '-')
+            return h('span', typeof params.row.receiptStatus === 'number' ? this.receiptStatusMap[params.row.receiptStatus] : '-')
           }
         }
       ],

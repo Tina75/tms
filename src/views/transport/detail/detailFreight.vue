@@ -88,14 +88,13 @@
                 </i-col>
                 <i-col span="8">
                   <span class="detail-field-title">代收货款：</span>
-                  <span v-if="info.collectionMoney">{{info.collectionMoney | toPoint}}元</span>
-                  <span v-else>-</span>
+                  <span>{{info.collectionMoney | toPoint('元')}}</span>
                 </i-col>
               </Row>
-              <Row class="detail-field-group">
-                <i-col v-if="info.assignCarType === 1" span="8">
+              <Row v-if="info.assignCarType === 1 && DispatchSet.deliverOutCashBackFeeOption === 1" class="detail-field-group">
+                <i-col span="8">
                   <span class="detail-field-title">返现运费：</span>
-                  <span v-if="info.cashBack">{{info.cashBack | toPoint}}元</span>
+                  <span v-if="payment.cashBack !== ''">{{info.cashBack | toPoint}}元</span>
                   <span v-else>-</span>
                 </i-col>
               </Row>
@@ -103,7 +102,7 @@
             <Row class="detail-field-group">
               <i-col span="13">
                 <span class="detail-field-title">备注：</span>
-                <span>{{ info.remark || '无' }}</span>
+                <span>{{ info.remark || '-' }}</span>
               </i-col>
             </Row>
           </div>
@@ -127,38 +126,90 @@
             <div class="detail-part-title">
               <span>费用明细</span>
             </div>
-            <Row class="detail-field-group">
-              <i-col span="6">
+            <ul v-if="info.assignCarType === 1" class="detail-field-group">
+              <li>
                 <span class="detail-field-title-sm">计费里程：</span>
-                <span class="detail-field-fee">{{ payment.mileage || 0 }}公里</span>
-              </i-col>
-              <i-col span="6">
-                <span class="detail-field-title-sm">{{ info.assignCarType === 1 ? '运输费：' : '油费：' }}</span>
-                <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+                <span v-if="payment.mileage !== ''" class="detail-field-fee">{{ payment.mileage }}公里</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverOutFreightFeeOption === 1">
+                <span class="detail-field-title-sm">运输费：</span>
+                <span v-if="payment.freightFee !== ''" class="detail-field-fee">{{ payment.freightFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverOutLoadFeeOption === 1">
                 <span class="detail-field-title-sm">装货费：</span>
-                <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+                <span v-if="payment.loadFee !== ''" class="detail-field-fee">{{ payment.loadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverOutUnloadFeeOption === 1">
                 <span class="detail-field-title-sm">卸货费：</span>
-                <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+                <span v-if="payment.unloadFee !== ''" class="detail-field-fee">{{ payment.unloadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverOutTollFeeOption === 1">
                 <span class="detail-field-title-sm">路桥费：</span>
-                <span class="detail-field-fee">{{ payment.tollFee || 0 }}元</span>
-              </i-col>
-              <i-col v-if="info.assignCarType === 2" span="6">
-                <span class="detail-field-title-sm">住宿费：</span>
-                <span class="detail-field-fee">{{ payment.accommodation || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+                <span v-if="payment.tollFee !== ''" class="detail-field-fee">{{ payment.tollFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverOutInsuranceFeeOption === 1">
                 <span class="detail-field-title-sm">保险费：</span>
-                <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
-              </i-col>
-              <i-col span="6">
+                <span v-if="payment.insuranceFee !== ''" class="detail-field-fee">{{ payment.insuranceFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverOutOtherFeeOption === 1">
                 <span class="detail-field-title-sm">其他：</span>
-                <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
+                <span v-if="payment.otherFee !== ''" class="detail-field-fee">{{ payment.otherFee }}元</span>
+                <span v-else>-</span>
+              </li>
+            </ul>
+            <ul v-else class="detail-field-group">
+              <li>
+                <span class="detail-field-title-sm">计费里程：</span>
+                <span v-if="payment.mileage !== ''" class="detail-field-fee">{{ payment.mileage }}公里</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverSelfOilFeeOption === 1">
+                <span class="detail-field-title-sm">油费：</span>
+                <span v-if="payment.freightFee !== ''" class="detail-field-fee">{{ payment.freightFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverSelfLoadFeeOption === 1">
+                <span class="detail-field-title-sm">装货费：</span>
+                <span v-if="payment.loadFee !== ''" class="detail-field-fee">{{ payment.loadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverSelfUnloadFeeOption === 1">
+                <span class="detail-field-title-sm">卸货费：</span>
+                <span v-if="payment.unloadFee !== ''" class="detail-field-fee">{{ payment.unloadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverSelfTollFeeOption === 1">
+                <span class="detail-field-title-sm">路桥费：</span>
+                <span v-if="payment.tollFee !== ''" class="detail-field-fee">{{ payment.tollFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverSelfAccommodationFeeOption === 1">
+                <span class="detail-field-title-sm">住宿费：</span>
+                <span v-if="payment.accommodation !== ''" class="detail-field-fee">{{ payment.accommodation }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverSelfInsuranceFeeOption === 1">
+                <span class="detail-field-title-sm">保险费：</span>
+                <span v-if="payment.insuranceFee !== ''" class="detail-field-fee">{{ payment.insuranceFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.deliverSelfOtherFeeOption === 1">
+                <span class="detail-field-title-sm">其他：</span>
+                <span v-if="payment.otherFee !== ''" class="detail-field-fee">{{ payment.otherFee }}元</span>
+                <span v-else>-</span>
+              </li>
+            </ul>
+            <Row v-if="info.assignCarType === 1 && DispatchSet.deliverOutInfoFeeOption === 1" class="detail-field-group">
+              <i-col span="6">
+                <span class="detail-field-title-sm">信息费：</span>
+                <span v-if="payment.infoFee !== ''" class="detail-field-fee">{{ payment.infoFee }}元</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
             <Row class="detail-field-group">
@@ -346,12 +397,12 @@ import SendFee from '../components/SendFee'
 import Server from '@/libs/js/server'
 import TMSUrl from '@/libs/constant/url'
 import _ from 'lodash'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import allocationStrategy from '../constant/allocation.js'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import CarPhoto from './components/car-photo.vue'
-import { divideFee } from '@/libs/js/config'
+import { divideMileage, isNumber, getFeeText } from '@/libs/js/config'
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
@@ -412,7 +463,8 @@ export default {
         cashBack: null,
         tollFee: null, // 路桥费
         mileage: null, // 计费里程 v1.06 新增
-        accommodation: null // 住宿费 v1.08 新增
+        accommodation: null, // 住宿费 v1.08 新增
+        infoFee: null // 信息费 v1.11 新增
       },
       rules: {
         start: [
@@ -426,12 +478,7 @@ export default {
       },
       // 支付方式
       settlementType: '',
-      settlementPayInfo: [
-        { payType: 1, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
-        { payType: 2, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
-        { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false },
-        { payType: 4, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
-      ],
+      settlementPayInfo: [],
 
       // 所有按钮组
       btnList: [
@@ -563,7 +610,7 @@ export default {
           key: 'customerOrderNo',
           width: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.customerOrderNo, true)
+            return this.tableDataRender(h, p.row.customerOrderNo)
           }
         },
         {
@@ -582,64 +629,74 @@ export default {
           minWidth: 180,
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'cargoName')
-            // return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
-          title: '包装',
+          title: '货物编号',
+          key: 'cargoNo',
+          width: 180,
+          render: (h, p) => {
+            return this.scopedSlotsRender(h, p, 'cargoNo')
+          }
+        },
+        {
+          title: '包装方式',
           key: 'unit',
-          width: 120,
+          width: 180,
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'unit')
-            // return this.tableDataRender(h, p.row.unit)
           }
         },
         {
           title: '数量',
           key: 'quantity',
-          width: 120,
+          width: 140,
           render: (h, p) => {
-            return this.scopedSlotsRender(h, p, 'quantity', 0)
-            // return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.quantity) ? cargo.quantity : '-')))
           }
         },
         {
           title: '货值(元)',
           key: 'cargoCost',
-          width: 120,
+          width: 140,
           render: (h, p) => {
             return h('div', {},
-              p.row.cargoList.map((cargo) => h('div', divideFee(cargo.cargoCost))))
-            // p.row.cargoList.map((cargo) => h('div', cargo.cargoCost / 100 || '0'))
-
-            // return this.tableDataRender(h, p.row.cargoCost / 100)
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, getFeeText(cargo.cargoCost))))
           }
         },
         {
           title: '体积(方)',
           key: 'volume',
-          width: 120,
+          width: 140,
           render: (h, p) => {
-            return this.scopedSlotsRender(h, p, 'volume', 0)
-            //  return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.volume) ? cargo.volume : '-')))
+          }
+        },
+        {
+          title: '包装尺寸（毫米）',
+          key: 'dimension',
+          width: 200,
+          render: (h, p) => {
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, this.formatDimension(cargo))))
           }
         },
         {
           title: '备注1',
           key: 'remark1',
-          minWidth: 140,
+          minWidth: 180,
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'remark1')
-            // return this.tableDataRender(h, p.row.remark1)
           }
         },
         {
           title: '备注2',
           key: 'remark2',
-          minWidth: 140,
+          minWidth: 180,
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'remark2')
-            // return this.tableDataRender(h, p.row.remark2)
           }
         }
       ],
@@ -655,6 +712,9 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'DispatchSet'
+    ]),
     feeStatusTip () {
       if (this.feeStatus === 10) return '此单已对账，不允许修改'
       else if (this.feeStatus === 20) return '此单已核销，不允许修改'
@@ -746,6 +806,8 @@ export default {
           volume,
           weight,
           weightKg,
+          cargoNo,
+          dimension,
           ...rest
         } = cargo
         if (!_cargoMapById[cargo.orderId]) {
@@ -762,19 +824,42 @@ export default {
           unit,
           volume,
           weight,
-          weightKg
+          weightKg,
+          cargoNo,
+          dimension
         })
       })
       return Object.values(_cargoMapById)
     }
   },
-
+  created () {
+    if (this.DispatchSet.paySettlementAdvanceOption === 1) { // 预付
+      this.settlementPayInfo.push(
+        { payType: 1, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
+      )
+    }
+    if (this.DispatchSet.paySettlementArriveOption === 1) { // 到付
+      this.settlementPayInfo.push(
+        { payType: 2, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
+      )
+    }
+    if (this.DispatchSet.paySettlementReceiptOption === 1) { // 回付
+      this.settlementPayInfo.push(
+        { payType: 3, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
+      )
+    }
+    if (this.DispatchSet.paySettlementTailOption === 1) { // 尾款
+      this.settlementPayInfo.push(
+        { payType: 4, fuelCardAmount: '', cashAmount: '', isCashDisabled: false, isCardDisabled: false }
+      )
+    }
+  },
   mounted () {
     // 判断显示吨列或公斤列
     if (this.WeightOption === 1) {
-      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 7)
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 8)
     } else {
-      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 7)
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 8)
     }
   },
 
@@ -850,7 +935,7 @@ export default {
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(data.waybill[key])
           if (key === 'mileage') {
-            this.payment[key] = data.waybill[key] / 1000 || null
+            this.payment[key] = divideMileage(data.waybill[key])
           }
         }
 
@@ -1355,4 +1440,10 @@ export default {
       vertical-align middle
     .ivu-radio-group-item
       margin-right 41px
+  .detail-field-group
+    li
+      display inline-block
+      width 25%
+      padding 5px 0
+      line-height 32px
 </style>

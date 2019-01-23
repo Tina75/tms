@@ -6,7 +6,7 @@ import _ from 'lodash'
 import Float from '@/libs/js/float'
 import { CAR } from '@/views/client/pages/client'
 import { mapActions, mapGetters } from 'vuex'
-import { roundFee, roundVolume, roundWeight, roundWeightKg, divideFee } from '@/libs/js/config'
+import { roundFee, roundVolume, roundWeight, roundWeightKg, divideFee, divideFeeOrNull, isNumber } from '@/libs/js/config'
 import NP from 'number-precision'
 export default {
   data () {
@@ -62,25 +62,20 @@ export default {
       columnWeight: {
         title: '重量(吨)',
         key: 'weight',
-        width: 120,
+        width: 140,
         render: (h, p) => {
-          // 运单里优化了订单和货物的展示效果，多个货物换行显示，所以存在cargolist字段；提货单没有该字段
-          if (p.row.hasOwnProperty('cargoList')) {
-            return this.scopedSlotsRender(h, p, 'weight', 0)
-          }
-          return this.tableDataRender(h, p.row.weight ? p.row.weight : 0)
+          return h('div', {},
+            p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.weight) ? cargo.weight : '-')))
         }
       },
       // 公斤列
       columnWeightKg: {
         title: '重量(公斤)',
         key: 'weightKg',
-        width: 120,
+        width: 140,
         render: (h, p) => {
-          if (p.row.hasOwnProperty('cargoList')) {
-            return this.scopedSlotsRender(h, p, 'weightKg', 0)
-          }
-          return this.tableDataRender(h, p.row.weightKg ? p.row.weightKg : 0)
+          return h('div', {},
+            p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.weightKg) ? cargo.weightKg : '-')))
         }
       }
     }
@@ -191,10 +186,21 @@ export default {
     scopedSlotsRender (h, p, key, defaultString = '-') {
       if (p.row.cargoList) {
         return h('div', {},
-          p.row.cargoList.map((cargo) => h('div', cargo[key] || defaultString))
+          // p.row.cargoList.map((cargo) => h('div', cargo[key] || defaultString))
+          p.row.cargoList.map((cargo) => this.tableDataRender(h, cargo[key] || defaultString))
         )
       }
       return h('span', '-')
+    },
+    // 格式化包装尺寸
+    formatDimension (cargo) {
+      let text = ''
+      if (isNumber(cargo.dimension.length) || isNumber(cargo.dimension.width) || isNumber(cargo.dimension.height)) {
+        text = (isNumber(cargo.dimension.length) ? cargo.dimension.length : '-') + ' x ' + (isNumber(cargo.dimension.width) ? cargo.dimension.width : '-') + ' x ' + (isNumber(cargo.dimension.height) ? cargo.dimension.height : '-')
+      } else {
+        text = '-'
+      }
+      return text
     },
     // 根据状态设置按钮
     setBtnsWithStatus () {
@@ -241,7 +247,7 @@ export default {
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
       // return typeof money === 'number' ? money / 100 : null
-      return (typeof money === 'number' && money !== 0) ? divideFee(money) : null
+      return divideFeeOrNull(money)
     },
 
     // 格式化金额单位为分

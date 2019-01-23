@@ -1,38 +1,70 @@
 <template>
   <Form ref="pickUpFeeForm" :label-width="62" :model="payment" :rules="rules" class="transport-detail" label-position="right">
     <div :class="sendWay === '1' ? 'outer-fee' : 'own-fee'" class="part" style="padding-bottom: 5px;">
-      <Row class="detail-field-group">
-        <i-col span="5">
-          <FormItem :label="sendWay === '1' ? '运输费：': '油费：'" prop="freightFee" class="fee-fix">
+      <ul v-if="sendWay === '1'" class="detail-field-group">
+        <li v-if="DispatchSet.pickOutFreightFeeOption === 1">
+          <FormItem label="运输费：" prop="freightFee" class="fee-fix">
             <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="5">
+        </li>
+        <li v-if="DispatchSet.pickOutLoadFeeOption === 1">
           <FormItem label="装货费：" prop="loadFee" class="fee-fix">
             <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="5">
+        </li>
+        <li v-if="DispatchSet.pickOutUnloadFeeOption === 1">
           <FormItem label="卸货费：" prop="unloadFee" class="fee-fix">
             <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="5">
+        </li>
+        <li v-if="DispatchSet.pickOutInsuranceFeeOption === 1">
           <FormItem label="保险费：" prop="insuranceFee" class="fee-fix">
             <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-        <i-col span="4">
+        </li>
+        <li v-if="DispatchSet.pickOutOtherFeeOption === 1">
           <FormItem label="其他：" prop="otherFee" class="other-fee-fix">
             <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
-        </i-col>
-      </Row>
+        </li>
+      </ul>
+      <ul v-else class="detail-field-group">
+        <li v-if="DispatchSet.pickSelfOilFeeOption === 1">
+          <FormItem label="油费：" prop="freightFee" class="fee-fix">
+            <TagNumberInput v-model="payment.freightFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.pickSelfLoadFeeOption === 1">
+          <FormItem label="装货费：" prop="loadFee" class="fee-fix">
+            <TagNumberInput v-model="payment.loadFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.pickSelfUnloadFeeOption === 1">
+          <FormItem label="卸货费：" prop="unloadFee" class="fee-fix">
+            <TagNumberInput v-model="payment.unloadFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.pickSelfInsuranceFeeOption === 1">
+          <FormItem label="保险费：" prop="insuranceFee" class="fee-fix">
+            <TagNumberInput v-model="payment.insuranceFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+        <li v-if="DispatchSet.pickSelfOtherFeeOption === 1">
+          <FormItem label="其他：" prop="otherFee" class="other-fee-fix">
+            <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
+            <span class="unit-yuan">元</span>
+          </FormItem>
+        </li>
+      </ul>
       <Row class="detail-field-group">
         <i-col span="24">
           <span class="detail-field-title-sm" style="vertical-align: unset;margin-left: 10px;">费用合计：</span>
@@ -106,8 +138,9 @@ import validator from '@/libs/js/validate'
 import PayInfo from './PayInfo'
 import AllocationStrategy from './AllocationStrategy.vue'
 import allocationStrategy from '../constant/allocation.js'
-import { roundFee, multiplyFee } from '@/libs/js/config'
+import { roundFee, multiplyFeeOrNull } from '@/libs/js/config'
 import NP from 'number-precision'
+import { mapGetters } from 'vuex'
 export default {
   name: 'PickupFeeComponent',
   components: { TagNumberInput, PayInfo, AllocationStrategy },
@@ -213,21 +246,29 @@ export default {
     }
   },
   computed: {
+    ...mapGetters([
+      'DispatchSet'
+    ]),
     // 计算总费用
     paymentTotal () {
-      let total = NP.plus(
-        Number(this.payment.freightFee),
-        Number(this.payment.loadFee),
-        Number(this.payment.unloadFee),
-        Number(this.payment.insuranceFee),
-        Number(this.payment.otherFee)
-      )
-
-      // total = Number(this.payment.freightFee) +
-      //         Number(this.payment.loadFee) +
-      //         Number(this.payment.unloadFee) +
-      //         Number(this.payment.insuranceFee) +
-      //         Number(this.payment.otherFee)
+      let total
+      if (this.sendWay === '1') {
+        total = NP.plus(
+          Number(this.DispatchSet.pickOutFreightFeeOption === 1 ? this.payment.freightFee : 0),
+          Number(this.DispatchSet.pickOutLoadFeeOption === 1 ? this.payment.loadFee : 0),
+          Number(this.DispatchSet.pickOutUnloadFeeOption === 1 ? this.payment.unloadFee : 0),
+          Number(this.DispatchSet.pickOutInsuranceFeeOption === 1 ? this.payment.insuranceFee : 0),
+          Number(this.DispatchSet.pickOutOtherFeeOption === 1 ? this.payment.otherFee : 0)
+        )
+      } else {
+        total = NP.plus(
+          Number(this.DispatchSet.pickSelfOilFeeOption === 1 ? this.payment.freightFee : 0),
+          Number(this.DispatchSet.pickSelfLoadFeeOption === 1 ? this.payment.loadFee : 0),
+          Number(this.DispatchSet.pickSelfUnloadFeeOption === 1 ? this.payment.unloadFee : 0),
+          Number(this.DispatchSet.pickSelfInsuranceFeeOption === 1 ? this.payment.insuranceFee : 0),
+          Number(this.DispatchSet.pickSelfOtherFeeOption === 1 ? this.payment.otherFee : 0)
+        )
+      }
       return roundFee(total)
     }
   },
@@ -247,11 +288,24 @@ export default {
     },
     // 格式化金额单位为分
     formatMoney () {
+      if (this.sendWay === '1') {
+        this.payment.freightFee = this.DispatchSet.pickOutFreightFeeOption === 1 ? this.payment.freightFee : ''
+        this.payment.loadFee = this.DispatchSet.pickOutLoadFeeOption === 1 ? this.payment.loadFee : ''
+        this.payment.unloadFee = this.DispatchSet.pickOutUnloadFeeOption === 1 ? this.payment.unloadFee : ''
+        this.payment.insuranceFee = this.DispatchSet.pickOutInsuranceFeeOption === 1 ? this.payment.insuranceFee : ''
+        this.payment.otherFee = this.DispatchSet.pickOutOtherFeeOption === 1 ? this.payment.otherFee : ''
+      } else {
+        this.payment.freightFee = this.DispatchSet.pickSelfOilFeeOption === 1 ? this.payment.freightFee : ''
+        this.payment.loadFee = this.DispatchSet.pickSelfLoadFeeOption === 1 ? this.payment.loadFee : ''
+        this.payment.unloadFee = this.DispatchSet.pickSelfUnloadFeeOption === 1 ? this.payment.unloadFee : ''
+        this.payment.insuranceFee = this.DispatchSet.pickSelfInsuranceFeeOption === 1 ? this.payment.insuranceFee : ''
+        this.payment.otherFee = this.DispatchSet.pickSelfOtherFeeOption === 1 ? this.payment.otherFee : ''
+      }
       let temp = Object.assign({}, this.payment)
       for (let key in temp) {
-        temp[key] = multiplyFee(temp[key])
+        temp[key] = multiplyFeeOrNull(temp[key])
       }
-      temp.totalFee = multiplyFee(this.paymentTotal)
+      temp.totalFee = multiplyFeeOrNull(this.paymentTotal)
       return temp
     },
     // 获取分摊策略
@@ -324,4 +378,9 @@ export default {
     border-bottom none
   .row-margin
     margin 20px 0 35px 0
+  li
+    display inline-block
+    width 20%
+    padding 5px 0
+    line-height 32px
 </style>

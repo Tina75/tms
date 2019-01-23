@@ -233,15 +233,29 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 40,
+          width: 50,
           render: (h, params) => {
-            return (this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301)) ? h('a', {
-              on: {
-                click: () => {
-                  this.writeOff(params)
+            let renderHtml = []
+            if ((this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301))) {
+              renderHtml.push(h('a', {
+                on: {
+                  click: () => {
+                    this.writeOff(params)
+                  }
+                },
+                style: {
+                  marginRight: '10px'
                 }
-              }
-            }, '核销') : ''
+              }, '核销'))
+            }
+            return renderHtml
+            // return (this.scene === 1 && this.hasPower(170101)) || (this.scene === 2 && this.hasPower(170201)) || (this.scene === 3 && this.hasPower(170301)) ? h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.writeOff(params)
+            //     }
+            //   }
+            // }, '核销') : ''
           }
         },
         {
@@ -283,7 +297,11 @@ export default {
           title: ' ',
           width: 1
         },
-        {
+        this.scene === 2 ? {
+          title: '合计金额',
+          width: 75,
+          key: 'totalFeeText'
+        } : {
           title: '合计运费',
           width: 75,
           key: 'totalFeeText'
@@ -381,55 +399,52 @@ export default {
         }
       })
     },
+    /* 生成对账单 */
     createBill () {
-      if (this.selectedList.length > 1) {
-        // 统计多段付单子
-        let monthList = []
-        // 统计非多段付单子
-        let notMulList = []
-        this.selectedList.map(item => {
-          if (item.isMultiPay === 1) {
-            monthList.push(item.orderNo)
-          } else if (item.isMultiPay === 0) {
-            notMulList.push(item.id)
-          }
+      // 统计多段付单子
+      let monthList = []
+      // 统计非多段付单子
+      let notMulList = []
+      this.selectedList.map(item => {
+        if (item.isMultiPay === 1) {
+          monthList.push(item.orderNo)
+        } else if (item.isMultiPay === 0) {
+          notMulList.push(item.id)
+        }
+      })
+      let errList = []
+      if (monthList.length > 0) { // 存在多段付
+        errList.push({
+          title: '以下单据是多段付，不能生成对账单',
+          arr: monthList
         })
-        let errList = []
-        if (monthList.length > 0) { // 存在多段付
+      }
+      if (notMulList.length === 0) { // 都是多段付，不用判断异常，直接弹窗提示存在多段付单子
+        if (errList.length > 0) this.errDialog(errList)
+        return
+      }
+      Server({
+        url: '/finance/reconcile/checkReconcile',
+        method: 'post',
+        data: {
+          idList: notMulList,
+          partnerType: this.scene,
+          partnerName: this.currentPartner.partnerName
+        }
+      }).then(res => {
+        if (res.data.data && res.data.data.operateCode === 1) {
+          // 存在异常
           errList.push({
-            title: '以下单据是多段付，不能生成对账单',
-            arr: monthList
+            title: '以下单据存在异常，无法生成对账单',
+            arr: res.data.data.orderNos
           })
         }
-        if (notMulList.length === 0) { // 都是多段付，不用判断异常，直接弹窗提示存在多段付单子
-          if (errList.length > 0) this.errDialog(errList)
-          return
+        if (errList.length === 0) { // 不存在异常且不存在多段付，可以批量生成对账单
+          this.createBillOk()
+        } else {
+          this.errDialog(errList)
         }
-        Server({
-          url: '/finance/reconcile/checkReconcile',
-          method: 'post',
-          data: {
-            idList: notMulList,
-            partnerType: this.scene,
-            partnerName: this.currentPartner.partnerName
-          }
-        }).then(res => {
-          if (res.data.data && res.data.data.operateCode === 1) {
-            // 存在异常
-            errList.push({
-              title: '以下单据存在异常，无法生成对账单',
-              arr: res.data.data.orderNos
-            })
-          }
-          if (errList.length === 0) { // 不存在异常且不存在多段付，可以批量生成对账单
-            this.createBillOk()
-          } else {
-            this.errDialog(errList)
-          }
-        })
-      } else {
-        this.$Message.warning('两条以上才能生成对账单')
-      }
+      })
     },
     startQuery () {
       this.orderData = []

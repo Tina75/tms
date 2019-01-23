@@ -7,9 +7,9 @@
       <div class="order-number">
         运单货物信息
       </div>
-      <div>
-        <table-extend :order-list="parentOrderData" style="float: left"></table-extend>
-        <Table :columns="columns1" :data="parentOrderCargoList"></Table>
+      <div class="table-group">
+        <table-extend :order-list="parentOrderData"></table-extend>
+        <Table :columns="columns1" :data="parentOrderCargoList" class="table-cargo"></Table>
       </div>
     </div>
     <div v-if="childOrderCargoList.length">
@@ -17,9 +17,9 @@
       <div class="order-number">
         异常货物信息
       </div>
-      <div>
-        <table-extend :order-list="childOrderData" style="float: left"></table-extend>
-        <Table :columns="columns2" :data="childOrderCargoList"></Table>
+      <div class="table-group">
+        <table-extend :order-list="childOrderData"></table-extend>
+        <Table :columns="columns2" :data="childOrderCargoList" class="table-cargo"></Table>
       </div>
     </div>
     <div slot="footer">
@@ -37,15 +37,16 @@
 <script>
 import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 import { TABLE_COLUMNS_ONE, TABLE_COLUMNS_TWO, COLUMNS_ONE_WEIGHT, COLUMNS_ONE_WEIGHTKG, COLUMNS_TWO_WEIGHT, COLUMNS_TWO_WEIGHTKG } from '../constant/abnormalCargo.js'
 import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import TableExtend from '../components/TableExtend.vue'
+import { roundFee, roundWeight, roundVolume, roundWeightKg } from '@/libs/js/config'
 
 export default {
-  name: 'separate',
+  name: 'cargoSeparate',
   components: { TableExtend },
   mixins: [BaseDialog, tableWeightColumnMixin],
   data () {
@@ -105,11 +106,11 @@ export default {
     }
     // 动态添加吨或公斤列
     if (this.WeightOption === 1) {
-      this.triggerWeightColumn(this.columns1, this.columns1Weight, 3)
-      this.triggerWeightColumn(this.columns2, this.columns2Weight, 3)
+      this.triggerWeightColumn(this.columns1, this.columns1Weight, 4)
+      this.triggerWeightColumn(this.columns2, this.columns2Weight, 4)
     } else {
-      this.triggerWeightColumn(this.columns1, this.columns1WeightKg, 3)
-      this.triggerWeightColumn(this.columns2, this.columns2WeightKg, 3)
+      this.triggerWeightColumn(this.columns1, this.columns1WeightKg, 4)
+      this.triggerWeightColumn(this.columns2, this.columns2WeightKg, 4)
     }
   },
 
@@ -179,10 +180,10 @@ export default {
       for (let key in subtract) {
         if (subtract[key].length > 1) {
           subtract[key][0].quantity -= subtract[key][1].quantity
-          subtract[key][0].volume = float.round(subtract[key][0].volume - subtract[key][1].volume, 6)
-          subtract[key][0].weight = float.round(subtract[key][0].weight - subtract[key][1].weight, 3)
-          subtract[key][0].weightKg -= subtract[key][1].weightKg
-          subtract[key][0].cargoCost = float.round(subtract[key][0].cargoCost - subtract[key][1].cargoCost)
+          subtract[key][0].volume = roundVolume(subtract[key][0].volume - subtract[key][1].volume)
+          subtract[key][0].weight = roundWeight(subtract[key][0].weight - subtract[key][1].weight)
+          subtract[key][0].weightKg = roundWeightKg(subtract[key][0].weightKg - subtract[key][1].weightKg)
+          subtract[key][0].cargoCost = roundFee(subtract[key][0].cargoCost - subtract[key][1].cargoCost)
         }
       }
       this.cloneData = _.cloneDeep(this.parentOrderCargoList)
@@ -198,14 +199,14 @@ export default {
         this.childOrderCargoList.unshift(parentData)
       } else {
         hasChildList.quantity += parentData.quantity
-        hasChildList.cargoCost = float.round(hasChildList.cargoCost + parentData.cargoCost)
+        hasChildList.cargoCost = roundFee(hasChildList.cargoCost + parentData.cargoCost)
         // 区分吨和公斤
         if (this.WeightOption === 1) {
-          hasChildList.weight = float.round(hasChildList.weight + parentData.weight, 3)
+          hasChildList.weight = roundWeight(hasChildList.weight + parentData.weight)
         } else {
-          hasChildList.weightKg += parentData.weightKg
+          hasChildList.weightKg = roundWeightKg(hasChildList.weightKg + parentData.weightKg)
         }
-        hasChildList.volume = float.round(hasChildList.volume + parentData.volume, 6)
+        hasChildList.volume = roundVolume(hasChildList.volume + parentData.volume)
       }
       // 将原单修改数据置为0
       this.parentOrderCargoList[index].quantity = 0
@@ -229,30 +230,30 @@ export default {
       parentData.quantity = this.quantityVal ? params.row.quantity - this.quantityVal : 0
       // 区分吨和公斤
       if (this.WeightOption === 1) {
-        parentData.weight = float.round(this.weightVal ? params.row.weight - this.weightVal : 0, 3)
+        parentData.weight = roundWeight(this.weightVal ? params.row.weight - this.weightVal : 0)
       } else {
-        parentData.weightKg = this.weightVal ? params.row.weightKg - this.weightVal : 0
+        parentData.weightKg = roundWeightKg(this.weightVal ? params.row.weightKg - this.weightVal : 0)
       }
-      parentData.volume = float.round(this.volumeVal ? params.row.volume - this.volumeVal : 0, 6)
+      parentData.volume = roundVolume(this.volumeVal ? params.row.volume - this.volumeVal : 0)
       // 货值比例关联优先级：数量-->重量-->体积
       if (params.row.quantity !== 0) {
-        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.quantity) / quantity)
+        parentData.cargoCost = parseInt(roundFee(cargoCost * parentData.quantity) / quantity)
       } else if (params.row.weight !== 0 || params.row.weightKg !== 0) {
         // 区分吨和公斤
         if (this.WeightOption === 1) {
-          parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weight, 3) / weight)
+          parentData.cargoCost = parseInt(roundWeight(cargoCost * parentData.weight) / weight)
         } else {
-          parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weightKg) / weight)
+          parentData.cargoCost = parseInt(roundWeightKg(cargoCost * parentData.weightKg) / weight)
         }
       } else {
-        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.volume, 6) / volume)
+        parentData.cargoCost = parseInt(roundVolume(cargoCost * parentData.volume) / volume)
       }
       this.$set(this.parentOrderCargoList, params.index, parentData)
       this.$set(this.cloneData, params.index, parentData)
 
       // 生成异常货物信息数据
       let childData = { ...params.row }
-      childData.cargoCost = float.round(cargoCost - parentData.cargoCost)
+      childData.cargoCost = roundFee(cargoCost - parentData.cargoCost)
       childData.quantity = this.quantityVal ? this.quantityVal : params.row.quantity
       // 区分吨和公斤
       if (this.WeightOption === 1) {
@@ -269,14 +270,14 @@ export default {
         this.childOrderCargoList.unshift(childData)
       } else {
         hasChildList.quantity += childData.quantity
-        hasChildList.cargoCost = float.round(hasChildList.cargoCost + childData.cargoCost)
+        hasChildList.cargoCost = roundFee(hasChildList.cargoCost + childData.cargoCost)
         // 区分吨和公斤
         if (this.WeightOption === 1) {
-          hasChildList.weight = float.round(hasChildList.weight + childData.weight, 3)
+          hasChildList.weight = roundWeight(hasChildList.weight + childData.weight)
         } else {
-          hasChildList.weightKg += childData.weightKg
+          hasChildList.weightKg = roundWeightKg(hasChildList.weightKg + childData.weightKg)
         }
-        hasChildList.volume = float.round(hasChildList.volume + childData.volume, 6)
+        hasChildList.volume = roundVolume(hasChildList.volume + childData.volume)
       }
 
       // 合并单元格需要
@@ -298,7 +299,7 @@ export default {
         obj[key] = obj[key].map((item, index) => {
           return {
             orderNo: index === 0 ? item.orderNo : '',
-            customerOrderNo: index === 0 ? item.customerOrderNo : '',
+            customerOrderNo: index === 0 ? (item.customerOrderNo || '-') : '',
             cargoLength: index === 0 ? obj[key].length : 1
           }
         })
@@ -315,9 +316,9 @@ export default {
         delete item._index
         delete item._rowKey
         if (this.WeightOption === 1) {
-          item.weightKg = parseInt(float.round(item.weight * 1000))
+          item.weightKg = parseInt(roundWeightKg(item.weight * 1000))
         } else {
-          item.weight = float.round(item.weightKg / 1000, 3)
+          item.weight = roundWeight(item.weightKg / 1000)
         }
       })
       z.childOrderCargoList.map((item) => {
@@ -354,6 +355,11 @@ export default {
 .ivu-btn-primary[disabled]
   background-color rgba(0,164,189,0.3)
   color #fff
+.table-group
+  display flex
+  display -ms-flexbox
+  .table-cargo
+    border-left none
 </style>
 <style lang='stylus'>
 .padding-left-30

@@ -83,7 +83,7 @@
             <Row class="detail-field-group">
               <i-col span="13">
                 <span class="detail-field-title">备注：</span>
-                <span>{{ info.remark || '无' }}</span>
+                <span>{{ info.remark || '-' }}</span>
               </i-col>
             </Row>
           </div>
@@ -93,7 +93,7 @@
             <div class="detail-part-title">
               <span>货物明细</span>
             </div>
-            <Table :columns="tableColumns" :data="detail" :loading="loading" class="detail-field-table"></Table>
+            <Table :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading" class="detail-field-table"></Table>
             <div class="table-footer">
               <span class="table-footer-title">总计</span>
               <span>总货值：{{ orderTotal.cargoCost }}元</span>
@@ -108,28 +108,60 @@
             <div class="detail-part-title">
               <span>应付费用</span>
             </div>
-            <Row class="detail-field-group">
-              <i-col span="4">
-                <span class="detail-field-title-sm">{{ info.assignCarType === 1 ? '运输费：' : '油费：' }}</span>
-                <span class="detail-field-fee">{{ payment.freightFee || 0 }}元</span>
-              </i-col>
-              <i-col span="4" offset="1">
+            <ul v-if="info.assignCarType === 1" class="detail-field-group">
+              <li v-if="DispatchSet.pickOutFreightFeeOption === 1">
+                <span class="detail-field-title-sm">运输费：</span>
+                <span v-if="payment.freightFee !== ''" class="detail-field-fee">{{ payment.freightFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickOutLoadFeeOption === 1">
                 <span class="detail-field-title-sm">装货费：</span>
-                <span class="detail-field-fee">{{ payment.loadFee || 0 }}元</span>
-              </i-col>
-              <i-col span="4" offset="1">
+                <span v-if="payment.loadFee !== ''" class="detail-field-fee">{{ payment.loadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickOutUnloadFeeOption === 1">
                 <span class="detail-field-title-sm">卸货费：</span>
-                <span class="detail-field-fee">{{ payment.unloadFee || 0 }}元</span>
-              </i-col>
-              <i-col span="4" offset="1">
+                <span v-if="payment.unloadFee !== ''" class="detail-field-fee">{{ payment.unloadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickOutInsuranceFeeOption === 1">
                 <span class="detail-field-title-sm">保险费：</span>
-                <span class="detail-field-fee">{{ payment.insuranceFee || 0 }}元</span>
-              </i-col>
-              <i-col span="4" offset="1">
+                <span v-if="payment.insuranceFee !== ''" class="detail-field-fee">{{ payment.insuranceFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickOutOtherFeeOption === 1">
                 <span class="detail-field-title-sm">其他：</span>
-                <span class="detail-field-fee">{{ payment.otherFee || 0 }}元</span>
-              </i-col>
-            </Row>
+                <span v-if="payment.otherFee !== ''" class="detail-field-fee">{{ payment.otherFee }}元</span>
+                <span v-else>-</span>
+              </li>
+            </ul>
+            <ul v-else class="detail-field-group">
+              <li v-if="DispatchSet.pickSelfOilFeeOption === 1">
+                <span class="detail-field-title-sm">油费：</span>
+                <span v-if="payment.freightFee !== ''" class="detail-field-fee">{{ payment.freightFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickSelfLoadFeeOption === 1">
+                <span class="detail-field-title-sm">装货费：</span>
+                <span v-if="payment.loadFee !== ''" class="detail-field-fee">{{ payment.loadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickSelfUnloadFeeOption === 1">
+                <span class="detail-field-title-sm">卸货费：</span>
+                <span v-if="payment.unloadFee !== ''" class="detail-field-fee">{{ payment.unloadFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickSelfInsuranceFeeOption === 1">
+                <span class="detail-field-title-sm">保险费：</span>
+                <span v-if="payment.insuranceFee !== ''" class="detail-field-fee">{{ payment.insuranceFee }}元</span>
+                <span v-else>-</span>
+              </li>
+              <li v-if="DispatchSet.pickSelfOtherFeeOption === 1">
+                <span class="detail-field-title-sm">其他：</span>
+                <span v-if="payment.otherFee !== ''" class="detail-field-fee">{{ payment.otherFee }}元</span>
+                <span v-else>-</span>
+              </li>
+            </ul>
             <Row class="detail-field-group">
               <i-col span="24">
                 <span class="detail-field-title-sm" style="vertical-align: unset;">费用合计：</span>
@@ -231,7 +263,7 @@
         </div>
         <Button class="detail-field-button" type="primary"
                 @click="addOrder('pickup')">添加订单</Button>
-        <Table :columns="tableColumns" :data="detail" :loading="loading"></Table>
+        <Table :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading"></Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
           <span>总货值：{{ orderTotal.cargoCost }}元</span>
@@ -288,10 +320,10 @@ import _ from 'lodash'
 import Exception from './exception.vue'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import allocationStrategy from '../constant/allocation.js'
-import { mapActions } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import CarPhoto from './components/car-photo.vue'
-import { divideFee } from '@/libs/js/config'
+import { getFeeText, isNumber } from '@/libs/js/config'
 export default {
   name: 'detailPickup',
   components: { SelectInput, PayInfo, Exception, PickupFee, OwnSendInfo, SendCarrierInfo, CarPhoto },
@@ -429,40 +461,59 @@ export default {
           key: 'cargoName',
           minWidth: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.cargoName)
+            return this.scopedSlotsRender(h, p, 'cargoName')
           }
         },
         {
-          title: '包装',
-          key: 'unit',
-          width: 120,
+          title: '货物编号',
+          key: 'cargoNo',
+          width: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.unit)
+            return this.scopedSlotsRender(h, p, 'cargoNo')
+          }
+        },
+        {
+          title: '包装方式',
+          key: 'unit',
+          width: 180,
+          render: (h, p) => {
+            return this.scopedSlotsRender(h, p, 'unit')
           }
         },
         {
           title: '数量',
           key: 'quantity',
-          width: 120,
+          width: 140,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.quantity ? p.row.quantity : 0)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.quantity) ? cargo.quantity : '-')))
           }
         },
         {
           title: '货值(元)',
           key: 'cargoCost',
-          width: 120,
+          width: 140,
           render: (h, p) => {
-            return this.tableDataRender(h, divideFee(p.row.cargoCost))
-            // return this.tableDataRender(h, p.row.cargoCost / 100)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, getFeeText(cargo.cargoCost))))
           }
         },
         {
           title: '体积(方)',
           key: 'volume',
-          width: 120,
+          width: 140,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.volume ? p.row.volume : 0)
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.volume) ? cargo.volume : '-')))
+          }
+        },
+        {
+          title: '包装尺寸（毫米）',
+          key: 'dimension',
+          width: 200,
+          render: (h, p) => {
+            return h('div', {},
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, this.formatDimension(cargo))))
           }
         },
         {
@@ -503,13 +554,58 @@ export default {
       imageItems: [] // 需要展示的车况照片list
     }
   },
-
+  computed: {
+    ...mapGetters([
+      'DispatchSet'
+    ]),
+    cargoGroupByOrderNo () {
+      // 以orderNo分组后的货物明细数据
+      let _cargoMapById = {}
+      this.detail.forEach((cargo) => {
+        // 单独提取货物的字段
+        let {
+          cargoCost,
+          cargoName,
+          packing,
+          quantity,
+          remark1,
+          remark2,
+          unit,
+          volume,
+          weight,
+          weightKg,
+          cargoNo,
+          dimension,
+          ...rest
+        } = cargo
+        if (!_cargoMapById[cargo.orderId]) {
+          _cargoMapById[cargo.orderId] = rest
+          _cargoMapById[cargo.orderId].cargoList = []
+        }
+        _cargoMapById[cargo.orderId].cargoList.push({
+          cargoCost,
+          cargoName,
+          packing,
+          quantity,
+          remark1,
+          remark2,
+          unit,
+          volume,
+          weight,
+          weightKg,
+          cargoNo,
+          dimension
+        })
+      })
+      return Object.values(_cargoMapById)
+    }
+  },
   mounted () {
     // 判断显示吨列或公斤列
     if (this.WeightOption === 1) {
-      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 5)
+      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 6)
     } else {
-      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 5)
+      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 6)
     }
   },
 
@@ -872,4 +968,10 @@ export default {
       vertical-align middle
     .ivu-radio-group-item
       margin-right 41px
+  .detail-field-group
+    li
+      display inline-block
+      width 20%
+      padding 5px 0
+      line-height 32px
 </style>

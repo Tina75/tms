@@ -12,6 +12,8 @@ import PhotoSwipeUIDefault from 'photoswipe/dist/photoswipe-ui-default'
  */
 import LoadingImg from '@/assets/loading.gif'
 
+const URL_HOST = process.env.VUE_APP_IMG_HOST
+
 const prepareOpenPhotoSwipe = (items) => {
   // 等先用loading图片替换原实际图片，在loaded图片后，再用原图
   let transferItems = items.map((item) => {
@@ -19,6 +21,7 @@ const prepareOpenPhotoSwipe = (items) => {
     if (src.indexOf('?x-oss-process') === -1) {
       src += '?x-oss-process=image/resize,w_1280'
     }
+    if (src.indexOf('aliyuncs.com') === -1) src = src ? `${URL_HOST}${src}` : ' '
     return {
       src: LoadingImg,
       realSrc: src,

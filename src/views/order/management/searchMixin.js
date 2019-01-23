@@ -171,20 +171,20 @@ export default {
     },
     // 修改下单开始结束时间
     handleTimeChange (val) {
-      this.keywords.createTimeStart = val[0]
-      this.keywords.createTimeEnd = val[1]
+      this.keywords.createTimeStart = val[0] ? val[0] + ' 00:00:00' : val[0]
+      this.keywords.createTimeEnd = val[1] ? val[1] + ' 23:59:59' : val[1]
       this.searchList()
     },
     // 修改回收开始结束时间
     handleRecoveryTimeChange (val) {
-      this.keywords.recoveryTimeStart = val[0]
-      this.keywords.recoveryTimeEnd = val[1]
+      this.keywords.recoveryTimeStart = val[0] ? val[0] + ' 00:00:00' : val[0]
+      this.keywords.recoveryTimeEnd = val[1] ? val[1] + ' 23:59:59' : val[1]
       this.searchList()
     },
     // 修改返厂开始结束时间
     handleReturnTimeChange (val) {
-      this.keywords.returnTimeStart = val[0]
-      this.keywords.returnTimeEnd = val[1]
+      this.keywords.returnTimeStart = val[0] ? val[0] + ' 00:00:00' : val[0]
+      this.keywords.returnTimeEnd = val[1] ? val[1] + ' 23:59:59' : val[1]
       this.searchList()
     },
     // 筛选列表显示字段

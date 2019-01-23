@@ -40,15 +40,15 @@
       <div class="separate-table">
         <Table v-show="separateCargoList.length > 0" ref="separateTable" :columns="columnsSeparate" :data="separateCargoList">
           <template slot-scope="{row, index}" slot="quantity">
-            <span v-if="!orderDetail.quantity">-</span>
+            <span v-if="!orderDetail.quantity">{{orderDetail.quantity === 0 ? orderDetail.quantity : '-'}}</span>
             <TagNumberInput v-else :precision="0" :min="0" :value="row.quantity" @on-change="(v)=>handleChange(index,'quantity',v)"></TagNumberInput>
           </template>
           <template slot-scope="{row, index}" slot="volume">
-            <span v-if="!orderDetail.volume">-</span>
+            <span v-if="!orderDetail.volume">{{orderDetail.volume === 0 ? orderDetail.volume : '-' }}</span>
             <TagNumberInput v-else :min="0" :precision="$numberPrecesion.volume" :value="row.volume" @on-change="(v)=>handleChange(index,'volume',v)"></TagNumberInput>
           </template>
           <template slot-scope="{row, index}" slot="cargoCost">
-            <span v-if="!cargoCost">-</span>
+            <span v-if="!cargoCost">{{cargoCost === 0 ? cargoCost : '-'}}</span>
             <TagNumberInput v-else :min="0" :precision="$numberPrecesion.fee" :value="divideFee(row.cargoCost)" @on-change="(v)=>handleChange(index,'cargoCost',v)"></TagNumberInput>
           </template>
         </Table>
@@ -75,7 +75,7 @@
  */
 import BaseDialog from '@/basic/BaseDialog'
 import float from '@/libs/js/float'
-import { divideFee, roundFee, roundVolume, roundWeight, roundWeightKg, multiplyFee } from '@/libs/js/config'
+import { divideFee, roundFee, roundVolume, roundWeight, roundWeightKg, multiplyFee, isNumber } from '@/libs/js/config'
 import { mapGetters } from 'vuex'
 import { TABLE_COLUMNS_AVERAGE, TABLE_COLUMNS_AVERAGE_EDIT, COLUMNS_THREE_WEIGHT, COLUMNS_THREE_WEIGHTKG, COLUMNS_TWO_WEIGHT, COLUMNS_TWO_WEIGHTKG } from '../constant/separate.js'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
@@ -114,7 +114,7 @@ export default {
             if (value) {
               if (value === 1) {
                 callback(new Error('至少要拆成2单'))
-              } else if (vm.cargoQuantity !== 0 && value > vm.cargoQuantity) {
+              } else if (vm.cargoQuantity && value > vm.cargoQuantity) {
                 // 用户输入了数量，必须小于货物数量
                 callback(new Error('拆单数量不可大于包装数量'))
               } else {
@@ -139,7 +139,7 @@ export default {
      */
     cargoCost () {
       if (this.cargoList.length > 0) {
-        return this.cargoList[0].cargoCost || 0
+        return this.cargoList[0].cargoCost
       }
       return 0
     },
@@ -149,7 +149,7 @@ export default {
     cargoQuantity () {
       // 批量拆单，只能拆只有一个货物的时候，所以这里直接取默认第一个货物的数量
       if (this.cargoList.length > 0) {
-        return this.cargoList[0].quantity || 0
+        return this.cargoList[0].quantity
       }
       return 0
     },
@@ -159,7 +159,7 @@ export default {
     cargoVolume () {
       //
       if (this.cargoList.length > 0) {
-        return this.cargoList[0].volume || 0
+        return this.cargoList[0].volume
       }
       return 0
     },
@@ -170,9 +170,9 @@ export default {
       //
       if (this.cargoList.length > 0) {
         if (this.WeightOption === 1) {
-          return this.cargoList[0].weight || 0
+          return this.cargoList[0].weight
         } else {
-          return this.cargoList[0].weightKg || 0
+          return this.cargoList[0].weightKg
         }
       }
       return 0
@@ -243,9 +243,9 @@ export default {
       let cargoCost = divideFee(vm.cargoCost)
       let baseNum = float.floor(NP.divide(vm.cargoQuantity, separateNum))
       // 每个货物 体积比例
-      let volumePercent = float.floor(NP.divide(vm.cargoVolume, vm.cargoQuantity), this.$numberPrecesion.volume)
+      let volumePercent = float.floor(NP.divide(vm.cargoVolume || 0, vm.cargoQuantity), this.$numberPrecesion.volume)
       // 每个货物重量比例
-      let weightPercent = float.floor(NP.divide(vm.cargoWeight, vm.cargoQuantity), vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
+      let weightPercent = float.floor(NP.divide(vm.cargoWeight || 0, vm.cargoQuantity), vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
       // 货值比例
       let costPercent = float.floor(NP.divide(cargoCost, vm.cargoQuantity), vm.$numberPrecesion.fee)
       let i = 0
@@ -289,6 +289,17 @@ export default {
           }
           // this.setCargoLeftValue(cargo, cargoCost)
         }
+        // 为空判断
+        if (!isNumber(vm.cargoVolume)) {
+          cargo.volume = vm.cargoVolume
+        }
+        if (!isNumber(vm.cargoWeight)) {
+          cargo.weight = vm.cargoWeight
+          cargo.weightKg = vm.cargoWeight
+        }
+        if (!isNumber(vm.cargoCost)) {
+          cargo.cargoCost = vm.cargoCost
+        }
 
         vm.separateCargoList.push(cargo)
         i++
@@ -306,9 +317,9 @@ export default {
       let separateNum = vm.formInline.separateNum
       let cargoCost = divideFee(vm.cargoCost)
       // 每个货物 体积比例
-      let volumePercent = float.floor(NP.divide(vm.cargoVolume, separateNum), this.$numberPrecesion.volume)
+      let volumePercent = float.floor(NP.divide(vm.cargoVolume || 0, separateNum), this.$numberPrecesion.volume)
       // 每个货物重量比例
-      let weightPercent = float.floor(NP.divide(vm.cargoWeight, separateNum), vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
+      let weightPercent = float.floor(NP.divide(vm.cargoWeight || 0, separateNum), vm.WeightOption === 1 ? this.$numberPrecesion.weight : this.$numberPrecesion.weightKg)
       // 货值比例
       let costPercent = float.floor(NP.divide(cargoCost, separateNum), this.$numberPrecesion.fee)
       let i = 0
@@ -334,6 +345,17 @@ export default {
           }
           cargo.volume = roundVolume(NP.minus(vm.cargoVolume, NP.times((separateNum - 1), volumePercent)))
           cargo.cargoCost = roundFee(NP.minus(multiplyFee(cargoCost), NP.times((separateNum - 1), multiplyFee(costPercent))))
+        }
+        // 为空判断
+        if (!isNumber(vm.cargoVolume)) {
+          cargo.volume = vm.cargoVolume
+        }
+        if (!isNumber(vm.cargoWeight)) {
+          cargo.weight = vm.cargoWeight
+          cargo.weightKg = vm.cargoWeight
+        }
+        if (!isNumber(vm.cargoCost)) {
+          cargo.cargoCost = vm.cargoCost
         }
 
         vm.separateCargoList.push(cargo)

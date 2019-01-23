@@ -186,8 +186,8 @@ export default {
     // 计算两次触摸事件之间的位置差距
     getTouchDiffer (touch) {
       return {
-        dx: touch.x - touchPosition.x,
-        dy: touch.y - touchPosition.y
+        dx: touch.x - (touchPosition ? touchPosition.x : 0),
+        dy: touch.y - (touchPosition ? touchPosition.y : 0)
       }
     },
 

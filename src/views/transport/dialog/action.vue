@@ -44,6 +44,9 @@
     <div slot="footer" style="text-align: center;">
       <Button :loading="btnLoading" type="primary" @click="submit">确定</Button>
       <Button type="default" @click.native="close">取消</Button>
+      <Button type="default" style="width: 35px; height: 35px;min-width: 0;padding: 0;vertical-align: top;" @click.native="toSetting">
+        <FontIcon type="shezhi" size="20" color="#999"></FontIcon>
+      </Button>
     </div>
   </Modal>
 </template>
@@ -58,11 +61,14 @@ import PickupFee from '../components/PickupFee'
 import { defaultOwnForm } from '@/components/own-car-form/mixin.js'
 import Server from '@/libs/js/server'
 import float from '@/libs/js/float'
+import FontIcon from '@/components/FontIcon'
 import _ from 'lodash'
-import { mapActions } from 'vuex'
+import TMSURL from '@/libs/constant/url'
+import { divideMileage, divideFeeOrNull } from '@/libs/js/config'
+import { mapGetters, mapActions } from 'vuex'
 export default {
   name: 'SendOrPickAction',
-  components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee },
+  components: { SendFee, SendCarrierInfo, OwnSendInfo, PickupFee, FontIcon },
   mixins: [ BaseDialog ],
 
   data () {
@@ -103,7 +109,8 @@ export default {
         cashBack: null,
         tollFee: null, // 路桥费
         mileage: null, // 计费里程 v1.06 新增
-        accommodation: null // 住宿费 v1.08 新增
+        accommodation: null, // 住宿费 v1.08 新增
+        infoFee: null // 信息费 v1.11 新增
       },
       settlementType: '',
       settlementPayInfo: [],
@@ -112,14 +119,33 @@ export default {
       allocationStrategy: null // 编辑的时候需要带入的分摊策略，1、按订单数  2、按件数 3、按重量 4、按体积
     }
   },
+  computed: {
+    ...mapGetters([
+      'DispatchSet'
+    ])
+  },
   created () {
     if (this.type === 'sendCar') {
-      this.settlementPayInfo = [
-        { payType: 1, fuelCardAmount: '', cashAmount: '' },
-        { payType: 2, fuelCardAmount: '', cashAmount: '' },
-        { payType: 3, fuelCardAmount: '', cashAmount: '' },
-        { payType: 4, fuelCardAmount: '', cashAmount: '' }
-      ]
+      if (this.DispatchSet.paySettlementAdvanceOption === 1) { // 预付
+        this.settlementPayInfo.push(
+          { payType: 1, fuelCardAmount: '', cashAmount: '' }
+        )
+      }
+      if (this.DispatchSet.paySettlementArriveOption === 1) { // 到付
+        this.settlementPayInfo.push(
+          { payType: 2, fuelCardAmount: '', cashAmount: '' }
+        )
+      }
+      if (this.DispatchSet.paySettlementReceiptOption === 1) { // 回付
+        this.settlementPayInfo.push(
+          { payType: 3, fuelCardAmount: '', cashAmount: '' }
+        )
+      }
+      if (this.DispatchSet.paySettlementTailOption === 1) { // 尾款
+        this.settlementPayInfo.push(
+          { payType: 4, fuelCardAmount: '', cashAmount: '' }
+        )
+      }
     } else {
       this.settlementPayInfo = [
         { payType: 2, fuelCardAmount: '', cashAmount: '' }
@@ -135,6 +161,7 @@ export default {
         delete this.payment.tollFee // 提货去掉路桥费
         delete this.payment.mileage // 提货去掉计费里程
         delete this.payment.accommodation // 提货去掉住宿费
+        delete this.payment.infoFee // 提货去掉信息费
       } else {
         for (let key in this.financeRulesInfo) {
           this.financeRulesInfo[key] = this.orderCreate[key]
@@ -200,7 +227,7 @@ export default {
         for (let key in this.payment) {
           this.payment[key] = this.setMoneyUnit2Yuan(billInfo[key])
           if (key === 'mileage') {
-            this.payment[key] = billInfo[key] / 1000 || null
+            this.payment[key] = divideMileage(billInfo[key])
           }
         }
 
@@ -209,6 +236,7 @@ export default {
           delete this.payment.tollFee // 提货去掉路桥费
           delete this.payment.tollFee // 提货去掉计费里程
           delete this.payment.accommodation // 提货去掉住宿费
+          delete this.payment.infoFee // 提货去掉信息费
         }
 
         this.settlementType = billInfo.settlementType ? billInfo.settlementType.toString() : '1'
@@ -230,8 +258,7 @@ export default {
 
     // 设置金额单位为元
     setMoneyUnit2Yuan (money) {
-      // return typeof money === 'number' ? money / 100 : null
-      return (typeof money === 'number' && money !== 0) ? money / 100 : null
+      return divideFeeOrNull(money)
     },
     // 格式化金额单位为分
     formatMoney () {
@@ -481,6 +508,17 @@ export default {
           }
         }
       })
+    },
+    // 跳转派车设置页面
+    toSetting () {
+      this.openTab({
+        path: TMSURL.SETTING,
+        title: '设置',
+        query: {
+          tab: 'dispatch'
+        }
+      })
+      this.close()
     }
   }
 }

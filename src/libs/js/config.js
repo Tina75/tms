@@ -6,7 +6,7 @@
  * @Author: mayousheng:Y010220
  * @Date: 2018-12-26 14:10:46
  * @Last Modified by: Y010220
- * @Last Modified time: 2019-01-09 15:02:50
+ * @Last Modified time: 2019-01-18 14:03:28
  */
 import float from './float'
 import NP from 'number-precision'
@@ -15,6 +15,7 @@ import NP from 'number-precision'
  * 组件内可通过: this.$numberPrecesion.weight 访问重量精度
  */
 export const NumberPrecesion = {
+  rate: 2, // 开票税率
   weight: 3, // 重量精确3位小数
   weightKg: 0, // 重量公斤，保留整数
   volume: 6, // 体积精确6位小数
@@ -36,7 +37,11 @@ export const FieldLength = {
   telephone: 20, // 手机固话长度，1-20
   extraAddress: 50, // 补充地址,门派楼,收货人单位,长度：50
   remark: 100, // 备注长度100
+  cargoName: 200, // 货物名称
   cargoNo: 200 // 货物编号，200位
+}
+export const isNumber = (fee) => {
+  return /^-?\d+(\.\d+)?$/.test(fee)
 }
 /**
  * 费用计算，保留4位小数
@@ -48,37 +53,70 @@ export const roundFee = (fee) => {
 }
 /**
  * 接口返回的费用需乘以100
+ * * 如果没有，自动转换0，返回，通常计算的时候使用
  * @param {number} fee 接口返回的值
  */
 export const multiplyFee = (fee) => {
   return float.round(NP.times(fee || 0, 100))
 }
 /**
+ * 提交的值乘以100
+ * * 如果没有，返回原值，通常在提交表单相关费用值时候用到
+ * @param {*} fee
+ */
+export const multiplyFeeOrNull = (fee) => {
+  return isNumber(fee) ? multiplyFee(fee) : ''
+}
+/**
+ * 接口返回的计费里程需乘以1000
+ * @param {number} fee 通常在提交表单计费里程时候用到
+ */
+export const multiplyMileageOrNull = (fee) => {
+  return isNumber(fee) ? multiplyMileage(fee) : ''
+}
+/**
  * 提交的值除以100
+ * * 如果没有，自动转换0，通常在计算的时候用到
  * @param {*} fee
  */
 export const divideFee = (fee) => {
   return roundFee(NP.divide(fee || 0, 100))
 }
 /**
+ * 提交的值除以100
+ * * 如果没有，返回原值，通常在读取接口返回的费用值时候用到
+ * @param {*} fee
+ */
+export const divideFeeOrNull = (fee) => {
+  return isNumber(fee) ? divideFee(fee) : ''
+}
+/**
  * 保留4位小数字符串类型
+ * * 表格渲染时用到
  * @param {number} value
  */
 export const getFeeText = (value) => {
-  return value ? divideFee(value) : '0'
+  return isNumber(value) ? divideFee(value) : '-'
 }
 /**
  * 税率乘100保留两位小数
  * @param {number} value
  */
 export const multiplyRate = (value) => {
-  return float.round(NP.times(value, 100), 2)
+  return float.round(NP.times(value, 100), NumberPrecesion.rate)
+}
+/**
+ * 税率乘100保留两位小数
+ * @param {number} fee 通常在读取接口返回的税率值时候用到
+ */
+export const multiplyRateOrNull = (fee) => {
+  return isNumber(fee) ? multiplyRate(fee) : ''
 }
 /**
  * 税率
  */
 export const getRateText = (value) => {
-  return value ? float.round(NP.times(value, 100), 2) : '-'
+  return value ? float.round(NP.times(value, 100), NumberPrecesion.rate) : '-'
 }
 /**
  * 列表中费用格式化
@@ -108,14 +146,14 @@ export const multiplyMileage = (fee) => {
  * @param {*} fee
  */
 export const divideMileage = (fee) => {
-  return roundMileage(NP.divide(fee || 0, 1000))
+  return isNumber(fee) ? roundMileage(NP.divide(fee || 0, 1000)) : ''
 }
 /**
  * 字符串化，保留小数
  * @param {*} value
  */
 export const getMileageText = (value) => {
-  return value ? divideMileage(value).toFixed(NumberPrecesion.mileage) : '-'
+  return isNumber(value) ? divideMileage(value) : '-'
 }
 /**
  * 列表中计费里程格式化
@@ -139,7 +177,16 @@ export const roundVolume = (value) => {
  * @param {*} value
  */
 export const renderVolume = (h, value) => {
-  return h('span', {}, value ? roundVolume(value) : '-')
+  return h('span', {}, isNumber(value) ? roundVolume(value) : '-')
+}
+
+/**
+ * 列表中数量格式化
+ * @param {*} h
+ * @param {*} value
+ */
+export const renderQuantity = (h, value) => {
+  return h('span', {}, isNumber(value) ? value : '-')
 }
 
 /**
@@ -155,7 +202,7 @@ export const roundWeight = (value) => {
  * @param {*} value
  */
 export const renderWeight = (h, value) => {
-  return h('span', {}, value ? roundWeight(value) : '-')
+  return h('span', {}, isNumber(value) ? roundWeight(value) : '-')
 }
 /**
  * 重量公斤计算，保留整数
@@ -170,5 +217,12 @@ export const roundWeightKg = (value) => {
  * @param {*} value
  */
 export const renderWeightKg = (h, value) => {
-  return h('span', {}, value ? roundWeightKg(value) : '-')
+  return h('span', {}, isNumber(value) ? roundWeightKg(value) : '-')
+}
+/**
+ * 数量、重量、体积等数字类型的属性格式化（费用除外）
+ * @param {*} value
+ */
+export const renderNumberAttr = (value) => {
+  return isNumber(value) ? value : '-'
 }

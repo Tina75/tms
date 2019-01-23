@@ -22,7 +22,8 @@
             <Col span="6">
             <div>
               <span class="label">金额：</span>
-              {{divideFee(infoData.cost)}}<span>元</span>
+              <span v-if="infoData.cost !== ''">{{infoData.cost | toPoint}}元</span>
+              <span v-else>-</span>
             </div>
             </Col>
             <Col span="6">
@@ -54,11 +55,11 @@
         <Row class="list-info">
           <div v-for="img in imageItems" :key="img.index" class="infoImage">
             <div :v-if="img">
-              <div
-                :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              <div-image
+                :src="img.src"
                 class="fileImage"
-                @click="handleView(img.count)">
-              </div>
+                @click.native="handleView(img.count)">
+              </div-image>
             </div>
           </div>
         </Row>
@@ -78,10 +79,10 @@ import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { mapActions } from 'vuex'
-import { divideFee } from '@/libs/js/config'
+import DivImage from '@/components/DivImage.vue'
 export default {
-  name: 'insurance-details',
-  components: { RecordList, prepareOpenSwipe },
+  name: 'check-details',
+  components: { RecordList, prepareOpenSwipe, DivImage },
   mixins: [ BasePage ],
   props: {
   },
@@ -101,9 +102,7 @@ export default {
   },
   methods: {
     ...mapActions(['checkQueryById', 'checkDeleteById']),
-    divideFee (fee) {
-      return divideFee(fee)
-    },
+
     queryById () {
       let vm = this
       this.checkQueryById({ id: vm.infoData.id }).then(res => {

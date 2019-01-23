@@ -1,16 +1,18 @@
 <template>
-  <Table :columns="columns"
-         :data="tableData"
-         :loading="loading"
-         class="payment-info-table"
-         width="350"></Table>
+  <div>
+    <Table :columns="columns" :data="tableData" :loading="loading" class="payment-info-table" width="350"></Table>
+    <div v-if="mode === 'edit' && payInfoTotal !== total" class="more-tips">
+      <div v-if="payInfoTotal < total">剩余未填金额<span>{{ more }}</span>元</div>
+      <div v-else>输入金额超出合计费<span style="color: #EE2017;">{{ more }}</span>元</div>
+    </div>
+  </div>
 </template>
 
 <script>
 import MoneyInput from './MoneyInput'
 import float from '@/libs/js/float'
 import NP from 'number-precision'
-import { roundFee } from '@/libs/js/config'
+import { roundFee, multiplyFeeOrNull } from '@/libs/js/config'
 export default {
   name: 'PayInfo',
   props: {
@@ -67,17 +69,15 @@ export default {
                   placeholder: 'bottom',
                   transfer: false
                 }
-              }, [h('span', {}, p.row.cashAmount || 0), h('div', {
+              }, [h('span', {}, p.row.cashAmount !== '' ? p.row.cashAmount : '-'), h('div', {
                 slot: 'content',
                 style: {
                   whiteSpace: 'normal'
                 }
               }, str)])
             }
-            // 展示表格 不显示 0 - 改单展示
-            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change' && p.row.cashAmount === '') return h('span', '')
             // 展示表格 可以显示 0
-            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount || 0)
+            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) return h('span', p.row.cashAmount !== '' ? p.row.cashAmount : '-')
             // 编辑状态
             return h(MoneyInput, {
               props: {
@@ -107,15 +107,14 @@ export default {
                   placeholder: 'bottom',
                   transfer: false
                 }
-              }, [h('span', {}, p.row.fuelCardAmount || 0), h('div', {
+              }, [h('span', {}, p.row.fuelCardAmount !== '' ? p.row.fuelCardAmount : '-'), h('div', {
                 slot: 'content',
                 style: {
                   whiteSpace: 'normal'
                 }
               }, str)])
             }
-            if ((this.mode === 'watch' || (this.mode === 'edit' && p.row.isCashDisabled)) && p.row.type === 'change' && p.row.fuelCardAmount === '') return h('span', '')
-            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount || 0)
+            if (this.mode === 'watch' || (this.mode === 'edit' && p.row.isCardDisabled)) return h('span', p.row.fuelCardAmount !== '' ? p.row.fuelCardAmount : '-')
 
             return h(MoneyInput, {
               props: {
@@ -136,24 +135,42 @@ export default {
             })
           }
         }
-      ]
+      ],
+      more: 0 // 剩余或多出得金额
+    }
+  },
+  computed: {
+    // payInfo 组件输入费用总计
+    payInfoTotal () {
+      let total = 0
+      this.tableDataBack.forEach(item => {
+        total = roundFee(NP.plus(total, roundFee(Number(item.cashAmount) + Number(item.fuelCardAmount))))
+      })
+      return total
     }
   },
   watch: {
     data (value) {
       this.tableData = Object.assign([], value)
       this.tableDataBack = Object.assign([], value)
+    },
+    payInfoTotal () {
+      this.more = Math.abs(roundFee(NP.minus(Number(this.total), Number(this.payInfoTotal)))) // 取绝对值，确保为正数
+    },
+    total () {
+      this.more = Math.abs(roundFee(NP.minus(Number(this.total), Number(this.payInfoTotal)))) // 取绝对值，确保为正数
     }
   },
   mounted () {
+    this.more = Math.abs(roundFee(NP.minus(Number(this.total), Number(this.payInfoTotal)))) // 取绝对值，确保为正数
   },
   methods: {
     getPayInfo () {
       return this.tableDataBack.map(item => {
         return {
           payType: item.payType,
-          fuelCardAmount: typeof item.fuelCardAmount === 'number' ? float.round(item.fuelCardAmount * 100) : void 0,
-          cashAmount: typeof item.cashAmount === 'number' ? float.round(item.cashAmount * 100) : void 0
+          fuelCardAmount: multiplyFeeOrNull(item.fuelCardAmount),
+          cashAmount: multiplyFeeOrNull(item.cashAmount)
         }
       })
     },
@@ -167,11 +184,7 @@ export default {
       })
     },
     validate () {
-      let total = 0
-      this.tableDataBack.forEach(item => {
-        total = roundFee(NP.plus(total, roundFee(Number(item.cashAmount) + Number(item.fuelCardAmount))))
-      })
-      if (total !== Number(this.total)) {
+      if (this.payInfoTotal !== Number(this.total)) {
         this.$Message.error('结算总额应与费用合计相等')
         return false
       }
@@ -199,4 +212,14 @@ export default {
 >>> .ivu-table
       .ivu-table-cell
         overflow inherit
+.more-tips
+  font-size 12px
+  font-family 'PingFangSC-Regular'
+  color #333
+  margin 5px 0 0 23px
+  span
+    margin 0 5px 0 20px
+    font-family 'PingFangSC-Medium'
+    font-weight 500
+    color #00A4BD
 </style>

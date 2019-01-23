@@ -71,8 +71,7 @@
           </i-col>
           <i-col span="4">
             <span>回单数：</span>
-            <span v-if="detail.receiptCount">{{detail.receiptCount}}</span>
-            <span v-else>-</span>
+            <span>{{detail.receiptCount}}</span>
           </i-col>
         </Row>
         <Row v-if="from === 'order'">
@@ -240,11 +239,11 @@
           </i-col>
         </Row>
       </div>
-      <div v-if="from === 'receipt' && receiptStatus > 0">
+      <div v-if="from === 'receipt' && detail.receiptOrder.receiptUrl.length > 0">
         <div class="title">
           <span>回单照片</span>
         </div>
-        <div v-if="detail.receiptOrder.receiptUrl.length > 0" style="width: 900px;margin-top: 31px;">
+        <div style="width: 900px;margin-top: 31px;">
           <div
             v-for="(item, index) in detail.receiptOrder.receiptUrl"
             :key="index"

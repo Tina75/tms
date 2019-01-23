@@ -32,7 +32,8 @@ export const PACKAGE_TYPE = [
   { value: '铁桶', label: '铁桶' },
   { value: '纤袋', label: '纤袋' },
   { value: '麻袋', label: '麻袋' },
-  { value: '木架', label: '木架' }
+  { value: '木架', label: '木架' },
+  { value: '托盘', label: '托盘' }
 ]
 
 export const DRIVER_TYPE = [
@@ -88,7 +89,20 @@ export const CAR_LENGTH1 = {
   16: '16米',
   17: '17.5米'
 }
-
+/**
+ * 车辆状态
+ */
+export const CAR_STATUS = {
+  1: '空闲',
+  2: '运输中'
+}
+/**
+ * 司机状态
+ */
+export const DRIVER_STATUS = {
+  1: '空闲',
+  2: '运输中'
+}
 export function getCarType (value) {
   for (let i = 0; i < CAR_TYPE.length; i++) {
     if (value === CAR_TYPE[i].value) {

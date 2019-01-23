@@ -112,7 +112,7 @@
       </Col>
     </Row>
     <div class="order-set-footer">
-      <Button type="primary" @click="save">保存</Button>
+      <Button type="primary" class="save-button" @click="save">保存</Button>
       <Button type="default" class="i-ml-10" @click="reset">恢复默认</Button>
     </div>
     </Form>
@@ -263,6 +263,8 @@ export default {
   margin-top 20px
 .order-set-footer
   text-align center
-  margin-top 50px
+  margin-top 40px
   margin-bottom 30px
+.save-button
+  width 80px
 </style>

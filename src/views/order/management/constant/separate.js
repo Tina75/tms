@@ -1,11 +1,12 @@
 
 import float from '@/libs/js/float'
-import { roundFee, renderFee, renderVolume, roundVolume, roundWeight, renderWeight, roundWeightKg, renderWeightKg } from '@/libs/js/config'
+import { isNumber, roundFee, renderFee, renderVolume, roundVolume, roundWeight, renderWeight, roundWeightKg, renderWeightKg } from '@/libs/js/config'
 import TagNumberInput from '@/components/TagNumberInput'
 export const TABLE_COLUMNS_ONE = vm => [
   {
     title: '货物名称',
-    key: 'cargoName'
+    key: 'cargoName',
+    tooltip: true
   },
   {
     title: '包装数量',
@@ -98,7 +99,8 @@ export const TABLE_COLUMNS_ONE = vm => [
   {
     title: '包装方式',
     key: 'unit',
-    width: 100
+    width: 100,
+    tooltip: true
   },
   {
     title: '操作',
@@ -257,7 +259,8 @@ export const TABLE_COLUMNS_ONE = vm => [
           ])
         } else {
           let renderBtn = []
-          if (vm.muiltyOrderCargoList.length === 0) {
+          if (vm.muiltyOrderCargoList.length === 0 &&
+            !(!params.row.quantity && !params.row.weight && !params.row.weightKg && !params.row.volume)) { // 重量数量体积都为0没有拆部分按钮
             renderBtn = [
               h('a', {
                 style: {
@@ -326,7 +329,8 @@ export const TABLE_COLUMNS_ONE = vm => [
 export const TABLE_COLUMNS_TWO = vm => [
   {
     title: '货物名称',
-    key: 'cargoName'
+    key: 'cargoName',
+    tooltip: true
   },
   {
     title: '包装数量',
@@ -351,7 +355,8 @@ export const TABLE_COLUMNS_TWO = vm => [
   {
     title: '包装方式',
     key: 'unit',
-    width: 100
+    width: 100,
+    tooltip: true
   },
   {
     title: '操作',
@@ -594,13 +599,14 @@ export const COLUMNS_THREE_WEIGHTKG = vm => {
 export const TABLE_COLUMNS_AVERAGE = (vm) => [
   {
     title: '货物名称',
-    key: 'cargoName'
+    key: 'cargoName',
+    tooltip: true
   },
   {
     title: '包装数量',
     key: 'quantity',
     render (h, params) {
-      return h('span', params.row.quantity ? params.row.quantity : '-')
+      return h('span', isNumber(params.row.quantity) ? params.row.quantity : '-')
     }
   },
   {
@@ -622,14 +628,16 @@ export const TABLE_COLUMNS_AVERAGE = (vm) => [
   {
     title: '包装方式',
     key: 'unit',
-    width: 100
+    width: 100,
+    tooltip: true
   }
 ]
 export const TABLE_COLUMNS_AVERAGE_EDIT = (vm) => {
   return [
     {
       title: '货物名称',
-      key: 'cargoName'
+      key: 'cargoName',
+      tooltip: true
     },
     {
       title: '包装数量',
@@ -681,7 +689,8 @@ export const TABLE_COLUMNS_AVERAGE_EDIT = (vm) => {
     {
       title: '包装方式',
       key: 'unit',
-      width: 100
+      width: 100,
+      tooltip: true
     },
     {
       title: '操作',

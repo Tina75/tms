@@ -10,6 +10,12 @@ export const getUserInfo = ({ rootState, commit, state, dispatch }, data) => {
     const { permission, ...userInfo } = data.data
     commit('initUserInfo', userInfo)
     commit('initPermissions', permission || [])
+    // 受理开单打印需要
+    commit('setCompanyInfo', {
+      name: userInfo.companyName,
+      shortName: userInfo.shortName,
+      logoUrl: userInfo.logoUrl
+    })
     return data.data
   }).catch(e => {
     return Promise.reject(e)
@@ -87,11 +93,12 @@ export const getConfiguration = ({ commit }) => {
     method: 'get'
   }).then((result) => {
     if (result.data.code === 10000) {
-      const { smsSetInfo, allocationStrategyInfo, tmsSetConfigDto, tmsCargoDto } = result.data.data
+      const { smsSetInfo, allocationStrategyInfo, tmsSetConfigDto, tmsCargoDto, tmsDispatchCarDto = {} } = result.data.data
       commit('smsSetting', smsSetInfo.smsCode)
       commit('allocationStrategySetting', allocationStrategyInfo)
-      commit('changeOrderConfiguration', tmsSetConfigDto)
+      commit('changeOrderConfiguration', tmsSetConfigDto) // 开单设置
       commit('tmsCargoDtoSetting', tmsCargoDto)
+      commit('changeDispatchConfiguration', tmsDispatchCarDto) // 派车设置
     }
   })
 }

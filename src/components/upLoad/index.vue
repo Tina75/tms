@@ -4,7 +4,7 @@
       <div v-for="(pic, index) in uploadImgList" :key="index" class="demo-upload-list">
         <template v-if="pic.progress === 1">
           <!-- <img :src="pic.url"> -->
-          <div :style="'height: 90px;background-image: url(' + pic.url + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
+          <div-image :src="pic.url" :width="width"></div-image>
           <div class="demo-upload-list-cover">
             <div style="cursor: pointer;" @click="handleView(index)">
               <div class="eye-circle">
@@ -50,7 +50,7 @@
     <div v-else>
       <div v-if="showPreview" class="demo-upload-list">
         <template v-if="progress === 1">
-          <div :style="'height: 90px;background-image: url(' + uploadImg + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"></div>
+          <div-image :src="uploadImg" :width="width"></div-image>
           <div class="demo-upload-list-cover">
             <div style="cursor: pointer;" @click="handleView(0)">
               <div class="eye-circle">
@@ -118,11 +118,13 @@ import FontIcon from '@/components/FontIcon'
 import openSwipe from '@/components/swipe/index'
 import { initOssInstance, showCropper } from './index.js'
 import { clearFileInput } from '@/libs/js/util'
+import DivImage from '@/components/DivImage.vue'
 export default {
   name: 'UpLoad',
 
   components: {
-    FontIcon
+    FontIcon,
+    DivImage
   },
 
   props: {
@@ -148,6 +150,14 @@ export default {
     multipleWidth: {
       type: String,
       default: 'width: 550px;'
+    },
+    height: {
+      type: [String, Number],
+      default: 90
+    },
+    width: {
+      type: [String, Number],
+      default: 160
     }
   },
   data () {

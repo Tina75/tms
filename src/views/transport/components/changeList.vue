@@ -11,8 +11,8 @@
       </div>
     </div>
     <div :class="{'except-record-list-hide': hideDetail}" class="change-list">
-      <div v-if="infoListOld.length>0" :class="{'no-bottom':feeListOld.length===0}" class="info">
-        <Row>
+      <div :class="{'no-bottom':feeListOld.length===0}" class="info">
+        <Row v-if="infoListOld.length>0">
           <Col span="12">
           <div class="title">修改前运单信息:</div>
           <Row>
@@ -33,11 +33,11 @@
           </Col>
         </Row>
       </div>
-      <div v-if="feeListOld.length>0"  class="fee">
+      <div   class="fee">
         <Row>
           <Col span="12">
           <div class="title">修改前运费:</div>
-          <Row>
+          <Row v-if="feeListOld.length>0">
             <Col v-for="item in feeListOld"  :key="item.name" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content">{{item.value}}</span>
@@ -52,9 +52,9 @@
             </Col>
           </Row>
           </Col>
-          <Col v-if="feeListNew.length>0" span="12">
+          <Col  span="12">
           <div class="title">修改后运费:</div>
-          <Row >
+          <Row v-if="feeListNew.length>0">
             <Col v-for="item in feeListNew" :key="item.name" :span="item.span" class="labelContent">
             <span class="label">{{item.name}}:</span>
             <span class="content after">{{item.value}}</span>
@@ -81,14 +81,15 @@ import PayInfo from '../components/PayInfo'
 import { getCarType, getCarLength } from '@/libs/constant/carInfo'
 import allocationStrategy from '../constant/allocation.js'
 import _ from 'lodash'
+import { divideMileage, divideFee } from '@/libs/js/config'
 
 const moneyFormate = (fee) => {
-  if (!fee) return '-'
-  return fee / 100
+  if (typeof fee !== 'number') return '-'
+  return divideFee(fee)
 }
 const mileageFormate = (mileage) => {
-  if (!mileage) return '-'
-  return mileage / 1000
+  if (typeof mileage !== 'number') return '-'
+  return divideMileage(mileage)
 }
 export default {
   name: 'except-record',
@@ -225,6 +226,13 @@ export default {
           'order': 120,
           'span': 12
         },
+        'infoFee': {
+          'type': 'fee',
+          'description': '信息费',
+          'ways': 1,
+          'order': 121,
+          'span': 12
+        },
         'totalFee': {
           'type': 'fee',
           'description': '合计费用',
@@ -246,11 +254,13 @@ export default {
           'order': 141,
           'span': 12
         },
-        // 'cashBack': {
-        //   'type': 'fee',
-        //   'description': '返现费用',
-        //   'ways': 1
-        // },
+        'cashBack': {
+          'type': 'fee',
+          'description': '返现费用',
+          'ways': 1,
+          'order': 142,
+          'span': 12
+        },
         'tollFee': {
           'type': 'fee',
           'description': '路桥费',
@@ -339,7 +349,8 @@ export default {
         { payType: 2, fuelCardAmount: '', cashAmount: '' },
         { payType: 3, fuelCardAmount: '', cashAmount: '' },
         { payType: 4, fuelCardAmount: '', cashAmount: '' }
-      ]
+      ],
+      settlementArray: ['prepaidCash', 'prepaidFuel', 'arrivePaidCash', 'arrivePaidFuel', 'receiptPaidCash', 'receiptPaidFule', 'tailPaidCash', 'tailPaidFule']
     }
   },
   computed: {
@@ -433,7 +444,7 @@ export default {
       let list = []
 
       for (let key in obj) {
-        if (changeList[key] && changeList[key].type === type && changeList[key].settlementType !== 1) {
+        if (changeList[key] && changeList[key].type === type && !this.settlementArray.includes(key)) {
           list.push({
             name: changeList[key].description,
             order: changeList[key].order,
@@ -453,12 +464,12 @@ export default {
       for (let i = 0, item = this.settlementPayInfo; i < item.length; i++) {
         let mid = {}
         for (let key in obj) {
-          if (this.changeList[key] && obj.settlementType === 1 && this.changeList[key].settlementType === 1) {
+          if (this.changeList[key] && this.settlementArray.includes(key) && this.changeList[key].settlementType === 1) {
             if (i === 0 && (key === 'prepaidCash' || key === 'prepaidFuel')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.prepaidFuel === 'number' ? obj.prepaidFuel / 100 : '',
-                cashAmount: typeof obj.prepaidCash === 'number' ? obj.prepaidCash / 100 : '',
+                fuelCardAmount: typeof obj.prepaidFuel === 'number' ? divideFee(obj.prepaidFuel) : '',
+                cashAmount: typeof obj.prepaidCash === 'number' ? divideFee(obj.prepaidCash) : '',
                 type: 'change'
               }
               // mid.payType = item[i].payType
@@ -468,24 +479,24 @@ export default {
             if (i === 1 && (key === 'arrivePaidCash' || key === 'arrivePaidFuel')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.arrivePaidFuel === 'number' ? obj.arrivePaidFuel / 100 : '',
-                cashAmount: typeof obj.arrivePaidCash === 'number' ? obj.arrivePaidCash / 100 : '',
+                fuelCardAmount: typeof obj.arrivePaidFuel === 'number' ? divideFee(obj.arrivePaidFuel) : '',
+                cashAmount: typeof obj.arrivePaidCash === 'number' ? divideFee(obj.arrivePaidCash) : '',
                 type: 'change'
               }
             }
             if (i === 2 && (key === 'receiptPaidCash' || key === 'receiptPaidFule')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.receiptPaidFule === 'number' ? obj.receiptPaidFule / 100 : '',
-                cashAmount: typeof obj.receiptPaidCash === 'number' ? obj.receiptPaidCash / 100 : '',
+                fuelCardAmount: typeof obj.receiptPaidFule === 'number' ? divideFee(obj.receiptPaidFule) : '',
+                cashAmount: typeof obj.receiptPaidCash === 'number' ? divideFee(obj.receiptPaidCash) : '',
                 type: 'change'
               }
             }
             if (i === 3 && (key === 'tailPaidCash' || key === 'tailPaidFule')) {
               mid = {
                 payType: item[i].payType,
-                fuelCardAmount: typeof obj.tailPaidFule === 'number' ? obj.tailPaidFule / 100 : '',
-                cashAmount: typeof obj.tailPaidCash === 'number' ? obj.tailPaidCash / 100 : '',
+                fuelCardAmount: typeof obj.tailPaidFule === 'number' ? divideFee(obj.tailPaidFule) : '',
+                cashAmount: typeof obj.tailPaidCash === 'number' ? divideFee(obj.tailPaidCash) : '',
                 type: 'change'
               }
             }

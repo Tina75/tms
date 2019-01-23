@@ -54,13 +54,15 @@
             <Col span="6">
             <div>
               <span class="label">交强险金额：</span>
-              {{divideFee(infoData.trafficFee)}}<span>元</span>
+              <span v-if="infoData.trafficFee !== ''">{{infoData.trafficFee | toPoint}}元</span>
+              <span v-else>-</span>
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">商业险金额:</span>
-              {{divideFee(infoData.businessFee)}}<span>元</span>
+              <span v-if="infoData.businessFee !== ''">{{infoData.businessFee | toPoint}}元</span>
+              <span v-else>-</span>
             </div>
             </Col>
           </Row>
@@ -68,7 +70,7 @@
             <Col span="6">
             <div>
               <span class="label">总金额：</span>
-              {{divideFee(infoData.totalFee)}}<span>元</span>
+              {{infoData.totalFee | toPoint}}<span>元</span>
             </div>
             </Col>
           </Row>
@@ -95,11 +97,11 @@
           </Row> -->
           <div v-for="img in imageItems" :key="img.index" class="infoImage">
             <div :v-if="img">
-              <div
-                :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              <div-image
+                :src="img.src"
                 class="fileImage"
-                @click="handleView(img.count)">
-              </div>
+                @click.native="handleView(img.count)">
+              </div-image>
             </div>
           </div>
         </Row>
@@ -119,10 +121,10 @@ import BasePage from '@/basic/BasePage'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import { mapActions } from 'vuex'
-import { divideFee } from '@/libs/js/config'
+import DivImage from '@/components/DivImage.vue'
 export default {
   name: 'insurance-details',
-  components: { RecordList, prepareOpenSwipe },
+  components: { RecordList, prepareOpenSwipe, DivImage },
   mixins: [ BasePage ],
   props: {
   },
@@ -142,9 +144,6 @@ export default {
   },
   methods: {
     ...mapActions(['insuranceQueryById', 'insuranceDeleteById']),
-    divideFee (fee) {
-      return divideFee(fee)
-    },
     queryById () {
       let vm = this
       this.insuranceQueryById({ id: vm.infoData.id }).then(res => {

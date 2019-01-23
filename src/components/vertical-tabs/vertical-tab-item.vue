@@ -1,9 +1,9 @@
 <template>
-  <transition name="fade" mode="out-in">
+  <div name="fade" mode="out-in">
     <div v-if="show" :class="prefixClass">
       <slot></slot>
     </div>
-  </transition>
+  </div>
 </template>
 
 <script>
@@ -53,16 +53,7 @@ export default {
 .vertical-tab-item
   color #333
   font-size 14px
-  position absolute
-  left 20px
-  top 20px
-  right 20px
+  position relative
+  margin 20px 20px 0
   display block
-  >>> .fade-enter,.fade-leave-to
-        opacity 0
-        display none
-  >>> .fade-enter-active,
-        transition all 0.3s ease
-  >>> .fade-leave-active
-        transition display 0.1s
 </style>

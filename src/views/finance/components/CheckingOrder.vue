@@ -87,22 +87,58 @@ export default {
           width: 120,
           key: 'action',
           render: (h, params) => {
-            return [(this.scene === 1 && this.hasPower(170103)) || (this.scene === 2 && this.hasPower(170203)) || (this.scene === 3 && this.hasPower(170303)) ? h('a', {
-              on: {
-                click: () => {
-                  this.writeOff(params)
+            let renderHtml = []
+            if ((this.scene === 1 && this.hasPower(170103)) || (this.scene === 2 && this.hasPower(170203)) || (this.scene === 3 && this.hasPower(170303))) {
+              renderHtml.push(h('a', {
+                on: {
+                  click: () => {
+                    this.writeOff(params)
+                  }
+                },
+                style: {
+                  marginRight: '10px'
                 }
-              },
-              style: {
-                marginRight: '10px'
-              }
-            }, '核销') : '', (this.scene === 1 && this.hasPower(170104)) || (this.scene === 2 && this.hasPower(170204)) || (this.scene === 3 && this.hasPower(170304)) ? h('a', {
-              on: {
-                click: () => {
-                  this.exportOrder(params)
+              }, '核销'))
+            }
+            if ((this.scene === 1 && this.hasPower(170104)) || (this.scene === 2 && this.hasPower(170204)) || (this.scene === 3 && this.hasPower(170304))) {
+              renderHtml.push(h('a', {
+                on: {
+                  click: () => {
+                    this.exportOrder(params)
+                  }
+                },
+                style: {
+                  marginRight: '10px'
                 }
-              }
-            }, '导出') : '']
+              }, '导出'))
+            }
+            if ((this.scene === 1 && this.hasPower(170107)) || (this.scene === 2 && this.hasPower(170208))) {
+              // this.scene === 1 && this.hasPower(170107)) || (this.scene === 2 && this.hasPower(170208))
+              renderHtml.push(h('a', {
+                on: {
+                  click: () => {
+                    this.delete(params)
+                  }
+                }
+              }, '删除'))
+            }
+            return renderHtml
+            // return [(this.scene === 1 && this.hasPower(170103)) || (this.scene === 2 && this.hasPower(170203)) || (this.scene === 3 && this.hasPower(170303)) ? h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.writeOff(params)
+            //     }
+            //   },
+            //   style: {
+            //     marginRight: '10px'
+            //   }
+            // }, '核销') : '', (this.scene === 1 && this.hasPower(170104)) || (this.scene === 2 && this.hasPower(170204)) || (this.scene === 3 && this.hasPower(170304)) ? h('a', {
+            //   on: {
+            //     click: () => {
+            //       this.exportOrder(params)
+            //     }
+            //   }
+            // }, '导出') : '']
           }
         },
         {
@@ -130,7 +166,10 @@ export default {
           title: this.sceneMap[this.scene],
           key: 'partnerName'
         },
-        {
+        this.scene === 2 ? {
+          title: '合计金额',
+          key: 'totalFeeText'
+        } : {
           title: '合计运费',
           key: 'totalFeeText'
         },
@@ -222,7 +261,6 @@ export default {
           reconcileId: data.row.reconcileId
         },
         fileName: '对账单'
-      }).then(res => {
       })
     },
     toDetail (data) {
@@ -274,6 +312,28 @@ export default {
       this.checkingOrderQuerySave.pageNo = 1
       this.checkingOrderQuerySave.pageSize = size
       this.getCheckList()
+    },
+    // 删除
+    delete (data) {
+      const _this = this
+      this.$Modal.confirm({
+        title: '提示',
+        content: '是否确定删除对账单？',
+        okText: '是',
+        cancelText: '否',
+        async onOk () {
+          Server({
+            url: '/finance/reconcile/delete',
+            method: 'get',
+            data: {
+              reconcileId: data.row.reconcileId
+            }
+          }).then(res => {
+            _this.getCheckList()
+            // _this.ok()
+          }).catch()
+        }
+      })
     }
   }
 }

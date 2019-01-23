@@ -32,8 +32,14 @@
         <Row  class="row">
           <Col span="8">
           <div>
-            <span class="label">联系电话：</span>
+            <span class="label">负责人电话：</span>
             {{companyList.carrierPhone}}
+          </div>
+          </Col>
+          <Col span="8">
+          <div>
+            <span class="label">客服联系电话：</span>
+            {{companyList.customerCarrierPhone}}
           </div>
           </Col>
           <Col span="8">
@@ -163,6 +169,7 @@ export default {
         carrierName: '',
         carrierPrincipal: '',
         carrierPhone: '',
+        customerCarrierPhone: '',
         payType: '',
         remark: ''
       },
@@ -451,6 +458,7 @@ export default {
             carrierId: data.carrierInfo.carrierId,
             carrierName: data.carrierInfo.carrierName,
             carrierPrincipal: data.carrierInfo.carrierPrincipal,
+            customerCarrierPhone: data.carrierInfo.customerCarrierPhone || '-',
             carrierPhone: data.carrierInfo.carrierPhone,
             payType: data.carrierInfo.payType,
             remark: data.carrierInfo.remark === '' ? '无' : data.carrierInfo.remark

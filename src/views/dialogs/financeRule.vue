@@ -53,6 +53,7 @@ export default {
       ruleOptions: [],
       ruleEmpty: false,
       charge: 0,
+      chargeRule: null, // 计算命中的单价，比如"100元/公里"
       distance: 0,
       zIndex: new Date().getTime(),
       rules: {
@@ -74,7 +75,10 @@ export default {
         params: {
           partnerId: this.partnerId,
           partnerType: this.partnerType,
-          partnerName: this.partnerName
+          partnerName: this.partnerName,
+          // v1.11 添加始发和目的城市，保持和app统一，过滤掉不符合的城市路线计费规则数据
+          departure: this.start,
+          destination: this.end
         }
       }).then((res) => {
         this.ruleOptions = res.data.data
@@ -119,7 +123,7 @@ export default {
         const weight = float.round(rule.ruleType === 7 || rule.ruleType === 6 ? this.weight * 1000 : this.weight, 3)
         const input = float.round(((rule.ruleType === 1 || rule.ruleType === 3 || rule.ruleType === 6 || rule.ruleType === 7) ? weight : this.volume) * 100, 4)
         Server({
-          url: '/finance/charge/calc',
+          url: '/finance/charge/calcWithInfo',
           method: 'post',
           data: {
             ruleId: rule.id,
@@ -132,7 +136,10 @@ export default {
             cargoInfos: this.cargoInfos
           }
         }).then(res => {
-          this.charge = divideFee(res.data.data)
+          this.charge = divideFee(res.data.data.amount)
+          if (this.source === 'order') {
+            this.chargeRule = res.data.data.shotFactor
+          }
           errorMsg = ''
           this.$refs.$form.validate()
         }).catch(err => {
@@ -147,7 +154,7 @@ export default {
       this.$refs.$form.validate(valid => {
         if (!valid) return
         vm.$nextTick(() => {
-          vm.ok(vm.charge)
+          vm.ok(vm.charge, vm.chargeRule)
           vm.close()
         })
       })

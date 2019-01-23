@@ -138,6 +138,30 @@ export default {
           }
         },
         {
+          title: '货物名称',
+          key: 'cargoNames',
+          minWidth: 160,
+          render: (h, p) => {
+            if (p.row.cargoNames.length > 0) {
+              if (p.row.cargoNames.length > 1) {
+                return h('Tooltip', {
+                  props: {
+                    placement: 'bottom',
+                    maxWidth: 500,
+                    content: p.row.cargoNames.join('\n')
+                  }
+                }, [
+                  h('span', p.row.cargoNames[0] + ' ...')
+                ])
+              } else {
+                return h('span', p.row.cargoNames.join('\n'))
+              }
+            } else {
+              return h('span', '-')
+            }
+          }
+        },
+        {
           title: '体积（方）',
           key: 'volume',
           minWidth: 100
@@ -278,10 +302,10 @@ export default {
         {
           title: '回单数量',
           key: 'receiptCount',
-          minWidth: 120,
-          render: (h, p) => {
-            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
-          }
+          minWidth: 120
+          // render: (h, p) => {
+          //   return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+          // }
         },
         {
           title: '代收货款',

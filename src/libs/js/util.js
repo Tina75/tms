@@ -128,6 +128,52 @@ export const money2chinese = (number) => {
 
   return resultArr.join('')
 }
+
+// 将金额简体字转为繁体字
+export const zncn2znhant = (str) => {
+  let arr = str.split('')
+  for (let i = 0; i < arr.length; i++) {
+    switch (arr[i]) {
+      case '一':
+        arr.splice(i, 1, '壹')
+        break
+      case '二':
+        arr.splice(i, 1, '贰')
+        break
+      case '三':
+        arr.splice(i, 1, '叁')
+        break
+      case '四':
+        arr.splice(i, 1, '肆')
+        break
+      case '五':
+        arr.splice(i, 1, '伍')
+        break
+      case '六':
+        arr.splice(i, 1, '陆')
+        break
+      case '七':
+        arr.splice(i, 1, '柒')
+        break
+      case '八':
+        arr.splice(i, 1, '捌')
+        break
+      case '九':
+        arr.splice(i, 1, '玖')
+        break
+      case '十':
+        arr.splice(i, 1, '拾')
+        break
+      case '百':
+        arr.splice(i, 1, '佰')
+        break
+      case '千':
+        arr.splice(i, 1, '仟')
+        break
+    }
+  }
+  return arr.join('')
+}
 /**
  * 清空文件上传INPUT
  * @param {*} input

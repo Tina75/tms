@@ -9,17 +9,27 @@ export default {
   computed: {
     ...mapGetters(['ruleTypeList']),
     ruleTypeMap () {
-      /* active 1: '发货方',
-                2: '承运商',
-                 车型只有承运商有 */
+      /**
+       * active 类型
+       * 1: '发货方',
+       * 2: '承运商',
+       * 车型只有承运商有
+       */
       let obj = {}
       for (let i = 0; i < ruleTypeAllList.length; i++) {
-        for (let j = 0; j < this.ruleTypeList.length; j++) {
-          if (ruleTypeAllList[i].value === '5' && this.active === '1') break
-          if (this.ruleTypeList[j] === ruleTypeAllList[i].value) {
-            obj[ruleTypeAllList[i].value] = ruleTypeAllList[i].name
-          }
+        if (this.ruleTypeList.includes(ruleTypeAllList[i].value)) {
+          obj[ruleTypeAllList[i].value] = ruleTypeAllList[i].name
         }
+        // for (let j = 0; j < this.ruleTypeList.length; j++) {
+        //   if (ruleTypeAllList[i].value === '5' && this.active === '1') break
+        //   if (this.ruleTypeList[j] === ruleTypeAllList[i].value) {
+        //     obj[ruleTypeAllList[i].value] = ruleTypeAllList[i].name
+        //   }
+        // }
+      }
+      // 车型只有承运商有, 如果当前是发货方就剔除车型类型
+      if (obj['5'] && this.active === '1') {
+        delete obj['5']
       }
       return obj
     },
@@ -36,9 +46,39 @@ export default {
       } else {
         return 2
       }
+    },
+    ruleType () {
+      return this.ruleDetail.ruleType
     }
   },
-  watch: {},
+  watch: {
+    ruleType (val, old) {
+      // debugger
+      if (old && (old !== '5' && old !== '8')) {
+        for (let j = 0; j < this.$refs['ruleBase'].length; j++) {
+          this.$refs['ruleBase'][j].resetFields()
+          // this.$refs['rulePrice'][j].resetFields()
+        }
+      }
+      if (old && old === '5') {
+        for (let j = 0; j < this.$refs['ruleCar'].length; j++) {
+          this.$refs['ruleCar'][j].resetFields()
+          // this.$refs['rulePrice'][j].resetFields()
+        }
+      }
+      if (old && old === '8') {
+        for (let j = 0; j < this.$refs['cargoName'].length; j++) {
+          this.$refs['cargoName'][j].resetFields()
+          // this.$refs['rulePrice'][j].resetFields()
+        }
+      }
+      this.ruleDetail.details && this.ruleDetail.details.forEach(item => {
+        item.chargeRules.forEach(el => {
+          el.baseAndStart = el.base + ',' + item.startNum
+        })
+      })
+    }
+  },
   data () {
     const startValidate = (rule, value, callback) => {
       if (value === null) {
@@ -128,14 +168,14 @@ export default {
       }
     }
     const carTypeValidate = (rule, value, callback) => {
-      if (value !== 0) {
+      if (value) {
         callback()
       } else {
         callback(new Error('请填写车型'))
       }
     }
     const carLengthValidate = (rule, value, callback) => {
-      if (value !== 0) {
+      if (value) {
         callback()
       } else {
         callback(new Error('请填写车长'))
@@ -325,6 +365,7 @@ export default {
       if (this.ruleDetail.ruleType === '5') {
         for (let j = 0; j < this.$refs['ruleCar'].length; j++) {
           await this.formValidate(this.$refs['ruleCar'][j])
+          // await this.formValidate(this.$refs['carLength'][j])
           await this.formValidate(this.$refs['rulePrice'][j])
         }
       }

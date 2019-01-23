@@ -12,10 +12,10 @@
       <p slot="header" class="header-title">{{title}}<setCargo></setCargo></p>
       <Form ref="validate" :model="validate" :rules="ruleValidate" :label-width="122" label-position="right">
         <FormItem label="货物名称：" prop="cargoName">
-          <Input v-model="validate.cargoName" :maxlength="20" placeholder="请输入"/>
+          <Input v-model="validate.cargoName" :maxlength="$fieldLength.cargoName" placeholder="请输入"/>
         </FormItem>
         <FormItem v-show="tmsCargoDto.cargoNoOption === 1" label="货物编码：">
-          <Input v-model="validate.cargoNo" :maxlength="200" placeholder="请输入"/>
+          <Input v-model="validate.cargoNo" :maxlength="$fieldLength.cargoNo" placeholder="请输入"/>
         </FormItem>
         <FormItem v-show="tmsCargoDto.cargoCostOption === 1" label="货值：">
           <!-- <Input v-model="validate.cargoCost"  placeholder="请输入"/>元 -->
@@ -50,10 +50,10 @@
           <TagNumberInput :min="0" :precision="$numberPrecesion.volume" v-model="validate.volume" :show-chinese="false" class="ivu-input-wrapper" placeholder="请输入"></TagNumberInput>方
         </FormItem>
         <FormItem v-show="tmsCargoDto.remark1Option === 1" label="备注1：">
-          <Input v-model="validate.remark1" :maxlength="100" placeholder="请输入"/>
+          <Input v-model="validate.remark1" :maxlength="$fieldLength.remark" placeholder="请输入"/>
         </FormItem>
         <FormItem v-show="tmsCargoDto.remark2Option === 1" label="备注2：">
-          <Input v-model="validate.remark2" :maxlength="100" placeholder="请输入"/>
+          <Input v-model="validate.remark2" :maxlength="$fieldLength.remark" placeholder="请输入"/>
         </FormItem>
       </Form>
       <div slot="footer">

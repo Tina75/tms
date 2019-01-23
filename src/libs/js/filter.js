@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import City from './city.js'
-import { divideFee, divideMileage } from './config'
+import { getMileageText, getFeeText, isNumber } from './config'
+const URL_HOST = process.env.VUE_APP_IMG_HOST
 /**
  * 时间格式化
  */
@@ -53,15 +54,21 @@ Vue.filter('codeToName', function (cityId) {
 /**
  * 将元转为分
  */
-Vue.filter('toPoint', function (money) {
-  return divideFee(money)
+Vue.filter('toPoint', function (money, yuan = '') {
+  if (isNumber(money)) {
+    return getFeeText(money) + yuan
+  }
+  return getFeeText(money)
 })
 
 /**
  * 计费里程格式化
  */
-Vue.filter('mileage', function (mileage) {
-  return mileage ? divideMileage(mileage).toFixed(1) : '-'
+Vue.filter('mileage', function (mileage, km = '') {
+  if (isNumber(mileage)) {
+    return getMileageText(mileage) + km
+  }
+  return getMileageText(mileage)
 })
 /**
  * 根据code获取城市全名 格式化城市
@@ -71,4 +78,10 @@ Vue.filter('mileage', function (mileage) {
 Vue.filter('cityFormatter', function (code) {
   if (!code) return ''
   return Array.from(new Set(City.codeToFullNameArr(code, 3))).join('')
+})
+
+Vue.directive('imgFormat', function (el, binding) {
+  if (!binding.value) return
+  if (binding.value.indexOf('aliyuncs.com') > 0) return
+  el.style.backgroundImage = 'url(' + `${URL_HOST}${binding.value}?x-oss-process=image/resize,m_fill,h_220,w_220` + ')'
 })

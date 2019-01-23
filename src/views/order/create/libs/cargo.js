@@ -1,7 +1,11 @@
 import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
-import { NumberPrecesion, divideFee, multiplyFee } from '@/libs/js/config'
+import { NumberPrecesion, divideFeeOrNull, multiplyFeeOrNull, isNumber } from '@/libs/js/config'
 let uniqueIndex = 0
+// 过滤undefined和null
+const propFilter = (val) => {
+  return val === undefined || val === null ? '' : val
+}
 export default class Cargo {
   /**
    *
@@ -9,16 +13,19 @@ export default class Cargo {
    * @param {Boolean} transfer 需要除以100转换为元
    */
   constructor (props, transfer = false) {
-    this.quantity = null
+    const self = this
     this.editable = false
+    this.hasError = false
+    this.errorMsg = {}
 
     this.cargoCost = null
     this._weight = null
     this.volume = null
-    this.hasError = false
-    this.errorMsg = {}
+    this.quantity = null
+    this.cargoNo = null
+    this.unit = null
+    this.orderNo = null
 
-    const self = this
     this.dimension = {
       _length: null,
       _width: null,
@@ -51,37 +58,29 @@ export default class Cargo {
         return this._height
       }
     }
-    this.cargoNo = null
-    this.unit = null
-
-    this.orderNo = null
-
     if (props) {
       this.id = props.id || uniqueIndex++
-      this.cargoName = props.cargoName
-      this.cargoNo = props.cargoNo
-
+      this.cargoName = propFilter(props.cargoName)
+      this.cargoNo = propFilter(props.cargoNo)
       if (props.dimension) {
-        this.dimension._length = props.dimension.length || null
-        this.dimension._width = props.dimension.width || null
-        this.dimension._height = props.dimension.height || null
+        this.dimension._length = propFilter(props.dimension.length)
+        this.dimension._width = propFilter(props.dimension.width)
+        this.dimension._height = propFilter(props.dimension.height)
       }
       if (!transfer) {
         // 货值，整数
-        this.cargoCost = props.cargoCost || null
+        this.cargoCost = Number(propFilter(props.cargoCost))
       } else {
-        this.cargoCost = divideFee(props.cargoCost || 0)
+        this.cargoCost = divideFeeOrNull(props.cargoCost)
       }
-      this._weight = props.weight || null
-      this.volume = props.volume || null
-      // 数量
-      this.quantity = props.quantity || null
-      // 包装
-      this.unit = props.unit || null
-      // 备注 100
-      this.remark1 = props.remark1 || null
-      this.remark2 = props.remark2 || null
-      this.orderNo = props.orderNo || null
+      // 兼容常发货物字符串 volume weight weightKg cargoCost
+      this._weight = Number(propFilter(props.weight))
+      this.volume = Number(propFilter(props.volume))
+      this.quantity = propFilter(props.quantity)
+      this.unit = propFilter(props.unit)
+      this.remark1 = propFilter(props.remark1)
+      this.remark2 = propFilter(props.remark2)
+      this.orderNo = propFilter(props.orderNo)
     }
   }
   get weight () {
@@ -91,7 +90,7 @@ export default class Cargo {
     this._weight = value
   }
   get weightKg () {
-    return this._weight === null ? null : float.round(this._weight * 1000)
+    return isNumber(this._weight) ? float.round(this._weight * 1000) : ''
   }
   set weightKg (value) {
     this._weight = float.round(value / 1000, NumberPrecesion.weight)
@@ -122,13 +121,6 @@ export default class Cargo {
         delete this.errorMsg[field]
       }
     }
-    // if (field === 'orderNo') {
-    //   if (!this.orderNo) {
-    //     this.errorMsg[field] = '请输入订单号'
-    //   } else {
-    //     delete this.errorMsg[field]
-    //   }
-    // }
     this.hasError = false
     for (let name in this.errorMsg) {
       if (name) {
@@ -142,16 +134,16 @@ export default class Cargo {
       cargoName: this.cargoName,
       weight: this.weight,
       volume: this.volume,
-      cargoCost: multiplyFee(this.cargoCost),
+      cargoCost: multiplyFeeOrNull(this.cargoCost),
       quantity: this.quantity,
       unit: this.unit,
       remark1: this.remark1,
       remark2: this.remark2,
       cargoNo: this.cargoNo,
       dimension: {
-        height: this.dimension.height || null,
-        width: this.dimension.width || null,
-        length: this.dimension.length || null
+        height: this.dimension.height,
+        width: this.dimension.width,
+        length: this.dimension.length
       }
     }
   }
@@ -163,15 +155,15 @@ export default class Cargo {
       weight: this.weight,
       weightKg: this.weightKg,
       volume: this.volume,
-      cargoCost: multiplyFee(this.cargoCost),
+      cargoCost: multiplyFeeOrNull(this.cargoCost),
       quantity: this.quantity,
       unit: this.unit,
-      cargoNo: this.cargoNo || '-'
-      // dimension: {
-      //   height: this.dimension.height || null,
-      //   width: this.dimension.width || null,
-      //   length: this.dimension.length || null
-      // }
+      cargoNo: this.cargoNo || '-',
+      dimension: {
+        height: this.dimension.height,
+        width: this.dimension.width,
+        length: this.dimension.length
+      }
     }
   }
   validateExp () {

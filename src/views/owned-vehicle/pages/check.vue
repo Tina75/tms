@@ -44,7 +44,7 @@ import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import Export from '@/libs/js/export'
 import { mapActions } from 'vuex'
-import { divideFee } from '@/libs/js/config'
+import { renderFee } from '@/libs/js/config'
 export default {
   name: 'owner-check',
   components: {
@@ -148,7 +148,8 @@ export default {
           title: '金额（元）',
           key: 'cost',
           render: (h, params) => {
-            return h('div', divideFee(params.row.cost))
+            return renderFee(h, params.row.cost)
+            // return h('div', divideFee(params.row.cost))
           }
         },
         {
@@ -216,10 +217,10 @@ export default {
     },
     // 日期格式化
     formatDateTime (value, format) {
-      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '-' }
     },
     formatDate (value, format) {
-      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '' }
+      if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd') } else { return '-' }
     },
     edit () {
       let vm = this

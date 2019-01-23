@@ -34,6 +34,16 @@ export default{
     }
   },
   /**
+   * 系统设置-派车设置
+   * @param {*} state
+   * @param {*} option
+   */
+  changeDispatchConfiguration (state, option) {
+    for (let i in state.dispatchSet) {
+      state.dispatchSet[i] = option[i]
+    }
+  },
+  /**
    * 保存短信配置
    * @param {*} state
    * @param {*} list
@@ -120,6 +130,13 @@ export default{
    */
   setImported (state, id) {
     state.importId = id
+  },
+  /**
+   * 设置公司信息
+   * @param {*} company
+   */
+  setCompanyInfo (state, company) {
+    state.companyInfo = company
   }
 }
 

@@ -64,7 +64,7 @@ export default {
           key: 'customerOrderNo',
           width: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.customerOrderNo, true)
+            return this.tableDataRender(h, p.row.customerOrderNo)
           }
         },
         {

@@ -159,7 +159,7 @@ import OrderPrint from './OrderPrint'
 import FontIcon from '@/components/FontIcon'
 import IconLabel from '@/components/IconLabel'
 import SearchMixin from '../searchMixin'
-import { renderFee, renderMileage, getRateText } from '@/libs/js/config'
+import { renderFee, renderMileage, getRateText, renderVolume, renderWeight, renderWeightKg } from '@/libs/js/config'
 export default {
   name: 'TabContent',
 
@@ -619,7 +619,7 @@ export default {
                   props: {
                     placement: 'bottom',
                     maxWidth: 152,
-                    content: p.row.waybillNo
+                    content: waybillNoArr.join('\n')
                   }
                 }, [
                   h('span', waybillNoArr[0] + ' ...')
@@ -703,17 +703,50 @@ export default {
         {
           title: '体积（方）',
           key: 'volume',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, params) => {
+            return renderVolume(h, params.row.volume)
+          }
+        },
+        {
+          title: '货物名称',
+          key: 'cargoNames',
+          minWidth: 160,
+          render: (h, p) => {
+            if (p.row.cargoNames.length > 0) {
+              if (p.row.cargoNames.length > 1) {
+                return h('Tooltip', {
+                  props: {
+                    placement: 'bottom',
+                    maxWidth: 500,
+                    content: p.row.cargoNames.join('\n')
+                  }
+                }, [
+                  h('span', p.row.cargoNames[0] + ' ...')
+                ])
+              } else {
+                return h('span', p.row.cargoNames.join('\n'))
+              }
+            } else {
+              return h('span', '-')
+            }
+          }
         },
         {
           title: '重量（吨）',
           key: 'weight',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, params) => {
+            return renderWeight(h, params.row.weight)
+          }
         },
         {
           title: '重量（公斤）',
           key: 'weightKg',
-          minWidth: 100
+          minWidth: 100,
+          render: (h, params) => {
+            return renderWeightKg(h, params.row.weightKg)
+          }
         },
         {
           title: '下单时间',
@@ -787,7 +820,9 @@ export default {
           title: '收货人单位',
           key: 'consigneeCompanyName',
           minWidth: 130,
-          tooltip: true
+          render: (h, params) => {
+            return h('span', params.row.consigneeCompanyName || '-')
+          }
         },
         {
           title: '结算方式',
@@ -804,6 +839,14 @@ export default {
           render: (h, params) => {
             // return h('span', params.row.freightFee ? float.round(params.row.freightFee / 100) : 0)
             return renderFee(h, params.row.freightFee)
+          }
+        },
+        {
+          title: '计费规则',
+          key: 'chargeRule',
+          minWidth: 130,
+          render: (h, params) => {
+            return h('span', params.row.chargeRule || '-')
           }
         },
         {
@@ -871,10 +914,10 @@ export default {
         {
           title: '回单数量',
           key: 'receiptCount',
-          minWidth: 120,
-          render: (h, p) => {
-            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
-          }
+          minWidth: 120
+          // render: (h, p) => {
+          //   return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+          // }
         },
         {
           title: '代收货款',
@@ -925,7 +968,7 @@ export default {
                 h('span', this.formatterAddress(params.row.remark))
               ])
             } else {
-              return h('span', params.row.remark)
+              return h('span', params.row.remark || '-')
             }
           }
         },

@@ -110,7 +110,7 @@ export default {
           title: '货物名称',
           key: 'cargoName',
           type: 'select',
-          max: 200,
+          max: this.$fieldLength.cargoName,
           width: 180
         },
         {
@@ -118,7 +118,7 @@ export default {
           title: '货物编号',
           key: 'cargoNo',
           type: 'text',
-          max: 200
+          max: this.$fieldLength.cargoNo
         },
         {
           required: false,
@@ -175,6 +175,7 @@ export default {
           type: 'multi',
           children: [
             {
+              min: 0,
               required: false,
               title: '长',
               key: 'length',
@@ -182,6 +183,7 @@ export default {
               point: NumberPrecesion.dimension
             },
             {
+              min: 0,
               required: false,
               title: '宽',
               key: 'width',
@@ -189,6 +191,7 @@ export default {
               point: NumberPrecesion.dimension
             },
             {
+              min: 0,
               required: false,
               title: '高',
               key: 'height',
@@ -202,14 +205,14 @@ export default {
           title: '备注1',
           key: 'remark1',
           type: 'text',
-          max: 100
+          max: this.$fieldLength.remark
         },
         {
           required: false,
           title: '备注2',
           key: 'remark2',
           type: 'text',
-          max: 100
+          max: this.$fieldLength.remark
         }
       ],
       // 异常信息表头
@@ -281,36 +284,39 @@ export default {
           type: 'package',
           max: 10
         },
-        // {
-        //   required: false,
-        //   title: '包装尺寸（毫米）',
-        //   key: 'dimension',
-        //   width: 180,
-        //   type: 'multi',
-        //   children: [
-        //     {
-        //       required: false,
-        //       title: '长',
-        //       key: 'length',
-        //       maxLen: 7,
-        //       point: NumberPrecesion.dimension
-        //     },
-        //     {
-        //       required: false,
-        //       title: '宽',
-        //       key: 'width',
-        //       maxLen: 7,
-        //       point: NumberPrecesion.dimension
-        //     },
-        //     {
-        //       required: false,
-        //       title: '高',
-        //       key: 'height',
-        //       maxLen: 7,
-        //       point: NumberPrecesion.dimension
-        //     }
-        //   ]
-        // },
+        {
+          required: false,
+          title: '包装尺寸（毫米）',
+          key: 'dimension',
+          width: 180,
+          type: 'multi',
+          children: [
+            {
+              min: 0,
+              required: false,
+              title: '长',
+              key: 'length',
+              maxLen: 7,
+              point: NumberPrecesion.dimension
+            },
+            {
+              min: 0,
+              required: false,
+              title: '宽',
+              key: 'width',
+              maxLen: 7,
+              point: NumberPrecesion.dimension
+            },
+            {
+              min: 0,
+              required: false,
+              title: '高',
+              key: 'height',
+              maxLen: 7,
+              point: NumberPrecesion.dimension
+            }
+          ]
+        },
         {
           required: false,
           title: '包装数量',

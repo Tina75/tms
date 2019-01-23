@@ -42,11 +42,18 @@
         <div class="exception-distribution i-mt-10">
           <label class="label-bar">图片：</label>
           <div class="flexBox">
-            <span v-for="(item, index) in data.fileUrls"
-                  :key="index" :style="`background-image: url(${zoomImage(item)}) `"
-                  style="background-position: center; background-size: 100%; background-repeat: no-repeat;"
-                  class="img-bar" @click="showImg(index)">
-            </span>
+            <div-image
+              v-for="(item, index) in data.fileUrls"
+              :key="index"
+              :src="item"
+              style="background-position: center; background-size: 100%; background-repeat: no-repeat;"
+              class="img-bar" @click.native="showImg(index)">
+            </div-image>
+            <!-- <span
+              v-for="(item, index) in data.fileUrls"
+              :key="index" :style="`background-image: url(${zoomImage(item)}) `"
+              class="img-bar" @click="showImg(index)">
+            </span> -->
           </div>
         </div>
         <Row class="mgbt20">
@@ -81,6 +88,10 @@
                 <i-col span="8">
                   <label class="feeLabel">其他：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.otherFee | Money}}元</span>
+                </i-col>
+                <i-col v-if="billType === 3" span="8">
+                  <label class="feeLabel">信息费：</label>
+                  <span class="colorGrey">{{data.beforeFeeInfo.infoFee | Money}}元</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">费用合计：</label>
@@ -130,6 +141,10 @@
                   <label class="feeLabel">其他：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}" class="colorGrey">{{data.afterFeeInfo.otherFee | Money}}</span>元
                 </i-col>
+                <i-col v-if="billType === 3" span="8">
+                  <label class="feeLabel">信息费：</label>
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.infoFee, data.afterFeeInfo.infoFee)}" class="colorGrey">{{data.afterFeeInfo.infoFee | Money}}</span>元
+                </i-col>
                 <i-col span="8">
                   <label class="feeLabel">费用合计：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.totalFee, data.afterFeeInfo.totalFee)}" class="colorGrey">{{data.afterFeeInfo.totalFee | Money}}</span>元
@@ -165,6 +180,7 @@ import openSwipe from '@/components/swipe/index'
 import cargoColumns from '../constant/cargoColumns'
 import { divideFee } from '@/libs/js/config'
 import { mapGetters } from 'vuex'
+import DivImage from '@/components/DivImage.vue'
 const moneyFormate = (fee) => {
   return divideFee(fee)
 }
@@ -179,6 +195,9 @@ export default {
     numFormat (num) {
       return num + 1
     }
+  },
+  components: {
+    DivImage
   },
   mixins: [ BasePage, TransportBase ],
   props: {
@@ -204,7 +223,6 @@ export default {
   data () {
     return {
       hideDetail: this.listLength > 1,
-      IMG_URL: process.env.VUE_APP_IMG_URL,
       columns: [
         {
           title: '付款方式',
@@ -307,10 +325,9 @@ export default {
       'WeightOption' // 重量配置 1 吨  2 公斤
     ]),
     imageItems () {
-      const self = this
       const arr = this.data.fileUrls.map(item => {
         return {
-          src: self.urlHandle(item),
+          src: item,
           msrc: item
         }
       })
@@ -376,17 +393,6 @@ export default {
       if (this.showImgFn) {
         this.showImgFn(index)
       }
-    },
-    // 客户端上传没有阿里云前缀 手动加上
-    urlHandle (item) {
-      return item.indexOf('aliyuncs') > -1 ? item : this.IMG_URL + item
-    },
-    /**
-   * 缩放图片
-   */
-    zoomImage (item) {
-      item += '?x-oss-process=image/resize,w_160'
-      return this.urlHandle(item)
     }
   }
 }
@@ -469,4 +475,8 @@ export default {
   .handle-info
     display: flex
     display -ms-flexbox
+</style>
+<style lang="stylus">
+.ivu-tooltip-inner-with-width
+    word-break break-all
 </style>

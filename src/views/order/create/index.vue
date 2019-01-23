@@ -288,8 +288,8 @@
       <FormItem label="回单数量:" prop="receiptCount">
         <Row>
           <Col span="19">
-          <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
-          </InputNumber>
+          <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :precision="0" clearable>
+          </TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">份</Col>
         </Row>
@@ -356,7 +356,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import api from './libs/api'
 import distance from '@/libs/js/distance'
 import validator, { validatePhone } from '@/libs/js/validate'
@@ -379,7 +378,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
 import { formatePhone } from '@/libs/js/formate'
-import { roundFee, divideFee, multiplyFee, multiplyMileage, divideMileage } from '@/libs/js/config'
+import { roundFee, multiplyFeeOrNull, divideFeeOrNull, multiplyMileageOrNull, divideMileage } from '@/libs/js/config'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -531,7 +530,8 @@ export default {
         // 备注
         remark: '',
         isSaveOrderTemplate: 0,
-        status: '' // 编辑时 status = 20 pickUp = 1时 不可编辑
+        status: '', // 编辑时 status = 20 pickUp = 1时 不可编辑
+        chargeRule: null // （V1.11新增）计费规则区间
       },
       orderPrint: [],
       rules: {
@@ -742,7 +742,7 @@ export default {
         .then((orderDetail) => {
           vm.loading = false
           for (let key in vm.orderForm) {
-            vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
+            vm.orderForm[key] = orderDetail[key]
           }
           this.consignerCargoes = orderDetail.orderCargoList.map((item) => new Cargo(item, true))
           // 加上id
@@ -750,7 +750,7 @@ export default {
           // 分转换元
           transferFeeList.forEach((fee) => {
             // vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
-            vm.orderForm[fee] = divideFee(vm.orderForm[fee])
+            vm.orderForm[fee] = divideFeeOrNull(vm.orderForm[fee])
           })
           // vm.orderForm.collectionMoney = vm.orderForm.collectionMoney ? vm.orderForm.collectionMoney / 100 : null
           if (vm.orderForm.deliveryTime) {
@@ -785,7 +785,7 @@ export default {
         // 分转换元
         transferFeeList.forEach((fee) => {
           // vm.orderForm[fee] = vm.orderForm[fee] ? vm.orderForm[fee] / 100 : 0
-          vm.orderForm[fee] = divideFee(vm.orderForm[fee])
+          vm.orderForm[fee] = divideFeeOrNull(vm.orderForm[fee])
         })
         vm.orderForm.deliveryTime = ''
         vm.orderForm.arriveTime = ''
@@ -948,13 +948,15 @@ export default {
           weight: statics.weight,
           volume: statics.volume,
           // distance: this.orderForm.mileage ? parseInt(this.orderForm.mileage * 1000) : 0,
-          distance: multiplyMileage(this.orderForm.mileage),
+          distance: multiplyMileageOrNull(this.orderForm.mileage),
           startPoint: { lat: this.orderForm.consignerAddressLatitude, lng: this.orderForm.consignerAddressLongitude },
-          endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude }
+          endPoint: { lat: this.orderForm.consigneeAddressLatitude, lng: this.orderForm.consigneeAddressLongitude },
+          source: 'order' // 计费规则来自订单
         },
         methods: {
-          ok (value) {
+          ok (value, chargeRule) {
             vm.orderForm.freightFee = value || 0
+            vm.orderForm.chargeRule = chargeRule
           }
         }
       })
@@ -965,9 +967,9 @@ export default {
         this.validPermit()
           .then(form => {
             return api.submitOrder(form)
-          }).then(() => {
+          }).then(res => {
             this.refreshForm(e)
-            resolve()
+            resolve(res.data.data)
           }).catch(err => {
             this.disabled = false
             reject(err)
@@ -1000,6 +1002,7 @@ export default {
       this.orderForm.consignerAddressLatitude = ''
       this.orderForm.consigneeAddressLongitude = ''
       this.orderForm.consigneeAddressLatitude = ''
+      this.orderForm.chargeRule = null // 重置计费规则命中区间
       this.isSaveOrderTemplate = false
 
       this.$refs.orderForm.resetFields()
@@ -1013,25 +1016,21 @@ export default {
     // 打印
     print () {
       this.handleSubmit()
-        .then(() => {
-          let orderPrint = _.cloneDeep(this.orderForm)
-          orderPrint.orderCargoList = _.cloneDeep(this.consignerCargoes)
-          orderPrint.totalFee = this.totalFee
-          this.salesmanList.map(el => {
-            if (el.id === orderPrint.salesmanId) {
-              orderPrint.salesmanName = el.name
-            }
-          })
-          this.orderPrint = [orderPrint]
+        .then(orderId => {
+          return api.getPrintDetail([orderId])
+        })
+        .then(res => {
+          this.orderPrint = res.data.data
 
           this.$refs.printer.print()
-          if (!orderPrint.id) {
+          if (!this.orderPrint.id) {
             // 创建订单页面
             this.resetForm()
           } else {
             this.closeTab()
           }
-        }).catch(() => {})
+        }).catch(() => {
+        })
     },
     dateChange (type, date) {
       const refs = type === 'START_DATE' ? 'stTimeInput' : type === 'END_DATE' ? 'edTimeInput' : ''
@@ -1068,10 +1067,6 @@ export default {
         }
       }
       this.distanceCp()
-    },
-    // 城市code设置
-    setCityCode () {
-
     },
     distanceCp () {
       const p1 = {
@@ -1226,7 +1221,7 @@ export default {
               deliveryTime: !orderForm.deliveryTime ? null : orderForm.deliveryTime.Format('yyyy-MM-dd hh:mm'),
               orderCargoList: orderCargoList.map(cargo => cargo.toJson()),
               // mileage: orderForm.mileage * 1000,
-              mileage: multiplyMileage(orderForm.mileage),
+              mileage: multiplyMileageOrNull(orderForm.mileage),
               consignerPhone: orderForm.consignerPhone.replace(/\s/g, ''),
               consigneePhone: orderForm.consigneePhone.replace(/\s/g, ''),
               invoiceRate: orderForm.isInvoice === 1 ? rate.set(orderForm.invoiceRate) : null
@@ -1234,7 +1229,7 @@ export default {
             // 转换成分单位
             transferFeeList.forEach((fee) => {
               // form[fee] = form[fee] ? float.round(form[fee] * 100) : 0
-              form[fee] = multiplyFee(form[fee]) || 0
+              form[fee] = multiplyFeeOrNull(form[fee])
             })
             // 没有业务员 置空
             const res = this.salesmanList.some(el => {

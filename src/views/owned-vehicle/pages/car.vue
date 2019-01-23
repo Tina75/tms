@@ -36,16 +36,18 @@
   </div>
 </template>
 <script>
-import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
+import { CAR_TYPE1, CAR_LENGTH1, CAR_STATUS } from '@/libs/constant/carInfo'
 import PageTable from '@/components/page-table'
 import BasePage from '@/basic/BasePage'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import { CODE, deleteCarById } from './client'
 import { mapActions } from 'vuex'
+import TagStatus from '../components/TagStatus.vue'
 export default {
   name: 'owned-car',
   components: {
+    TagStatus,
     PageTable
   },
   metaInfo: {
@@ -67,7 +69,7 @@ export default {
         {
           title: '操作',
           key: 'id',
-          width: 150,
+          width: 130,
           render: (h, params) => {
             let renderBtn = []
             if (this.hasPower(190202)) {
@@ -153,7 +155,24 @@ export default {
         },
         {
           title: '车牌号',
-          key: 'carNo'
+          key: 'carNo',
+          width: 80
+        },
+        {
+          title: '状态',
+          key: 'carStatus',
+          width: 80,
+          render (h, params) {
+            if (!params.row.carStatus) {
+              return h('span', '-')
+            }
+            return h(TagStatus,
+              {
+                props: {
+                  type: params.row['carStatus'] === 1 ? 'warning' : 'info'
+                }
+              }, CAR_STATUS[params.row.carStatus])
+          }
         },
         {
           title: '车型',
@@ -237,10 +256,12 @@ export default {
           }
         }, {
           title: '主司机',
-          key: 'driverName'
+          key: 'driverName',
+          width: 60
         }, {
           title: '副司机',
-          key: 'assistantDriverName'
+          key: 'assistantDriverName',
+          width: 60
         }, {
           title: '创建时间',
           key: 'createTime',

@@ -118,9 +118,14 @@ export default {
       },
       selectedIds: [],
       totalFeeMap: {
-        1: '收',
-        2: '付',
-        3: '付'
+        1: '应收运费',
+        2: '应付/应收金额',
+        3: '应付运费'
+      },
+      payFeeMap: {
+        1: '实收运费',
+        2: '实付/实收金额',
+        3: '实付运费'
       }
     }
   },
@@ -158,11 +163,11 @@ export default {
           key: 'partnerName'
         },
         {
-          title: `应${this.totalFeeMap[this.scene]}运费`,
+          title: `${this.totalFeeMap[this.scene]}`,
           key: 'totalFeeText'
         },
         {
-          title: `实${this.totalFeeMap[this.scene]}运费`,
+          title: `${this.payFeeMap[this.scene]}`,
           key: 'payFeeText'
         },
         {

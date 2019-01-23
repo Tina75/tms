@@ -63,6 +63,7 @@ import mixin from './mixin'
 import { VALIDATOR_PHONE } from './validator'
 import { setToken } from '@/libs/js/auth'
 import Cookies from 'js-cookie'
+import md5 from 'md5'
 // token与记住密码过期时长 1年
 const EXPIRES = 365 * 24 * 60 * 60 * 1000
 export default {
@@ -164,7 +165,12 @@ export default {
         Server({
           url: '/user/login',
           method: 'post',
-          data: this.form
+          // data: this.form
+          data: {
+            phone: this.form.phone,
+            password: md5(this.form.password),
+            captchaCode: this.form.captchaCode
+          }
         }).then(res => {
           if (this.rememberPW) this.localPwSave()
           else window.localStorage.removeItem('local_rememberd_pw')

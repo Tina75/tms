@@ -7,15 +7,15 @@
         <FormItem v-if="settleTypeDesc" label="结算方式：">
           <p>{{settleTypeDesc}}</p>
         </FormItem>
-        <FormItem :label="scene === 1 ? '应收金额：' : '应付金额：'">
-          <p><span class="writeOffFormFee">{{needPay}}</span>元</p>
+        <FormItem :label="scene === 1 ? '应收金额：' : (needPay >= 0 ? '应付金额：' : '应收金额：')">
+          <p><span class="writeOffFormFee">{{Math.abs(needPay)}}</span>元</p>
         </FormItem>
         <!--ids.length===0 代表是多段付-->
-        <FormItem v-if="ids.length===0" :label="scene === 1 ? '实收金额：' : '实付金额：'" prop="actualFee">
+        <FormItem v-if="ids.length===0" :label="scene === 1 ? '实收金额：' : (needPay >= 0 ? '实付金额：' : '实收金额：')" prop="actualFee">
           <tagNumberInput v-model="writeOffForm.actualFee" placeholder="请输入"></tagNumberInput>
           <!--<Input v-model="writeOffForm.actualFee" placeholder="请输入" />-->
         </FormItem>
-        <FormItem :label="scene === 1 ? '收款方式：' : '付款方式：'" prop="payType">
+        <FormItem :label="scene === 1 ? '收款方式：' : (needPay >= 0 ? '付款方式：' : '收款方式：')" prop="payType">
           <p v-if="isOil">油卡</p>
           <RadioGroup v-else v-model="writeOffForm.payType">
             <Radio v-for="(value, key) in payTypeMap" :key="key" :label="key">{{value}}</Radio>
@@ -106,7 +106,7 @@ export default {
         method: 'post',
         data: {
           id: this.id,
-          actualFee: multiplyFee(this.writeOffForm.actualFee),
+          actualFee: this.needPay >= 0 ? multiplyFee(this.writeOffForm.actualFee) : -multiplyFee(this.writeOffForm.actualFee),
           payType: this.writeOffForm.payType,
           account: this.writeOffForm.account.replace(/\s+/g, ''),
           bankBranch: this.writeOffForm.bankBranch,

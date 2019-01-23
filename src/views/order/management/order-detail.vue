@@ -53,8 +53,8 @@
               </i-col>
               <i-col v-if="from === 'order'" span="4">
                 <span>代收货款：</span>
-                <span v-if="detail.collectionMoney">{{detail.collectionMoney | toPoint}}元</span>
-                <span v-else>0元</span>
+                <span v-if="detail.collectionMoney !== ''">{{ getDivideFee(detail.collectionMoney) }}元</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
             <Row>
@@ -73,22 +73,26 @@
               </i-col>
               <i-col span="4">
                 <span>回单数：</span>
-                <span v-if="detail.receiptCount">{{detail.receiptCount}}</span>
-                <span v-else>-</span>
+                <span>{{detail.receiptCount}}</span>
               </i-col>
             </Row>
             <Row v-if="from === 'order'">
               <i-col span="7">
                 <span>对接业务员：</span>
-                <span>{{detail.salesmanName}}</span>
+                <span v-if="detail.salesmanName">{{detail.salesmanName}}</span>
+                <span v-else>-</span>
               </i-col>
               <i-col span="7">
                 <span>是否开票：</span>
                 <span>{{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%）` : '否'}}</span>
               </i-col>
-              <i-col span="7">
+              <i-col v-if="!detail.parentId" span="7">
                 <span>开票税额：</span>
-                <span>{{detail.invoiceAmount | toPoint}}元</span>
+                <span>{{ detail.invoiceAmount | toPoint('元') }}</span>
+              </i-col>
+              <i-col v-else span="7">
+                <span>开票税额：</span>
+                <span>{{ detail.allocationInvoiceAmount | toPoint('元') }}</span>
               </i-col>
             </Row>
             <Row style="margin-top:18px">
@@ -136,13 +140,15 @@
             <Row>
               <i-col>
                 <span>收货人单位：</span>
-                <span>{{detail.consigneeCompanyName}}</span>
+                <span v-if="detail.consigneeCompanyName">{{detail.consigneeCompanyName}}</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
             <Row style="margin-top: 18px;">
               <i-col span="24">
                 <span>备注：</span>
-                <span>{{detail.remark}}</span>
+                <span v-if="detail.remark">{{detail.remark}}</span>
+                <span v-else>-</span>
               </i-col>
             </Row>
           </div>
@@ -194,45 +200,38 @@
             <Row style="padding-top: 17px;">
               <i-col span="4">
                 <span style="width: 72px;">计费里程：</span>
-                <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage | mileage}}公里</span>
-                <span v-else>-</span>
+                <span style="font-weight:bold;">{{ detail.mileage | mileage('公里')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">运输费：</span>
-                <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.freightFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">提货费：</span>
-                <span v-if="detail.pickupFee" style="font-weight:bold;">{{detail.pickupFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.pickupFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">装货费：</span>
-                <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.loadFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">卸货费：</span>
-                <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.unloadFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">保险费：</span>
-                <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.insuranceFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">其他：</span>
-                <span v-if="detail.otherFee" style="font-weight:bold;">{{detail.otherFee | toPoint}}元</span>
-                <span v-else style="font-weight:bold;">0元</span>
+                <span style="font-weight:bold;">{{detail.otherFee | toPoint('元')}}</span>
               </i-col>
             </Row>
             <Row>
               <i-col span="24">
                 <span style="width: 72px;">费用合计：</span>
-                <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint}} 元</span>
-                <span v-else>-</span>
+                <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint('元')}}</span>
+                <span v-else style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.allocationFee | toPoint('元')}}</span>
               </i-col>
             </Row>
             <Row>
@@ -241,19 +240,6 @@
                 <span>{{settlementToName(detail.settlementType)}}</span>
               </i-col>
             </Row>
-          </div>
-          <div v-if="from === 'receipt' && receiptStatus > 0">
-            <div class="title">
-              <span>回单照片</span>
-            </div>
-            <div v-if="detail.receiptOrder.receiptUrl.length > 0" style="width: 900px;margin-top: 31px;">
-              <div
-                v-for="(item, index) in detail.receiptOrder.receiptUrl"
-                :key="index"
-                :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + item + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-                @click="handleView(index)">
-              </div>
-            </div>
           </div>
           <div class="order-log">
             <div class="title">
@@ -293,7 +279,8 @@ import float from '@/libs/js/float'
 import { mapGetters } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import OrderChange from './components/OrderChange'
-import { renderFee, roundFee, divideFee, roundVolume, roundWeight } from '@/libs/js/config'
+import { roundFee, divideFee, roundVolume, roundWeight } from '@/libs/js/config'
+import * as CargoInfo from '@/libs/constant/cargoInfoTable'
 import NP from 'number-precision'
 export default {
   name: 'order-management-detail',
@@ -323,74 +310,15 @@ export default {
       btnGroup: [],
       operateValue: 5,
       tableColumns: [
-        {
-          title: '货物名称',
-          key: 'cargoName'
-          // className: 'padding-left-45'
-        },
-        {
-          title: '货物编号',
-          key: 'cargoNo',
-          render: (h, p) => {
-            return h('span', p.row.cargoNo ? p.row.cargoNo : '-')
-          }
-        },
-        {
-          title: '货值（元）',
-          key: 'cargoCost',
-          render: (h, params) => {
-            return renderFee(h, params.row.cargoCost)
-            // return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : 0)
-          }
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : 0)
-          }
-        },
-        {
-          title: '数量',
-          key: 'quantity',
-          render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : 0)
-          }
-        },
-        {
-          title: '包装方式',
-          key: 'unit',
-          render: (h, p) => {
-            return h('span', p.row.unit ? p.row.unit : '-')
-          }
-        },
-        {
-          title: '包装尺寸（毫米）',
-          key: 'dimension',
-          render: (h, p) => {
-            let text = ''
-            if (p.row.dimension.length || p.row.dimension.width || p.row.dimension.height) {
-              text = (p.row.dimension.length || '-') + ' x ' + (p.row.dimension.width || '-') + ' x ' + (p.row.dimension.height || '-')
-            } else {
-              text = '-'
-            }
-            return h('span', text)
-          }
-        },
-        {
-          title: '备注1',
-          key: 'remark1',
-          render: (h, p) => {
-            return h('span', p.row.remark1 ? p.row.remark1 : '-')
-          }
-        },
-        {
-          title: '备注2',
-          key: 'remark2',
-          render: (h, p) => {
-            return h('span', p.row.remark2 ? p.row.remark2 : '-')
-          }
-        }
+        CargoInfo.cargoName,
+        CargoInfo.cargoNo,
+        CargoInfo.cargoCost,
+        CargoInfo.volume,
+        CargoInfo.quantity,
+        CargoInfo.unit,
+        CargoInfo.dimension,
+        CargoInfo.remark1,
+        CargoInfo.remark2
       ],
       tableData: [],
       currentStep: 0,
@@ -399,20 +327,8 @@ export default {
       orderLog: [],
       orderPrint: [],
       imgViewFunc: null,
-      columnWeight: {
-        title: '重量（吨）',
-        key: 'weight',
-        render: (h, p) => {
-          return h('span', p.row.weight ? p.row.weight : 0)
-        }
-      },
-      columnWeightKg: {
-        title: '重量（公斤）',
-        key: 'weightKg',
-        render: (h, p) => {
-          return h('span', p.row.weightKg ? p.row.weightKg : 0)
-        }
-      },
+      columnWeight: CargoInfo.weight,
+      columnWeightKg: CargoInfo.weightKg,
       activeTab: 'detail',
       changeOrderCnt: 0,
       cngLabel: (h) => {
@@ -442,7 +358,7 @@ export default {
         // total += Number(item.cargoCost)
         total = NP.plus(total, Number(item.cargoCost))
       })
-      total = divideFee(total)
+      total = this.getDivideFee(total)
       return roundFee(total) + '元'
     },
     // 总数量
@@ -509,6 +425,9 @@ export default {
   },
 
   methods: {
+    getDivideFee (val) {
+      return divideFee(val)
+    },
     getDetailChange () {
       Server({
         url: '/order/getOrderChangeRecordNum',
@@ -1255,4 +1174,8 @@ export default {
       font-weight 600
     .ivu-tabs-bar
       margin-bottom 26px
+</style>
+<style lang="stylus">
+.ivu-tooltip-inner-with-width
+    word-break break-all
 </style>

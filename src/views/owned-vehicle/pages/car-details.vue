@@ -48,7 +48,8 @@
             <Col span="6">
             <div>
               <span class="label">载重：</span>
-              {{infoData.shippingWeight}}<span v-if="infoData.shippingWeight">吨</span>
+              <span v-if="infoData.shippingWeight !== ''">{{infoData.shippingWeight}}吨</span>
+              <span v-else>-</span>
             </div>
             </Col>
           </Row>
@@ -56,25 +57,26 @@
             <Col span="6">
             <div>
               <span class="label">净空：</span>
-              {{infoData.shippingVolume}}<span v-if="infoData.shippingVolume">方</span>
+              <span v-if="infoData.shippingVolume !== ''">{{infoData.shippingVolume}}吨</span>
+              <span v-else>-</span>
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">车辆品牌：</span>
-              {{infoData.carBrand}}
+              {{infoData.carBrand || '-'}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">主司机：</span>
-              {{infoData.driverName}}
+              {{infoData.driverName  || '-'}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">副司机：</span>
-              {{infoData.assistantDriverName}}
+              {{infoData.assistantDriverName  || '-'}}
             </div>
             </Col>
           </Row>
@@ -82,13 +84,14 @@
             <Col span="6">
             <div>
               <span class="label">购买日期：</span>
-              {{formatDate(infoData.purchDate)}}
+              {{formatDate(infoData.purchDate)  || '-'}}
             </div>
             </Col>
             <Col span="6">
             <div>
               <span class="label">挂车号：</span>
-              {{infoData.trailerNo}}<span v-if="infoData.trailerNo">挂</span>
+              <span v-if="infoData.trailerNo">{{infoData.trailerNo}}挂</span>
+              <span v-else>-</span>
             </div>
             </Col>
           </Row>
@@ -112,11 +115,11 @@
         <Row class="list-info">
           <div v-for="img in imageItems" :key="img.index" class="infoImage">
             <div :v-if="img">
-              <div
-                :style="'height: 90px;background-image: url(' + img.src + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
+              <div-image
+                :src="img.src"
                 class="fileImage"
-                @click="handleView(img.count)">
-              </div>
+                @click.native="handleView(img.count)">
+              </div-image>
               <p class="titleInput">{{ img.title }}</p>
             </div>
           </div>
@@ -212,9 +215,11 @@ import pageTable from '@/components/page-table'
 import TMSUrl from '@/libs/constant/url'
 import Export from '@/libs/js/export'
 import { mapActions } from 'vuex'
+import { renderFee, renderMileage } from '@/libs/js/config'
+import DivImage from '@/components/DivImage.vue'
 export default {
   name: 'owned-car-details',
-  components: { RecordList, prepareOpenSwipe, pageTable, Export },
+  components: { RecordList, prepareOpenSwipe, pageTable, Export, DivImage },
   mixins: [ BasePage ],
   metaInfo: {
     title: '车辆详情'
@@ -357,21 +362,24 @@ export default {
           title: '维修费用（元）',
           key: 'repairMoney',
           render: (h, params) => {
-            return h('span', Number(params.row.repairMoney) / 100)
+            return renderFee(h, params.row.repairMoney)
+            // return h('span', Number(params.row.repairMoney) / 100)
           }
         },
         {
           title: '已支付费用（元）',
           key: 'payMoney',
           render: (h, params) => {
-            return h('span', Number(params.row.payMoney) / 100)
+            return renderFee(h, params.row.payMoney)
+            // return h('span', Number(params.row.payMoney) / 100)
           }
         },
         {
           title: '未支付费用（元）',
           key: 'waitPayMoney',
           render: (h, params) => {
-            return h('span', Number(params.row.waitPayMoney) / 100)
+            return renderFee(h, params.row.waitPayMoney)
+            // return h('span', Number(params.row.waitPayMoney) / 100)
           }
         },
         {
@@ -484,7 +492,8 @@ export default {
           title: '总金额（元）',
           key: 'totalFee',
           render: (h, params) => {
-            return h('div', Number(params.row.totalFee) / 100)
+            return renderFee(h, params.row.totalFee)
+            // return h('div', Number(params.row.totalFee) / 100)
           }
         },
         {
@@ -515,14 +524,16 @@ export default {
           title: '交强险金额（元）',
           key: 'trafficFee',
           render: (h, params) => {
-            return h('div', Number(params.row.trafficFee) / 100)
+            return renderFee(h, params.row.trafficFee)
+            // return h('div', Number(params.row.trafficFee) / 100)
           }
         },
         {
           title: '商业险金额（元）',
           key: 'businessFee',
           render: (h, params) => {
-            return h('div', Number(params.row.businessFee) / 100)
+            return renderFee(h, params.row.businessFee)
+            // return h('div', Number(params.row.businessFee) / 100)
           }
         },
         {
@@ -615,7 +626,8 @@ export default {
           title: '金额（元）',
           key: 'cost',
           render: (h, params) => {
-            return h('span', Number(params.row.cost) / 100)
+            return renderFee(h, params.row.cost)
+            // return h('span', Number(params.row.cost) / 100)
           }
         },
         {
@@ -725,7 +737,8 @@ export default {
           title: '金额（元）',
           key: 'cost',
           render: (h, params) => {
-            return h('span', Number(params.row.cost) / 100)
+            return renderFee(h, params.row.cost)
+            // return h('span', Number(params.row.cost) / 100)
           }
         },
         {
@@ -740,14 +753,16 @@ export default {
           title: '换上公里数（公里）',
           key: 'setupMileage',
           render: (h, params) => {
-            return h('span', Number(params.row.setupMileage) / 1000)
+            return renderMileage(h, params.row.setupMileage)
+            // return h('span', Number(params.row.setupMileage) / 1000)
           }
         },
         {
           title: '换下公里数（公里）',
           key: 'uninstallMileage',
           render: (h, params) => {
-            return h('span', Number(params.row.uninstallMileage) / 1000)
+            return renderMileage(h, params.row.uninstallMileage)
+            // return h('span', Number(params.row.uninstallMileage) / 1000)
           }
         },
         {

@@ -2,7 +2,7 @@
   <div class="vertical-tabs">
     <Row type="flex">
       <Col :style="styleHeight" class="vertical-tabs__menu" span="4">
-      <Menu ref="menu" :active-name="activeKey" width="180" @on-select="handleSelect">
+      <Menu ref="menu" :active-name="activeKey" width="160" @on-select="handleSelect">
         <template v-for="(tab, index) in tabList" >
           <MenuItem :key="index" :name="tab.name" class="vertical-tabs__menu-item">
           <FontIcon v-if="!!tab.icon" :key="index" v-bind.sync="tab.icon" size="19" class="vertical-tabs__menu-icon"></FontIcon>
@@ -47,13 +47,18 @@ export default {
     ...mapGetters(['DocumentHeight']),
     styleHeight () {
       return {
-        height: this.DocumentHeight + 'px'
+        minHeight: this.DocumentHeight + 'px'
       }
     }
   },
   watch: {
     activeKey (key) {
       this.updateVisibility(this.getTabIndex(this.activeKey))
+    },
+    value (newValue) {
+      if (newValue !== this.activeKey) {
+        this.activeKey = newValue
+      }
     }
   },
   mounted () {
@@ -86,11 +91,12 @@ export default {
     },
     updateVisibility (index) {
       this.getTabs().forEach((el, i) => {
-        if (i === index) {
-          el.fadeIn()
-        } else {
+        if (i !== index) {
           el.fadeOut()
         }
+      })
+      this.$nextTick(() => {
+        this.children[index].fadeIn()
       })
     },
     handleSelect (name) {
@@ -104,10 +110,11 @@ export default {
 
 <style lang="stylus" scoped>
 .vertical-tabs
-  margin -20px -15px
+  zoom 1
+  position relative
   &__menu
     height auto
-    flex 0 0 180px
+    flex 0 0 160px
     background-color #f3f5f9
   &__menu-item
     padding: 14px 8px;
@@ -122,10 +129,12 @@ export default {
     top 12px
   &__content-wrapper
     flex 1
+    -ms-flex 1
   &__content
     padding-left 20px
     background-color #fff
     position relative
+    height 100%
   >>> .ivu-menu-light.ivu-menu-vertical
         .ivu-menu-item-active:not(.ivu-menu-submenu)
           color #333
