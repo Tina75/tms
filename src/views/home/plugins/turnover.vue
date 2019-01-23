@@ -46,8 +46,8 @@ export default {
           trigger: 'axis'
         },
         grid: {
-          left: 0,
-          right: 0,
+          left: 5,
+          right: 5,
           top: 30,
           bottom: 5,
           containLabel: true
