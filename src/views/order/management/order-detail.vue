@@ -241,19 +241,6 @@
               </i-col>
             </Row>
           </div>
-          <div v-if="from === 'receipt' && receiptStatus > 0">
-            <div class="title">
-              <span>回单照片</span>
-            </div>
-            <div v-if="detail.receiptOrder.receiptUrl.length > 0" style="width: 900px;margin-top: 31px;">
-              <div
-                v-for="(item, index) in detail.receiptOrder.receiptUrl"
-                :key="index"
-                :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + $handleImgUrl(item) + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-                @click="handleView(index)">
-              </div>
-            </div>
-          </div>
           <div class="order-log">
             <div class="title">
               <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
