@@ -65,16 +65,17 @@ export default class Cargo {
       if (props.dimension) {
         this.dimension._length = propFilter(props.dimension.length)
         this.dimension._width = propFilter(props.dimension.width)
-        this.dimension._height = (props.dimension.height)
+        this.dimension._height = propFilter(props.dimension.height)
       }
       if (!transfer) {
         // 货值，整数
-        this.cargoCost = propFilter(props.cargoCost)
+        this.cargoCost = Number(propFilter(props.cargoCost))
       } else {
         this.cargoCost = divideFeeOrNull(props.cargoCost)
       }
-      this._weight = propFilter(props.weight)
-      this.volume = propFilter(props.volume)
+      // 兼容常发货物字符串 volume weight weightKg cargoCost
+      this._weight = Number(propFilter(props.weight))
+      this.volume = Number(propFilter(props.volume))
       this.quantity = propFilter(props.quantity)
       this.unit = propFilter(props.unit)
       this.remark1 = propFilter(props.remark1)
