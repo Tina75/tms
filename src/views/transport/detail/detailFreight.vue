@@ -610,7 +610,7 @@ export default {
           key: 'customerOrderNo',
           width: 180,
           render: (h, p) => {
-            return this.tableDataRender(h, p.row.customerOrderNo, true)
+            return this.tableDataRender(h, p.row.customerOrderNo)
           }
         },
         {
@@ -629,80 +629,74 @@ export default {
           minWidth: 180,
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'cargoName')
-            // return this.tableDataRender(h, p.row.cargoName)
           }
         },
         {
           title: '货物编号',
           key: 'cargoNo',
-          width: 120,
+          width: 180,
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'cargoNo')
           }
         },
         {
-          title: '包装',
+          title: '包装方式',
           key: 'unit',
-          width: 120,
+          width: 180,
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'unit')
-            // return this.tableDataRender(h, p.row.unit)
           }
         },
         {
           title: '数量',
           key: 'quantity',
-          width: 120,
+          width: 140,
           render: (h, p) => {
-            // return this.scopedSlotsRender(h, p, 'quantity', 0)
             return h('div', {},
-              p.row.cargoList.map((cargo) => h('div', isNumber(cargo.quantity) ? cargo.quantity : '-')))
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.quantity) ? cargo.quantity : '-')))
           }
         },
         {
           title: '货值(元)',
           key: 'cargoCost',
-          width: 120,
+          width: 140,
           render: (h, p) => {
             return h('div', {},
-              p.row.cargoList.map((cargo) => h('div', getFeeText(cargo.cargoCost))))
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, getFeeText(cargo.cargoCost))))
           }
         },
         {
           title: '体积(方)',
           key: 'volume',
-          width: 120,
+          width: 140,
           render: (h, p) => {
             return h('div', {},
-              p.row.cargoList.map((cargo) => h('div', isNumber(cargo.volume) ? cargo.volume : '-')))
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.volume) ? cargo.volume : '-')))
           }
         },
         {
           title: '包装尺寸（毫米）',
           key: 'dimension',
-          width: 180,
+          width: 200,
           render: (h, p) => {
-            // return this.scopedSlotsRender(h, p, '', text)
             return h('div', {},
-              p.row.cargoList.map((cargo) => h('div', this.formatDimension(cargo))))
+              p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, this.formatDimension(cargo))))
           }
         },
         {
           title: '备注1',
           key: 'remark1',
-          minWidth: 140,
+          minWidth: 180,
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'remark1')
-            // return this.tableDataRender(h, p.row.remark1)
           }
         },
         {
           title: '备注2',
           key: 'remark2',
-          minWidth: 140,
+          minWidth: 180,
           render: (h, p) => {
             return this.scopedSlotsRender(h, p, 'remark2')
-            // return this.tableDataRender(h, p.row.remark2)
           }
         }
       ],
