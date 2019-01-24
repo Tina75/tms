@@ -163,7 +163,7 @@
               <td colspan="7">
                 <div class="total-row-right">
                   <span>结算方式：{{ settlement(data) || '-' }}</span>
-                  <span>是否开票：{{ data.isInvoice === 1 ? `是（${getMultiplyRate(data.invoiceRate)}%）` : '否'}}</span>
+                  <span>是否开票：{{ data.isInvoice === 1 ? `是` : '否'}}</span>
                   <span>代收货款：{{ data.collectionMoney | fee }}</span>
                 </div>
               </td>
