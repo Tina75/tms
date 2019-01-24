@@ -210,7 +210,6 @@ import SelectCarLength from '@/components/SelectCarLength'
 import SelectCarType from '@/components/SelectCarType'
 import { formatePhone } from '@/libs/js/formate'
 import validator, { validatePhone } from '@/libs/js/validate'
-import { divideFeeOrNull } from '@/libs/js/config'
 import _ from 'lodash'
 export default {
   name: 'carrier',
@@ -371,8 +370,8 @@ export default {
         carNO: this.validate.driver.carNO,
         carType: this.validate.driver.carType,
         carLength: this.validate.driver.carLength,
-        shippingWeight: divideFeeOrNull(this.validate.driver.shippingWeight),
-        shippingVolume: divideFeeOrNull(this.validate.driver.shippingVolume),
+        shippingWeight: this.validate.driver.shippingWeight,
+        shippingVolume: this.validate.driver.shippingVolume,
         remark: this.validate.driver.remark,
         payType: this.validate.driver.payType,
         carBrand: this.validate.driver.carBrand,

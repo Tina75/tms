@@ -41,8 +41,7 @@
           <Col span="6">
           <div>
             <span class="label">送修公里数：</span>
-            <span v-if="infoData.repairMile">{{infoData.repairMile / 1000}}<span>公里</span></span>
-            <span v-else>-</span>
+            <span>{{infoData.repairMile / 1000}}<span>公里</span></span>
           </div>
           </Col>
           <Col span="6">
