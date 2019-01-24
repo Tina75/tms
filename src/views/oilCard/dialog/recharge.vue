@@ -13,7 +13,8 @@
         <span>{{recharge.primaryCardNumber}}</span>
       </FormItem>
       <FormItem  label="当前余额：">
-        <span class="moneyFormSpan">{{recharge.amount | toPoint}}元</span>
+        <span class="moneyFormSpan">{{recharge.amount | toPoint}}</span>
+        <span v-if="typeof recharge.amount === 'number'">元</span>
       </FormItem>
       <FormItem label="充值金额：" prop="changeAmount">
         <Row>
