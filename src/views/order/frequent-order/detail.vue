@@ -358,7 +358,7 @@ export default {
     color #333
   .totalFee
     color #00A4BD
-    font-size 20px
+    font-size 18px
 </style>
 <style lang="stylus">
 .ivu-tooltip-inner-with-width

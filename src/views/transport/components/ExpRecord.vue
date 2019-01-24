@@ -19,11 +19,11 @@
       <Row class="mgbt20">
         <i-col span="6">
           <label class="label-bar">异常环节：</label>
-          <span class="colorGrey">{{data.abnormalTimingDesc}}</span>
+          <span class="colorGrey">{{data.abnormalTimingDesc|empty}}</span>
         </i-col>
         <i-col span="6">
           <label class="label-bar">异常类型：</label>
-          <span class="colorGrey">{{data.abnormalTypeDesc}}</span>
+          <span class="colorGrey">{{data.abnormalTypeDesc|empty}}</span>
         </i-col>
         <i-col span="6">
           <label class="label-bar">上报时间：</label>
@@ -37,7 +37,7 @@
       <div :class="{'except-record-list-hide': hideDetail}" class="except-record-list-show">
         <div class="exception-distribution">
           <label class="label-bar">异常描述：</label>
-          <span class="flexBox colorGrey">{{data.abnormalDesc}}</span>
+          <span class="flexBox colorGrey">{{data.abnormalDesc|empty}}</span>
         </div>
         <div class="exception-distribution i-mt-10">
           <label class="label-bar">图片：</label>
@@ -167,7 +167,7 @@
         </div>
         <div class="mgbt20 handle-info">
           <label class="label-bar">处理备注：</label>
-          <span class="flexBox colorGrey">{{data.disposeDesc}}</span>
+          <span class="flexBox colorGrey">{{data.disposeDesc|empty}}</span>
         </div>
       </div>
     </div>
@@ -178,11 +178,11 @@ import BasePage from '@/basic/BasePage'
 import TransportBase from '../mixin/transportBase'
 import openSwipe from '@/components/swipe/index'
 import cargoColumns from '../constant/cargoColumns'
-import { divideFee } from '@/libs/js/config'
+import { divideFeeOrNull } from '@/libs/js/config'
 import { mapGetters } from 'vuex'
 import DivImage from '@/components/DivImage.vue'
 const moneyFormate = (fee) => {
-  return divideFee(fee)
+  return divideFeeOrNull(fee) === '' ? '-' : divideFeeOrNull(fee)
 }
 export default {
   name: 'except-record',
