@@ -45,7 +45,8 @@
           <Col span="8">
           <div>
             <span class="label">结算方式：</span>
-            <span>{{payTypeMap[companyList.payType]}}</span>
+            <span v-if="companyList.payType">{{payTypeMap[companyList.payType]}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -53,7 +54,8 @@
           <Col span="24">
           <div>
             <span class="label">备注：</span>
-            {{companyList.remark}}
+            <span v-if="companyList.remark">{{companyList.remark}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -461,7 +463,7 @@ export default {
             customerCarrierPhone: data.carrierInfo.customerCarrierPhone || '-',
             carrierPhone: data.carrierInfo.carrierPhone,
             payType: data.carrierInfo.payType,
-            remark: data.carrierInfo.remark === '' ? '无' : data.carrierInfo.remark
+            remark: data.carrierInfo.remark
           }
         }
       })

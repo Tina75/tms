@@ -27,7 +27,11 @@
           <Col span="6">
           <div>
             <span class="label">合作方式：</span>
-            {{infoData.driverType}}
+            <span v-if="infoData.driverType === 1">合约</span>
+            <span v-else-if="infoData.driverType === 2">临时</span>
+            <span v-else-if="infoData.driverType === 3">自有</span>
+            <span v-else-if="infoData.driverType === 4">挂靠</span>
+            <span v-else>-</span>
           </div>
             </Col>
           <Col span="6">
@@ -41,25 +45,29 @@
           <Col span="6">
           <div>
             <span class="label">车型：</span>
-            {{infoData.carType}}
+            <span v-if="infoData.carType">{{infoData.carType}}</span>
+            <span v-else>-</span>
           </div>
             </Col>
           <Col span="6">
           <div>
             <span class="label">车长：</span>
-            {{infoData.carLength}}
+            <span v-if="infoData.carLength">{{infoData.carLength}}</span>
+            <span v-else>-</span>
           </div>
             </Col>
           <Col span="6">
           <div>
             <span class="label">载重：</span>
-            {{infoData.shippingWeight}}<span>吨</span>
+            <span v-if="infoData.shippingWeight">{{infoData.shippingWeight}}吨</span>
+            <span v-else>-</span>
           </div>
             </Col>
           <Col span="6">
           <div>
             <span class="label">净空：</span>
-            {{infoData.shippingVolume}}<span>方</span>
+            <span v-if="infoData.shippingVolume">{{infoData.shippingVolume}}方</span>
+            <span v-else>-</span>
           </div>
             </Col>
         </Row>
@@ -67,13 +75,15 @@
           <Col span="6">
           <div>
             <span class="label">购买日期：</span>
-            {{formatDate(infoData.purchDate)}}
+            <span v-if="infoData.purchDate">{{formatDate(infoData.purchDate)}}</span>
+            <span v-else>-</span>
           </div>
             </Col>
           <Col span="6">
           <div>
             <span class="label">车辆品牌：</span>
-            {{infoData.carBrand}}
+            <span v-if="infoData.carBrand">{{infoData.carBrand}}</span>
+            <span v-else>-</span>
           </div>
             </Col>
         </Row>

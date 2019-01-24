@@ -159,7 +159,8 @@ export default {
           key: 'setupMileage',
           width: 150,
           render: (h, params) => {
-            return renderMileage(h, params.row.setupMileage)
+            if (params.row.setupMileage === '') return renderMileage(h, '-')
+            else return renderMileage(h, params.row.setupMileage)
             // return h('div', Number(params.row.setupMileage) / 1000)
           }
         },
@@ -168,7 +169,8 @@ export default {
           key: 'uninstallMileage',
           width: 150,
           render: (h, params) => {
-            return renderMileage(h, params.row.uninstallMileage)
+            if (params.row.uninstallMileage === '') return renderMileage(h, '-')
+            else return renderMileage(h, params.row.uninstallMileage)
             // return h('div', Number(params.row.uninstallMileage) / 1000)
           }
         },

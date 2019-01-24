@@ -39,25 +39,31 @@
         <Col span="6">
         <div>
           <span class="label">车型：</span>
-          <span>{{carTypeMap[driverList.carType]}}</span>
+          <span v-if="driverList.carType">{{carTypeMap[driverList.carType]}}</span>
+          <span v-else>-</span>
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">车长：</span>
-          {{carLengthMap[driverList.carLength]}}
+          <span v-if="driverList.carLength">{{carLengthMap[driverList.carLength]}}</span>
+          <span v-else>-</span>
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">载重：</span>
-          {{driverList.shippingWeight}}<span v-if="driverList.shippingWeight">吨</span>
+          {{driverList.shippingWeight}}
+          <span v-if="driverList.shippingWeight">吨</span>
+          <span v-else>-</span>
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">净空：</span>
-          {{driverList.shippingVolume}}<span v-if="driverList.shippingVolume">方</span>
+          {{driverList.shippingVolume}}
+          <span v-if="driverList.shippingVolume">方</span>
+          <span v-else>-</span>
         </div>
         </Col>
       </Row>
@@ -65,13 +71,15 @@
         <Col span="6">
         <div>
           <span class="label">车辆品牌：</span>
-          {{driverList.carBrand}}
+          <span v-if="driverList.carBrand">{{driverList.carBrand}}</span>
+          <span v-else>-</span>
         </div>
         </Col>
         <Col span="6">
         <div>
           <span class="label">结算方式：</span>
-          {{payTypeMap[driverList.payType]}}
+          <span v-if="driverList.payType">{{payTypeMap[driverList.payType]}}</span>
+          <span v-else>-</span>
         </div>
         </Col>
         </Col>

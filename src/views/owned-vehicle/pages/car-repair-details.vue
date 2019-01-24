@@ -68,7 +68,8 @@
           <Col span="20">
           <div>
             <span class="label">维修单位：</span>
-            {{infoData.repairUnit}}
+            <span v-if="infoData.repairUnit">{{infoData.repairUnit}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -76,7 +77,8 @@
           <Col span="20">
           <div>
             <span class="label">维修原因：</span>
-            {{infoData.repairReason}}
+            <span v-if="infoData.repairReason">{{infoData.repairReason}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -84,7 +86,8 @@
           <Col span="20">
           <div>
             <span class="label">维修结果：</span>
-            {{infoData.repairResult}}
+            <span v-if="infoData.repairResult">{{infoData.repairResult}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -92,7 +95,8 @@
           <Col span="20">
           <div>
             <span class="label">备注：</span>
-            {{infoData.remark}}
+            <span v-if="infoData.remark">{{infoData.remark}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row><br/>
