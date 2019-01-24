@@ -779,7 +779,7 @@ export default {
       api.getReCreateDeatil(createId).then(orderDetail => {
         vm.loading = false
         for (let key in vm.orderForm) {
-          vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
+          vm.orderForm[key] = orderDetail[key]
         }
         this.consignerCargoes = orderDetail.orderCargoTemplateList.map((item) => new Cargo(item, true))
         // 分转换元
@@ -883,8 +883,6 @@ export default {
           // 如果在货物信息中已经有数据了，就不覆盖了；如果没有货物信息，就默认添加已维护的货物
           const confignerCargoValid = _this.consignerCargoes[0].validate()
           if (!confignerCargoValid.success) {
-            cargoList[0].weight = Number(cargoList[0].weight)
-            cargoList[0].volume = Number(cargoList[0].volume)
             _this.consignerCargoes = [new Cargo(cargoList[0], true)]
           }
         }

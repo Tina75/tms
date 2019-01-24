@@ -136,7 +136,7 @@ import SelectInput from '@/components/SelectInput'
 import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 import CarSelect from '@/components/own-car-form/CarSelect'
-import { multiplyFee, divideFee } from '@/libs/js/config'
+import { multiplyFee, divideFeeOrNull, multiplyFeeOrNull } from '@/libs/js/config'
 export default {
   name: 'edit-insurance',
   components: {
@@ -213,9 +213,9 @@ export default {
           })
         }
         vm.$refs.upLoads.uploadImgList = vm.imgList
-        vm.validate.totalFee = divideFee(vm.validate.totalFee)
-        vm.validate.trafficFee = divideFee(vm.validate.trafficFee)
-        vm.validate.businessFee = divideFee(vm.validate.businessFee)
+        vm.validate.totalFee = divideFeeOrNull(vm.validate.totalFee)
+        vm.validate.trafficFee = divideFeeOrNull(vm.validate.trafficFee)
+        vm.validate.businessFee = divideFeeOrNull(vm.validate.businessFee)
       } else {
         vm.validate.buyDate = new Date()
       }
@@ -230,7 +230,7 @@ export default {
       if (params.effectDate) params.effectDate = new Date(this.validate.effectDate).getTime()
       if (params.expireDate) params.expireDate = new Date(this.validate.expireDate).getTime()
       if (params.trafficFee) params.trafficFee = multiplyFee(this.validate.trafficFee)
-      if (params.businessFee) params.businessFee = multiplyFee(this.validate.businessFee)
+      if (params.businessFee) params.businessFee = multiplyFeeOrNull(this.validate.businessFee)
       this.$refs[name].validate((valid) => {
         if (valid) {
           this.loading = true

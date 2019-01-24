@@ -69,7 +69,7 @@ import BaseDialog from '@/basic/BaseDialog'
 import SelectInput from '@/components/SelectInput.vue'
 import { consignerCargoAdd, consignerCargoUpdate } from '../pages/client'
 import float from '@/libs/js/float'
-import { multiplyFee } from '@/libs/js/config'
+import { multiplyFeeOrNull } from '@/libs/js/config'
 import SelectPackageType from '@/components/SelectPackageType'
 import TagNumberInput from '@/components/TagNumberInput'
 import setCargo from './setCargo'
@@ -150,10 +150,10 @@ export default {
           let data = {
             cargoName: this.validate.cargoName,
             unit: this.validate.unit,
-            cargoCost: multiplyFee(this.validate.cargoCost),
-            weight: this.tmsCargoDto.weightOption === 1 ? parseFloat(this.validate.weight) : undefined,
-            weightKg: this.tmsCargoDto.weightKgOption === 1 ? parseFloat(this.validate.weightKg) : undefined,
-            volume: parseFloat(this.validate.volume),
+            cargoCost: multiplyFeeOrNull(this.validate.cargoCost),
+            weight: this.tmsCargoDto.weightOption === 1 ? this.validate.weight : undefined,
+            weightKg: this.tmsCargoDto.weightKgOption === 1 ? this.validate.weightKg : undefined,
+            volume: this.validate.volume,
             remark1: this.validate.remark1,
             remark2: this.validate.remark2,
             cargoNo: this.validate.cargoNo,

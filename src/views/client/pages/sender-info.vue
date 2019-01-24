@@ -32,6 +32,7 @@
             <span class="label">提货方式：</span>
             <span v-if="list.pickUp===1">小车上门提货</span>
             <span v-else-if="list.pickUp===2">大车直送客户</span>
+            <span v-else>-</span>
           </div>
           </Col>
           <Col span="8">
@@ -41,13 +42,14 @@
             <span v-else-if="list.payType===2">到付</span>
             <span v-else-if="list.payType===3">回单付</span>
             <span v-else-if="list.payType===4">月结</span>
-            <span v-else></span>
+            <span v-else>-</span>
           </div>
           </Col>
           <Col span="8">
           <div>
             <span class="label">是否开票：</span>
-            <span v-text="list.isInvoice === 1 ? `是（${rate(list.invoiceRate)}%）` : '否'">现付</span>
+            <span v-if="list.isInvoice" v-text="list.isInvoice === 1 ? `是（${rate(list.invoiceRate)}%）` : '否'">现付</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -56,13 +58,15 @@
           <div>
             <span class="label">开拓渠道：</span>
             <span v-if="list.exploiteChannel ===1">公司开拓</span>
-            <span v-if="list.exploiteChannel ===2">个人开拓</span>
+            <span v-else-if="list.exploiteChannel ===2">个人开拓</span>
+            <span v-else>-</span>
           </div>
           </Col>
           <Col span="8">
           <div>
             <span class="label">对接业务员：</span>
-            <span v-text="list.salesName"></span>
+            <span v-if="list.salesName" v-text="list.salesName"></span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -70,7 +74,8 @@
           <Col span="24">
           <div>
             <span class="label">备注：</span>
-            {{list.remark}}
+            <span v-if="list.remark">{{list.remark}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -133,7 +138,7 @@ import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, co
 import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
 import headType from '@/libs/constant/headtype'
-import { divideFee, renderFee } from '@/libs/js/config'
+import { divideFeeOrNull, renderFee } from '@/libs/js/config'
 // 是否包含省市
 const hasCity = (val, cityName) => {
   return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
@@ -399,7 +404,7 @@ export default {
                           ...params.row,
                           cargoName: params.row.cargoName,
                           unit: params.row.unit,
-                          cargoCost: divideFee(params.row.cargoCost),
+                          cargoCost: divideFeeOrNull(params.row.cargoCost),
                           weight: String(params.row.weight),
                           weightKg: String(params.row.weightKg),
                           volume: String(params.row.volume),

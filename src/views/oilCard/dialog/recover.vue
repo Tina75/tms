@@ -13,7 +13,8 @@
         <span>{{recover.number}}</span>
       </FormItem>
       <FormItem  label="当前余额：">
-        <span class="moneyFormSpan">{{recover.amount | toPoint}}元</span>
+        <span class="moneyFormSpan">{{recover.amount | toPoint}}</span>
+        <span v-if="typeof recover.amount === 'number'">元</span>
       </FormItem>
       <FormItem label="实际金额：" prop="actrualAmount">
         <Row>

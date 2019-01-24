@@ -117,7 +117,7 @@ import Server from '@/libs/js/server'
 import TagNumberInput from '@/components/TagNumberInput'
 import CarSelect from '@/components/own-car-form/CarSelect'
 import float from '@/libs/js/float'
-import { multiplyFee, divideFee } from '@/libs/js/config'
+import { multiplyFeeOrNull, divideFeeOrNull } from '@/libs/js/config'
 export default {
   name: 'edit-tyre',
   components: {
@@ -187,9 +187,9 @@ export default {
           })
         }
         vm.$refs.upLoads.uploadImgList = vm.imgList
-        vm.validate.cost = divideFee(vm.validate.cost)
-        vm.validate.setupMileage = Number(vm.validate.setupMileage) / 1000
-        vm.validate.uninstallMileage = Number(vm.validate.uninstallMileage) / 1000
+        vm.validate.cost = divideFeeOrNull(vm.validate.cost)
+        vm.validate.setupMileage = vm.validate.setupMileage !== '' ? Number(vm.validate.setupMileage) / 1000 : ''
+        vm.validate.uninstallMileage = vm.validate.uninstallMileage !== '' ? Number(vm.validate.uninstallMileage) / 1000 : ''
       }
     },
     save (name) {
@@ -199,7 +199,7 @@ export default {
       })
       let params = Object.assign({}, this.validate)
       if (params.setupDate) params.setupDate = new Date(this.validate.setupDate).getTime()
-      if (params.cost) params.cost = multiplyFee(this.validate.cost)
+      if (params.cost) params.cost = multiplyFeeOrNull(this.validate.cost)
       if (params.setupMileage) params.setupMileage = float.round(this.validate.setupMileage * 1000)
       if (params.uninstallMileage) params.uninstallMileage = float.round(this.validate.uninstallMileage * 1000)
       this.$refs[name].validate((valid) => {

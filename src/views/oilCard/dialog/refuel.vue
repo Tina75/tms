@@ -13,7 +13,8 @@
         <span>{{refuel.number}}</span>
       </FormItem>
       <FormItem  label="当前余额：">
-        <span class="moneyFormSpan">{{refuel.amount | toPoint}}元</span>
+        <span class="moneyFormSpan">{{refuel.amount | toPoint}}</span>
+        <span v-if="typeof refuel.amount === 'number'">元</span>
       </FormItem>
       <FormItem  label="加油车辆：" prop="truckNo">
         <SelectInput

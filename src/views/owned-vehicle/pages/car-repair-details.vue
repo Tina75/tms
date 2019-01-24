@@ -41,8 +41,7 @@
           <Col span="6">
           <div>
             <span class="label">送修公里数：</span>
-            <span v-if="infoData.repairMile">{{infoData.repairMile / 1000}}<span>公里</span></span>
-            <span v-else>-</span>
+            <span>{{infoData.repairMile | mileage('公里')}}</span>
           </div>
           </Col>
           <Col span="6">
@@ -68,7 +67,8 @@
           <Col span="20">
           <div>
             <span class="label">维修单位：</span>
-            {{infoData.repairUnit}}
+            <span v-if="infoData.repairUnit">{{infoData.repairUnit}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -76,7 +76,8 @@
           <Col span="20">
           <div>
             <span class="label">维修原因：</span>
-            {{infoData.repairReason}}
+            <span v-if="infoData.repairReason">{{infoData.repairReason}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -84,7 +85,8 @@
           <Col span="20">
           <div>
             <span class="label">维修结果：</span>
-            {{infoData.repairResult}}
+            <span v-if="infoData.repairResult">{{infoData.repairResult}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row>
@@ -92,7 +94,8 @@
           <Col span="20">
           <div>
             <span class="label">备注：</span>
-            {{infoData.remark}}
+            <span v-if="infoData.remark">{{infoData.remark}}</span>
+            <span v-else>-</span>
           </div>
           </Col>
         </Row><br/>

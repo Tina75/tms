@@ -6,7 +6,8 @@
         <span>{{assign.number}}</span>
       </FormItem>
       <FormItem  label="金额：">
-        <span class="moneyFormSpan">{{assign.amount | toPoint}}元</span>
+        <span class="moneyFormSpan">{{assign.amount | toPoint}}</span>
+        <span v-if="typeof assign.amount === 'number'">元</span>
       </FormItem>
       <FormItem  label="用途：" prop="type">
         <RadioGroup v-model="assign.type" @on-change="typeChange">

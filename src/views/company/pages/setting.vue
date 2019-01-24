@@ -33,6 +33,7 @@
                 <Input v-model="formCompany.shortName" :maxlength="6" placeholder="请输入公司简称，最多6个字"></Input>
               </Row>
               <span v-else class="formConten-p blockContent">{{formCompany.shortName}}</span>
+              <span v-if="!isEdit && !formCompany.shortName">-</span>
             </FormItem>
             </Col>
           </Row>

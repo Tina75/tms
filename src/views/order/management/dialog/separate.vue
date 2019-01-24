@@ -161,7 +161,7 @@ export default {
       return roundFee(fee)
     },
     childTwoFee () {
-      let fee = float.round(this.detailData.allocationFee / 100)
+      let fee = roundFee(this.detailData.allocationFee / 100)
       if (this.allocationStrategy === 1 ||
          (this.allocationStrategy === 2 && this.detailData.quantity) ||
          (this.allocationStrategy === 3 && (this.detailData.weight || this.detailData.weightKg)) ||
@@ -406,30 +406,30 @@ export default {
       parentData.quantity = this.quantityVal ? params.row.quantity - this.quantityVal : 0
       // 区分吨和公斤
       if (this.WeightOption === 1) {
-        parentData.weight = float.round(this.weightVal ? params.row.weight - this.weightVal : 0, 3)
+        parentData.weight = roundWeight(this.weightVal ? params.row.weight - this.weightVal : 0)
       } else {
-        parentData.weightKg = this.weightVal ? params.row.weightKg - this.weightVal : 0
+        parentData.weightKg = roundWeightKg(this.weightVal ? params.row.weightKg - this.weightVal : 0)
       }
-      parentData.volume = float.round(this.volumeVal ? params.row.volume - this.volumeVal : 0, 6)
+      parentData.volume = roundVolume(this.volumeVal ? params.row.volume - this.volumeVal : 0)
       // 货值比例关联优先级：数量-->重量-->体积
       if (params.row.quantity !== 0) {
-        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.quantity) / quantity)
+        parentData.cargoCost = parseInt(roundFee(cargoCost * parentData.quantity) / quantity)
       } else if (params.row.weight !== 0 || params.row.weightKg !== 0) {
         // 区分吨和公斤
         if (this.WeightOption === 1) {
-          parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weight, 3) / weight)
+          parentData.cargoCost = parseInt(roundWeight(cargoCost * parentData.weight) / weight)
         } else {
-          parentData.cargoCost = parseInt(float.round(cargoCost * parentData.weightKg) / weight)
+          parentData.cargoCost = parseInt(roundWeightKg(cargoCost * parentData.weightKg) / weight)
         }
       } else {
-        parentData.cargoCost = parseInt(float.round(cargoCost * parentData.volume, 6) / volume)
+        parentData.cargoCost = parseInt(roundVolume(cargoCost * parentData.volume) / volume)
       }
       this.$set(this.parentOrderCargoList, params.index, parentData)
       this.$set(this.cloneData, params.index, parentData)
 
       // 生成子单数据
       let childData = { ...params.row }
-      childData.cargoCost = float.round(cargoCost - parentData.cargoCost)
+      childData.cargoCost = roundFee(cargoCost - parentData.cargoCost)
       childData.quantity = this.quantityVal ? this.quantityVal : params.row.quantity
       // 区分吨和公斤
       if (this.WeightOption === 1) {

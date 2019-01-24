@@ -78,7 +78,8 @@
             <Col span="20">
             <div>
               <span class="label">备注:</span>
-              {{infoData.remark}}
+              <span v-if="infoData.remark">{{infoData.remark}}</span>
+              <span v-else>-</span>
             </div>
             </Col>
           </Row>

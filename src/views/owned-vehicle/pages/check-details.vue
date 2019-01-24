@@ -35,7 +35,8 @@
             <Col span="6">
             <div>
               <span class="label">下次年检日期:</span>
-              {{infoData.nextCheckDate | date}}
+              <span v-if="infoData.nextCheckDate">{{infoData.nextCheckDate | date}}</span>
+              <span v-else>-</span>
             </div>
             </Col>
           </Row>
@@ -43,7 +44,8 @@
             <Col span="20">
             <div>
               <span class="label">备注:</span>
-              {{infoData.remark}}
+              <span v-if="infoData.remark">{{infoData.remark}}</span>
+              <span v-else>-</span>
             </div>
             </Col>
           </Row>
