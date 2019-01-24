@@ -779,7 +779,7 @@ export default {
       api.getReCreateDeatil(createId).then(orderDetail => {
         vm.loading = false
         for (let key in vm.orderForm) {
-          vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
+          vm.orderForm[key] = orderDetail[key]
         }
         this.consignerCargoes = orderDetail.orderCargoTemplateList.map((item) => new Cargo(item, true))
         // 分转换元
