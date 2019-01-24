@@ -232,10 +232,12 @@ export default {
           if (resp.data.code === 10000) {
             this.active++
           }
+          this.password = ''
           this.loading = false
         })
         .catch((error) => {
           this.loading = false
+          this.password = ''
           throw error
         })
     },
