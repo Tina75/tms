@@ -100,8 +100,11 @@ export default class Cargo {
   get weightKg () {
     return isNumber(this._weight) ? float.round(this._weight * 1000) : ''
   }
+  /**
+   * value = 0 | '' 时候不处理，其余除以1000
+   */
   set weightKg (value) {
-    this._weight = float.round(value / 1000, NumberPrecesion.weight)
+    this._weight = value ? float.round(value / 1000, NumberPrecesion.weight) : value
   }
 
   validate () {
