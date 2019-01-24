@@ -234,27 +234,33 @@ export default {
     const store = this.DispatchSet
     for (let key in store) {
       this.form[key] = store[key]
-      if (store[key] === 1) {
-        if (key.startsWith('pickSelf')) {
-        // 提货自送
-          this.pickSelf.push(key)
-        } else if (key.startsWith('pickOut')) {
-          // 提货外转
-          this.pickOut.push(key)
-        } else if (key.startsWith('deliverSelf')) {
-          // 送货费用自送
-          this.deliverSelf.push(key)
-        } else if (key.startsWith('deliverOut')) {
-          // 送货外转
-          this.deliverOut.push(key)
-        } else if (key.startsWith('paySettlement')) {
-          this.paySettlement.push(key)
-        }
-      }
     }
+    this.getCheckedStatus()
   },
   methods: {
     ...mapMutations(['changeDispatchConfiguration']),
+    getCheckedStatus () {
+      let form = this.form
+      for (let key in form) {
+        if (form[key] === 1) {
+          if (key.startsWith('pickSelf')) {
+            // 提货自送
+            this.pickSelf.push(key)
+          } else if (key.startsWith('pickOut')) {
+          // 提货外转
+            this.pickOut.push(key)
+          } else if (key.startsWith('deliverSelf')) {
+          // 送货费用自送
+            this.deliverSelf.push(key)
+          } else if (key.startsWith('deliverOut')) {
+          // 送货外转
+            this.deliverOut.push(key)
+          } else if (key.startsWith('paySettlement')) {
+            this.paySettlement.push(key)
+          }
+        }
+      }
+    },
     /**
      * 同步formstate的值
      */
@@ -295,8 +301,17 @@ export default {
             ...DELIVERY_SET
           }
           vm.save()
+          vm.clearQueue()
+          vm.getCheckedStatus()
         }
       })
+    },
+    clearQueue () {
+      this.pickSelf = []
+      this.pickOut = []
+      this.deliverSelf = []
+      this.deliverOut = []
+      this.paySettlement = []
     },
     save () {
       const data = { ...this.form }
