@@ -114,7 +114,7 @@
       <Row :gutter="16">
         <Col span="6">
         <FormItem label="计费里程：">
-          <span class="blod-font">{{detail.mileage | mile}}公里</span>
+          <span class="blod-font">{{detail.mileage | mileage('公里')}}</span>
         </FormItem>
         </Col>
         <Col span="6">
