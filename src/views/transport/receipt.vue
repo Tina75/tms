@@ -618,49 +618,17 @@ export default {
     // 获取各状态订单数目
     getOrderNum () {
       Server({
-        url: 'order/getReceiptOrderNumByStatus',
+        url: '/order/getReceiptOrderNumByStatusNew',
         method: 'get'
       }).then((res) => {
         let list = res.data.data
-        let arr = []
-        list.map((item) => {
-          if (item.total !== undefined) {
-            let t = {
-              name: '全部',
-              count: ''
-            }
-            arr.unshift(t)
-          }
-          if (item.waiting_sign !== undefined) {
-            let p = {
-              name: '待签收',
-              count: item.waiting_sign
-            }
-            arr.push(p)
-          }
-          if (item.waiting_recovery !== undefined) {
-            let p = {
-              name: '待回收',
-              count: item.waiting_recovery
-            }
-            arr.push(p)
-          }
-          if (item.waiting_return_factory !== undefined) {
-            let d = {
-              name: '待返厂',
-              count: item.waiting_return_factory
-            }
-            arr.push(d)
-          }
-          if (item.already_returned_factory !== undefined) {
-            let d = {
-              name: '已返厂',
-              count: item.already_returned_factory
-            }
-            arr.push(d)
-          }
-        })
-        this.status = arr
+        this.status = [
+          { name: '全部', count: '' },
+          { name: '待签收', count: list.waiting_sign },
+          { name: '待回收', count: list.waiting_recovery },
+          { name: '待返厂', count: list.waiting_return_factory },
+          { name: '已返厂', count: list.already_returned_factory }
+        ]
       })
     },
     // tab状态栏切换

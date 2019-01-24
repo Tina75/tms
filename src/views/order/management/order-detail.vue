@@ -73,7 +73,7 @@
               </i-col>
               <i-col span="4">
                 <span>回单数：</span>
-                <span v-if="detail.receiptCount">{{detail.receiptCount}}</span>
+                <span v-if="detail.receiptCount !== ''">{{detail.receiptCount}}</span>
                 <span v-else>-</span>
               </i-col>
             </Row>
