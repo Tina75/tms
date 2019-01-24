@@ -58,11 +58,11 @@
         <Row>
           <i-col span="7">
             <span>始发地：</span>
-            <span>{{detail.startName}}</span>
+            <span>{{detail.startName | empty}}</span>
           </i-col>
           <i-col span="7">
             <span>目的地：</span>
-            <span>{{detail.endName}}</span>
+            <span>{{detail.endName | empty}}</span>
           </i-col>
           <i-col span="6">
             <span>提货方式：</span>
