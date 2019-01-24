@@ -41,7 +41,7 @@
           <Col span="6">
           <div>
             <span class="label">送修公里数：</span>
-            <span>{{infoData.repairMile / 1000}}<span>公里</span></span>
+            <span>{{infoData.repairMile | mileage('公里')}}</span>
           </div>
           </Col>
           <Col span="6">
