@@ -188,8 +188,8 @@ export default {
         }
         vm.$refs.upLoads.uploadImgList = vm.imgList
         vm.validate.cost = divideFeeOrNull(vm.validate.cost)
-        vm.validate.setupMileage = vm.validate.setupMileage === '' ? Number(vm.validate.setupMileage) / 1000 : ''
-        vm.validate.uninstallMileage = vm.validate.uninstallMileage === '' ? Number(vm.validate.uninstallMileage) / 1000 : ''
+        vm.validate.setupMileage = vm.validate.setupMileage !== '' ? Number(vm.validate.setupMileage) / 1000 : ''
+        vm.validate.uninstallMileage = vm.validate.uninstallMileage !== '' ? Number(vm.validate.uninstallMileage) / 1000 : ''
       }
     },
     save (name) {

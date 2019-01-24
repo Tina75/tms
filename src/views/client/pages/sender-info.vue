@@ -138,7 +138,7 @@ import { CODE, consignerDetail, consignerAddressList, consignerAddressDelete, co
 import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
 import headType from '@/libs/constant/headtype'
-import { divideFee, renderFee } from '@/libs/js/config'
+import { divideFeeOrNull, renderFee } from '@/libs/js/config'
 // 是否包含省市
 const hasCity = (val, cityName) => {
   return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
@@ -404,7 +404,7 @@ export default {
                           ...params.row,
                           cargoName: params.row.cargoName,
                           unit: params.row.unit,
-                          cargoCost: divideFee(params.row.cargoCost),
+                          cargoCost: divideFeeOrNull(params.row.cargoCost),
                           weight: String(params.row.weight),
                           weightKg: String(params.row.weightKg),
                           volume: String(params.row.volume),
