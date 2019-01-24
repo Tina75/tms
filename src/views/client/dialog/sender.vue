@@ -35,7 +35,7 @@
         <Select v-model="validate.isInvoice" transfer clearable placeholder="请输入">
           <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
-        <Tooltip :max-width="200" :content="`开票税费将计入成本统计`" placement="top" transfer>
+        <Tooltip :max-width="200" :content="`开票税额将计入成本统计`" placement="top" transfer>
           <Icon class="vermiddle paddingBlock" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
         </Tooltip>
       </FormItem>

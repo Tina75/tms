@@ -118,7 +118,7 @@ export const TABLECOLUMNS = {
       }
     },
     {
-      title: '开票税费',
+      title: '开票税额',
       key: 'invoiceAmount',
       width: 200,
       render: (h, params) => {
@@ -224,7 +224,7 @@ export const TABLECOLUMNS = {
       }
     },
     {
-      title: '开票税费',
+      title: '开票税额',
       key: 'invoiceAmount',
       width: 150,
       render: (h, params) => {
@@ -358,7 +358,7 @@ export const TABLECOLUMNS = {
       }
     },
     {
-      title: '开票税费',
+      title: '开票税额',
       key: 'invoiceAmount',
       width: 200,
       render: (h, params) => {
