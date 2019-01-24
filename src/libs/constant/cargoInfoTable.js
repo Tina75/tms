@@ -17,64 +17,64 @@ export const customerOrderNo = {
 export const cargoName = {
   title: '货物名称',
   key: 'cargoName',
-  tooltip: true
-  // render: (h, params) => {
-  //   let text = ''
-  //   if (params.row.cargoName.length > 12) { // 显示tooltip
-  //     text = params.row.cargoName.slice(0, 12) + '...'
-  //     return h('div', [
-  //       h('Tooltip', {
-  //         props: {
-  //           placeholder: 'bottom',
-  //           transfer: false
-  //         }
-  //       }, [
-  //         h('span', {
-  //         }, text),
-  //         h('div', {
-  //           slot: 'content',
-  //           style: {
-  //             whiteSpace: 'normal'
-  //           }
-  //         }, params.row.cargoName)
-  //       ])
-  //     ])
-  //   } else {
-  //     return h('span', {
-  //     }, params.row.cargoName || '-')
-  //   }
-  // }
+  // tooltip: true
+  render: (h, params) => {
+    let text = ''
+    if (params.row.cargoName.length > 12) { // 显示tooltip
+      text = params.row.cargoName.slice(0, 12) + '...'
+      return h('div', [
+        h('Tooltip', {
+          props: {
+            placeholder: 'bottom',
+            transfer: true
+          }
+        }, [
+          h('span', {
+          }, text),
+          h('div', {
+            slot: 'content',
+            style: {
+              whiteSpace: 'normal'
+            }
+          }, params.row.cargoName)
+        ])
+      ])
+    } else {
+      return h('span', {
+      }, params.row.cargoName || '-')
+    }
+  }
 }
 export const cargoNo = {
   title: '货物编号',
   key: 'cargoNo',
-  tooltip: true
-  // render: (h, params) => {
-  //   let text = ''
-  //   if (params.row.cargoNo.length > 12) { // 显示tooltip
-  //     text = params.row.cargoNo.slice(0, 12) + '...'
-  //     return h('div', [
-  //       h('Tooltip', {
-  //         props: {
-  //           placeholder: 'bottom',
-  //           transfer: false
-  //         }
-  //       }, [
-  //         h('span', {
-  //         }, text),
-  //         h('div', {
-  //           slot: 'content',
-  //           style: {
-  //             whiteSpace: 'normal'
-  //           }
-  //         }, params.row.cargoNo)
-  //       ])
-  //     ])
-  //   } else {
-  //     return h('span', {
-  //     }, params.row.cargoNo || '-')
-  //   }
-  // }
+  // tooltip: true
+  render: (h, params) => {
+    let text = ''
+    if (params.row.cargoNo.length > 12) { // 显示tooltip
+      text = params.row.cargoNo.slice(0, 12) + '...'
+      return h('div', [
+        h('Tooltip', {
+          props: {
+            placeholder: 'bottom',
+            transfer: true
+          }
+        }, [
+          h('span', {
+          }, text),
+          h('div', {
+            slot: 'content',
+            style: {
+              whiteSpace: 'normal'
+            }
+          }, params.row.cargoNo)
+        ])
+      ])
+    } else {
+      return h('span', {
+      }, params.row.cargoNo || '-')
+    }
+  }
 }
 export const weight = {
   title: '重量（吨）',
