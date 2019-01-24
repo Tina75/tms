@@ -12,7 +12,7 @@
     <div v-else class="i-pb-10 i-pt-10" style="text-align: center;">
       <span>
         <Icon type="md-alert" size="26" color="#FFBB44"></Icon>
-        您还未给此客户设置计费规则
+        暂未查询到符合收发货线路的计费规则
       </span>
     </div>
 
