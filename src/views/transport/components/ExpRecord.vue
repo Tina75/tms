@@ -63,44 +63,44 @@
               <Row v-if="billType != 2">
                 <i-col span="8">
                   <label class="feeLabel">{{data.assignCarType === 1 ? '运输费：' : '油费：'}}</label>
-                  <span class="colorGrey">{{data.beforeFeeInfo.freightFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.freightFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">装货费：</label>
-                  <span class="colorGrey">{{data.beforeFeeInfo.loadFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.loadFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">卸货费：</label>
-                  <span class="colorGrey">{{data.beforeFeeInfo.unloadFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.unloadFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col v-if="billType === 3" span="8">
                   <label class="feeLabel">路桥费：</label>
-                  <span class="colorGrey">{{data.beforeFeeInfo.tollFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.tollFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col v-if="billType === 3 && data.assignCarType === 2" span="8">
                   <label class="feeLabel">住宿费：</label>
-                  <span class="colorGrey">{{data.beforeFeeInfo.accommodation | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.accommodation | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">保险费：</label>
-                  <span class="colorGrey">{{data.beforeFeeInfo.insuranceFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.insuranceFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">其他：</label>
-                  <span class="colorGrey">{{data.beforeFeeInfo.otherFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.otherFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col v-if="billType === 3" span="8">
                   <label class="feeLabel">信息费：</label>
-                  <span class="colorGrey">{{data.beforeFeeInfo.infoFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.infoFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">费用合计：</label>
-                  <span class="colorGrey">{{data.beforeFeeInfo.totalFee | Money}}元</span>
+                  <span class="colorGrey">{{data.beforeFeeInfo.totalFee | toPoint('元')}}</span>
                 </i-col>
               </Row>
               <Row v-else>
                 <label>外转运费：</label>
-                <span class="colorGrey">{{data.beforeFeeInfo.freightFee | Money}}元</span>
+                <span class="colorGrey">{{data.beforeFeeInfo.freightFee | toPoint('元')}}</span>
               </Row>
               <Table
                 v-if="data.assignCarType === 1"
@@ -115,44 +115,44 @@
               <Row v-if="billType != 2">
                 <i-col span="8">
                   <label class="feeLabel">{{data.assignCarType === 1 ? '运输费：' : '油费：'}}</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}" class="colorGrey">{{data.afterFeeInfo.freightFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}" class="colorGrey">{{data.afterFeeInfo.freightFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">装货费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}" class="colorGrey">{{data.afterFeeInfo.loadFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.loadFee, data.afterFeeInfo.loadFee)}" class="colorGrey">{{data.afterFeeInfo.loadFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">卸货费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}" class="colorGrey">{{data.afterFeeInfo.unloadFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.unloadFee, data.afterFeeInfo.unloadFee)}" class="colorGrey">{{data.afterFeeInfo.unloadFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col v-if="billType === 3" span="8">
                   <label class="feeLabel">路桥费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.tollFee, data.afterFeeInfo.tollFee)}" class="colorGrey">{{data.afterFeeInfo.tollFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.tollFee, data.afterFeeInfo.tollFee)}" class="colorGrey">{{data.afterFeeInfo.tollFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col v-if="billType === 3 && data.assignCarType === 2" span="8">
                   <label class="feeLabel">住宿费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.accommodation, data.afterFeeInfo.accommodation)}" class="colorGrey">{{data.afterFeeInfo.accommodation | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.accommodation, data.afterFeeInfo.accommodation)}" class="colorGrey">{{data.afterFeeInfo.accommodation | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">保险费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}" class="colorGrey">{{data.afterFeeInfo.insuranceFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}" class="colorGrey">{{data.afterFeeInfo.insuranceFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">其他：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}" class="colorGrey">{{data.afterFeeInfo.otherFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}" class="colorGrey">{{data.afterFeeInfo.otherFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col v-if="billType === 3" span="8">
                   <label class="feeLabel">信息费：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.infoFee, data.afterFeeInfo.infoFee)}" class="colorGrey">{{data.afterFeeInfo.infoFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.infoFee, data.afterFeeInfo.infoFee)}" class="colorGrey">{{data.afterFeeInfo.infoFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
                   <label class="feeLabel">费用合计：</label>
-                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.totalFee, data.afterFeeInfo.totalFee)}" class="colorGrey">{{data.afterFeeInfo.totalFee | Money}}</span>元
+                  <span :class="{'red-col': compareFee(data.beforeFeeInfo.totalFee, data.afterFeeInfo.totalFee)}" class="colorGrey">{{data.afterFeeInfo.totalFee | toPoint('元')}}</span>
                 </i-col>
               </Row>
               <Row v-else>
                 <label>外转运费：</label>
-                <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}" class="colorGrey">{{data.afterFeeInfo.freightFee | Money}}元</span>
+                <span :class="{'red-col': compareFee(data.beforeFeeInfo.freightFee, data.afterFeeInfo.freightFee)}" class="colorGrey">{{data.afterFeeInfo.freightFee | toPoint('元')}}</span>
               </Row>
               <Table
                 v-if="data.assignCarType === 1"
@@ -191,7 +191,6 @@ export default {
       if (!timestamp) return '-'
       return new Date(timestamp).Format('yyyy-MM-dd hh:mm')
     },
-    Money: moneyFormate,
     numFormat (num) {
       return num + 1
     }

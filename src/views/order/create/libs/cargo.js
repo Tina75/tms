@@ -2,9 +2,17 @@ import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
 import { NumberPrecesion, divideFeeOrNull, multiplyFeeOrNull, isNumber } from '@/libs/js/config'
 let uniqueIndex = 0
-// 过滤undefined和null
+// 过滤undefined和null为空
 const propFilter = (val) => {
   return val === undefined || val === null ? '' : val
+}
+// 字符串转数字 注 ''时返回''
+const toNumber = (val) => {
+  if (typeof val === 'string') {
+    return val === '' ? '' : Number(val)
+  } else {
+    return val
+  }
 }
 export default class Cargo {
   /**
@@ -69,13 +77,13 @@ export default class Cargo {
       }
       if (!transfer) {
         // 货值，整数
-        this.cargoCost = Number(propFilter(props.cargoCost))
+        this.cargoCost = propFilter(toNumber(props.cargoCost))
       } else {
-        this.cargoCost = divideFeeOrNull(props.cargoCost)
+        this.cargoCost = divideFeeOrNull(toNumber(props.cargoCost))
       }
       // 兼容常发货物字符串 volume weight weightKg cargoCost
-      this._weight = Number(propFilter(props.weight))
-      this.volume = Number(propFilter(props.volume))
+      this._weight = propFilter(toNumber(props.weight))
+      this.volume = propFilter(toNumber(props.volume))
       this.quantity = propFilter(props.quantity)
       this.unit = propFilter(props.unit)
       this.remark1 = propFilter(props.remark1)
