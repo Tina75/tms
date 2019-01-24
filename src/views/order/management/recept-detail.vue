@@ -139,7 +139,7 @@
         <Row style="margin-top: 18px;">
           <i-col span="24">
             <span>备注：</span>
-            <span>{{detail.remark}}</span>
+            <span>{{detail.remark || '-'}}</span>
           </i-col>
         </Row>
       </div>
@@ -239,13 +239,13 @@
           </i-col>
         </Row>
       </div>
-      <div v-if="from === 'receipt' && detail.receiptOrder.receiptUrl.length > 0">
+      <div v-if="from === 'receipt' && receiptUrl.length > 0">
         <div class="title">
           <span>回单照片</span>
         </div>
         <div style="width: 900px;margin-top: 31px;">
           <div
-            v-for="(item, index) in detail.receiptOrder.receiptUrl"
+            v-for="(item, index) in receiptUrl"
             :key="index"
             :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + $handleImgUrl(item) + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
             @click="handleView(index)">
@@ -384,7 +384,8 @@ export default {
         render: (h, p) => {
           return h('span', p.row.weightKg ? p.row.weightKg : 0)
         }
-      }
+      },
+      receiptUrl: [] // 回单照片
     }
   },
 
@@ -601,7 +602,7 @@ export default {
         name: 'order/management/dialog/upload',
         data: {
           params: order,
-          name: order.receiptOrder.receiptUrl.length > 0 ? '修改' : '上传'
+          name: this.receiptUrl.length > 0 ? '修改' : '上传'
         },
         methods: {
           ok (node) {
@@ -658,12 +659,13 @@ export default {
         }).then((res) => {
           z.detail = res.data.data
           z.receiptStatus = res.data.data.receiptOrder.receiptStatus
+          z.receiptUrl = res.data.data.receiptOrder.receiptUrl
           // 过滤回单详情页操作按钮
           z.filterReceiptButton()
           z.orderLog = res.data.data.receiptOrderLogs // 回单日志
           z.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
           let imageItems = []
-          z.detail.receiptOrder.receiptUrl.map((item) => {
+          z.receiptUrl.map((item) => {
             imageItems.push({
               src: z.$handleImgUrl(item),
               msrc: z.$handleImgUrl(item)
@@ -898,24 +900,25 @@ export default {
     },
     // 回单详情按钮过滤   0待回收；1待返厂（已回收）；2已返厂
     filterReceiptButton () {
-      if (this.detail.receiptOrder.receiptStatus === 0 && this.detail.status === 40) {
-        this.btnGroup = [
+      const z = this
+      if (z.detail.receiptOrder.receiptStatus === 0 && z.detail.status === 40) {
+        z.btnGroup = [
           { name: '回收', value: 1, code: 120501 }
         ]
-        this.operateValue = 1
-      } else if (this.detail.receiptOrder.receiptStatus === 1) {
-        this.btnGroup = [
-          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 120505 : 120504 },
+        z.operateValue = 1
+      } else if (z.detail.receiptOrder.receiptStatus === 1) {
+        z.btnGroup = [
+          { name: z.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: z.receiptUrl.length > 0 ? 120505 : 120504 },
           { name: '返厂', value: 2, code: 120502 }
         ]
-        this.operateValue = 2
-      } else if (this.detail.receiptOrder.receiptStatus === 2) {
-        this.btnGroup = [
-          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 120505 : 120504 }
+        z.operateValue = 2
+      } else if (z.detail.receiptOrder.receiptStatus === 2) {
+        z.btnGroup = [
+          { name: z.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: z.receiptUrl.length > 0 ? 120505 : 120504 }
         ]
-        this.operateValue = 1
+        z.operateValue = 1
       } else {
-        this.btnGroup = []
+        z.btnGroup = []
       }
     },
     // 预览
