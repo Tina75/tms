@@ -85,3 +85,7 @@ Vue.directive('imgFormat', function (el, binding) {
   if (binding.value.indexOf('aliyuncs.com') > 0) return
   el.style.backgroundImage = 'url(' + `${URL_HOST}${binding.value}?x-oss-process=image/resize,m_fill,h_220,w_220` + ')'
 })
+// 为空字符串时 '-'
+Vue.filter('empty', function (string) {
+  return string === '' ? '-' : string
+})

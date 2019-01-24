@@ -56,11 +56,12 @@
                 <span class="table-footer-item">装货费：{{item.waybill.loadFee | toPoint('元')}}</span>
                 <span class="table-footer-item">卸货费：{{item.waybill.unloadFee | toPoint('元')}}</span>
                 <span class="table-footer-item">路桥费：{{item.waybill.tollFee | toPoint('元')}}</span>
+                <span v-if="item.waybill.assignCarType === 2" class="table-footer-item">住宿费：{{item.waybill.accommodation | toPoint('元')}}</span>
                 <span class="table-footer-item">保险费：{{item.waybill.insuranceFee | toPoint('元')}}</span>
                 <span class="table-footer-item">其他：{{item.waybill.otherFee | toPoint('元')}}</span>
                 <span class="table-footer-item">合计运费: {{item.waybill.totalFee | toPoint('元')}}</span>
                 <span class="table-footer-item">结算方式：{{settlement(item.waybill.settlementType) || '-'}}</span>
-                <span class="table-footer-item">信息费：{{item.waybill.infoFee | toPoint('元')}}</span>
+                <span v-if="item.waybill.assignCarType === 1" class="table-footer-item">信息费：{{item.waybill.infoFee | toPoint('元')}}</span>
               </td>
             </tr>
           </tbody>

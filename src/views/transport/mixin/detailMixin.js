@@ -62,20 +62,20 @@ export default {
       columnWeight: {
         title: '重量(吨)',
         key: 'weight',
-        width: 120,
+        width: 140,
         render: (h, p) => {
           return h('div', {},
-            p.row.cargoList.map((cargo) => h('div', isNumber(cargo.weight) ? cargo.weight : '-')))
+            p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.weight) ? cargo.weight : '-')))
         }
       },
       // 公斤列
       columnWeightKg: {
         title: '重量(公斤)',
         key: 'weightKg',
-        width: 120,
+        width: 140,
         render: (h, p) => {
           return h('div', {},
-            p.row.cargoList.map((cargo) => h('div', isNumber(cargo.weightKg) ? cargo.weightKg : '-')))
+            p.row.cargoList.map((cargo) => h('div', { style: { 'lineHeight': 2 } }, isNumber(cargo.weightKg) ? cargo.weightKg : '-')))
         }
       }
     }
@@ -186,7 +186,8 @@ export default {
     scopedSlotsRender (h, p, key, defaultString = '-') {
       if (p.row.cargoList) {
         return h('div', {},
-          p.row.cargoList.map((cargo) => h('div', cargo[key] || defaultString))
+          // p.row.cargoList.map((cargo) => h('div', cargo[key] || defaultString))
+          p.row.cargoList.map((cargo) => this.tableDataRender(h, cargo[key] || defaultString))
         )
       }
       return h('span', '-')

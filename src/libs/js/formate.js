@@ -3,13 +3,12 @@
  * @param {*} value 手机号
  */
 export const formatePhone = (value) => {
+  // 首字母是1的为手机号
   if (/^1/.test(value)) {
-    let str = value.replace(/\s/g, '')
-    if (value.length > 3 && value.length < 8) {
-      value = str.substr(0, 3) + ' ' + str.substr(3, 4)
-    } else if (value.length >= 8) {
-      value = [str.substr(0, 3), str.substr(3, 4), str.substr(7, 4)].join(' ')
-    }
+    let reg = /^1(\d{2})/
+    let reg1 = /(\d{4})/
+
+    value = value.replace(reg, '1$1 ').replace(reg1, '$1 ')
   }
   return value
 }

@@ -71,11 +71,19 @@ export default {
       let showText = (text.length > 12 && !unEllipsis) ? text.substr(0, 12) + '...' : text
       showText = showText || '-'
       if (text.length <= 12 || unEllipsis) {
-        return h('span', showText)
+        return h('div', {
+          style: {
+            'lineHeight': 2
+          }
+        }, showText)
       } else {
         return h('Tooltip', {
+          class: ['table-data-render'],
           props: {
             content: text
+          },
+          style: {
+            'lineHeight': 2
           }
         }, showText)
       }

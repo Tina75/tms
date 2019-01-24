@@ -4,24 +4,24 @@
       <Button v-if="hasPower(100402)" type="default" @click="deleteBtn">删除</Button>
       <Button v-if="hasPower(100401)" type="primary" @click="createOrder">再来一单</Button>
     </div>
-    <Form :label-width="85" label-position="left">
+    <Form :label-width="97" label-position="left">
       <div class="title">
         <span>基本信息</span>
       </div>
       <Row :gutter="16">
         <Col span="6">
         <FormItem label="客户名称：">
-          {{detail.consignerName}}
+          {{detail.consignerName | empty}}
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="发货城市：">
-          {{detail.startName}}
+          {{detail.startName | empty}}
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="到货城市：">
-          {{detail.endName}}
+          {{detail.endName | empty}}
         </FormItem>
         </Col>
         <Col span="6">
@@ -38,12 +38,12 @@
         </Col>
         <Col span="6">
         <FormItem label="对接业务员：">
-          {{detail.salesmanName}}
+          {{detail.salesmanName | empty}}
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="代收货款：">
-          {{detail.collectionMoney | toPoint}}元
+          {{detail.collectionMoney | toPoint('元') }}
         </FormItem>
         </Col>
         <Col span="6">
@@ -55,7 +55,7 @@
       <Row :gutter="16">
         <Col span="24">
         <FormItem label="备注：">
-          {{detail.remark}}
+          {{detail.remark | empty}}
         </FormItem>
         </Col>
       </Row>
@@ -91,7 +91,7 @@
             {{detail.consigneeAddress + detail.consigneeHourseNumber}}
           </FormItem>
           <FormItem label="收货人单位：">
-            {{detail.consigneeCompanyName}}
+            {{detail.consigneeCompanyName | empty}}
           </FormItem>
         </Card>
         </Col>
@@ -119,42 +119,42 @@
         </Col>
         <Col span="6">
         <FormItem label="运输费用：">
-          <span class="blod-font">{{detail.freightFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.freightFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="提货费用：">
-          <span class="blod-font">{{detail.pickupFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.pickupFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="装货费用：">
-          <span class="blod-font">{{detail.loadFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.loadFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
       </Row>
       <Row :gutter="16">
         <Col span="6">
         <FormItem label="卸货费用：">
-          <span class="blod-font">{{detail.unloadFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.unloadFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="保险费用：">
-          <span class="blod-font">{{detail.insuranceFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.insuranceFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
         <FormItem label="其他费用：">
-          <span class="blod-font">{{detail.otherFee | toPoint}}元</span>
+          <span class="blod-font">{{detail.otherFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
       </Row>
       <Row :gutter="16">
-        <Col span="6">
+        <Col span="12">
         <FormItem label="费用合计：">
-          <span class="blod-font totalFee">{{detail.totalFee | toPoint}}</span>
-          <span class="blod-font"> 元 （{{settleMap[detail.settlementType]}}）</span>
+          <span class="blod-font totalFee">{{detail.totalFee | toPoint('元') }}</span>
+          <span class="blod-font">  （{{settleMap[detail.settlementType]}}）</span>
         </FormItem>
         </Col>
       </Row>
@@ -358,9 +358,13 @@ export default {
     color #333
   .totalFee
     color #00A4BD
-    font-size 20px
+    font-size 18px
 </style>
 <style lang="stylus">
 .ivu-tooltip-inner-with-width
-    word-break break-all
+  word-break break-all
+.frequent-order-detail
+  .ivu-form-item-label
+  .ivu-form-item-content
+    font-size 14px
 </style>

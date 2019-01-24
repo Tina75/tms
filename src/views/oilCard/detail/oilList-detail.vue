@@ -40,7 +40,8 @@
         <Row>
           <i-col  span="6">
             <span>余额：</span>
-            <span>{{detail.amount | toPoint}}元</span>
+            <span>{{detail.amount | toPoint}}</span>
+            <span v-if="typeof detail.amount === 'number'">元</span>
           </i-col>
           <i-col span="6">
             <span>持卡人：</span>

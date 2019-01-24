@@ -16,7 +16,8 @@
         <span v-if = "transfer.type === 2">{{transfer.number}}</span>
       </FormItem>
       <FormItem  label="当前余额：">
-        <span class="moneyFormSpan">{{transfer.amount | toPoint}}元</span>
+        <span class="moneyFormSpan">{{transfer.amount | toPoint}}</span>
+        <span v-if="typeof transfer.amount === 'number'">元</span>
       </FormItem>
       <!--类型为主卡-->
       <FormItem v-if="transfer.type===1" label="转入卡号：" prop="toCardId">

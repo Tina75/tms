@@ -12,7 +12,7 @@
     <div v-else class="i-pb-10 i-pt-10" style="text-align: center;">
       <span>
         <Icon type="md-alert" size="26" color="#FFBB44"></Icon>
-        您还未给此客户设置计费规则
+        暂未查询到符合收发货线路的计费规则
       </span>
     </div>
 
@@ -75,7 +75,10 @@ export default {
         params: {
           partnerId: this.partnerId,
           partnerType: this.partnerType,
-          partnerName: this.partnerName
+          partnerName: this.partnerName,
+          // v1.11 添加始发和目的城市，保持和app统一，过滤掉不符合的城市路线计费规则数据
+          departure: this.start,
+          destination: this.end
         }
       }).then((res) => {
         this.ruleOptions = res.data.data

@@ -158,8 +158,8 @@
           <td class="money"><div>{{res.myOtherFee}}</div></td>
         </tr>
         <tr>
-          <td>开票税费</td>
-          <td>开票税费</td>
+          <td>开票税额</td>
+          <td>开票税额</td>
           <td class="money"><div>{{res.orderInvoiceFee}}</div></td>
         </tr>
         <tr class="total">

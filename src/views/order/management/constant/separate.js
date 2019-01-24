@@ -1,6 +1,5 @@
 
-import float from '@/libs/js/float'
-import { roundFee, renderFee, renderVolume, roundVolume, roundWeight, renderWeight, roundWeightKg, renderWeightKg } from '@/libs/js/config'
+import { isNumber, roundFee, renderFee, renderVolume, roundVolume, roundWeight, renderWeight, roundWeightKg, renderWeightKg } from '@/libs/js/config'
 import TagNumberInput from '@/components/TagNumberInput'
 export const TABLE_COLUMNS_ONE = vm => [
   {
@@ -84,7 +83,7 @@ export const TABLE_COLUMNS_ONE = vm => [
           })
         ])
       } else {
-        return h('div', float.round(params.row.volume, 6))
+        return h('div', roundVolume(params.row.volume))
       }
     }
   },
@@ -93,7 +92,6 @@ export const TABLE_COLUMNS_ONE = vm => [
     key: 'cargoCost',
     render: (h, params) => {
       return renderFee(h, params.row.cargoCost)
-      // return h('div', float.round(params.row.cargoCost / 100))
     }
   },
   {
@@ -169,7 +167,7 @@ export const TABLE_COLUMNS_ONE = vm => [
                   params.row.cargoCost = roundFee(cloneData.cargoCost)
                 }
                 // 没修改过数量、重量、体积中任意一个 或 修改过数量、重量、体积跟初始值一致   部分整拆
-                if (vm.quantityVal === params.row.quantity && float.round(vm.weightVal, 3) === float.round(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg, 3) && float.round(vm.volumeVal, 6) === float.round(params.row.volume, 6)) {
+                if (vm.quantityVal === params.row.quantity && roundWeight(vm.weightVal) === roundWeight(vm.WeightOption === 1 ? params.row.weight : params.row.weightKg) && roundVolume(vm.volumeVal) === roundVolume(params.row.volume)) {
                   vm.separateWholeList(params.index)
                 } else {
                   if (params.row.quantity !== 0) {
@@ -341,7 +339,6 @@ export const TABLE_COLUMNS_TWO = vm => [
     key: 'volume',
     render: (h, params) => {
       return renderVolume(h, params.row.volume)
-      // return h('div', float.round(params.row.volume, 6))
     }
   },
   {
@@ -349,7 +346,6 @@ export const TABLE_COLUMNS_TWO = vm => [
     key: 'cargoCost',
     render: (h, params) => {
       return renderFee(h, params.row.cargoCost)
-      // return h('div', float.round(params.row.cargoCost / 100))
     }
   },
   {
@@ -400,7 +396,7 @@ export const TABLE_COLUMNS_TWO = vm => [
                   params.row.volume = Number(params.row.volume)
 
                   hasParentList.quantity += params.row.quantity
-                  hasParentList.cargoCost = float.round(hasParentList.cargoCost + params.row.cargoCost)
+                  hasParentList.cargoCost = roundFee(hasParentList.cargoCost + params.row.cargoCost)
                   // 区分吨和公斤
                   if (vm.WeightOption === 1) {
                     hasParentList.weight = roundWeight(hasParentList.weight + params.row.weight)
@@ -498,7 +494,6 @@ export const COLUMNS_ONE_WEIGHTKG = vm => {
         ])
       } else {
         return renderWeightKg(h, params.row.weightKg)
-        // return h('div', float.round(params.row.weightKg))
       }
     }
   }
@@ -590,7 +585,6 @@ export const COLUMNS_THREE_WEIGHTKG = vm => {
       } else {
         return renderWeightKg(h, params.row.weight)
         // return renderWeightKg(h, params.row.weightKg)
-        // return h('div', float.round(params.row.weightKg))
       }
     }
   }
@@ -606,7 +600,7 @@ export const TABLE_COLUMNS_AVERAGE = (vm) => [
     title: '包装数量',
     key: 'quantity',
     render (h, params) {
-      return h('span', params.row.quantity ? params.row.quantity : '-')
+      return h('span', isNumber(params.row.quantity) ? params.row.quantity : '-')
     }
   },
   {
@@ -614,7 +608,6 @@ export const TABLE_COLUMNS_AVERAGE = (vm) => [
     key: 'volume',
     render: (h, params) => {
       return renderVolume(h, params.row.volume)
-      // return h('div', float.round(params.row.volume, 6))
     }
   },
   {
@@ -622,7 +615,6 @@ export const TABLE_COLUMNS_AVERAGE = (vm) => [
     key: 'cargoCost',
     render: (h, params) => {
       return renderFee(h, params.row.cargoCost)
-      // return h('div', float.round(params.row.cargoCost / 100))
     }
   },
   {

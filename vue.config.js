@@ -1,6 +1,7 @@
 const UglifyPlugin = require('uglifyjs-webpack-plugin')
 const uglifyOptions = require('@vue/cli-service/lib/config/uglifyOptions')
 const merge = require('webpack-merge')
+const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin')
 module.exports = {
   baseUrl: './',
   assetsDir: 'static',
@@ -17,7 +18,35 @@ module.exports = {
           }
         }))
       ])
+      config.optimization.splitChunks({
+        chunks: 'all',
+        cacheGroups: {
+          vendors: {
+            name: 'chunk-vendors',
+            test: /[\\/]node_modules[\\/]/,
+            priority: -10,
+            chunks: 'initial'
+          },
+          iview: {
+            name: 'chunk-iview', // 单独将 iview 拆包
+            priority: -5, // 权重要大于 vendor 和 app 不然会被打包进 vendor 或者 app
+            test: /[\\/]node_modules[\\/]iview[\\/]/
+          },
+          common: {
+            name: 'chunk-common',
+            minChunks: 2,
+            priority: -20,
+            chunks: 'initial',
+            reuseExistingChunk: true
+          }
+        }
+      })
     }
+    // 提取chunk id清单
+    config.optimization.runtimeChunk(true)
+    config.plugin('script-ext').use(ScriptExtHtmlWebpackPlugin, [{
+      inline: /runtime\..*\.js$/
+    }]).after('html')
     // config.module
     //   .rule('vue')
     //   .test(/\.vue$/)

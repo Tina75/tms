@@ -60,11 +60,11 @@
             <Row>
               <i-col span="7">
                 <span>始发地：</span>
-                <span>{{detail.startName}}</span>
+                <span>{{detail.startName | empty}}</span>
               </i-col>
               <i-col span="7">
                 <span>目的地：</span>
-                <span>{{detail.endName}}</span>
+                <span>{{detail.endName | empty}}</span>
               </i-col>
               <i-col span="6">
                 <span>提货方式：</span>
@@ -73,8 +73,7 @@
               </i-col>
               <i-col span="4">
                 <span>回单数：</span>
-                <span v-if="detail.receiptCount">{{detail.receiptCount}}</span>
-                <span v-else>-</span>
+                <span>{{detail.receiptCount}}</span>
               </i-col>
             </Row>
             <Row v-if="from === 'order'">
@@ -87,10 +86,13 @@
                 <span>是否开票：</span>
                 <span>{{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%）` : '否'}}</span>
               </i-col>
-              <i-col span="7">
+              <i-col v-if="!detail.parentId" span="7">
                 <span>开票税额：</span>
-                <span v-if="detail.invoiceAmount !== ''">{{ getDivideFee(detail.invoiceAmount) }}元</span>
-                <span v-else>-</span>
+                <span>{{ detail.invoiceAmount | toPoint('元') }}</span>
+              </i-col>
+              <i-col v-else span="7">
+                <span>开票税额：</span>
+                <span>{{ detail.allocationInvoiceAmount | toPoint('元') }}</span>
               </i-col>
             </Row>
             <Row style="margin-top:18px">
@@ -228,8 +230,8 @@
             <Row>
               <i-col span="24">
                 <span style="width: 72px;">费用合计：</span>
-                <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint}} 元</span>
-                <span v-else>-</span>
+                <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint('元')}}</span>
+                <span v-else style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.allocationFee | toPoint('元')}}</span>
               </i-col>
             </Row>
             <Row>
@@ -238,19 +240,6 @@
                 <span>{{settlementToName(detail.settlementType)}}</span>
               </i-col>
             </Row>
-          </div>
-          <div v-if="from === 'receipt' && receiptStatus > 0">
-            <div class="title">
-              <span>回单照片</span>
-            </div>
-            <div v-if="detail.receiptOrder.receiptUrl.length > 0" style="width: 900px;margin-top: 31px;">
-              <div
-                v-for="(item, index) in detail.receiptOrder.receiptUrl"
-                :key="index"
-                :style="'cursor: pointer;display: inline-block;width: 160px;margin-right: 16px;height: 90px;background-image: url(' + $handleImgUrl(item) + '?x-oss-process=image/resize,w_160);background-repeat: no-repeat;background-position: center;'"
-                @click="handleView(index)">
-              </div>
-            </div>
           </div>
           <div class="order-log">
             <div class="title">

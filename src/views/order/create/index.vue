@@ -288,8 +288,8 @@
       <FormItem label="回单数量:" prop="receiptCount">
         <Row>
           <Col span="19">
-          <InputNumber v-model="orderForm.receiptCount" :min="0" :parser="value => value ?  parseInt(value).toString() : value" class="order-create__input-w100">
-          </InputNumber>
+          <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :precision="0" clearable>
+          </TagNumberInput>
           </Col>
           <Col span="5" class="order-create__input-unit">份</Col>
         </Row>
@@ -779,7 +779,7 @@ export default {
       api.getReCreateDeatil(createId).then(orderDetail => {
         vm.loading = false
         for (let key in vm.orderForm) {
-          vm.orderForm[key] = orderDetail[key] || vm.orderForm[key]
+          vm.orderForm[key] = orderDetail[key]
         }
         this.consignerCargoes = orderDetail.orderCargoTemplateList.map((item) => new Cargo(item, true))
         // 分转换元
@@ -883,8 +883,6 @@ export default {
           // 如果在货物信息中已经有数据了，就不覆盖了；如果没有货物信息，就默认添加已维护的货物
           const confignerCargoValid = _this.consignerCargoes[0].validate()
           if (!confignerCargoValid.success) {
-            cargoList[0].weight = Number(cargoList[0].weight)
-            cargoList[0].volume = Number(cargoList[0].volume)
             _this.consignerCargoes = [new Cargo(cargoList[0], true)]
           }
         }

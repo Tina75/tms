@@ -914,10 +914,10 @@ export default {
         {
           title: '回单数量',
           key: 'receiptCount',
-          minWidth: 120,
-          render: (h, p) => {
-            return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
-          }
+          minWidth: 120
+          // render: (h, p) => {
+          //   return h('span', p.row.receiptCount ? p.row.receiptCount : '-')
+          // }
         },
         {
           title: '代收货款',

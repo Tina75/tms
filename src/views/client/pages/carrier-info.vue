@@ -32,7 +32,7 @@
         <Row  class="row">
           <Col span="8">
           <div>
-            <span class="label">联系电话：</span>
+            <span class="label">负责人电话：</span>
             {{companyList.carrierPhone}}
           </div>
           </Col>

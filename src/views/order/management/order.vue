@@ -79,66 +79,22 @@ export default {
     // 获取各状态订单数目
     getOrderNum () {
       Server({
-        url: 'order/getOrderNumByStatus',
+        url: '/order/getOrderNumByStatusNew',
         method: 'get',
         data: {
           importId: this.ImportId || null
         }
       }).then((res) => {
         let list = res.data.data
-        let arr = []
-        list.map((item) => {
-          if (item.total !== undefined) {
-            let t = {
-              name: '全部',
-              count: ''
-            }
-            arr.unshift(t)
-          }
-          if (item.pickup !== undefined) {
-            let p = {
-              name: '待提货',
-              count: item.pickup
-            }
-            arr.push(p)
-          }
-          if (item.dispatch !== undefined) {
-            let d = {
-              name: '待送货',
-              count: item.dispatch
-            }
-            arr.push(d)
-          }
-          if (item.transit !== undefined) {
-            let t = {
-              name: '在途',
-              count: item.transit
-            }
-            arr.push(t)
-          }
-          if (item.arrive !== undefined) {
-            let a = {
-              name: '已到货',
-              count: item.arrive
-            }
-            arr.push(a)
-          }
-          if (item.receipt !== undefined) {
-            let r = {
-              name: '已回单',
-              count: item.receipt
-            }
-            arr.push(r)
-          }
-          if (item.recycle !== undefined) {
-            let r = {
-              name: '回收站',
-              count: item.recycle
-            }
-            arr.push(r)
-          }
-        })
-        this.status = arr
+        this.status = [
+          { name: '全部', count: '' },
+          { name: '待提货', count: list.pickup },
+          { name: '待送货', count: list.dispatch },
+          { name: '在途', count: list.transit },
+          { name: '已到货', count: list.arrive },
+          { name: '已回单', count: list.receipt },
+          { name: '回收站', count: list.recycle }
+        ]
       })
     },
     // tab状态栏切换

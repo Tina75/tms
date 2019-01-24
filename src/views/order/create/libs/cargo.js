@@ -2,9 +2,17 @@ import validator from '@/libs/js/validate'
 import float from '@/libs/js/float'
 import { NumberPrecesion, divideFeeOrNull, multiplyFeeOrNull, isNumber } from '@/libs/js/config'
 let uniqueIndex = 0
-// 过滤undefined和null
+// 过滤undefined和null为空
 const propFilter = (val) => {
   return val === undefined || val === null ? '' : val
+}
+// 字符串转数字 注 ''时返回''
+const toNumber = (val) => {
+  if (typeof val === 'string') {
+    return val === '' ? '' : Number(val)
+  } else {
+    return val
+  }
 }
 export default class Cargo {
   /**
@@ -65,16 +73,17 @@ export default class Cargo {
       if (props.dimension) {
         this.dimension._length = propFilter(props.dimension.length)
         this.dimension._width = propFilter(props.dimension.width)
-        this.dimension._height = (props.dimension.height)
+        this.dimension._height = propFilter(props.dimension.height)
       }
       if (!transfer) {
         // 货值，整数
-        this.cargoCost = propFilter(props.cargoCost)
+        this.cargoCost = propFilter(toNumber(props.cargoCost))
       } else {
-        this.cargoCost = divideFeeOrNull(props.cargoCost)
+        this.cargoCost = divideFeeOrNull(toNumber(props.cargoCost))
       }
-      this._weight = propFilter(props.weight)
-      this.volume = propFilter(props.volume)
+      // 兼容常发货物字符串 volume weight weightKg cargoCost
+      this._weight = propFilter(toNumber(props.weight))
+      this.volume = propFilter(toNumber(props.volume))
       this.quantity = propFilter(props.quantity)
       this.unit = propFilter(props.unit)
       this.remark1 = propFilter(props.remark1)
@@ -91,8 +100,11 @@ export default class Cargo {
   get weightKg () {
     return isNumber(this._weight) ? float.round(this._weight * 1000) : ''
   }
+  /**
+   * value = 0 | '' 时候不处理，其余除以1000
+   */
   set weightKg (value) {
-    this._weight = float.round(value / 1000, NumberPrecesion.weight)
+    this._weight = value ? float.round(value / 1000, NumberPrecesion.weight) : value
   }
 
   validate () {
