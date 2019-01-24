@@ -34,20 +34,15 @@
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
-import float from '@/libs/js/float'
 import settlement from '@/libs/constant/settlement'
 import ORDER_ITEM from '../constant/orderItem'
-
+import { divideFeeOrNull, multiplyRateOrNull, divideMileage } from '@/libs/js/config'
 export default {
   name: 'order-record',
   filters: {
     timeFormatter (timestamp) {
       if (!timestamp) return '-'
       return new Date(timestamp).Format('yyyy-MM-dd hh:mm')
-    },
-    Money (fee) {
-      if (!fee) return '-'
-      return fee / 100
     }
   },
   mixins: [ BasePage ],
@@ -96,22 +91,22 @@ export default {
       let res = ''
       switch (type) {
         case 'moneny':
-          res = float.round(value / 100)
+          res = divideFeeOrNull(value) === '' ? '-' : divideFeeOrNull(value)
           break
         case 'mile':
-          res = float.round(value / 1000)
+          res = divideMileage(value) === '' ? '-' : divideMileage(value)
           break
         case 'rate':
-          res = float.round(value * 100) + '%'
+          res = multiplyRateOrNull(value) === '' ? '-' : multiplyRateOrNull(value) + '%'
           break
         case 'boolean':
           res = value === 1 ? '是' : '否'
           break
         case 'settle':
-          res = this.settleMap[value]
+          res = this.settleMap[value] || '-'
           break
         default:
-          res = value
+          res = value === '' ? '-' : value
       }
       return res
     }
