@@ -21,7 +21,7 @@ export const ORDER_STATUS = [
   },
   {
     value: 100,
-    label: '回收站'
+    label: '已删除'
   }
 ]
 
