@@ -85,6 +85,7 @@ import { renderFee, getMileageText } from '@/libs/js/config'
 import Export from '@/libs/js/export'
 import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
+import billTypeMap from '@/libs/constant/billType'
 export default {
   name: 'report-driver',
   components: {
@@ -120,10 +121,7 @@ export default {
       times: ['', ''],
       isExport: false,
       /* 业务类型 1 提货 3 送货 */
-      billTypeMap: {
-        1: '提货',
-        3: '送货'
-      },
+      billTypeMap: billTypeMap,
       carriersId: null,
       columns: [
         {
