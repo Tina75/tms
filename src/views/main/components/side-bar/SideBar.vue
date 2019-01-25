@@ -66,8 +66,8 @@ export default {
     line-height: 42px;
     color: #252A2F;
     cursor: pointer;
-    -webkit-transition: left .3s ease;
-    transition: left .3s ease;
+    -webkit-transition: left .2s ease-in-out;
+    transition: left .2s ease-in-out;
     width:0;
     border-left:12px solid #C1C6CB;
     border-top:7px solid transparent;
