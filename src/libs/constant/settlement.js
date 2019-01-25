@@ -21,4 +21,12 @@ export const settlementStatusToName = settlements.reduce((map, option) => {
   return map
 }, {})
 
+export function settlementsFindName (value) {
+  let name = '-'
+  for (const iterator in settlementStatusToName) {
+    if (value === Number(iterator)) name = settlementStatusToName[iterator]
+  }
+  return name
+}
+
 export default settlements
