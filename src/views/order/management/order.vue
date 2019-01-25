@@ -3,7 +3,6 @@
     <tab-header :name="curStatusName" :tabs="status" @tabChange="handleTabChange"></tab-header>
     <tab-content
       :tab-status="curStatusName"
-      :tab-key="tabKey"
       @refresh-tab="getOrderNum">
     </tab-content>
   </div>
@@ -37,10 +36,7 @@ export default {
         { name: '已回单', count: '' },
         { name: '回收站', count: '' }
       ],
-      curStatusName: '',
-      tabKey: {
-        status: 10 // 默认待提货状态  传给pageTable可重新请求数据
-      }
+      curStatusName: ''
     }
   },
 
@@ -55,11 +51,9 @@ export default {
     if (!this.ImportId) {
       if (sessionStorage.getItem('ORDER_TAB_NAME')) {
         this.curStatusName = sessionStorage.getItem('ORDER_TAB_NAME')
-        this.tabKey.status = this.statusToCode(this.curStatusName)
       } else {
         sessionStorage.setItem('ORDER_TAB_NAME', '全部')
         this.curStatusName = '全部'
-        this.tabKey.status = null
       }
     } else { // 批量导入点查看进入的传importId字段，订单列表显示《全部》tab页
       sessionStorage.setItem('ORDER_TAB_NAME', '全部')
@@ -100,34 +94,6 @@ export default {
     // tab状态栏切换
     handleTabChange (val) {
       this.curStatusName = val
-    },
-    // 状态转为状态码
-    statusToCode (name) {
-      let code
-      switch (name) {
-        case '全部':
-          code = null
-          break
-        case '待提货':
-          code = 10
-          break
-        case '待送货':
-          code = 20
-          break
-        case '在途':
-          code = 30
-          break
-        case '已到货':
-          code = 40
-          break
-        case '已回单':
-          code = 50
-          break
-        default:
-          code = 10
-          break
-      }
-      return code
     }
   }
 }

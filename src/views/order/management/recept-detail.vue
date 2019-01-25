@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header :class="from === 'order' ? themeBarColor(orderStatus) : themeBarColor(receiptStatus)" class="detail-header">
+    <header :class="themeBarColor(receiptStatus)" class="detail-header">
       <ul>
         <li>订单号：{{detail.orderNo}}</li>
         <li>客户订单号：{{detail.customerOrderNo || '-' }}</li>
@@ -16,7 +16,7 @@
             </ul>
           </Poptip>
         </li>
-        <li>{{ from === 'order' ? '订单状态：' : '回单状态：'}}<span :class="from === 'order' ? themeStatusColor(orderStatus) : themeStatusColor(receiptStatus)" style="font-weight: bold;">{{ from === 'order' ? statusToName(orderStatus) : statusToName(receiptStatus) }}</span></li>
+        <li>回单状态：<span :class="themeStatusColor(receiptStatus)" style="font-weight: bold;">{{ statusToName(receiptStatus) }}</span></li>
       </ul>
     </header>
     <div style="text-align: right;margin: 24px 0;min-height: 1px;">
@@ -32,7 +32,7 @@
     <section>
       <div>
         <div class="title" style="margin-top: 0">
-          <span>{{from === 'order' ? '客户信息' : '回单信息'}}</span>
+          <span>回单信息</span>
         </div>
         <Row>
           <i-col span="7">
@@ -48,11 +48,6 @@
             <span>到货时间：</span>
             <span v-if="detail.arriveTime">{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
             <span v-else>-</span>
-          </i-col>
-          <i-col v-if="from === 'order'" span="4">
-            <span>代收货款：</span>
-            <span v-if="detail.collectionMoney">{{detail.collectionMoney / 100}}元</span>
-            <span v-else>0元</span>
           </i-col>
         </Row>
         <Row>
@@ -72,16 +67,6 @@
           <i-col span="4">
             <span>回单数：</span>
             <span>{{detail.receiptCount}}</span>
-          </i-col>
-        </Row>
-        <Row v-if="from === 'order'">
-          <i-col span="7">
-            <span>对接业务员：</span>
-            <span>{{detail.salesmanName}}</span>
-          </i-col>
-          <i-col span="7">
-            <span>是否开票：</span>
-            <span>{{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%）` : '否'}}</span>
           </i-col>
         </Row>
         <Row style="margin-top:18px">
@@ -143,7 +128,7 @@
           </i-col>
         </Row>
       </div>
-      <div v-if="from === 'receipt'">
+      <div>
         <div class="title" style="margin-top: 35px;">
           <span>承运商信息</span>
         </div>
@@ -170,76 +155,7 @@
           </i-col>
         </Row>
       </div>
-      <div v-if="from === 'order'" class="cargo-details">
-        <div class="title" style="margin-top: 35px;">
-          <span>货物明细</span>
-        </div>
-        <Table :columns="tableColumns" :data="detail.orderCargoList" style="margin-top: 30px;"></Table>
-        <div class="table-footer">
-          <span style="padding-right: 5px;box-sizing:border-box;">合计</span>
-          <!-- <span>订单总数：{{ orderTotal }}</span> -->
-          <span>总货值：{{ cargoCostTotal }}</span>
-          <span>总数量：{{ quantityTotal }}</span>
-          <span>总重量：{{ weightTotal }}</span>
-          <span>总体积：{{ volumeTotal }}</span>
-        </div>
-      </div>
-      <div v-if="from === 'order'">
-        <div class="title">
-          <span>应收费用</span>
-        </div>
-        <Row style="padding-top: 17px;">
-          <i-col span="4">
-            <span style="width: 72px;">计费里程：</span>
-            <span v-if="detail.mileage" style="font-weight:bold;">{{detail.mileage / 1000}}公里</span>
-            <span v-else>-</span>
-          </i-col>
-          <i-col span="4">
-            <span class="fee-style">运输费：</span>
-            <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
-            <span v-else style="font-weight:bold;">0元</span>
-          </i-col>
-          <i-col span="4">
-            <span class="fee-style">提货费：</span>
-            <span v-if="detail.pickupFee" style="font-weight:bold;">{{detail.pickupFee | toPoint}}元</span>
-            <span v-else style="font-weight:bold;">0元</span>
-          </i-col>
-          <i-col span="4">
-            <span class="fee-style">装货费：</span>
-            <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
-            <span v-else style="font-weight:bold;">0元</span>
-          </i-col>
-          <i-col span="4">
-            <span class="fee-style">卸货费：</span>
-            <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
-            <span v-else style="font-weight:bold;">0元</span>
-          </i-col>
-          <i-col span="4">
-            <span class="fee-style">保险费：</span>
-            <span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>
-            <span v-else style="font-weight:bold;">0元</span>
-          </i-col>
-          <i-col span="4">
-            <span class="fee-style">其他：</span>
-            <span v-if="detail.otherFee" style="font-weight:bold;">{{detail.otherFee | toPoint}}元</span>
-            <span v-else style="font-weight:bold;">0元</span>
-          </i-col>
-        </Row>
-        <Row>
-          <i-col span="24">
-            <span style="width: 72px;">费用合计：</span>
-            <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint}} 元</span>
-            <span v-else>-</span>
-          </i-col>
-        </Row>
-        <Row>
-          <i-col span="24">
-            <span style="width: 72px;">结算方式：</span>
-            <span>{{settlementToName(detail.settlementType)}}</span>
-          </i-col>
-        </Row>
-      </div>
-      <div v-if="from === 'receipt' && receiptUrl.length > 0">
+      <div v-if="receiptUrl.length > 0">
         <div class="title">
           <span>回单照片</span>
         </div>
@@ -254,7 +170,7 @@
       </div>
       <div class="order-log">
         <div class="title">
-          <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
+          <span>回单日志</span>
         </div>
         <div class="log-list">
           <div class="fold-icon" @click="showOrderLog">
@@ -274,7 +190,6 @@
       <img :src="curImg" style="width: 100%">
       <div slot="footer" style="text-align: center;"></div>
     </Modal>
-    <OrderPrint ref="printer" :list="orderPrint"></OrderPrint>
   </div>
 </template>
 
@@ -282,21 +197,16 @@
 import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
-import OrderPrint from './components/OrderPrint'
 import openSwipe from '@/components/swipe/index'
-import _ from 'lodash'
-import float from '@/libs/js/float'
-import { mapGetters } from 'vuex'
-import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
+import { RECEIPT_STATUS_CODE, RECEIPT_STATUS } from '@/libs/constant/receipt'
+import { ORDER_STATUS_CODE } from '@/libs/constant/order'
+import pickups from '@/libs/constant/pickup.js'
+import { THEME_CLASS } from '@/libs/constant/themeClass.js'
 
 export default {
   name: 'order-management-detail',
-
-  components: {
-    OrderPrint
-  },
-  mixins: [ BasePage, tableWeightColumnMixin ],
-  metaInfo: { title: '订单详情' },
+  mixins: [ BasePage ],
+  metaInfo: { title: '回单详情' },
   data () {
     return {
       detail: {
@@ -315,146 +225,16 @@ export default {
       show: false,
       btnGroup: [],
       operateValue: 5,
-      tableColumns: [
-        {
-          title: '货物名称',
-          key: 'cargoName',
-          className: 'padding-left-45'
-        },
-        {
-          title: '包装',
-          key: 'unit',
-          render: (h, p) => {
-            return h('span', p.row.unit ? p.row.unit : '-')
-          }
-        },
-        {
-          title: '数量',
-          key: 'quantity',
-          render: (h, p) => {
-            return h('span', p.row.quantity ? p.row.quantity : 0)
-          }
-        },
-        {
-          title: '货值（元）',
-          key: 'cargoCost',
-          render: (h, params) => {
-            return h('span', params.row.cargoCost ? params.row.cargoCost / 100 : 0)
-          }
-        },
-        {
-          title: '体积（方）',
-          key: 'volume',
-          render: (h, p) => {
-            return h('span', p.row.volume ? p.row.volume : 0)
-          }
-        },
-        {
-          title: '备注1',
-          key: 'remark1',
-          render: (h, p) => {
-            return h('span', p.row.remark1 ? p.row.remark1 : '-')
-          }
-        },
-        {
-          title: '备注2',
-          key: 'remark2',
-          render: (h, p) => {
-            return h('span', p.row.remark2 ? p.row.remark2 : '-')
-          }
-        }
-      ],
-      tableData: [],
-      currentStep: 0,
       orderLogCount: 0,
       showLog: false,
       orderLog: [],
-      orderPrint: [],
       imgViewFunc: null,
-      columnWeight: {
-        title: '重量（吨）',
-        key: 'weight',
-        render: (h, p) => {
-          return h('span', p.row.weight ? p.row.weight : 0)
-        }
-      },
-      columnWeightKg: {
-        title: '重量（公斤）',
-        key: 'weightKg',
-        render: (h, p) => {
-          return h('span', p.row.weightKg ? p.row.weightKg : 0)
-        }
-      },
       receiptUrl: [] // 回单照片
-    }
-  },
-
-  computed: {
-    ...mapGetters([
-      'WeightOption' // 重量配置 1 吨  2 公斤
-    ]),
-    // 订单总数
-    orderTotal () {
-      return this.detail.orderCargoList.length
-    },
-    // 总货值
-    cargoCostTotal () {
-      let total = 0
-      this.detail.orderCargoList.map((item) => {
-        total += Number(item.cargoCost)
-      })
-      total /= 100
-      return float.round(total) + '元'
-    },
-    // 总数量
-    quantityTotal () {
-      let total = 0
-      this.detail.orderCargoList.map((item) => {
-        total += Number(item.quantity)
-      })
-      return total
-    },
-    // 总体积
-    volumeTotal () {
-      let total = 0
-      this.detail.orderCargoList.map((item) => {
-        total += Number(item.volume)
-      })
-      return float.round(total, 4) + '方'
-    },
-    // 总重量
-    weightTotal () {
-      let total = 0
-      this.detail.orderCargoList.map((item) => {
-        // 区分吨或公斤
-        if (this.WeightOption === 1) {
-          total += Number(item.weight)
-        } else {
-          total += Number(item.weightKg)
-        }
-      })
-      return float.round(total, 3) + (this.WeightOption === 1 ? '吨' : '公斤')
-    },
-    // 总费用
-    FeeTotal () {
-      let total = 0
-      total += this.detail.freightFee
-      total += this.detail.loadFee
-      total += this.detail.unloadFee
-      total += this.detail.insuranceFee
-      total += this.detail.otherFee
-      return total
     }
   },
 
   mounted () {
     this.getDetail()
-    // 动态添加吨或公斤列
-    if (this.WeightOption === 1) {
-      this.triggerWeightColumn(this.tableColumns, this.columnWeight, 4)
-    } else {
-      this.triggerWeightColumn(this.tableColumns, this.columnWeightKg, 4)
-    }
   },
 
   methods: {
@@ -466,78 +246,11 @@ export default {
     },
     // 各状态按钮操作
     handleOperateClick (btn) {
-      // this.operateValue = btn.value
-      if (btn.name === '拆单') {
-        this.openSeparateDialog(this.detail)
-      } else if (btn.name === '外转') {
-        this.openOuterDialog(this.detail)
-      } else if (btn.name === '还原' || btn.name === '删除') {
-        this.openResOrDelDialog(this.detail, btn.name)
-      } else if (btn.name === '编辑') { // 编辑
-        this.openTab({
-          title: '编辑' + this.detail.orderNo,
-          path: '/order/update',
-          query: {
-            id: this.detail.id
-          }
-        })
-      } else if (btn.name === '回收' || btn.name === '返厂') {
+      if (btn.name === '回收' || btn.name === '返厂') {
         this.openReturnDialog(this.detail, btn.name)
-      } else if (btn.name === '打印') {
-        this.print(this.detail)
-      } else if (btn.name === '恢复') {
-        this.openRecoveryDialog(this.detail)
-      } else if (btn.name === '彻底删除') {
-        this.completelyDeleteDialog(this.detail)
       } else if (btn.name === '上传回单照片' || btn.name === '修改回单照片') {
         this.openUploadDialog(this.detail)
-      } else if (btn.name === '分享') {
-        this.openShareDialog(this.detail)
       }
-    },
-    // 外转
-    openOuterDialog (order) {
-      const _this = this
-      this.openDialog({
-        name: 'order/management/dialog/outer',
-        data: { detail: order },
-        methods: {
-          ok (node) {
-            _this.getDetail()
-            _this.ema.fire('closeTab', _this.$route) // 关闭tab页
-          }
-        }
-      })
-    },
-    // 拆单
-    openSeparateDialog (order) {
-      const _this = this
-      this.openDialog({
-        name: 'order/management/dialog/separate',
-        data: { id: order.id, orderNo: order.orderNo },
-        methods: {
-          ok (node) {
-            _this.getDetail()
-          }
-        }
-      })
-    },
-    // 还原或删除 (单条操作)
-    openResOrDelDialog (order, name) {
-      const _this = this
-      const data = {
-        id: [order],
-        name: name
-      }
-      this.openDialog({
-        name: 'order/management/dialog/restoreOrDelete',
-        data: data,
-        methods: {
-          ok (node) {
-            _this.getDetail()
-          }
-        }
-      })
     },
     // 回收或返厂 (单条操作)
     openReturnDialog (order, name) {
@@ -549,45 +262,6 @@ export default {
       this.openDialog({
         name: 'order/management/dialog/return',
         data: data,
-        methods: {
-          ok (node) {
-            _this.getDetail()
-          }
-        }
-      })
-    },
-    // 打印
-    print (order) {
-      Server({
-        url: 'order/getOrderAndDetailList',
-        method: 'post',
-        data: {
-          orderIds: [order.id]
-        }
-      }).then((res) => {
-        this.orderPrint = _.cloneDeep(res.data.data)
-        this.$refs.printer.print()
-      })
-    },
-    // 恢复
-    openRecoveryDialog (order) {
-      const _this = this
-      _this.openDialog({
-        name: 'order/management/dialog/recovery',
-        data: { id: [order] },
-        methods: {
-          ok (node) {
-            _this.getDetail()
-          }
-        }
-      })
-    },
-    // 彻底删除
-    completelyDeleteDialog (order) {
-      const _this = this
-      _this.openDialog({
-        name: 'order/management/dialog/completelyDelete',
-        data: { id: [order] },
         methods: {
           ok (node) {
             _this.getDetail()
@@ -611,20 +285,6 @@ export default {
         }
       })
     },
-    // 分享
-    openShareDialog (order) {
-      const _this = this
-      _this.openDialog({
-        name: 'order/management/dialog/share',
-        data: {
-          id: [order],
-          suffix: ''
-        },
-        methods: {
-          ok (node) {}
-        }
-      })
-    },
     // 日志切换显示
     showOrderLog () {
       this.showLog = !this.showLog
@@ -632,117 +292,45 @@ export default {
     // 拉取table数据
     getDetail () {
       const z = this
-      // 订单详情  from: order   回单详情 from: receipt
-      if (z.from === 'order') {
-        Server({
-          url: 'order/detail',
-          method: 'get',
-          data: {
-            id: z.$route.query.orderId
-          }
-        }).then((res) => {
-          z.detail = res.data.data
-          z.orderStatus = res.data.data.status
-          // 过滤订单详情页操作按钮
-          z.filterOrderButton()
-          z.orderLog = res.data.data.orderLogs // 订单日志
-          z.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
-          z.waybillNums = res.data.data.waybillNoList // 运单子单
-        })
-      } else { // 回单详情
-        Server({
-          url: 'order/getReceiptOrderDetail',
-          method: 'get',
-          data: {
-            id: z.$route.query.orderId
-          }
-        }).then((res) => {
-          z.detail = res.data.data
-          z.receiptStatus = res.data.data.receiptOrder.receiptStatus
-          z.receiptUrl = res.data.data.receiptOrder.receiptUrl
-          // 过滤回单详情页操作按钮
-          z.filterReceiptButton()
-          z.orderLog = res.data.data.receiptOrderLogs // 回单日志
-          z.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
-          let imageItems = []
-          z.receiptUrl.map((item) => {
-            imageItems.push({
-              src: z.$handleImgUrl(item),
-              msrc: z.$handleImgUrl(item)
-            })
+      Server({
+        url: '/order/getReceiptOrderDetail',
+        method: 'get',
+        data: {
+          id: z.$route.query.orderId
+        }
+      }).then((res) => {
+        z.detail = res.data.data
+        z.receiptStatus = res.data.data.receiptOrder.receiptStatus
+        z.receiptUrl = res.data.data.receiptOrder.receiptUrl
+        // 过滤回单详情页操作按钮
+        z.filterReceiptButton()
+        z.orderLog = res.data.data.receiptOrderLogs // 回单日志
+        z.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
+        let imageItems = []
+        z.receiptUrl.map((item) => {
+          imageItems.push({
+            src: z.$handleImgUrl(item),
+            msrc: z.$handleImgUrl(item)
           })
-          z.imgViewFunc = openSwipe(imageItems)
         })
-      }
+        z.imgViewFunc = openSwipe(imageItems)
+      })
     },
     // 状态改名称
     statusToName (code) {
-      let name
-      switch (code) {
-        case -1:
-          name = '待签收'
-          break
-        case 0:
-          name = '待回收'
-          break
-        case 1:
-          name = '待返厂'
-          break
-        case 2:
-          name = '已返厂'
-          break
-        case 10:
-          name = '待提货'
-          break
-        case 20:
-          name = '待送货'
-          break
-        case 30:
-          name = '在途'
-          break
-        case 40:
-          name = '已到货'
-          break
-        case 50:
-          name = '已回单'
-          break
-        case 100:
-          name = '已删除'
-          break
+      let status = RECEIPT_STATUS.find(item => item.value === code)
+      if (status) {
+        return status.label
       }
-      return name
+      return '-'
     },
     // 提货状态转名称
     pickupToName (code) {
-      let name
-      switch (code) {
-        case 1:
-          name = '小车上门自提'
-          break
-        case 2:
-          name = '大车直送客户'
-          break
+      let pick = pickups.find(item => item.value === code)
+      if (pick) {
+        return pick.name
       }
-      return name
-    },
-    // 结算方式转名称
-    settlementToName (code) {
-      let name
-      switch (code) {
-        case 1:
-          name = '现付'
-          break
-        case 2:
-          name = '到付'
-          break
-        case 3:
-          name = '回付'
-          break
-        case 4:
-          name = '月结'
-          break
-      }
-      return name
+      return '-'
     },
     // 点击展开的运单子单
     handleWaybillNo (no) {
@@ -754,165 +342,21 @@ export default {
         }
       })
     },
-    // 订单详情按钮过滤
-    filterOrderButton () {
-      /**
-       * status  10：待提货 20：待调度 30：在途 40：已到货 50：已回单
-       * parentId    父单：('' && 被拆单: disassembleStatus=1)， 子单：不为''
-       * disassembleStatus   是否被拆单：1是;0否（只对父单有效，子单被拆单也为0）
-       * transStatus   是否被外转：1是，0否
-       * dispatchStatus 是否被调度：1是，0否
-       * pickupStatus  是否被提货：1是；0否
-       * pickup   提货方式 1上门提货、2直接送货 （开单时选择上门提货  初始状态为待提货（10），开单时选择直接送货，初始状态为待调度（20））
-       *
-       *
-       * 展示按钮：拆单、外转、还原、删除、编辑（详情页独有）
-       * 1、待提货状态下：（status: 10）
-       *    拆单： 无拆单按钮            //【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）】显示
-       *    外转：（v1.06删除外转）【（未外转：transStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''） && （未被提货：pickupStatus=0）】显示
-       *    还原： 无还原按钮            //【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被提货：pickupStatus=0）】显示
-       *    删除： 无删除按钮            //
-       *          订单列表里显示：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （被拆单后的父单：disassembleStatus=1）】
-       *          订单详情里显示：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （不是子单：parentId=''）】
-       *    编辑：【（未外转：transStatus=0） && （未被提货：pickupStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
-       * 2、待调度状态下：（status: 20）
-       *    拆单：【（未外转：transStatus=0） && （不是父单{原单或者子单}：disassembleStatus !== 1）&& （未被调度：dispatchStatus=0）】显示
-       *    外转：（v1.06删除外转）【（未外转：transStatus=0） && （不是上门提货：pickup !== 1） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）/ 备注：v1.05版本 子单可以外转 / && （未被调度：dispatchStatus=0）】显示
-       *    还原：【（是父单：parentId=''） && （被拆单：disassembleStatus=1） && （未被调度：dispatchStatus=0）】显示
-       *    删除：
-       *          订单列表里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （被拆单后的父单：disassembleStatus=1）】
-       *          订单详情里显示：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （不是子单：parentId=''）】
-       *    编辑：【（不是上门提货：pickup !== 1） && （未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
-       */
-      let r = this.detail
-      let renderBtn = []
-      // 子单不展示分享按钮
-      if (!r.parentId) {
-        renderBtn.push({ name: '分享', value: 9, code: 100307 })
-      }
-      if (r.status === 10) { // 待提货状态
-        // 删除按钮
-        if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
-          renderBtn.push(
-            { name: '删除', value: 1, code: 100302 }
-          )
-        }
-        // 打印
-        this.checkPrintCode(renderBtn)
-        // 拆单按钮
-        // if (r.transStatus === 0 && r.disassembleStatus !== 1) {
-        //   renderBtn.push(
-        //     { name: '拆单', value: 2, code: 110103 }
-        //   )
-        // }
-        // 外转按钮
-        // if (r.transStatus === 0 && r.disassembleStatus === 0 && r.parentId === '' && r.pickupStatus === 0) {
-        //   renderBtn.push(
-        //     { name: '外转', value: 3, code: 120209 }
-        //   )
-        // }
-        // 还原按钮
-        // if (r.parentId === '' && r.disassembleStatus === 1 && r.pickupStatus === 0) {
-        //   renderBtn.push(
-        //     { name: '还原', value: 4, code: 110105 }
-        //   )
-        // }
-        // 编辑按钮
-        if (r.transStatus === 0 && r.pickupStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
-          renderBtn.push(
-            { name: '编辑', value: 5, code: 100301 }
-          )
-        }
-      }
-      if (r.status === 20) { // 待调度状态
-        // 删除按钮
-        if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.parentId === '') {
-          renderBtn.push(
-            { name: '删除', value: 1, code: 100302 }
-          )
-        }
-        // 打印
-        this.checkPrintCode(renderBtn)
-        // 拆单按钮
-        if (r.transStatus === 0 && r.disassembleStatus !== 1 && r.dispatchStatus === 0) {
-          if (r.collectionMoney > 0) {
-            renderBtn.push(
-              { name: '拆单', value: 3, code: 120110, disabled: true, content: '有代收货款的订单不允许拆单' }
-            )
-          } else {
-            if (!r.volume && !r.weight && !r.quantity) {
-              renderBtn.push(
-                { name: '拆单', value: 3, code: 120110, disabled: true, content: '包装数量或体积或重量未填，无法拆单' }
-              )
-            } else {
-              renderBtn.push(
-                { name: '拆单', value: 3, code: 120110 }
-              )
-            }
-          }
-        }
-        // 外转按钮
-        // if (r.transStatus === 0 && r.disassembleStatus === 0 && r.dispatchStatus === 0) {
-        //   renderBtn.push(
-        //     { name: '外转', value: 4, code: 120111 }
-        //   )
-        // }
-        // 还原按钮
-        if (r.parentId === '' && r.disassembleStatus === 1 && r.dispatchStatus === 0) {
-          renderBtn.push(
-            { name: '还原', value: 5, code: 120112 }
-          )
-        }
-        // 编辑按钮
-        if (r.pickup !== 1 && r.transStatus === 0 && r.dispatchStatus === 0 && r.disassembleStatus === 0 && r.parentId === '') {
-          renderBtn.push(
-            { name: '编辑', value: 6, code: 100301 }
-          )
-        }
-      }
-      if (r.status === 100) { // 回收站状态
-        renderBtn.push(
-          { name: '恢复', value: 1, code: 100305 },
-          { name: '彻底删除', value: 2, code: 100306 }
-        )
-      }
-      this.btnGroup = renderBtn
-      if (this.btnGroup.length > 0 && r.status !== 100) {
-        this.operateValue = this.btnGroup[this.btnGroup.length - 1].value // 默认点亮最后一个按钮
-      }
-    },
-    checkPrintCode (btns) {
-      if (this.source) {
-        if (this.source === 'order') {
-          btns.push(
-            { name: '打印', value: 2, code: 100303 }
-          )
-        } else if (this.source === 'waybill') {
-          btns.push(
-            { name: '打印', value: 2, code: 120103 }
-          )
-        } else if (this.source === 'pickup') {
-          btns.push(
-            { name: '打印', value: 2, code: 120202 }
-          )
-        }
-      }
-    },
     // 回单详情按钮过滤   0待回收；1待返厂（已回收）；2已返厂
     filterReceiptButton () {
       const z = this
-      if (z.detail.receiptOrder.receiptStatus === 0 && z.detail.status === 40) {
+      if (z.detail.receiptOrder.receiptStatus === RECEIPT_STATUS_CODE.waiting_recovery && z.detail.status === ORDER_STATUS_CODE.arrive) {
         z.btnGroup = [
           { name: '回收', value: 1, code: 120501 }
         ]
         z.operateValue = 1
-      } else if (z.detail.receiptOrder.receiptStatus === 1) {
+      } else if (z.detail.receiptOrder.receiptStatus === RECEIPT_STATUS_CODE.waiting_return_factory) {
         z.btnGroup = [
           { name: z.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: z.receiptUrl.length > 0 ? 120505 : 120504 },
           { name: '返厂', value: 2, code: 120502 }
         ]
         z.operateValue = 2
-      } else if (z.detail.receiptOrder.receiptStatus === 2) {
+      } else if (z.detail.receiptOrder.receiptStatus === RECEIPT_STATUS_CODE.already_returned_factory) {
         z.btnGroup = [
           { name: z.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: z.receiptUrl.length > 0 ? 120505 : 120504 }
         ]
@@ -923,86 +367,23 @@ export default {
     },
     // 预览
     handleView (i) {
-      // this.visible = true
-      // this.curImg = this.detail.receiptOrder.receiptUrl[i]
       this.imgViewFunc(i)
     },
     // 每种状态对应各自主题色
     themeBarColor (code) {
-      let barClass
-      switch (code) {
-        case -1:
-          barClass = 'i-bar-warning'
-          break
-        case 0:
-          barClass = 'i-bar-warning'
-          break
-        case 1:
-          barClass = 'i-bar-warning'
-          break
-        case 2:
-          barClass = 'i-bar-success'
-          break
-        case 10:
-          barClass = 'i-bar-warning'
-          break
-        case 20:
-          barClass = 'i-bar-warning'
-          break
-        case 30:
-          barClass = 'i-bar-info'
-          break
-        case 40:
-          barClass = 'i-bar-success'
-          break
-        case 50:
-          barClass = 'i-bar-success'
-          break
-        case 100:
-          barClass = 'i-bar-danger'
-          break
+      let theme = THEME_CLASS.find(item => item.code === code)
+      if (theme) {
+        return theme.barClass
       }
-      return barClass
+      return ''
     },
     // 每种状态对应各自主题色
     themeStatusColor (code) {
-      let statusClass
-      switch (code) {
-        case -1:
-          statusClass = 'i-status-warning'
-          break
-        case 0:
-          statusClass = 'i-status-warning'
-          break
-        case 1:
-          statusClass = 'i-status-warning'
-          break
-        case 2:
-          statusClass = 'i-status-success'
-          break
-        case 10:
-          statusClass = 'i-status-warning'
-          break
-        case 20:
-          statusClass = 'i-status-warning'
-          break
-        case 30:
-          statusClass = 'i-status-info'
-          break
-        case 40:
-          statusClass = 'i-status-success'
-          break
-        case 50:
-          statusClass = 'i-status-success'
-          break
-        case 100:
-          statusClass = 'i-status-danger'
-          break
+      let theme = THEME_CLASS.find(item => item.code === code)
+      if (theme) {
+        return theme.statusClass
       }
-      return statusClass
-    },
-    rate (value) {
-      return float.round(value * 100, 2)
+      return ''
     }
   },
   /**

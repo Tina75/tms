@@ -159,6 +159,7 @@ import OrderPrint from './OrderPrint'
 import FontIcon from '@/components/FontIcon'
 import IconLabel from '@/components/IconLabel'
 import SearchMixin from '../searchMixin'
+import { ORDER_SIMPLE_SEARCH_LIST, ORDER_STATUS_CODE, ORDER_STATUS } from '@/libs/constant/order'
 import { renderFee, renderMileage, getRateText, renderVolume, renderWeight, renderWeightKg } from '@/libs/js/config'
 export default {
   name: 'TabContent',
@@ -174,11 +175,6 @@ export default {
   props: {
     tabStatus: {
       type: String,
-      require: true
-    },
-    // keyword
-    tabKey: {
-      type: Object,
       require: true
     },
     // 导入批次号id
@@ -227,25 +223,8 @@ export default {
         // { name: '恢复', value: 7, code: 110110 },
         // { name: '彻底删除', value: 8, code: 110111 }
       ],
-      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：运单号
-      selectList: [
-        {
-          value: 0,
-          label: '客户名称'
-        },
-        {
-          value: 3,
-          label: '客户订单号'
-        },
-        {
-          value: 1,
-          label: '订单号'
-        },
-        {
-          value: 2,
-          label: '运单号'
-        }
-      ],
+      selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：运单号 3: 客户订单号
+      selectList: ORDER_SIMPLE_SEARCH_LIST,
       operateValue: 1,
       tableColumns: [
         {
@@ -286,7 +265,7 @@ export default {
              *    编辑：【（未外转：transStatus=0） && （未被调度：dispatchStatus=0） && （未拆单：disassembleStatus=0） && （不是子单：parentId=''）】（只在详情显示）
              */
             let r = params.row
-            if (r.status === 10) { // 待提货状态
+            if (r.status === ORDER_STATUS_CODE.pickup) { // 待提货状态
               // 需显示的按钮组
               let renderBtn = []
               // 拆单按钮
@@ -355,7 +334,7 @@ export default {
               // }
               return h('div', renderBtn)
             }
-            if (r.status === 20) { // 待调度状态
+            if (r.status === ORDER_STATUS_CODE.dispatch) { // 待调度状态
               // 需显示的按钮组
               let renderBtn = []
               // 拆单按钮
@@ -542,7 +521,7 @@ export default {
               }, params.row.orderNo)
             ]
             if (this.source === 'order') {
-              if ((params.row.status < 30 && params.row.transStatus === 1) || (params.row.status === 10 && params.row.pickupStatus === 1) || (params.row.status === 20 && params.row.dispatchStatus === 1)) {
+              if ((params.row.status < ORDER_STATUS_CODE.transit && params.row.transStatus === 1) || (params.row.status === ORDER_STATUS_CODE.pickup && params.row.pickupStatus === 1) || (params.row.status === ORDER_STATUS_CODE.dispatch && params.row.dispatchStatus === 1)) {
                 renderHtml.push(
                   h(FontIcon, {
                     props: {
@@ -1093,26 +1072,26 @@ export default {
           if (val === '全部') {
             this.keywords.status = null
           } else if (val === '待提货') {
-            this.keywords.status = 10
+            this.keywords.status = ORDER_STATUS_CODE.pickup
           } else if (val === '待送货') {
-            this.keywords.status = 20
+            this.keywords.status = ORDER_STATUS_CODE.dispatch
           }
         } else if (val === '回收站') {
           this.btnGroup = [
             { name: '恢复', value: 7, code: 100305 },
             { name: '彻底删除', value: 8, code: 100306 }
           ]
-          this.keywords.status = 100
+          this.keywords.status = ORDER_STATUS_CODE.recycle
         } else {
           this.btnGroup = [
             { name: '导出', value: 6, code: 100304 }
           ]
           if (val === '在途') {
-            this.keywords.status = 30
+            this.keywords.status = ORDER_STATUS_CODE.transit
           } else if (val === '已到货') {
-            this.keywords.status = 40
+            this.keywords.status = ORDER_STATUS_CODE.arrive
           } else if (val === '已回单') {
-            this.keywords.status = 50
+            this.keywords.status = ORDER_STATUS_CODE.receipt
           }
         }
         this.btnGroup.push({ name: '分享', value: 9, code: 100307 })
@@ -1127,7 +1106,7 @@ export default {
             { name: '打印', value: 5, code: 120202 },
             { name: '导出', value: 6, code: 120207 }
           ]
-          this.keywords.status = 10
+          this.keywords.status = ORDER_STATUS_CODE.pickup
           this.deleteOperateCol() //  去掉操作栏
         } else {
           this.btnGroup = [
@@ -1135,7 +1114,7 @@ export default {
             { name: '打印', value: 5, code: 120103 },
             { name: '导出', value: 6, code: 120108 }
           ]
-          this.keywords.status = 20
+          this.keywords.status = ORDER_STATUS_CODE.dispatch
         }
       }
       this.isSearching = true
@@ -1173,7 +1152,7 @@ export default {
           return
         }
         let data = this.selectOrderList.find((item) => {
-          return (item.status !== 10 || item.pickupStatus !== 0 || item.transStatus !== 0 || item.parentId !== '')
+          return (item.status !== ORDER_STATUS_CODE.pickup || item.pickupStatus !== 0 || item.transStatus !== 0 || item.parentId !== '')
         })
         if (data !== undefined) {
           this.$Message.warning('您选择的订单不支持提货调度')
@@ -1182,7 +1161,7 @@ export default {
         }
       } else if (btn.name === '订单还原') { // 【（是待提货或待调度状态：status < 30） && （是父单：parentId=''） && （被拆单：disassembleStatus=1） && 【规则取消：（未被提货：pickupStatus=0） && 】（未被调度：dispatchStatus=0） && （未外转：transStatus=0）】 可以批量操作
         let data = this.selectOrderList.find((item) => {
-          return (item.status > 20 || item.parentId !== '' || item.disassembleStatus !== 1 || item.dispatchStatus !== 0 || item.transStatus !== 0)
+          return (item.status > ORDER_STATUS_CODE.dispatch || item.parentId !== '' || item.disassembleStatus !== 1 || item.dispatchStatus !== 0 || item.transStatus !== 0)
         })
         if (data !== undefined) {
           this.$Message.warning('您选择的订单不支持订单还原')
@@ -1382,6 +1361,14 @@ export default {
         data,
         fileName: '订单明细'
       })
+    },
+    // 状态改名称
+    statusToName (code) {
+      let status = ORDER_STATUS.find(item => item.value === code)
+      if (status) {
+        return status.label
+      }
+      return '-'
     },
     // 待调度
     rowClassName (row, index) {
