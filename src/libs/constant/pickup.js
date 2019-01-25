@@ -4,11 +4,10 @@ export const pickups = [
 ]
 
 export function pickupsFindName (value) {
-  let name = '-'
-  pickups.find((item) => {
-    if (value === item.value) name = item.name
-  })
-  return name
+  for (const item of pickups) {
+    if (item.value === value) return item.name
+  }
+  return '-'
 }
 
 export default pickups

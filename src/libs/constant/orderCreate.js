@@ -21,9 +21,8 @@ export const exploiteChannel = [
   }
 ]
 export function exploiteChannelFindName (value) {
-  let name = '-'
-  exploiteChannel.find((item) => {
-    if (value === item.value) name = item.name
-  })
-  return name
+  for (const item of exploiteChannel) {
+    if (item.value === value) return item.name
+  }
+  return '-'
 }
