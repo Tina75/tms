@@ -137,6 +137,7 @@ import tableHeadType from '@/libs/constant/headtype.js'
 import jsCookie from 'js-cookie'
 import { renderFee, getMileageText } from '@/libs/js/config'
 import statusEnum from '@/libs/constant/statusEnum'
+import { orderStatusMap } from '@/libs/constant/order'
 export default {
   name: 'report-operate',
   components: {
@@ -180,7 +181,7 @@ export default {
       times: ['', ''],
       isExport: false,
       /* 订单状态 */
-      orderStatusMap: statusEnum.orderStatusMap,
+      orderStatusMap: orderStatusMap,
       /* 提货单状态 */
       loadbillStatusMap: statusEnum.loadbillStatusMap,
       /* 运单状态  */

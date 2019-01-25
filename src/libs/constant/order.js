@@ -25,6 +25,15 @@ export const ORDER_STATUS = [
   }
 ]
 
+/**
+ * @Description: 运营报表中订单状态展示
+ * @Date 2019/1/25
+ */
+export const orderStatusMap = ORDER_STATUS.reduce((object, option) => {
+  object[option.value] = option.label
+  return object
+}, {})
+
 // 订单状态
 export const ORDER_STATUS_CODE = {
   pickup: 10, // 待提货
