@@ -1,6 +1,6 @@
 // import TMSUrl from '@/libs/constant/url'
-import float from '@/libs/js/float'
-import { renderFee } from '@/libs/js/config'
+// import float from '@/libs/js/float'
+import { renderFee, getRateText } from '@/libs/js/config'
 import IconLabel from '@/components/IconLabel'
 import { renderMileage, renderVolume, renderWeight } from './util'
 
@@ -274,7 +274,8 @@ export const TABLE_COLUMNS = vm => [
     key: 'invoiceRate',
     minWidth: 180,
     render: (h, params) => {
-      return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
+      // return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
+      return h('span', getRateText(params.row.invoiceRate))
     }
   },
   {
