@@ -182,7 +182,8 @@ import { mapGetters, mapActions } from 'vuex'
 // import City from '@/libs/js/city'
 import SearchMixin from '@/views/order/management/searchMixin.js'
 import { renderFee } from '@/libs/js/config'
-// let hasTab = false
+import { RECEIPT_SIMPLE_SEARCH_LIST, RECEIPT_STATUS_CODE, RECEIPT_STATUS } from '@/libs/constant/receipt'
+import { ORDER_STATUS_CODE } from '@/libs/constant/order'
 
 export default {
   name: 'order-receipt',
@@ -209,36 +210,7 @@ export default {
         { name: '已返厂', count: '' }
       ],
       selectStatus: 0, // 当前搜索状态   0：客户名称   1：订单号  2：客户订单号
-      selectList: [
-        {
-          value: 0,
-          label: '客户名称'
-        },
-        {
-          value: 1,
-          label: '订单号'
-        },
-        {
-          value: 2,
-          label: '客户订单号'
-        },
-        {
-          value: 3,
-          label: '承运商名称'
-        },
-        {
-          value: 4,
-          label: '司机姓名'
-        },
-        {
-          value: 5,
-          label: '司机手机号'
-        },
-        {
-          value: 6,
-          label: '车牌号'
-        }
-      ],
+      selectList: RECEIPT_SIMPLE_SEARCH_LIST,
       keyword: {
         receiptStatus: 0// 默认待回收状态  传给pageTable可重新请求数据
       },
@@ -264,7 +236,7 @@ export default {
           extra: true,
           render: (h, params) => {
             let renderBtn = []
-            if (params.row.receiptOrder.receiptStatus === 0 && params.row.status === 40 && this.hasPower(120501)) {
+            if (params.row.receiptOrder.receiptStatus === RECEIPT_STATUS_CODE.waiting_recovery && params.row.status === ORDER_STATUS_CODE.arrive && this.hasPower(120501)) {
               renderBtn.push(
                 h('a', {
                   style: {
@@ -279,7 +251,7 @@ export default {
                 }, '回收')
               )
             }
-            if (params.row.receiptOrder.receiptStatus === 1 && this.hasPower(120502)) {
+            if (params.row.receiptOrder.receiptStatus === RECEIPT_STATUS_CODE.waiting_return_factory && this.hasPower(120502)) {
               renderBtn.push(
                 h('a', {
                   style: {
@@ -294,7 +266,7 @@ export default {
                 }, '返厂')
               )
             }
-            if (params.row.receiptOrder.receiptStatus > 0) {
+            if (params.row.receiptOrder.receiptStatus > RECEIPT_STATUS_CODE.waiting_recovery) {
               if (params.row.receiptOrder.receiptUrl.length > 0 && this.hasPower(120505)) { // 修改回单
                 renderBtn.push(
                   h('a', {
@@ -576,13 +548,13 @@ export default {
     if (tab) {
       switch (tab) {
         case '1':
-          this.keyword.receiptStatus = 0
+          this.keyword.receiptStatus = RECEIPT_STATUS_CODE.waiting_recovery
           break
         case '2':
-          this.keyword.receiptStatus = 1
+          this.keyword.receiptStatus = RECEIPT_STATUS_CODE.waiting_return_factory
           break
         case '3':
-          this.keyword.receiptStatus = 2
+          this.keyword.receiptStatus = RECEIPT_STATUS_CODE.already_returned_factory
           break
       }
       // hasTab = this.$route.query.tab
@@ -592,11 +564,9 @@ export default {
       // 刷新页面停留当前tab页
       if (sessionStorage.getItem('RECEIPT_TAB_NAME')) {
         this.curStatusName = sessionStorage.getItem('RECEIPT_TAB_NAME')
-        this.keyword.receiptStatus = this.statusToCode(this.curStatusName)
         this.handleTabChange(this.curStatusName) // 表头按钮状态
       } else {
         sessionStorage.setItem('RECEIPT_TAB_NAME', '待回收')
-        this.keyword.receiptStatus = 0
         this.handleTabChange('待回收') // 表头按钮状态
       }
     }
@@ -605,10 +575,6 @@ export default {
   mounted () {
     this.getOrderNum()
   },
-
-  // destroyed () {
-  //   hasTab = false
-  // },
 
   methods: {
     ...mapActions([
@@ -650,7 +616,7 @@ export default {
         this.btnGroup = [
           { name: '导出', value: 1, code: 120503 }
         ]
-        this.keywords.receiptStatus = -1
+        this.keywords.receiptStatus = RECEIPT_STATUS_CODE.waiting_sign
       } else if (val === '待回收') {
         // 全部、待回收、待返厂加上操作栏
         this.addOperateCol()
@@ -659,7 +625,7 @@ export default {
           { name: '回收', value: 1, code: 120501 },
           { name: '导出', value: 2, code: 120503 }
         ]
-        this.keywords.receiptStatus = 0
+        this.keywords.receiptStatus = RECEIPT_STATUS_CODE.waiting_recovery
       } else if (val === '待返厂') {
         // 全部、待回收、待返厂加上操作栏
         this.addOperateCol()
@@ -668,7 +634,7 @@ export default {
           { name: '返厂', value: 1, code: 120502 },
           { name: '导出', value: 2, code: 120503 }
         ]
-        this.keywords.receiptStatus = 1
+        this.keywords.receiptStatus = RECEIPT_STATUS_CODE.waiting_return_factory
       } else {
         // 已返厂取消操作栏
         this.addOperateCol()
@@ -676,7 +642,7 @@ export default {
         this.btnGroup = [
           { name: '导出', value: 1, code: 120503 }
         ]
-        this.keywords.receiptStatus = 2
+        this.keywords.receiptStatus = RECEIPT_STATUS_CODE.already_returned_factory
       }
       this.isSearching = true
       this.clearKeywords() // 清楚搜索条件
@@ -712,7 +678,7 @@ export default {
     },
     // 打开回收或返厂弹窗 (支持单条、多条操作))
     openReturnDialog (params, name) {
-      if (params && name === '回收' && params.row.status < 40) {
+      if (params && name === '回收' && params.row.status < ORDER_STATUS_CODE.arrive) {
         this.$Message.warning('您选择的订单还未确认到货，请先确认货物已到货')
         return
       }
@@ -761,28 +727,6 @@ export default {
         }
       })
     },
-    // 状态转为状态码
-    statusToCode (name) {
-      let code
-      switch (name) {
-        case '全部':
-          code = null
-          break
-        case '待回收':
-          code = 0
-          break
-        case '待返厂':
-          code = 1
-          break
-        case '已返厂':
-          code = 2
-          break
-        default:
-          code = 0
-          break
-      }
-      return code
-    },
     // 导出
     export () {
       const data = Object.assign({}, this.keyword, {
@@ -794,6 +738,14 @@ export default {
         data,
         fileName: '回单明细'
       })
+    },
+    // 状态改名称
+    statusToName (code) {
+      let status = RECEIPT_STATUS.find(item => item.value === code)
+      if (status) {
+        return status.label
+      }
+      return '-'
     }
   }
 }
