@@ -36,6 +36,7 @@
 import PageTable from '@/components/page-table'
 import { carrierDelete, carrierDetailsForDriver, carrierDetailsForCompany } from './client'
 import BasePage from '@/basic/BasePage'
+import { carrierPayTypeFindName } from '../libs/carrierPayType.js'
 export default {
   name: 'carrier',
   components: {
@@ -65,11 +66,7 @@ export default {
       ],
       keyword: '',
       order: null,
-      payTypeMap: {
-        1: '按单付',
-        2: '月结',
-        '': '_'
-      },
+      // payTypeMap: carrierPayType,
       columns1: [
         {
           title: '操作',
@@ -99,21 +96,7 @@ export default {
                               type: {
                                 selectStatus: params.row.carrierType
                               },
-                              driver: { // 1 个体司机
-                                driverName: _this.driver.driverName,
-                                driverPhone: _this.driver.driverPhone,
-                                carNO: _this.driver.carNO,
-                                carType: _this.driver.carType + '',
-                                carLength: _this.driver.carLength + '',
-                                shippingWeight: _this.driver.shippingWeight + '',
-                                shippingVolume: _this.driver.shippingVolume + '',
-                                remark: _this.driver.remark,
-                                payType: _this.driver.payType + '',
-                                carBrand: _this.driver.carBrand,
-                                travelPhoto: _this.driver.travelPhoto,
-                                drivePhoto: _this.driver.drivePhoto,
-                                regularLine: _this.driver.regularLine
-                              }
+                              driver: { ..._this.driver }
                             }
                           },
                           methods: {
@@ -135,14 +118,7 @@ export default {
                               type: {
                                 selectStatus: params.row.carrierType
                               },
-                              company: {
-                                carrierName: _this.company.carrierName,
-                                carrierPrincipal: _this.company.carrierPrincipal,
-                                carrierPhone: _this.company.carrierPhone,
-                                customerCarrierPhone: _this.company.customerCarrierPhone,
-                                payType: _this.company.payType + '',
-                                remark: _this.company.remark
-                              }
+                              company: { ..._this.company }
                             }
                           },
                           methods: {
@@ -280,7 +256,7 @@ export default {
             if (!params.row.payType) {
               return h('div', '-')
             }
-            return h('div', {}, this.payTypeMap[params.row.payType])
+            return h('div', {}, carrierPayTypeFindName(params.row.payType))
           }
         },
         {
@@ -321,6 +297,9 @@ export default {
     }
   },
   methods: {
+    // carrierPayTypeFindName (val) {
+    //   return carrierPayTypeFindName(val)
+    // },
     searchList () {
       this.queryWords = {
         type: this.selectStatus,

@@ -26,7 +26,7 @@
         <Row>
           <i-col span="7">
             <span>客户名称：</span>
-            <span>{{detail.shipperCompanyName}}</span>
+            <span>{{detail.shipperCompanyName || '-'}}</span>
           </i-col>
           <i-col span="7">
             <span>发货时间：</span>
@@ -40,7 +40,8 @@
           </i-col>
           <i-col  span="4">
             <span>代收货款：</span>
-            <span>{{detail.collectionMoney | toPoint}}元</span>
+            <span>{{detail.collectionMoney | toPoint}}</span>
+            <span v-if="typeof detail.collectionMoney === 'number'">元</span>
           </i-col>
         </Row>
         <Row>
@@ -59,7 +60,7 @@
           <!--</i-col>-->
           <i-col span="7">
             <span>回单数：</span>
-            <span>{{detail.receiptCount}}</span>
+            <span>{{detail.receiptCount || '-'}}</span>
           </i-col>
           <!--<i-col span="6">-->
           <!--<span>对接业务员：</span>-->
@@ -67,7 +68,7 @@
           <!--</i-col>-->
           <i-col span="4">
             <span>是否开票：</span>
-            <span>{{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%）` : '否'}}</span>
+            <span>{{detail.isInvoice === 1 ? `是` : '否'}}</span>
           </i-col>
         </Row>
         <!--<Row>-->
@@ -83,35 +84,35 @@
         <Row style="margin-top:18px">
           <i-col span="7">
             <span>发货联系人：</span>
-            <span>{{detail.consignerContact}}</span>
+            <span>{{detail.consignerContact || '-'}}</span>
           </i-col>
           <i-col span="7">
             <span>联系方式：</span>
-            <span>{{detail.consignerPhone}}</span>
+            <span>{{detail.consignerPhone || '-'}}</span>
           </i-col>
           <i-col span="10">
             <span>发货地址：</span>
-            <span>{{detail.consignerAddress}}</span>
+            <span>{{detail.consignerAddress || '-'}}</span>
           </i-col>
         </Row>
         <Row>
           <i-col span="7">
             <span>收货联系人：</span>
-            <span>{{detail.consigneeContact}}</span>
+            <span>{{detail.consigneeContact || '-'}}</span>
           </i-col>
           <i-col span="7">
             <span>联系方式：</span>
-            <span>{{detail.consigneePhone}}</span>
+            <span>{{detail.consigneePhone || '-'}}</span>
           </i-col>
           <i-col span="10">
             <span>收货地址：</span>
-            <span>{{detail.consigneeAddress}}</span>
+            <span>{{detail.consigneeAddress || '-'}}</span>
           </i-col>
         </Row>
         <Row style="margin-top: 18px;">
           <i-col span="24">
             <span>备注：</span>
-            <span>{{detail.remark}}</span>
+            <span>{{detail.remark || '-'}}</span>
           </i-col>
         </Row>
       </div>
@@ -212,7 +213,7 @@ import Server from '@/libs/js/server'
 import '@/libs/js/filter'
 import { getFeeText } from '@/libs/js/config'
 import { renderVolume, renderWeight } from '../constant/util'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 export default {
   name: 'upstreamDetail',
 
@@ -462,48 +463,6 @@ export default {
       }
       return name
     },
-    // 提货状态转名称
-    pickupToName (code) {
-      let name
-      switch (code) {
-        case 1:
-          name = '小车上门自提'
-          break
-        case 2:
-          name = '大车直送客户'
-          break
-      }
-      return name
-    },
-    // 结算方式转名称
-    settlementToName (code) {
-      let name
-      switch (code) {
-        case 1:
-          name = '现付'
-          break
-        case 2:
-          name = '到付'
-          break
-        case 3:
-          name = '回付'
-          break
-        case 4:
-          name = '月结'
-          break
-      }
-      return name
-    },
-    // 点击展开的运单子单
-    handleWaybillNo (no) {
-      this.openTab({
-        title: no,
-        path: '/transport/detail/detailFreight',
-        query: {
-          no: no
-        }
-      })
-    },
     // 订单详情按钮过滤
     filterOrderButton () {
       /**
@@ -594,10 +553,11 @@ export default {
           break
       }
       return statusClass
-    },
-    rate (value) {
-      return float.floor(value * 100, 2)
     }
+    // rate (value) {
+    //   // return float.floor(value * 100, 2)
+    //   return multiplyRate(value)
+    // }
   }
 }
 </script>
