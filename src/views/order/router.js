@@ -68,17 +68,17 @@ export default[
           'title': '订单管理'
         }
       },
-      {
-        'name': 'order-management-detail',
-        'path': '/order-management/detail',
-        'component': () => import(/* webpackChunkName: "order-detail" */'./management/detail.vue'),
-        'meta': {
-          'notCache': true,
-          'hideInMenu': true,
-          'powerCode': 100300,
-          'title': '订单详情'
-        }
-      },
+      // {
+      //   'name': 'order-management-detail',
+      //   'path': '/order-management/detail',
+      //   'component': () => import(/* webpackChunkName: "order-detail" */'./management/detail.vue'),
+      //   'meta': {
+      //     'notCache': true,
+      //     'hideInMenu': true,
+      //     'powerCode': 100300,
+      //     'title': '订单详情'
+      //   }
+      // },
       {
         'name': 'management-order-detail',
         'path': '/order-management/order-detail',
