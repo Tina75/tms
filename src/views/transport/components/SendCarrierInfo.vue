@@ -47,8 +47,8 @@
           </i-col>
           <i-col span="8">
             <span class="detail-field-title" style="width: 82px;text-align: right;">车型：</span>
-            <SelectCarType v-model="carrierInfo.carType" class="detail-info-input-half" style="margin-right: 12px;"></SelectCarType>
-            <SelectCarLength v-model="carrierInfo.carLength" class="detail-info-input-half"></SelectCarLength>
+            <SelectCarType v-model="carrierInfo.carType" placement="bottom-start" class="detail-info-input-half" style="margin-right: 12px;"></SelectCarType>
+            <SelectCarLength v-model="carrierInfo.carLength" placement="bottom-end" class="detail-info-input-half"></SelectCarLength>
             <!-- <Select v-model="carrierInfo.carType"
                     transfer
                     class="detail-info-input-half"
