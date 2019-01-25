@@ -8,14 +8,14 @@
 /**
  * @Description: 订单状态
  */
-const orderStatusMap = {
-  10: '待提货',
-  20: '待调度',
-  30: '在途 ',
-  40: '已到货',
-  50: '已回单',
-  100: '删除'
-}
+// const orderStatusMap = {
+//   10: '待提货',
+//   20: '待调度',
+//   30: '在途 ',
+//   40: '已到货',
+//   50: '已回单',
+//   100: '删除'
+// }
 /**
  * @Description: 提货单状态
  */
@@ -54,4 +54,4 @@ const receiptStatusMap = {
   2: '已返厂'
 }
 
-export default { orderStatusMap, loadbillStatusMap, waybillStatusMap, transbillStatusMap, receiptStatusMap }
+export default { loadbillStatusMap, waybillStatusMap, transbillStatusMap, receiptStatusMap }
