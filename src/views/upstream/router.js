@@ -14,8 +14,7 @@ export default [
         'meta': {
           'icon': 'shangyoulaidan',
           'title': '上游来单',
-          'powerCode': 110000,
-          'notCache': true
+          'powerCode': 110000
         }
       },
       {
