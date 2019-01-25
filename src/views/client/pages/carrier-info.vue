@@ -151,7 +151,7 @@ export default {
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
       payTypeMap: {
-        1: '按单付',
+        1: '按单结',
         2: '月结',
         '': ''
       },
