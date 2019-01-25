@@ -61,7 +61,8 @@ export default {
   },
   mixins: [BaseComponent, cargoFeeMixin],
   data () {
-    const statusText = ORDER_STATUS.map(status => {
+    // 过滤掉已删除的单子
+    const statusText = ORDER_STATUS.filter(item => Number(item.value) !== 100).map(status => {
       return {
         label: status.label,
         value: status.label

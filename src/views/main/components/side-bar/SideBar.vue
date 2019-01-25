@@ -1,13 +1,13 @@
 <template>
   <div class="sider">
-    <Sider :collapsed-width="50" v-model="collapsed" breakpoint="md" collapsible style="height:100%">
+    <Sider :collapsed-width="50" v-model="collapsed" breakpoint="md" collapsible hide-trigger class="sider-layout">
       <side-menu :collapsed="collapsed" :active-name="$route.path" />
-      <div slot="trigger" >
-        <span :class="['sider-trigger', collapsed ? 'collapsed' : 'uncollapsed']" @click="collapsed = !collapsed">
-          <i :class="[collapsed ? 'collapsed' : '']" class="icon font_family icon-ico-zz1"></i>
-        </span>
-      </div>
     </Sider>
+    <div class="sider-trigger-el" >
+      <span :class="['sider-trigger', collapsed ? 'collapsed' : 'uncollapsed']" @click="collapsed = !collapsed">
+        <i :class="[collapsed ? 'collapsed' : '']" class="icon font_family icon-ico-zz1"></i>
+      </span>
+    </div>
   </div>
 </template>
 
@@ -45,32 +45,41 @@ export default {
 }
 
 </script>
-<style lang='stylus'>
+<style lang='stylus' scoped>
 .sider
   height 100%
+  &-layout
+    height 100%
+    overflow hidden
+  &-trigger-el
+    position: absolute;
+    top: 45%;
+    left: 0;
+    z-index: 999;
   &-trigger
     z-index 11
-    top 45%
+    top 0
+    left 200px
     position: absolute;
-    right: -12px;
     text-align: center;
     height: 55px;
     line-height: 42px;
     color: #252A2F;
     cursor: pointer;
-    -webkit-transition: background .3s ease;
-    transition: background .3s ease;
+    -webkit-transition: left .3s ease;
+    transition: left .3s ease;
     width:0;
     border-left:12px solid #C1C6CB;
     border-top:7px solid transparent;
     border-bottom:7px solid transparent;
-    i
+    >>> i
       position absolute
       right -1px
       font-size 14px
       transform rotate(180deg)
-  .collapsed
+  >>> .collapsed
     i
       transform rotate(0deg)
-
+  &-trigger.collapsed
+    left 50px
 </style>
