@@ -557,8 +557,6 @@ export default {
           this.keyword.receiptStatus = RECEIPT_STATUS_CODE.already_returned_factory
           break
       }
-      // hasTab = this.$route.query.tab
-      sessionStorage.setItem('RECEIPT_TAB_NAME', this.status[this.$route.query.tab].name)
       this.handleTabChange(this.status[this.$route.query.tab].name) // 表头按钮状态
     } else {
       // 刷新页面停留当前tab页
@@ -599,14 +597,9 @@ export default {
     },
     // tab状态栏切换
     handleTabChange (val) {
-      // 如果tab点击还是原来的tab则不走下面的流程，保持不变
-      let receiptTabName = sessionStorage.getItem('RECEIPT_TAB_NAME')
-      if (val === receiptTabName) return
-
       this.curStatusName = val
       sessionStorage.setItem('RECEIPT_TAB_NAME', val)
-      this.selectOrderList = [] // 重置当前已勾选项
-      this.selectedId = [] // 重置当前已勾选id项
+
       if (val === '全部') {
         // 全部、待回收、待返厂加上操作栏
         this.deleteOperateCol()

@@ -93,11 +93,8 @@ export default {
     },
     // tab状态栏切换
     handleTabChange (val) {
-      let orderTabName = sessionStorage.getItem('ORDER_TAB_NAME')
-      if (val !== orderTabName) {
-        this.curStatusName = val
-        sessionStorage.setItem('ORDER_TAB_NAME', val)
-      }
+      this.curStatusName = val
+      sessionStorage.setItem('ORDER_TAB_NAME', val)
     }
   }
 }
