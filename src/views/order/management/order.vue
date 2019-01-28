@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tab-header :name="curStatusName" :tabs="status" @tabChange="handleTabChange"></tab-header>
+    <tab-header :name="curStatusName" :tabs="status" @tab-change="handleTabChange"></tab-header>
     <tab-content
       :tab-status="curStatusName"
       @refresh-tab="getOrderNum">
@@ -94,6 +94,7 @@ export default {
     // tab状态栏切换
     handleTabChange (val) {
       this.curStatusName = val
+      sessionStorage.setItem('ORDER_TAB_NAME', val)
     }
   }
 }

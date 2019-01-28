@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tab-header :name="curStatusName" :tabs="status" @tabChange="handleTabChange"></tab-header>
+    <tab-header :name="curStatusName" :tabs="status" @tab-change="handleTabChange"></tab-header>
     <div class="receipt-container">
       <div>
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
@@ -557,8 +557,6 @@ export default {
           this.keyword.receiptStatus = RECEIPT_STATUS_CODE.already_returned_factory
           break
       }
-      // hasTab = this.$route.query.tab
-      sessionStorage.setItem('RECEIPT_TAB_NAME', this.status[this.$route.query.tab].name)
       this.handleTabChange(this.status[this.$route.query.tab].name) // 表头按钮状态
     } else {
       // 刷新页面停留当前tab页
@@ -600,8 +598,8 @@ export default {
     // tab状态栏切换
     handleTabChange (val) {
       this.curStatusName = val
-      this.selectOrderList = [] // 重置当前已勾选项
-      this.selectedId = [] // 重置当前已勾选id项
+      sessionStorage.setItem('RECEIPT_TAB_NAME', val)
+
       if (val === '全部') {
         // 全部、待回收、待返厂加上操作栏
         this.deleteOperateCol()
