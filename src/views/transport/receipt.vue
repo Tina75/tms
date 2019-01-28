@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tab-header :name="curStatusName" :tabs="status" @tabChange="handleTabChange"></tab-header>
+    <tab-header :name="curStatusName" :tabs="status" @tab-change="handleTabChange"></tab-header>
     <div class="receipt-container">
       <div>
         <Button v-for="(btn, index) in btnGroup" v-if="hasPower(btn.code)" :key="index" :type="btn.value === operateValue ? 'primary' : 'default'" @click="handleOperateClick(btn)">{{ btn.name }}</Button>
@@ -633,7 +633,12 @@ export default {
     },
     // tab状态栏切换
     handleTabChange (val) {
+      // 如果tab点击还是原来的tab则不走下面的流程，保持不变
+      let receiptTabName = sessionStorage.getItem('RECEIPT_TAB_NAME')
+      if (val === receiptTabName) return
+
       this.curStatusName = val
+      sessionStorage.setItem('RECEIPT_TAB_NAME', val)
       this.selectOrderList = [] // 重置当前已勾选项
       this.selectedId = [] // 重置当前已勾选id项
       if (val === '全部') {

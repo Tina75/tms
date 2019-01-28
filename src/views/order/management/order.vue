@@ -1,6 +1,6 @@
 <template>
   <div>
-    <tab-header :name="curStatusName" :tabs="status" @tabChange="handleTabChange"></tab-header>
+    <tab-header :name="curStatusName" :tabs="status" @tab-change="handleTabChange"></tab-header>
     <tab-content
       :tab-status="curStatusName"
       :tab-key="tabKey"
@@ -99,7 +99,11 @@ export default {
     },
     // tab状态栏切换
     handleTabChange (val) {
-      this.curStatusName = val
+      let orderTabName = sessionStorage.getItem('ORDER_TAB_NAME')
+      if (val !== orderTabName) {
+        this.curStatusName = val
+        sessionStorage.setItem('ORDER_TAB_NAME', val)
+      }
     },
     // 状态转为状态码
     statusToCode (name) {

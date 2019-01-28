@@ -23,7 +23,8 @@ export default {
         return []
       },
       require: true
-    }
+    },
+    tabChange: Function
   },
 
   data () {
@@ -40,19 +41,7 @@ export default {
 
   methods: {
     handleChangeTab (val) {
-      if (this.$route.path === '/order-management/order') {
-        let orderTabName = sessionStorage.getItem('ORDER_TAB_NAME')
-        if (val !== orderTabName) {
-          this.$emit('tabChange', val)
-          sessionStorage.setItem('ORDER_TAB_NAME', val)
-        }
-      } else if (this.$route.path === '/transport/receipt') {
-        let receiptTabName = sessionStorage.getItem('RECEIPT_TAB_NAME')
-        if (val !== receiptTabName) {
-          this.$emit('tabChange', val)
-          sessionStorage.setItem('RECEIPT_TAB_NAME', val)
-        }
-      }
+      this.$emit('tab-change', val)
     }
   }
 }
