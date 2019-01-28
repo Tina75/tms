@@ -88,7 +88,7 @@
         <Col :span="8">
         <FormItem label="结算方式：">
           <Select v-model="validate.driver.payType" transfer class="formInputSty" clearable>
-            <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
+            <Option v-for="opt in payTypeMap" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
         </FormItem>
         </Col>
@@ -175,7 +175,7 @@
         <Col span="8">
         <FormItem label="结算方式：">
           <Select v-model="validate.company.payType" transfer clearable>
-            <Option v-for="(item,key) in payTypeMap" :key="key" :value="key">{{item}}</Option>
+            <Option v-for="opt in payTypeMap" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
           </Select>
         </FormItem>
         </Col>
@@ -210,6 +210,7 @@ import SelectCarLength from '@/components/SelectCarLength'
 import SelectCarType from '@/components/SelectCarType'
 import { formatePhone } from '@/libs/js/formate'
 import validator, { validatePhone } from '@/libs/js/validate'
+import { carrierPayType } from '../libs/carrierPayType.js'
 import _ from 'lodash'
 export default {
   name: 'carrier',
@@ -226,10 +227,7 @@ export default {
       flagAddress: true,
       radioDisabled: false,
       formatterCarNo: formatterCarNo, // 车牌号大写转换
-      payTypeMap: {
-        1: '按单付',
-        2: '月结'
-      },
+      payTypeMap: carrierPayType,
       selectList: [
         {
           value: 1,

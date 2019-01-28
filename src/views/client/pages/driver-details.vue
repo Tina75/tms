@@ -77,8 +77,7 @@
         <Col span="6">
         <div>
           <span class="label">结算方式：</span>
-          <span v-if="driverList.payType">{{payTypeMap[driverList.payType]}}</span>
-          <span v-else>-</span>
+          <span>{{carrierPayTypeFindName(driverList.payType)}}</span>
         </div>
         </Col>
         </Col>
@@ -136,6 +135,7 @@ import prepareOpenSwipe from '@/components/swipe/index'
 import { CAR_TYPE1, CAR_LENGTH1 } from '@/libs/constant/carInfo'
 import { CODE, carrierDelete, carrierDetailsForDriver } from './client'
 import DivImage from '@/components/DivImage.vue'
+import { carrierPayTypeFindName } from '../libs/carrierPayType.js'
 export default {
   name: 'driver-details',
   components: { DivImage },
@@ -167,11 +167,7 @@ export default {
       },
       line1: '',
       line2: '',
-      payTypeMap: {
-        1: '按单付',
-        2: '月结',
-        '': ''
-      },
+      // payTypeMap: carrierPayType,
       imageItems: []
     }
   },
@@ -180,6 +176,9 @@ export default {
     this.initData()
   },
   methods: {
+    carrierPayTypeFindName (val) {
+      return carrierPayTypeFindName(val)
+    },
     // 司机个人信息查询
     _carrierDetailsForDriver () {
       let vm = this
@@ -274,21 +273,7 @@ export default {
             type: {
               selectStatus: 1
             },
-            driver: { // 1 个体司机
-              driverName: _this.driverList.driverName,
-              driverPhone: _this.driverList.driverPhone,
-              carNO: _this.driverList.carNO,
-              carType: _this.driverList.carType + '',
-              carLength: _this.driverList.carLength + '',
-              shippingWeight: _this.driverList.shippingWeight + '',
-              shippingVolume: _this.driverList.shippingVolume + '',
-              remark: _this.driverList.remark,
-              payType: _this.driverList.payType + '',
-              carBrand: _this.driverList.carBrand,
-              travelPhoto: _this.driverList.travelPhoto,
-              drivePhoto: _this.driverList.drivePhoto,
-              regularLine: _this.driverList.regularLine
-            }
+            driver: { ..._this.driverList }
           }
         },
         methods: {

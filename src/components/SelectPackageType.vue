@@ -1,6 +1,6 @@
 <template>
   <div class="selectCustomSty">
-    <Poptip v-model="visible" :width="width" placement="bottom" transfer popper-class="package-poptip">
+    <Poptip v-model="visible" :width="width" :placement="placement" transfer popper-class="package-poptip">
       <Input
         v-show="false"
         :value="formatterValue">
@@ -46,6 +46,10 @@ export default {
     maxlength: {
       type: Number,
       default: 10
+    },
+    placement: {
+      type: String,
+      default: 'bottom'
     },
     transfer: '',
     type: '', // type 默认【车型/车厂/包装方式】，如有自定义传入listMapData集合

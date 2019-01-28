@@ -45,8 +45,7 @@
           <Col span="8">
           <div>
             <span class="label">结算方式：</span>
-            <span v-if="companyList.payType">{{payTypeMap[companyList.payType]}}</span>
-            <span v-else>-</span>
+            <span>{{carrierPayTypeFindName(companyList.payType)}}</span>
           </div>
           </Col>
         </Row>
@@ -132,6 +131,7 @@ import TMSUrl from '@/libs/constant/url'
 import ruleForClient from './ruleForClient/index'
 import driverDetails from './driver-details'
 import Export from '@/libs/js/export'
+import { carrierPayTypeFindName } from '../libs/carrierPayType.js'
 export default {
   name: 'carrier-info',
   components: {
@@ -150,11 +150,6 @@ export default {
       carrierType: this.$route.query.carrierType,
       carTypeMap: CAR_TYPE1,
       carLengthMap: CAR_LENGTH1,
-      payTypeMap: {
-        1: '按单付',
-        2: '月结',
-        '': ''
-      },
       driverList: {
         driverName: '',
         carNO: '',
@@ -434,6 +429,9 @@ export default {
     }
   },
   methods: {
+    carrierPayTypeFindName (val) {
+      return carrierPayTypeFindName(val)
+    },
     tabsClick (name) {
       if (name === 'rule') {
         this.isShow = true

@@ -1,6 +1,6 @@
 <template>
   <div class="selectCustomSty">
-    <Poptip v-model="visible" :width="width" placement="bottom" transfer popper-class="package-poptip">
+    <Poptip v-model="visible" :width="width" :placement="placement" transfer popper-class="package-poptip">
       <Input
         v-show="false"
         :value="formatterValue">
@@ -44,6 +44,10 @@ export default {
     clearable: {
       type: Boolean,
       default: false
+    },
+    placement: {
+      type: String,
+      default: 'bottom'
     },
     maxlength: '',
     transfer: '',

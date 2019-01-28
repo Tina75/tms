@@ -16,7 +16,7 @@
             </ul>
           </Poptip>
         </li>
-        <li>{{ from === 'order' ? '订单状态：' : '回单状态：'}}<span :class="from === 'order' ? themeStatusColor(orderStatus) : themeStatusColor(receiptStatus)" style="font-weight: bold;">{{ from === 'order' ? statusToName(orderStatus) : statusToName(receiptStatus) }}</span></li>
+        <li>订单状态：<span :class="themeStatusColor(orderStatus)" style="font-weight: bold;">{{ statusToName(orderStatus) }}</span></li>
       </ul>
     </header>
     <div style="text-align: right;margin: 24px 0;min-height: 1px;">
@@ -34,7 +34,7 @@
         <section>
           <div>
             <div class="title" style="margin-top: 0">
-              <span>{{from === 'order' ? '客户信息' : '回单信息'}}</span>
+              <span>客户信息</span>
             </div>
             <Row>
               <i-col span="7">
@@ -51,7 +51,7 @@
                 <span v-if="detail.arriveTime">{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
                 <span v-else>-</span>
               </i-col>
-              <i-col v-if="from === 'order'" span="4">
+              <i-col span="4">
                 <span>代收货款：</span>
                 <span v-if="detail.collectionMoney !== ''">{{ getDivideFee(detail.collectionMoney) }}元</span>
                 <span v-else>-</span>
@@ -76,7 +76,7 @@
                 <span>{{detail.receiptCount}}</span>
               </i-col>
             </Row>
-            <Row v-if="from === 'order'">
+            <Row>
               <i-col span="7">
                 <span>对接业务员：</span>
                 <span v-if="detail.salesmanName">{{detail.salesmanName}}</span>
@@ -152,34 +152,7 @@
               </i-col>
             </Row>
           </div>
-          <div v-if="from === 'receipt'">
-            <div class="title" style="margin-top: 35px;">
-              <span>承运商信息</span>
-            </div>
-            <Row v-for="(item, index) in detail.receiptOrder.carrierInfos" :key="index">
-              <i-col span="7">
-                <span>承运商：</span>
-                <span v-if="item.carrierName">{{item.carrierName}}</span>
-                <span v-else>-</span>
-              </i-col>
-              <i-col span="7">
-                <span>司机姓名：</span>
-                <span v-if="item.driverName">{{item.driverName}}</span>
-                <span v-else>-</span>
-              </i-col>
-              <i-col span="6">
-                <span>司机手机号：</span>
-                <span v-if="item.driverPhone">{{item.driverPhone}}</span>
-                <span v-else>-</span>
-              </i-col>
-              <i-col span="4">
-                <span>车牌号：</span>
-                <span v-if="item.carNo">{{item.carNo}}</span>
-                <span v-else>-</span>
-              </i-col>
-            </Row>
-          </div>
-          <div v-if="from === 'order'" class="cargo-details">
+          <div class="cargo-details">
             <div class="title" style="margin-top: 35px;">
               <span>货物明细</span>
             </div>
@@ -193,7 +166,7 @@
               <span>{{ quantityTotal }}</span>
             </div>
           </div>
-          <div v-if="from === 'order'">
+          <div>
             <div class="title">
               <span>应收费用</span>
             </div>
@@ -243,7 +216,7 @@
           </div>
           <div class="order-log">
             <div class="title">
-              <span>{{from === 'order' ? '订单日志' : '回单日志'}}</span>
+              <span>订单日志</span>
             </div>
             <div class="log-list">
               <div class="fold-icon" @click="showOrderLog">
@@ -273,15 +246,18 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
 import OrderPrint from './components/OrderPrint'
-import openSwipe from '@/components/swipe/index'
 import _ from 'lodash'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 import { mapGetters } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import OrderChange from './components/OrderChange'
-import { roundFee, divideFee, roundVolume, roundWeight } from '@/libs/js/config'
+import { roundFee, divideFee, roundVolume, roundWeight, roundWeightKg, multiplyRate } from '@/libs/js/config'
 import * as CargoInfo from '@/libs/constant/cargoInfoTable'
 import NP from 'number-precision'
+import { ORDER_STATUS_CODE, ORDER_STATUS } from '@/libs/constant/order'
+import { THEME_CLASS } from '@/libs/constant/themeClass.js'
+import pickups from '@/libs/constant/pickup.js'
+import settlements from '@/libs/constant/settlement.js'
 export default {
   name: 'order-management-detail',
 
@@ -304,7 +280,6 @@ export default {
       from: this.$route.query.from,
       source: this.$route.query.source, // 页面来源
       orderStatus: '',
-      receiptStatus: '',
       waybillNums: [],
       show: false,
       btnGroup: [],
@@ -320,13 +295,10 @@ export default {
         CargoInfo.remark1,
         CargoInfo.remark2
       ],
-      tableData: [],
-      currentStep: 0,
       orderLogCount: 0,
       showLog: false,
       orderLog: [],
       orderPrint: [],
-      imgViewFunc: null,
       columnWeight: CargoInfo.weight,
       columnWeightKg: CargoInfo.weightKg,
       activeTab: 'detail',
@@ -392,7 +364,11 @@ export default {
           total = NP.plus(total, Number(item.weightKg))
         }
       })
-      return roundWeight(total, 3) + (this.WeightOption === 1 ? '吨' : '公斤')
+      if (this.WeightOption === 1) {
+        return roundWeight(total) + '吨'
+      } else {
+        return roundWeightKg(total) + '公斤'
+      }
     },
     // 总费用
     FeeTotal () {
@@ -462,16 +438,12 @@ export default {
             id: this.detail.id
           }
         })
-      } else if (btn.name === '回收' || btn.name === '返厂') {
-        this.openReturnDialog(this.detail, btn.name)
       } else if (btn.name === '打印') {
         this.print(this.detail)
       } else if (btn.name === '恢复') {
         this.openRecoveryDialog(this.detail)
       } else if (btn.name === '彻底删除') {
         this.completelyDeleteDialog(this.detail)
-      } else if (btn.name === '上传回单照片' || btn.name === '修改回单照片') {
-        this.openUploadDialog(this.detail)
       } else if (btn.name === '分享') {
         this.openShareDialog(this.detail)
       } else if (btn.name === '修改订单') {
@@ -522,23 +494,6 @@ export default {
         }
       })
     },
-    // 回收或返厂 (单条操作)
-    openReturnDialog (order, name) {
-      const _this = this
-      const data = {
-        id: [order],
-        name: name
-      }
-      this.openDialog({
-        name: 'order/management/dialog/return',
-        data: data,
-        methods: {
-          ok (node) {
-            _this.getDetail()
-          }
-        }
-      })
-    },
     // 打印
     print (order) {
       Server({
@@ -571,22 +526,6 @@ export default {
       _this.openDialog({
         name: 'order/management/dialog/completelyDelete',
         data: { id: [order] },
-        methods: {
-          ok (node) {
-            _this.getDetail()
-          }
-        }
-      })
-    },
-    // 打开上传和修改回单弹窗
-    openUploadDialog (order) {
-      const _this = this
-      _this.openDialog({
-        name: 'order/management/dialog/upload',
-        data: {
-          params: order,
-          name: order.receiptOrder.receiptUrl.length > 0 ? '修改' : '上传'
-        },
         methods: {
           ok (node) {
             _this.getDetail()
@@ -631,116 +570,45 @@ export default {
     },
     // 拉取table数据
     getDetail () {
-      // 订单详情  from: order   回单详情 from: receipt
-      if (this.from === 'order') {
-        Server({
-          url: 'order/detail',
-          method: 'get',
-          data: {
-            id: this.$route.query.orderId
-          }
-        }).then((res) => {
-          this.detail = res.data.data
-          this.orderStatus = res.data.data.status
-          // 过滤订单详情页操作按钮
-          this.filterOrderButton()
-          this.orderLog = res.data.data.orderLogs // 订单日志
-          this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
-          this.waybillNums = res.data.data.waybillNoList // 运单子单
-        })
-      } else { // 回单详情
-        Server({
-          url: 'order/getReceiptOrderDetail',
-          method: 'get',
-          data: {
-            id: this.$route.query.orderId
-          }
-        }).then((res) => {
-          this.detail = res.data.data
-          this.receiptStatus = res.data.data.receiptOrder.receiptStatus
-          // 过滤回单详情页操作按钮
-          this.filterReceiptButton()
-          this.orderLog = res.data.data.receiptOrderLogs // 回单日志
-          this.orderLogCount = res.data.data.receiptOrderLogs.length // 回单日志数量
-          let imageItems = []
-          this.detail.receiptOrder.receiptUrl.map((item) => {
-            imageItems.push({
-              src: item,
-              msrc: item
-            })
-          })
-          this.imgViewFunc = openSwipe(imageItems)
-        })
-      }
+      Server({
+        url: 'order/detail',
+        method: 'get',
+        data: {
+          id: this.$route.query.orderId
+        }
+      }).then((res) => {
+        this.detail = res.data.data
+        this.orderStatus = res.data.data.status
+        // 过滤订单详情页操作按钮
+        this.filterOrderButton()
+        this.orderLog = res.data.data.orderLogs // 订单日志
+        this.orderLogCount = res.data.data.orderLogs.length // 订单日志数量
+        this.waybillNums = res.data.data.waybillNoList // 运单子单
+      })
     },
     // 状态改名称
     statusToName (code) {
-      let name
-      switch (code) {
-        case -1:
-          name = '待签收'
-          break
-        case 0:
-          name = '待回收'
-          break
-        case 1:
-          name = '待返厂'
-          break
-        case 2:
-          name = '已返厂'
-          break
-        case 10:
-          name = '待提货'
-          break
-        case 20:
-          name = '待送货'
-          break
-        case 30:
-          name = '在途'
-          break
-        case 40:
-          name = '已到货'
-          break
-        case 50:
-          name = '已回单'
-          break
-        case 100:
-          name = '已删除'
-          break
+      let status = ORDER_STATUS.find(item => item.value === code)
+      if (status) {
+        return status.label
       }
-      return name
+      return '-'
     },
     // 提货状态转名称
-    pickupToName (code) {
-      let name
-      switch (code) {
-        case 1:
-          name = '小车上门自提'
-          break
-        case 2:
-          name = '大车直送客户'
-          break
+    pickupToName (data) {
+      let pick = pickups.find(item => item.value === data)
+      if (pick) {
+        return pick.name
       }
-      return name
+      return '-'
     },
     // 结算方式转名称
-    settlementToName (code) {
-      let name
-      switch (code) {
-        case 1:
-          name = '现付'
-          break
-        case 2:
-          name = '到付'
-          break
-        case 3:
-          name = '回付'
-          break
-        case 4:
-          name = '月结'
-          break
+    settlementToName (data) {
+      let type = settlements.find(item => item.value === data)
+      if (type) {
+        return type.name
       }
-      return name
+      return '-'
     },
     // 点击展开的运单子单
     handleWaybillNo (no) {
@@ -784,7 +652,7 @@ export default {
        */
       let r = this.detail
       let renderBtn = []
-      if (r.status === 50 && !r.disassembleStatus) { // 已回单未拆单展示删除按钮
+      if (r.status === ORDER_STATUS_CODE.receipt && !r.disassembleStatus) { // 已回单未拆单展示删除按钮
         renderBtn.push(
           { name: '删除', value: 1, code: 100302 }
         )
@@ -793,7 +661,7 @@ export default {
       if (!r.parentId) {
         renderBtn.push({ name: '分享', value: 9, code: 100307 })
       }
-      if (r.status === 10) { // 待提货状态
+      if (r.status === ORDER_STATUS_CODE.pickup) { // 待提货状态
         // 删除按钮
         if (r.transStatus === 0 && r.pickupStatus === 0 && r.parentId === '') {
           renderBtn.push(
@@ -834,7 +702,7 @@ export default {
           }
         }
       }
-      if (r.status === 20) { // 待调度状态
+      if (r.status === ORDER_STATUS_CODE.dispatch) { // 待调度状态
         // 打印
         this.checkPrintCode(renderBtn)
         // 删除按钮
@@ -887,7 +755,7 @@ export default {
           }
         }
       }
-      if (r.status === 100) { // 回收站状态
+      if (r.status === ORDER_STATUS_CODE.recycle) { // 回收站状态
         if (!(r.historyStatus === 50 || (r.historyStatus === 20 && r.pickupStatus === 1))) {
           renderBtn.push(
             { name: '恢复', value: 1, code: 100305 }
@@ -897,13 +765,13 @@ export default {
           { name: '彻底删除', value: 2, code: 100306 }
         )
       }
-      if (r.status !== 10 && r.status !== 20 && r.status !== 100) {
+      if (r.status !== ORDER_STATUS_CODE.pickup && r.status !== ORDER_STATUS_CODE.dispatch && r.status !== ORDER_STATUS_CODE.recycle) {
         renderBtn.push(
           { name: '修改订单', value: 7, code: 100308 }
         )
       }
       this.btnGroup = renderBtn
-      if (this.btnGroup.length > 0 && r.status !== 100) {
+      if (this.btnGroup.length > 0 && r.status !== ORDER_STATUS_CODE.recycle) {
         this.operateValue = this.btnGroup[this.btnGroup.length - 1].value // 默认点亮最后一个按钮
       }
     },
@@ -924,110 +792,24 @@ export default {
         }
       }
     },
-    // 回单详情按钮过滤   0待回收；1待返厂（已回收）；2已返厂
-    filterReceiptButton () {
-      if (this.detail.receiptOrder.receiptStatus === 0 && this.detail.status === 40) {
-        this.btnGroup = [
-          { name: '回收', value: 1, code: 120501 }
-        ]
-        this.operateValue = 1
-      } else if (this.detail.receiptOrder.receiptStatus === 1) {
-        this.btnGroup = [
-          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 120505 : 120504 },
-          { name: '返厂', value: 2, code: 120502 }
-        ]
-        this.operateValue = 2
-      } else if (this.detail.receiptOrder.receiptStatus === 2) {
-        this.btnGroup = [
-          { name: this.detail.receiptOrder.receiptUrl.length > 0 ? '修改回单照片' : '上传回单照片', value: 1, code: this.detail.receiptOrder.receiptUrl.length > 0 ? 120505 : 120504 }
-        ]
-        this.operateValue = 1
-      } else {
-        this.btnGroup = []
-      }
-    },
-    // 预览
-    handleView (i) {
-      // this.visible = true
-      // this.curImg = this.detail.receiptOrder.receiptUrl[i]
-      this.imgViewFunc(i)
-    },
     // 每种状态对应各自主题色
     themeBarColor (code) {
-      let barClass
-      switch (code) {
-        case -1:
-          barClass = 'i-bar-warning'
-          break
-        case 0:
-          barClass = 'i-bar-warning'
-          break
-        case 1:
-          barClass = 'i-bar-warning'
-          break
-        case 2:
-          barClass = 'i-bar-success'
-          break
-        case 10:
-          barClass = 'i-bar-warning'
-          break
-        case 20:
-          barClass = 'i-bar-warning'
-          break
-        case 30:
-          barClass = 'i-bar-info'
-          break
-        case 40:
-          barClass = 'i-bar-success'
-          break
-        case 50:
-          barClass = 'i-bar-success'
-          break
-        case 100:
-          barClass = 'i-bar-danger'
-          break
+      let theme = THEME_CLASS.find(item => item.code === code)
+      if (theme) {
+        return theme.barClass
       }
-      return barClass
+      return ''
     },
     // 每种状态对应各自主题色
     themeStatusColor (code) {
-      let statusClass
-      switch (code) {
-        case -1:
-          statusClass = 'i-status-warning'
-          break
-        case 0:
-          statusClass = 'i-status-warning'
-          break
-        case 1:
-          statusClass = 'i-status-warning'
-          break
-        case 2:
-          statusClass = 'i-status-success'
-          break
-        case 10:
-          statusClass = 'i-status-warning'
-          break
-        case 20:
-          statusClass = 'i-status-warning'
-          break
-        case 30:
-          statusClass = 'i-status-info'
-          break
-        case 40:
-          statusClass = 'i-status-success'
-          break
-        case 50:
-          statusClass = 'i-status-success'
-          break
-        case 100:
-          statusClass = 'i-status-danger'
-          break
+      let theme = THEME_CLASS.find(item => item.code === code)
+      if (theme) {
+        return theme.statusClass
       }
-      return statusClass
+      return ''
     },
     rate (value) {
-      return float.round(value * 100, 2)
+      return multiplyRate(value)
     }
   },
   /**

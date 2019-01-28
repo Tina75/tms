@@ -1,4 +1,6 @@
 import City from '@/libs/js/city'
+import settlements from '@/libs/constant/settlement.js'
+import pickups from '@/libs/constant/pickup.js'
 import { mapGetters, mapActions } from 'vuex'
 
 export default {
@@ -223,75 +225,19 @@ export default {
     },
     // 结算方式码转为名称
     settlementToName (val) {
-      let name
-      switch (val) {
-        case 1:
-          name = '现付'
-          break
-        case 2:
-          name = '到付'
-          break
-        case 3:
-          name = '回付'
-          break
-        case 4:
-          name = '月结'
-          break
-        default:
-          name = ''
-          break
+      let type = settlements.find(item => item.value === val)
+      if (type) {
+        return type.name
       }
-      return name
+      return '-'
     },
     // 提货状态转名称
     pickupToName (code) {
-      let name
-      switch (code) {
-        case 1:
-          name = '小车上门自提'
-          break
-        case 2:
-          name = '大车直送客户'
-          break
+      let pick = pickups.find(item => item.value === code)
+      if (pick) {
+        return pick.name
       }
-      return name
-    },
-    // 状态码转名称
-    statusToName (code) {
-      let name
-      switch (code) {
-        case -1:
-          name = '待签收'
-          break
-        case 0:
-          name = '待回收'
-          break
-        case 1:
-          name = '待返厂'
-          break
-        case 2:
-          name = '已返厂'
-          break
-        case 10:
-          name = '待提货'
-          break
-        case 20:
-          name = '待送货'
-          break
-        case 30:
-          name = '在途'
-          break
-        case 40:
-          name = '已到货'
-          break
-        case 50:
-          name = '已回单'
-          break
-        case 100:
-          name = '已删除'
-          break
-      }
-      return name
+      return '-'
     },
     // 将地址字符串12位后的替换成...
     formatterAddress (str) {

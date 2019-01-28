@@ -1,5 +1,5 @@
 // import TMSUrl from '@/libs/constant/url'
-import float from '@/libs/js/float'
+// import float from '@/libs/js/float'
 import { renderFee } from '@/libs/js/config'
 import IconLabel from '@/components/IconLabel'
 import { renderMileage, renderVolume, renderWeight } from './util'
@@ -71,11 +71,11 @@ export const TABLE_COLUMNS = vm => [
     key: 'shipperCompanyName',
     minWidth: 200
   },
-  {
-    title: '对接业务员',
-    key: 'handlerUserName',
-    minWidth: 180
-  },
+  // {
+  //   title: '对接业务员',
+  //   key: 'handlerUserName',
+  //   minWidth: 180
+  // },
   {
     title: '发货城市',
     key: 'departureCityName',
@@ -188,15 +188,15 @@ export const TABLE_COLUMNS = vm => [
       return renderFee(h, params.row.freightFee)
     }
   },
-  {
-    title: '提货费',
-    key: 'pickFee',
-    minWidth: 120,
-    render: (h, params) => {
-      // return h('span', params.row.pickFee ? (params.row.pickFee / 100).toFixed(2) : '-')
-      return renderFee(h, params.row.pickFee)
-    }
-  },
+  // {
+  //   title: '提货费',
+  //   key: 'pickFee',
+  //   minWidth: 120,
+  //   render: (h, params) => {
+  //     // return h('span', params.row.pickFee ? (params.row.pickFee / 100).toFixed(2) : '-')
+  //     return renderFee(h, params.row.pickFee)
+  //   }
+  // },
   {
     title: '装货费',
     key: 'loadFee',
@@ -215,15 +215,15 @@ export const TABLE_COLUMNS = vm => [
       return renderFee(h, params.row.unloadFee)
     }
   },
-  {
-    title: '保险费',
-    key: 'insureFee',
-    minWidth: 120,
-    render: (h, params) => {
-      // return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '-')
-      return renderFee(h, params.row.insuranceFee)
-    }
-  },
+  // {
+  //   title: '保险费',
+  //   key: 'insureFee',
+  //   minWidth: 120,
+  //   render: (h, params) => {
+  //     // return h('span', params.row.insuranceFee ? (params.row.insuranceFee / 100).toFixed(2) : '-')
+  //     return renderFee(h, params.row.insuranceFee)
+  //   }
+  // },
   {
     title: '其他费用',
     key: 'otherFee',
@@ -269,14 +269,15 @@ export const TABLE_COLUMNS = vm => [
       return h('span', params.row.isInvoice === 1 ? '是' : '否')
     }
   },
-  {
-    title: '开票税率',
-    key: 'invoiceRate',
-    minWidth: 180,
-    render: (h, params) => {
-      return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
-    }
-  },
+  // {
+  //   title: '开票税率',
+  //   key: 'invoiceRate',
+  //   minWidth: 180,
+  //   render: (h, params) => {
+  //     // return h('span', float.floor(params.row.invoiceRate * 100, 2) || '-')
+  //     return h('span', getRateText(params.row.invoiceRate))
+  //   }
+  // },
   {
     title: '制单人',
     key: 'orderMakerName',

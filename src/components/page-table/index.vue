@@ -416,13 +416,15 @@ export default {
         return
       }
       // 发送请求，填充data
-      this.loading = true
+      vm.loading = true
+      // 只需要传参：pageNo和pageSize
+      let pagination = _.pick(vm.pagination, ['pageNo', 'pageSize'])
       server({
-        method: this.method,
-        url: this.url,
+        method: vm.method,
+        url: vm.url,
         data: {
-          ...this.pagination,
-          ...this.keywords
+          ...pagination,
+          ...vm.keywords
         }
       })
         .then((response) => {
@@ -432,7 +434,7 @@ export default {
             // 当有复选框场景的时候，需要主动勾选上
             vm.dataSource = (data[vm.listField] || []).map((item) => {
               if (vm.rowSelection.isVisible && typeof vm.rowSelection.isVisible === 'function') {
-                let visible = this.rowSelection.isVisible(item)
+                let visible = vm.rowSelection.isVisible(item)
                 if (!visible) {
                   item._disabled = true
                   item._visible = visible

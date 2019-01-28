@@ -45,6 +45,7 @@ import PageTable from '@/components/page-table'
 import { consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
+import { settlementsFindName } from '@/libs/constant/settlement.js'
 const rate = {
   get (value) {
     return value ? float.floor(float.round(value * 100), 2) : value === 0 ? value : null
@@ -105,17 +106,7 @@ export default {
                         title: '修改发货方',
                         flag: 2, // 编辑
                         id: params.row.id,
-                        validate: {
-                          name: params.row.name,
-                          contact: params.row.contact,
-                          phone: params.row.phone,
-                          payType: params.row.payType + '',
-                          remark: params.row.remark,
-                          pickUp: params.row.pickUp,
-                          isInvoice: params.row.isInvoice,
-                          invoiceRate: rate.get(params.row.invoiceRate),
-                          salesmanId: params.row.salesmanId
-                        }
+                        validate: { ...params.row, invoiceRate: rate.get(params.row.invoiceRate) }
                       },
                       methods: {
                         ok () {
@@ -276,19 +267,19 @@ export default {
           title: '结算方式',
           key: 'payType',
           render: (h, params) => {
-            let text = ''
-            if (params.row.payType === 1) {
-              text = '现付'
-            } else if (params.row.payType === 2) {
-              text = '到付'
-            } else if (params.row.payType === 3) {
-              text = '回单付'
-            } else if (params.row.payType === 4) {
-              text = '月结'
-            } else {
-              text = '-'
-            }
-            return h('div', {}, text)
+            // let text = ''
+            // if (params.row.payType === 1) {
+            //   text = '现付'
+            // } else if (params.row.payType === 2) {
+            //   text = '到付'
+            // } else if (params.row.payType === 3) {
+            //   text = '回单付'
+            // } else if (params.row.payType === 4) {
+            //   text = '月结'
+            // } else {
+            //   text = '-'
+            // }
+            return h('div', {}, settlementsFindName(params.row.payType))
           }
         },
         {

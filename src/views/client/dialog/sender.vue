@@ -25,10 +25,7 @@
       </FormItem>
       <FormItem label="结算方式：">
         <Select v-model="validate.payType" transfer clearable placeholder="请输入">
-          <Option value="1">现付</Option>
-          <Option value="2">到付</Option>
-          <Option value="3">回单付</Option>
-          <Option value="4">月结</Option>
+          <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
       <FormItem label="是否开票：">
@@ -49,8 +46,7 @@
       </FormItem>
       <FormItem label="开拓渠道：" >
         <Select v-model="validate.exploiteChannel" transfer placeholder="请输入">
-          <Option value="1">公司开拓</Option>
-          <Option value="2">个人开拓</Option>
+          <Option v-for="opt in exploiteChannel" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
         </Select>
       </FormItem>
       <FormItem label="">
@@ -78,14 +74,15 @@
 <script>
 import { consignerAdd, consignerUpdate } from '../pages/client'
 import BaseDialog from '@/basic/BaseDialog'
-import pickups from '@/libs/constant/pickup.js'
-import { invoiceList } from '@/libs/constant/orderCreate.js'
+import { pickups } from '@/libs/constant/pickup.js'
+import { invoiceList, exploiteChannel } from '@/libs/constant/orderCreate.js'
 import TagNumberInput from '@/components/TagNumberInput'
 import SelectInput from '@/components/SelectInput.vue'
 import server from '@/libs/js/server'
 import float from '@/libs/js/float'
 import { validatePhone } from '@/libs/js/validate'
 import { formatePhone } from '@/libs/js/formate'
+import settlements from '@/libs/constant/settlement.js'
 const rate = {
   set (value) {
     return value ? float.floor(value / 100, 4) : value
@@ -100,6 +97,8 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      settlements,
+      exploiteChannel,
       loading: false,
       pickups, // 提货方式
       invoiceList,
@@ -115,7 +114,7 @@ export default {
         isInvoice: 0, // 是否开票
         invoiceRate: null, // 开票税率
         salesmanId: '', // 业务员
-        exploiteChannel: '1'
+        exploiteChannel: 1
       },
       ruleValidate: {
         name: [

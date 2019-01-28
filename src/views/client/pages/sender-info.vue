@@ -30,19 +30,13 @@
           <Col span="8">
           <div>
             <span class="label">提货方式：</span>
-            <span v-if="list.pickUp===1">小车上门提货</span>
-            <span v-else-if="list.pickUp===2">大车直送客户</span>
-            <span v-else>-</span>
+            <span>{{pickupsFindName(list.pickUp)}}</span>
           </div>
           </Col>
           <Col span="8">
           <div>
             <span class="label">结算方式：</span>
-            <span v-if="list.payType===1">现付</span>
-            <span v-else-if="list.payType===2">到付</span>
-            <span v-else-if="list.payType===3">回单付</span>
-            <span v-else-if="list.payType===4">月结</span>
-            <span v-else>-</span>
+            <span>{{settlementsFindName(list.payType)}}</span>
           </div>
           </Col>
           <Col span="8">
@@ -57,9 +51,7 @@
           <Col span="8">
           <div>
             <span class="label">开拓渠道：</span>
-            <span v-if="list.exploiteChannel ===1">公司开拓</span>
-            <span v-else-if="list.exploiteChannel ===2">个人开拓</span>
-            <span v-else>-</span>
+            <span>{{exploiteChannelFindName(list.exploiteChannel)}}</span>
           </div>
           </Col>
           <Col span="8">
@@ -139,6 +131,9 @@ import pageTable from '@/components/page-table'
 import float from '@/libs/js/float'
 import headType from '@/libs/constant/headtype'
 import { divideFeeOrNull, renderFee } from '@/libs/js/config'
+import { settlementsFindName } from '@/libs/constant/settlement.js'
+import { pickupsFindName } from '@/libs/constant/pickup.js'
+import { exploiteChannelFindName } from '@/libs/constant/orderCreate.js'
 // 是否包含省市
 const hasCity = (val, cityName) => {
   return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
@@ -559,6 +554,15 @@ export default {
     this.ruleHeight = document.body.clientHeight - 90 - 15 * 2 - 20 + 15 - 174 - 32 - 39 - 16 - 44 + 146
   },
   methods: {
+    settlementsFindName (val) {
+      return settlementsFindName(val)
+    },
+    pickupsFindName (val) {
+      return pickupsFindName(val)
+    },
+    exploiteChannelFindName (val) {
+      return exploiteChannelFindName(val)
+    },
     tabsClick (name) {
       if (name === 'rule') {
         this.isShow = true

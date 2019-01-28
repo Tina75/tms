@@ -136,6 +136,8 @@ import { getPreMonth } from '../mixins/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 import jsCookie from 'js-cookie'
 import { renderFee, getMileageText } from '@/libs/js/config'
+import statusEnum from '@/libs/constant/statusEnum'
+import { orderStatusMap } from '@/libs/constant/order'
 export default {
   name: 'report-operate',
   components: {
@@ -179,39 +181,15 @@ export default {
       times: ['', ''],
       isExport: false,
       /* 订单状态 */
-      orderStatusMap: {
-        10: '待提货',
-        20: '待调度',
-        30: '在途 ',
-        40: '已到货',
-        50: '已回单',
-        100: '删除'
-      },
+      orderStatusMap: orderStatusMap,
       /* 提货单状态 */
-      loadbillStatusMap: {
-        1: '待提货',
-        2: '提货中',
-        3: '已提货'
-      },
+      loadbillStatusMap: statusEnum.loadbillStatusMap,
       /* 运单状态  */
-      waybillStatusMap: {
-        1: '待派车',
-        2: '待发运',
-        3: '在途',
-        4: '已到货'
-      },
+      waybillStatusMap: statusEnum.waybillStatusMap,
       /* 外转单状态  */
-      transbillStatusMap: {
-        1: '待发运',
-        2: '在途',
-        3: '到货'
-      },
+      transbillStatusMap: statusEnum.transbillStatusMap,
       /* 回单状态  */
-      receiptStatusMap: {
-        0: '待回收',
-        1: '待返厂',
-        2: '已返厂'
-      },
+      receiptStatusMap: statusEnum.receiptStatusMap,
       columns: [
         {
           title: '订单号',
