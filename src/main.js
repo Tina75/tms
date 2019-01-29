@@ -23,7 +23,6 @@ window.addEventListener('error', e => {
 })
 
 const errorHandler = (error, vm) => {
-  console.error(error)
   vm.$reportError(error)
 }
 Vue.config.productionTip = false
@@ -33,7 +32,7 @@ Vue.prototype.$throw = error => {
 }
 // 客户端上传图片不带域名，需要统一添加
 Vue.prototype.$handleImgUrl = url => {
-  return url.indexOf('aliyuncs') > -1 ? url : process.env.VUE_APP_IMG_URL + url
+  return url.indexOf('aliyuncs') > -1 ? url : process.env.VUE_APP_IMG_HOST + url
 }
 
 // Meta自设置
