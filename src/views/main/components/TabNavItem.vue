@@ -1,11 +1,12 @@
 <template>
   <div :class="['item-container',checked?'mh-10':'']">
     <i v-show="checked" class="icon font_family icon-you2 border-icon-left" style=""></i>
-    <div :title="name" :class="['tab-item',checked?'tab-item__checked':'']">
+    <div :title="name" :class="['tab-item',checked?'tab-item__checked':'']" @click="linkto">
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="checked" class="tab-item__icon " type="ios-refresh" size="20" @click.stop="refresh"/>
       </span>
-      <router-link :to="path" tag="span" class="tab-item__name">{{name}}</router-link>
+      <span class="tab-item__name">{{name}}</span>
+      <!-- <router-link :to="path" tag="span" class="tab-item__name">{{name}}</router-link> -->
       <span style="display:inline-block;min-width:18px">
         <Icon v-show="closeable" :style="checked?'visibility:visible':'visibility:hidden'" class="tab-item__icon close-icon" type="ios-close" size="20" @click.stop="close"/>
       </span>
@@ -67,6 +68,9 @@ export default {
       setTimeout(() => {
         this.$router.push(tab)
       }, 50)
+    },
+    linkto () {
+      this.$router.push(this.path)
     }
   }
 }
