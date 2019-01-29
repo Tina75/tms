@@ -1,6 +1,7 @@
 
 import { isNumber, roundFee, renderFee, renderVolume, roundVolume, roundWeight, renderWeight, roundWeightKg, renderWeightKg } from '@/libs/js/config'
 import TagNumberInput from '@/components/TagNumberInput'
+import _ from 'lodash'
 export const TABLE_COLUMNS_ONE = vm => [
   {
     title: '货物名称',
@@ -11,7 +12,7 @@ export const TABLE_COLUMNS_ONE = vm => [
     title: '包装数量',
     key: 'quantity',
     render: (h, params) => {
-      if (vm.isSeparate && (vm.currentId === params.row.id) && (vm.cloneData[params.index].quantity !== 0)) {
+      if (vm.isSeparate && (vm.currentId === params.row.id) && (_.find(vm.cloneData, ['id', params.row.id]).quantity !== 0)) {
         return h('div', [
           h('InputNumber', {
             props: {
@@ -24,7 +25,7 @@ export const TABLE_COLUMNS_ONE = vm => [
               'on-change': (val) => {
                 vm.quantityVal = val
                 let percent = vm.quantityVal / params.row.quantity // 当前数量拆分的百分比
-                let cloneData = vm.cloneData[params.index]
+                let cloneData = _.find(vm.cloneData, ['id', params.row.id])
                 // 计算重量
                 if (cloneData.weight !== 0 || cloneData.weightKg !== 0) {
                   // 区分吨和公斤
@@ -50,6 +51,7 @@ export const TABLE_COLUMNS_ONE = vm => [
           })
         ])
       } else {
+        params.row.quantity = _.find(vm.cloneData, ['id', params.row.id]).quantity
         return h('div', params.row.quantity)
       }
     }
@@ -58,12 +60,12 @@ export const TABLE_COLUMNS_ONE = vm => [
     title: '体积（方）',
     key: 'volume',
     render: (h, params) => {
-      if (vm.isSeparate && (vm.currentId === params.row.id) && (vm.cloneData[params.index].volume !== 0)) {
+      if (vm.isSeparate && (vm.currentId === params.row.id) && (_.find(vm.cloneData, ['id', params.row.id]).volume !== 0)) {
         return h('div', [
           h(TagNumberInput, {
             props: {
               min: 0,
-              max: roundVolume(vm.parentOrderCargoList[params.index].volume) + 0.0000004, // 1.1 + 0.1 = 1.2000000002
+              max: roundVolume(vm.parentOrderCargoList[params.index].volume),
               value: roundVolume(params.row.volume),
               step: 0.000001,
               precision: 6,
@@ -73,7 +75,7 @@ export const TABLE_COLUMNS_ONE = vm => [
             },
             on: {
               'on-change': (val) => {
-                if (val === null) {
+                if (val === '') {
                   vm.volumeVal = null
                 } else {
                   vm.volumeVal = roundVolume(val)
@@ -83,6 +85,7 @@ export const TABLE_COLUMNS_ONE = vm => [
           })
         ])
       } else {
+        params.row.volume = _.find(vm.cloneData, ['id', params.row.id]).volume
         return h('div', roundVolume(params.row.volume))
       }
     }
@@ -91,6 +94,7 @@ export const TABLE_COLUMNS_ONE = vm => [
     title: '货值',
     key: 'cargoCost',
     render: (h, params) => {
+      params.row.cargoCost = _.find(vm.cloneData, ['id', params.row.id]).cargoCost
       return renderFee(h, params.row.cargoCost)
     }
   },
@@ -155,7 +159,7 @@ export const TABLE_COLUMNS_ONE = vm => [
                  * 重量、体积是小数，可能会出现1.000000000002的情况，需要转一下
                  */
                 if (!((params.row.quantity !== 0 && vm.quantityVal === 0) || ((params.row.weight !== 0 || params.row.weightKg !== 0) && vm.weightVal === 0) || (params.row.volume !== 0 && vm.volumeVal === 0))) {
-                  let cloneData = vm.cloneData[params.index]
+                  let cloneData = _.find(vm.cloneData, ['id', params.row.id])
                   params.row.quantity = cloneData.quantity
                   // 区分吨和公斤
                   if (vm.WeightOption === 1) {
@@ -227,7 +231,7 @@ export const TABLE_COLUMNS_ONE = vm => [
             on: {
               click: () => {
                 vm.isSeparate = false
-                let cloneData = vm.cloneData[params.index]
+                let cloneData = _.find(vm.cloneData, ['id', params.row.id])
                 params.row.quantity = cloneData.quantity
                 // 区分吨和公斤
                 if (vm.WeightOption === 1) {
@@ -269,7 +273,7 @@ export const TABLE_COLUMNS_ONE = vm => [
                   click: () => {
                     vm.isSeparate = true
                     vm.currentId = params.row.id
-                    let cloneData = vm.cloneData[params.index]
+                    let cloneData = _.find(vm.cloneData, ['id', params.row.id])
                     vm.cargoCostVal = cloneData.cargoCost
                     vm.quantityVal = cloneData.quantity
                     vm.weightVal = vm.WeightOption === 1 ? cloneData.weight : cloneData.weightKg
@@ -378,31 +382,20 @@ export const TABLE_COLUMNS_TWO = vm => [
                 if (hasParentList !== undefined) {
                   hasParentList.quantity = Number(hasParentList.quantity)
                   hasParentList.cargoCost = Number(hasParentList.cargoCost)
-                  // 区分吨和公斤
-                  if (vm.WeightOption === 1) {
-                    hasParentList.weight = Number(hasParentList.weight)
-                  } else {
-                    hasParentList.weightKg = Number(hasParentList.weightKg)
-                  }
+                  hasParentList.weight = Number(hasParentList.weight)
+                  hasParentList.weightKg = Number(hasParentList.weightKg)
                   hasParentList.volume = Number(hasParentList.volume)
+
                   params.row.quantity = Number(params.row.quantity)
                   params.row.cargoCost = Number(params.row.cargoCost)
-                  // 区分吨和公斤
-                  if (vm.WeightOption === 1) {
-                    params.row.weight = Number(params.row.weight)
-                  } else {
-                    params.row.weightKg = Number(params.row.weightKg)
-                  }
+                  params.row.weight = Number(params.row.weight)
+                  params.row.weightKg = Number(params.row.weightKg)
                   params.row.volume = Number(params.row.volume)
 
                   hasParentList.quantity += params.row.quantity
                   hasParentList.cargoCost = roundFee(hasParentList.cargoCost + params.row.cargoCost)
-                  // 区分吨和公斤
-                  if (vm.WeightOption === 1) {
-                    hasParentList.weight = roundWeight(hasParentList.weight + params.row.weight)
-                  } else {
-                    hasParentList.weightKg += params.row.weightKg
-                  }
+                  hasParentList.weight = roundWeight(hasParentList.weight + params.row.weight)
+                  hasParentList.weightKg = roundWeightKg(hasParentList.weightKg + params.row.weightKg)
                   hasParentList.volume = roundVolume(hasParentList.volume + params.row.volume)
                   if (vm.childOrderCargoList.length > 0) {
                     // 拆部分
@@ -423,6 +416,7 @@ export const TABLE_COLUMNS_TWO = vm => [
                   vm.parentOrderCargoList.push(child[0])
                 }
               }
+              vm.cloneData = vm.parentOrderCargoList
             }
           }
         }, '还原')
@@ -436,12 +430,12 @@ export const COLUMNS_ONE_WEIGHT = vm => {
     title: '重量（吨）',
     key: 'weight',
     render: (h, params) => {
-      if (vm.isSeparate && (vm.currentId === params.row.id) && (vm.cloneData[params.index].weight !== 0)) {
+      if (vm.isSeparate && (vm.currentId === params.row.id) && (_.find(vm.cloneData, ['id', params.row.id]).weight !== 0)) {
         return h('div', [
           h(TagNumberInput, {
             props: {
               min: 0,
-              max: roundWeight(vm.parentOrderCargoList[params.index].weight) + 0.0004, // 1.01 + 0.01 = 1.02000000002
+              max: roundWeight(vm.parentOrderCargoList[params.index].weight),
               value: roundWeight(params.row.weight),
               step: 0.001,
               precision: vm.$numberPrecesion.weight,
@@ -451,7 +445,7 @@ export const COLUMNS_ONE_WEIGHT = vm => {
             },
             on: {
               'on-change': (val) => {
-                if (val === null) {
+                if (val === '') {
                   vm.weightVal = null
                 } else {
                   vm.weightVal = roundWeight(val)
@@ -461,6 +455,7 @@ export const COLUMNS_ONE_WEIGHT = vm => {
           })
         ])
       } else {
+        params.row.weight = _.find(vm.cloneData, ['id', params.row.id]).weight
         return h('div', roundWeight(params.row.weight))
       }
     }
@@ -472,7 +467,7 @@ export const COLUMNS_ONE_WEIGHTKG = vm => {
     title: '重量（公斤）',
     key: 'weightKg',
     render: (h, params) => {
-      if (vm.isSeparate && (vm.currentId === params.row.id) && (vm.cloneData[params.index].weightKg !== 0)) {
+      if (vm.isSeparate && (vm.currentId === params.row.id) && (_.find(vm.cloneData, ['id', params.row.id]).weightKg !== 0)) {
         return h('div', [
           h(TagNumberInput, {
             props: {
@@ -483,7 +478,7 @@ export const COLUMNS_ONE_WEIGHTKG = vm => {
             },
             on: {
               'on-change': (val) => {
-                if (val === null) {
+                if (val === '') {
                   vm.weightVal = null
                 } else {
                   vm.weightVal = roundWeightKg(val)
@@ -493,6 +488,7 @@ export const COLUMNS_ONE_WEIGHTKG = vm => {
           })
         ])
       } else {
+        params.row.weightKg = _.find(vm.cloneData, ['id', params.row.id]).weightKg
         return renderWeightKg(h, params.row.weightKg)
       }
     }
