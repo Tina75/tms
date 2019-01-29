@@ -331,6 +331,8 @@
         </div>
         <Button v-if="status === '待发运'" class="detail-field-button" type="primary"
                 @click="addOrder('freight')">添加订单</Button>
+        <Button v-if="inEditing === 'change'" class="detail-field-button" type="primary"
+                @click="openCargoAddDialog()">添加货物</Button>
         <Table ref="cargoEditTable" :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading"> </Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -1404,6 +1406,28 @@ export default {
         methods: {
           ok (node) {
             _this.callSendInterface(data)
+          }
+        }
+      })
+    },
+    // 打开添加货物弹窗
+    openCargoAddDialog () {
+      const z = this
+      let list = z.detail.map((item) => {
+        return {
+          label: item.orderNo,
+          value: item.orderId
+        }
+      })
+      z.openDialog({
+        name: 'transport/dialog/addCargo',
+        data: {
+          orders: list,
+          source: 'change' // 改单入口
+        },
+        methods: {
+          complete (cargo) {
+            // console.log(cargo)
           }
         }
       })
