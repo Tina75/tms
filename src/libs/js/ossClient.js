@@ -35,14 +35,12 @@ class OssClient {
     }
     if (!lastRequestTime) {
       // 初始化请求
-      lastRequestTime = Date.now()
       this.getOssClient()
     } else {
       let now = Date.now()
       // 间隔的秒数
       let interval = Math.ceil((now - lastRequestTime) / 1000)
       if (interval >= intervalTime) {
-        lastRequestTime = now
         this.getOssClient()
       }
     }
@@ -75,6 +73,8 @@ class OssClient {
           bucket: data.ossTokenDTO.bucketName,
           endpoint: data.ossTokenDTO.endpoint
         })
+        vm.lastRequestTime = Date.now()
+
         return response
       })
   }
