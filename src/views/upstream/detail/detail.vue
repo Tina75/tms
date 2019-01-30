@@ -45,42 +45,15 @@
           </i-col>
         </Row>
         <Row>
-          <!--<i-col span="7">-->
-          <!--<span>始发地：</span>-->
-          <!--<span>{{detail.startName}}</span>-->
-          <!--</i-col>-->
-          <!--<i-col span="7">-->
-          <!--<span>目的地：</span>-->
-          <!--<span>{{detail.endName}}</span>-->
-          <!--</i-col>-->
-          <!--<i-col span="7">-->
-          <!--<span>提货方式：</span>-->
-          <!--<span v-if="detail.pickTypeDesc">{{detail.pickTypeDesc}}</span>-->
-          <!--<span v-else>-</span>-->
-          <!--</i-col>-->
           <i-col span="7">
             <span>回单数：</span>
             <span>{{detail.receiptCount || '-'}}</span>
           </i-col>
-          <!--<i-col span="6">-->
-          <!--<span>对接业务员：</span>-->
-          <!--<span>{{detail.handlerUserName}}</span>-->
-          <!--</i-col>-->
           <i-col span="4">
             <span>是否开票：</span>
             <span>{{detail.isInvoice === 1 ? `是` : '否'}}</span>
           </i-col>
         </Row>
-        <!--<Row>-->
-        <!--<i-col span="7">-->
-        <!--<span>对接业务员：</span>-->
-        <!--<span>{{detail.handlerUserName}}</span>-->
-        <!--</i-col>-->
-        <!--<i-col span="7">-->
-        <!--<span>是否开票：</span>-->
-        <!--<span>{{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%）` : '否'}}</span>-->
-        <!--</i-col>-->
-        <!--</Row>-->
         <Row style="margin-top:18px">
           <i-col span="7">
             <span>发货联系人：</span>
@@ -92,7 +65,7 @@
           </i-col>
           <i-col span="10">
             <span>发货地址：</span>
-            <span>{{detail.consignerAddress || '-'}}</span>
+            <span>{{consignerAddress || '-'}}</span>
           </i-col>
         </Row>
         <Row>
@@ -106,7 +79,7 @@
           </i-col>
           <i-col span="10">
             <span>收货地址：</span>
-            <span>{{detail.consigneeAddress || '-'}}</span>
+            <span>{{consigneeAddress}}</span>
           </i-col>
         </Row>
         <Row style="margin-top: 18px;">
@@ -145,11 +118,6 @@
             <span v-if="detail.freightFee" style="font-weight:bold;">{{detail.freightFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <!--<i-col span="4">-->
-          <!--<span class="fee-style">提货费：</span>-->
-          <!--<span v-if="detail.pickFee" style="font-weight:bold;">{{detail.pickFee | toPoint}}元</span>-->
-          <!--<span v-else>-</span>-->
-          <!--</i-col>-->
           <i-col span="4">
             <span class="fee-style">装货费：</span>
             <span v-if="detail.loadFee" style="font-weight:bold;">{{detail.loadFee | toPoint}}元</span>
@@ -160,11 +128,6 @@
             <span v-if="detail.unloadFee" style="font-weight:bold;">{{detail.unloadFee | toPoint}}元</span>
             <span v-else>-</span>
           </i-col>
-          <!--<i-col span="4">-->
-          <!--<span class="fee-style">保险费：</span>-->
-          <!--<span v-if="detail.insuranceFee" style="font-weight:bold;">{{detail.insuranceFee | toPoint}}元</span>-->
-          <!--<span v-else>-</span>-->
-          <!--</i-col>-->
           <i-col span="4">
             <span class="fee-style">其他：</span>
             <span v-if="detail.otherFee" style="font-weight:bold;">{{detail.otherFee | toPoint}}元</span>
@@ -203,7 +166,6 @@
         </div>
       </div>
     </section>
-    <!--<OrderPrint ref="printer" :list="orderPrint"></OrderPrint>-->
   </div>
 </template>
 
@@ -212,7 +174,7 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import '@/libs/js/filter'
 import { getFeeText } from '@/libs/js/config'
-import { renderVolume, renderWeight } from '../constant/util'
+import { renderVolume, renderWeight, divideWeight, divideVolume } from '../constant/util'
 // import float from '@/libs/js/float'
 export default {
   name: 'upstreamDetail',
@@ -319,7 +281,7 @@ export default {
       this.detail.cargoInfos.map((item) => {
         total += Number(item.volume)
       })
-      return total
+      return divideVolume(total)
     },
     // 总重量
     weightTotal () {
@@ -327,7 +289,15 @@ export default {
       this.detail.cargoInfos.map((item) => {
         total += Number(item.weight)
       })
-      return total
+      return divideWeight(total)
+    },
+    // 发货地址
+    consignerAddress () {
+      return this.methodCity(this.detail.departureCityName, this.detail.consignerAddress)
+    },
+    // 收货地址
+    consigneeAddress () {
+      return this.methodCity(this.detail.destinationCityName, this.detail.consigneeAddress)
     }
   },
   beforeRouteUpdate (to, from, next) {
@@ -342,6 +312,31 @@ export default {
   },
 
   methods: {
+    /**
+     * @Description: 发货城市将省市区和详细地址拼接，并且去掉详细地址中重复的省市区信息
+     * @Date 2019/1/29
+     * @param 省市区(CityName) 详细地址(addressName)
+     */
+    methodCity (CityName, addressName) {
+      let str = CityName || ''
+      let address = addressName || ''
+      let index1 = str.indexOf('省')
+      if (index1) {
+        let province = str.slice(0, index1 + 1)
+        address = address.replace(province, '')
+      }
+      let index2 = str.indexOf('市')
+      if (index2) {
+        let city = str.slice(index1 + 1, index2 + 1)
+        address = address.replace(city, '')
+      }
+      let index3 = str.indexOf('区')
+      if (index3) {
+        let area = str.slice(index2 + 1, str.length)
+        address = address.replace(area, '')
+      }
+      return str + address
+    },
     showPoptip (e) {
       this.show = true
     },
