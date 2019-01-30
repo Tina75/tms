@@ -61,7 +61,7 @@
                 </Col>
               </Row>
               <Row>
-                <Col span="6">
+                <Col span="24">
                 <p>备注：<span>{{item.remark}}</span></p>
                 </Col>
               </Row>
