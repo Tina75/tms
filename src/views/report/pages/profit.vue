@@ -201,7 +201,7 @@ import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import PageTable from '@/components/page-table'
 import SelectInput from '@/components/SelectInput.vue'
-import { getPreMonth } from '../mixins/getPerMonth'
+import { getPreMonth } from '../../../libs/js/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 import { getFeeText } from '@/libs/js/config'
 export default {

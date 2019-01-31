@@ -24,14 +24,24 @@
           </Col>
           <Col span="13">
           <FormItem  prop="daterange">
-            <DatePicker v-model="formInline.daterange" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
+            <DatePicker
+              v-model="formInline.daterange"
+              :options="dateOption"
+              :start-date="perMonth" transfer
+              type="daterange"
+              format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
           </FormItem>
           </Col>
         </Row>
         </Col>
         <Col v-if="scene==='2'" span="6">
         <FormItem :label-width="75" label="核销日期：" prop="daterange">
-          <DatePicker v-model="formInline.daterange" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
+          <DatePicker
+            v-model="formInline.daterange"
+            :start-date="perMonth"
+            :options="dateOption"
+            transfer type="daterange"
+            format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
         </FormItem>
         </Col>
         <Col span="5">
@@ -46,6 +56,7 @@
 </template>
 
 <script>
+import { getPreMonth } from '../../../libs/js/getPerMonth'
 /**
  * 返现运费表单
  * scene: 1.待核销， 2.已核销
@@ -76,12 +87,16 @@ export default {
       }
     }
   },
+  computed: {
+    perMonth () {
+      return getPreMonth()
+    }
+  },
   methods: {
     /**
      * 搜索
      */
     handleSearch () {
-      console.log('form', this.formInline)
       let params = {
         partnerName: this.formInline.partnerName || void 0, // 外转方/承运商名字
         orderNo: this.formInline.orderNo || void 0, // 单据号
