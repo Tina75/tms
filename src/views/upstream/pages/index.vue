@@ -78,7 +78,12 @@
 
         <div class="complex-query">
           <div>
-            <DatePicker v-model="seniorSearchFields.dateRange"  :options="timeOption" type="daterange" transfer  split-panels placeholder="请选择下单的开始和结束日期" class="search-input-senior"></DatePicker>
+            <DatePicker
+              v-model="seniorSearchFields.dateRange"
+              :options="timeOption" :start-date="perMonth"
+              type="daterange"
+              transfer
+              split-panels placeholder="请选择下单的开始和结束日期" class="search-input-senior"></DatePicker>
           </div>
           <div>
             <Button type="primary"
@@ -122,6 +127,7 @@ import TabHeader from '../components/TabHeader'
 import headType from '@/libs/constant/headtype'
 import { TABLE_COLUMNS, TABLIST, BTNLIST, setTabList } from '../constant/upstream.js'
 import Server from '@/libs/js/server'
+import { getPreMonth } from '../../../libs/js/getPerMonth'
 export default {
   name: 'upstream',
   components: { TabHeader, PageTable, SelectInput, SelectInputForCity },
@@ -167,6 +173,9 @@ export default {
     ...mapGetters([
       'clients'
     ]),
+    perMonth () {
+      return getPreMonth()
+    },
     // tab切换后根据tab和权限确定应展示的按钮组
     showButtons () {
       return this.currentBtns.filter(item => {

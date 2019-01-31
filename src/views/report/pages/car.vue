@@ -94,7 +94,7 @@ import { renderFee, getMileageText } from '@/libs/js/config'
 // import City from '@/libs/js/city'
 // import { mapGetters, mapActions } from 'vuex'
 import Export from '@/libs/js/export'
-import { getPreMonth } from '../mixins/getPerMonth'
+import { getPreMonth } from '../../../libs/js/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 import billTypeMap from '@/libs/constant/billType'
 export default {

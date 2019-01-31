@@ -11,7 +11,13 @@
           </Col>
           <Col span="5" style="margin-right: 20px">
           <FormItem :label-width="75" label="核销时间：">
-            <DatePicker v-model="writtenOffQuery.period" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
+            <DatePicker
+              v-model="writtenOffQuery.period"
+              :options="dateOption" :start-date="perMonth"
+              transfer
+              type="daterange" format="yyyy-MM-dd"
+              placeholder="开始时间-结束时间"
+              style="width: 100%" />
           </FormItem>
           </Col>
           <Col span="2" style="margin-right: 10px">
@@ -50,6 +56,7 @@ import BaseComponent from '@/basic/BaseComponent'
 import Server from '@/libs/js/server'
 import Export from '@/libs/js/export'
 import { getFeeText } from '@/libs/js/config'
+import { getPreMonth } from '../../../libs/js/getPerMonth'
 export default {
   name: 'writtenOff',
   mixins: [ BaseComponent ],
@@ -130,6 +137,9 @@ export default {
     }
   },
   computed: {
+    perMonth () {
+      return getPreMonth()
+    },
     orderColumn () {
       return [
         {
