@@ -1,10 +1,10 @@
 <template>
   <div class="collect-fee">
-    <TabHeader :value="activeTab" :list="tabs" @on-change="handleChangeTab" />
+    <TabHeader :name="activeTab" :tabs="tabs" @tab-change="handleChangeTab" />
     <div class="collect-fee__content">
-      <WaitCollect v-if="activeTab === 'WAIT_COLLECT'"></WaitCollect>
-      <WaitPay v-if="activeTab === 'WAIT_PAY'"></WaitPay>
-      <Paied v-if="activeTab === 'PAIED'"></Paied>
+      <WaitCollect v-if="activeTab === '未收'"></WaitCollect>
+      <WaitPay v-if="activeTab === '已收未付'"></WaitPay>
+      <Paied v-if="activeTab === '已付款'"></Paied>
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@
  * created by mys 2018-11-2
  */
 import BasePage from '@/basic/BasePage'
-import TabHeader from '../components/TabHeader'
+import TabHeader from '@/components/TabHeader'
 import WaitCollect from '../components/WaitCollect.vue'
 import WaitPay from '../components/WaitPay.vue'
 import Paied from '../components/Paied.vue'
@@ -37,7 +37,7 @@ export default {
   data () {
     return {
       tabs: CollectTabs,
-      activeTab: 'WAIT_COLLECT'
+      activeTab: '未收'
     }
   },
   methods: {
@@ -46,10 +46,6 @@ export default {
      */
     handleChangeTab (activeName) {
       this.activeTab = activeName
-      // if (CollectTabMap.WAIT_COLLECT === activeName) {
-      //   // 未收
-      //   console.log(activeName)
-      // }
     }
   }
 }

@@ -1,10 +1,10 @@
 <template>
   <div class="sider">
-    <Sider :collapsed-width="50" v-model="collapsed" breakpoint="md" collapsible hide-trigger class="sider-layout">
+    <Sider ref="$sider" :collapsed-width="50" v-model="collapsed" breakpoint="md" collapsible hide-trigger class="sider-layout">
       <side-menu :collapsed="collapsed" :active-name="$route.path" />
     </Sider>
     <div class="sider-trigger-el" >
-      <span :class="['sider-trigger', collapsed ? 'collapsed' : 'uncollapsed']" @click="collapsed = !collapsed">
+      <span :class="['sider-trigger', collapsed ? 'collapsed' : 'uncollapsed', zeroWidth ? 'sider-trigger-hidden':'']" @click="collapsed = !collapsed">
         <i :class="[collapsed ? 'collapsed' : '']" class="icon font_family icon-ico-zz1"></i>
       </span>
     </div>
@@ -21,14 +21,27 @@ export default {
   mixins: [ BaseComponent ],
   data () {
     return {
-      collapsed: false
+      collapsed: false,
+      zeroWidth: false
     }
   },
 
   computed: {
     ...mapGetters(['TabNavList'])
   },
-
+  watch: {
+    collapsed (newValue) {
+      if (newValue) {
+        this.$nextTick(() => {
+          if (this.$refs.$sider.$el.className.indexOf('ivu-layout-sider-zero-width') >= 0) {
+            this.zeroWidth = true
+          }
+        })
+      } else {
+        this.zeroWidth = false
+      }
+    }
+  },
   mounted () {
     // window.EMA.bind('openTab', (route) => { this.onMenuSelect(route) })
     // 默认打开首页
@@ -48,6 +61,8 @@ export default {
 <style lang='stylus' scoped>
 .sider
   height 100%
+  &-trigger-hidden
+    display none
   &-layout
     height 100%
     overflow hidden

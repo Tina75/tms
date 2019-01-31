@@ -4,17 +4,17 @@
 export const CollectTabs = [
   {
     label: '未收',
-    name: 'WAIT_COLLECT',
+    name: '未收',
     count: ''
   },
   {
     label: '已收未付',
-    name: 'WAIT_PAY',
+    name: '已收未付',
     count: ''
   },
   {
     label: '已付款',
-    name: 'PAIED',
+    name: '已付款',
     count: ''
   }
 ]
@@ -22,22 +22,22 @@ export const CollectTabs = [
  * key value
  * {WAIT_COLLECT: 'WAIT_COLLECT'}
  */
-export const CollectTabMap = CollectTabs.reduce((map, item) => {
-  map[item.name] = item.name
-  return map
-}, {})
+// export const CollectTabMap = CollectTabs.reduce((map, item) => {
+//   map[item.name] = item.name
+//   return map
+// }, {})
 /**
  * 返现头部tab
  */
 export const ReturnTabs = [
   {
     label: '待核销',
-    name: 'WAIT_VERIFY',
+    name: '待核销',
     count: ''
   },
   {
     label: '已核销',
-    name: 'VERIFIED',
+    name: '已核销',
     count: ''
   }
 ]
