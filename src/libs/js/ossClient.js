@@ -11,39 +11,58 @@ import server from './server'
  * 这里统一上传aliyun函数
  * token需要每隔一个小时需要重新获取一次
  */
-// 最后一次请求时间
-let lastRequestTime = null
-// 间隔1个小时请求一次
-const intervalTime = 3600
+const OssClient = {
+  // 最后一次请求时间
+  lastRequestTime: null,
+  // 间隔1个小时请求一次
+  intervalTime: 3600,
+  /**
+   * 请求的token，是否过期
+   */
+  isExpired () {
+    if (this.lastRequestTime) {
+      let now = Date.now()
+      // 间隔的秒数
+      let interval = Math.ceil((now - this.lastRequestTime) / 1000)
+      return interval >= this.intervalTime
+    }
+    return true
+  }
+}
+let ossClient = null
+// 创建实例并返回
+OssClient.createClient = function createClient (option = {
+  bizType: 'order',
+  fileCount: 1,
+  fileSuffix: 'jpg'
+}, onProgress
+) {
+  if (!ossClient || this.isExpired()) {
+    ossClient = new Client(option, onProgress)
+  }
+  return ossClient
+}
+/**
+ * 更新记录最后一次token请求时间
+ */
+OssClient.updateLastRequestTime = function updateLastRequestTime (time) {
+  this.lastRequestTime = time
+}
 // 阿里云实例
-class OssClient {
+class Client {
   /**
    * 构造函数
    * @param {object} options 获取token的参数选项
    * @param {*} onProgress 进度回调函数
    */
-  constructor (options = {
-    bizType: 'order',
-    fileCount: 1,
-    fileSuffix: 'jpg'
-  }, onProgress) {
+  constructor (options, onProgress) {
     this.options = options
-    this.ossDir = null
-    this.ossClient = null
+    // this.ossDir = null
+    // this.ossClient = null
     if (onProgress) {
       this.onProgress = onProgress
     }
-    if (!lastRequestTime) {
-      // 初始化请求
-      this.getOssClient()
-    } else {
-      let now = Date.now()
-      // 间隔的秒数
-      let interval = Math.ceil((now - lastRequestTime) / 1000)
-      if (interval >= intervalTime) {
-        this.getOssClient()
-      }
-    }
+    this.getOssClient()
   }
   /**
    * 进度跟踪
@@ -73,8 +92,8 @@ class OssClient {
           bucket: data.ossTokenDTO.bucketName,
           endpoint: data.ossTokenDTO.endpoint
         })
-        vm.lastRequestTime = Date.now()
-
+        // lastRequestTime = Date.now()
+        OssClient.updateLastRequestTime(Date.now())
         return response
       })
   }

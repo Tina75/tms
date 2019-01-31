@@ -49,7 +49,7 @@ export default {
   },
   created () {
     // this.initOssInstance()
-    this.ossClient = new OssClient()
+    this.ossClient = OssClient.createClient()
   },
   mounted () {
     // this.checkTemplateUpdate()
