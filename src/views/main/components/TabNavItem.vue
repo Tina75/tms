@@ -66,8 +66,10 @@ export default {
         this.$router.push({ path: '/loading' })
       })
       setTimeout(() => {
-        this.$router.push(tab)
-      }, 50)
+        this.$nextTick(() => {
+          this.$router.push(tab)
+        })
+      }, 100)
     },
     linkto () {
       this.$router.push(this.path)
