@@ -333,6 +333,8 @@
                 @click="addOrder('freight')">添加订单</Button>
         <Button v-if="inEditing === 'change'" class="detail-field-button" type="primary"
                 @click="openCargoAddDialog()">添加货物</Button>
+        <Button v-if="inEditing === 'change'" class="detail-field-button" type="primary" style="margin-left: 20px;"
+                @click="openCargoSeparateDialog()">删除货物</Button>
         <Table ref="cargoEditTable" :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading"> </Table>
         <div class="table-footer">
           <span class="table-footer-title">总计</span>
@@ -1428,6 +1430,23 @@ export default {
         methods: {
           complete (cargo) {
             // console.log(cargo)
+          }
+        }
+      })
+    },
+
+    // 少货、货损弹窗
+    openCargoSeparateDialog () {
+      const z = this
+      z.openDialog({
+        name: 'transport/dialog/cargoSeparate',
+        data: {
+          billId: z.id,
+          billType: 3
+        },
+        methods: {
+          complete () {
+            // self.clearSelectedAndFetch()
           }
         }
       })
