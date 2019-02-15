@@ -34,7 +34,7 @@
       <DropdownItem
         v-for="(option, index) in filterOptions"
         :key="index"
-        :name="option.name"
+        :name="getOptionKey(option)"
         :class="{'ivu-select-item-focus': focusIndex === index}"
         v-html="heightlightText(option.name)">
       </DropdownItem>
@@ -61,6 +61,15 @@ export default {
     autoFocus: {
       type: Boolean,
       default: false
+    },
+    /**
+     * 默认通过options里的name区分不同的选项
+     * 但是开单页收货人可能存在相同的姓名+手机，收货地址不一样
+     * 导致无法区分收货人;
+     * 这里添加区分每个选项的唯一字段属性，可以传id
+     */
+    optionKey: {
+      type: [String, Boolean]
     },
     // 前置图标
     prefix: String,
@@ -300,14 +309,28 @@ export default {
       this.$emit('input', this.currentValue)
       // this.setCurrentValue('')
     },
+    /**
+     * 可以通过optionKey区分选项
+     * 默认通过name区分
+     */
+    getOptionKey (option) {
+      if (this.optionKey) {
+        return option[this.optionKey]
+      }
+      return option.name
+    },
     // 点击下拉框项
     handleSelect (name) {
-      const item = this.options.find((opt) => {
-        if (opt.name) {
-          return opt.name === name
-        }
-        return opt.value === name
-      })
+      const vm = this
+      const item = vm.optionKey
+        ? vm.options.find((opt) => {
+          return opt[vm.optionKey] === name
+        }) : vm.options.find((opt) => {
+          if (opt.name) {
+            return opt.name === name
+          }
+          return opt.value === name
+        })
       this.setCurrentValue(item.value)
       this.focusIndex = -1
       this.visible = false
@@ -395,7 +418,7 @@ export default {
           } else {
             const selectOption = this.filterOptions[this.focusIndex]
             if (selectOption) {
-              this.handleSelect(selectOption.name)
+              this.handleSelect(this.getOptionKey(selectOption))
             }
           }
           this.$nextTick(() => {

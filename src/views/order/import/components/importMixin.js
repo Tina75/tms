@@ -3,8 +3,8 @@ import { clearFileInput } from '@/libs/js/util'
 const MAX_UPLOAD_FILES = 3
 export default {
   props: {
-    ossClient: Object,
-    ossDir: String
+    ossClient: Object
+    // ossDir: String
   },
   data () {
     return {
@@ -243,11 +243,9 @@ export default {
         return
       }
       try {
-        const uploadResult = await this.uploadFile(file)
-        let fileUrl = uploadResult.res.requestUrls[0]
-        if (fileUrl.indexOf('?upload') !== -1) {
-          fileUrl = fileUrl.substring(0, fileUrl.indexOf('?upload'))
-        }
+        const uploadResult = await this.ossClient.uploadFile(file)
+        let fileUrl = uploadResult.name
+
         const notifyResult = await this.notifyBackend(file.name, fileUrl)
         if (notifyResult.data.code === 10000) {
           // this.$Message.success({content: '导入文件完成，后台正在处理中，请稍后查看结果', duration: 3})
@@ -264,48 +262,11 @@ export default {
         if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
           // token失效过期了
           this.$Message.info({ content: '重新获取认证信息，文件正在上传', duration: 3 })
-          await this.$parent.initOssInstance()
+          await this.ossClient.getOssClient()
           this.handleChange(e)
         } else {
           // console.error('导入订单', error)
           this.$Message.error({ content: '导入订单文件失败', duration: 3 })
-        }
-      }
-    },
-    async uploadFile (file) {
-      const vm = this
-      if (this.ossClient) {
-        try {
-          // this.visible = true
-          // 生成随机文件名 Math.floor(Math.random() *10000)
-          let result = null
-          let randomName = new Date().getTime() * Math.random() + '.' + file.name.split('.').pop()
-          if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
-            result = await this.ossClient.put(this.ossDir + randomName, file)
-          } else {
-            result = await this.ossClient.multipartUpload(this.ossDir + randomName, file, {
-              partSize: 1024 * 1024, // 分片大小 ,1M
-              progress: function (progress, pp) {
-                if (progress) {
-                  vm.progress = progress
-                }
-              }
-            })
-          }
-          this.$nextTick(() => {
-            // this.visible = false
-            vm.progress = 0
-          })
-          return result
-        } catch (e) {
-          // 捕获超时异常
-          if (e.code === 'ConnectionTimeoutError') {
-            this.$Message.error('文件上传超时')
-            // do ConnectionTimeoutError operation
-          } else if (e.code === 'RequestError') {
-            // console.error('请求body格式非法')
-          }
-          throw e
         }
       }
     },

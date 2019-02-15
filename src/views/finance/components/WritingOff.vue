@@ -23,7 +23,12 @@
           </Col>
           <Col :span="scene === 2 ? 6:4" style="margin-right: 40px">
           <FormItem>
-            <DatePicker v-model="writingOffQuery.period" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width: 100%" />
+            <DatePicker
+              v-model="writingOffQuery.period"
+              :options="dateOption" :start-date="perMonth"
+              transfer
+              type="daterange" format="yyyy-MM-dd"
+              placeholder="开始时间-结束时间" style="width: 100%" />
           </FormItem>
           </Col>
           <Col  v-if="scene !== 2" span="5">
@@ -107,6 +112,7 @@ import _ from 'lodash'
 import payTypeDialog from '../dialogs/payTypeDialog'
 import { payTypeMap } from '../constant/numList'
 import { getFeeText, roundFee } from '@/libs/js/config'
+import { getPreMonth } from '../../../libs/js/getPerMonth'
 export default {
   name: 'writingOff',
   components: {
@@ -207,6 +213,9 @@ export default {
     }
   },
   computed: {
+    perMonth () {
+      return getPreMonth()
+    },
     emptyContent () {
       return `请点击左侧${this.sceneMap[this.scene]}列表查看${this.orderNameMap[this.scene]}哦～`
     },

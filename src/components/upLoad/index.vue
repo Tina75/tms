@@ -244,7 +244,7 @@ export default {
           if (error.code === 'ConnectionTimeoutError') {
             this.$Message.error('图片上传超时')
           } else if (error.code === 'RequestError') {
-            console.error('请求body格式非法')
+            // console.error('请求body格式非法')
           } else if (error.code === 'InvalidAccessKeyId' || error.code === 'InvalidBucketName') {
             this.$Message.info({ content: '重新获取认证信息，正在上传', duration: 3 })
             await this.initOssInstance()
@@ -276,7 +276,7 @@ export default {
       this.showPreview = true
       this.progress = 0
       const uploadResult = await this.uploadFile(file)
-      this.uploadImg = uploadResult.res.requestUrls[0].split('?')[0]
+      this.uploadImg = uploadResult.name
       this.$Message.success({ content: '上传成功', duration: 3 })
       this.setUploadImg()
     },
@@ -292,7 +292,7 @@ export default {
 
         const uploadResult = await this.uploadFile(files[i])
         this.uploadImgList.push({
-          url: uploadResult.res.requestUrls[0].split('?')[0],
+          url: uploadResult.name,
           progress: navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0 ? 1 : this.progress
         })
         this.$Message.success({ content: '上传成功', duration: 3 })
