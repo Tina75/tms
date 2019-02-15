@@ -69,7 +69,7 @@ export default {
         this.$nextTick(() => {
           this.$router.push(tab)
         })
-      }, 100)
+      }, 120)
     },
     linkto () {
       this.$router.push(this.path)
