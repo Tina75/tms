@@ -14,7 +14,14 @@
         </Col>
         <Col v-if="scene === '1'" span="7">
         <FormItem :label-width="75" label="下单日期：" prop="daterange">
-          <DatePicker v-model="formInline.daterange" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
+          <DatePicker
+            v-model="formInline.daterange"
+            :options="dateOption"
+            :start-date="perMonth"
+            transfer type="daterange"
+            format="yyyy-MM-dd"
+            placeholder="开始时间-结束时间"
+            style="width:100%"></DatePicker>
         </FormItem>
         </Col>
         <Col v-if="scene === '2'" span="7" class="van-right">
@@ -29,7 +36,12 @@
           </Col>
           <Col span="14">
           <FormItem  prop="daterange">
-            <DatePicker v-model="formInline.daterange" :options="dateOption" transfer type="daterange" format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
+            <DatePicker
+              :start-date="perMonth"
+              v-model="formInline.daterange"
+              :options="dateOption"
+              transfer type="daterange"
+              format="yyyy-MM-dd" placeholder="开始时间-结束时间" style="width:100%"></DatePicker>
           </FormItem>
           </Col>
         </Row>
@@ -46,6 +58,7 @@
 </template>
 
 <script>
+import { getPreMonth } from '../../../libs/js/getPerMonth'
 export default {
   props: {
     scene: {
@@ -71,12 +84,16 @@ export default {
       }
     }
   },
+  computed: {
+    perMonth () {
+      return getPreMonth()
+    }
+  },
   methods: {
     /**
      * 搜索
      */
     handleSearch () {
-      console.log('form', this.formInline)
       let params = {
         partnerName: this.formInline.partnerName || void 0,
         orderNo: this.formInline.orderNo || void 0,

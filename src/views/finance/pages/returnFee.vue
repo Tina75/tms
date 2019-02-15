@@ -1,9 +1,9 @@
 <template>
   <div class="return-fee">
-    <TabHeader :value="activeTab" :list="tabs" @on-change="handleChangeTab" />
+    <TabHeader :name="activeTab" :tabs="tabs" @tab-change="handleChangeTab" />
     <div class="return-fee__content">
-      <WaitReturnFee v-if="activeTab === 'WAIT_VERIFY'"></WaitReturnFee>
-      <div v-if="activeTab === 'VERIFIED'" class="return-fee__verified">
+      <WaitReturnFee v-if="activeTab === '待核销'"></WaitReturnFee>
+      <div v-if="activeTab === '已核销'" class="return-fee__verified">
         <ReturnFeeForm scene="2" @on-search="handleSearch"></ReturnFeeForm>
         <div class="return-fee__export">
           <Button v-if="hasPower(170603)" type="primary" @click="handleExport">导出</Button>
@@ -28,7 +28,7 @@
  * 到货确认以后，所有未核销的运单或外转单。
  */
 import BasePage from '@/basic/BasePage'
-import TabHeader from '../components/TabHeader'
+import TabHeader from '@/components/TabHeader'
 import { ReturnTabs } from '../constant/tabs.js'
 import WaitReturnFee from '../components/WaitReturnFee.vue'
 import ReturnFeeForm from '../components/ReturnFeeForm.vue'
@@ -60,7 +60,7 @@ export default {
     })
     return {
       tabs: ReturnTabs,
-      activeTab: 'WAIT_VERIFY',
+      activeTab: '待核销',
       selectedOrders: [],
       // 一核销
       keywords: {

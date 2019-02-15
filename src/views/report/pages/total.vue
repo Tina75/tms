@@ -46,7 +46,7 @@
 <script>
 import PageTable from '@/components/page-table'
 import Export from '@/libs/js/export'
-import { getPreMonth } from '../mixins/getPerMonth'
+import { getPreMonth } from '../../../libs/js/getPerMonth'
 import tableHeadType from '@/libs/constant/headtype.js'
 import { renderFee } from '@/libs/js/config'
 export default {

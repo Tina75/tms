@@ -67,9 +67,9 @@ export default {
         yAxis: {
           name: '笔',
           type: 'value',
-          nameTextStyle: {
-            padding: [0, 25, 0, 0]
-          },
+          // nameTextStyle: {
+          //   padding: [0, 25, 0, 0]
+          // },
           axisTick: {
             show: false
           },
@@ -84,10 +84,10 @@ export default {
         },
 
         grid: {
-          left: 25,
-          right: 60,
+          left: 5,
+          right: 50,
           top: 30,
-          bottom: 12,
+          bottom: 5,
           containLabel: true
         },
 

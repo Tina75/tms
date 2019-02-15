@@ -82,7 +82,7 @@ export default {
             const actions = []
             actions.push(h('a', {
               attrs: {
-                href: params.row.fileUrl,
+                href: vm.$handleImgUrl(params.row.fileUrl),
                 download: '下载模板'
               }
             }, params.row.status ? '下载' : '下载错误报告'))

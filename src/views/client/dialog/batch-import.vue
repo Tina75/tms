@@ -103,10 +103,7 @@ export default {
       this.fileName = file.name
       try {
         const uploadResult = await this.uploadFile(file)
-        let fileUrl = uploadResult.res.requestUrls[0]
-        if (fileUrl.indexOf('?upload') !== -1) {
-          fileUrl = fileUrl.substring(0, fileUrl.indexOf('?upload'))
-        }
+        let fileUrl = uploadResult.name
         this.notifyBackend(file.name, fileUrl).then(res => {
           const { code, data } = res.data
           if (code === 10000) {

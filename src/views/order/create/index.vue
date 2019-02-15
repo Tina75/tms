@@ -97,7 +97,7 @@
       </Col>
       <Col span="6">
       <FormItem label="收货人:" prop="consigneeContact">
-        <SelectInput v-model="orderForm.consigneeContact" :maxlength="$fieldLength.name" :local-options="consigneeContacts" :remote="false" clearable @on-select="handleSelectConsignee">
+        <SelectInput v-model="orderForm.consigneeContact" :maxlength="$fieldLength.name" :local-options="consigneeContacts" :remote="false" option-key="id" clearable @on-select="handleSelectConsignee">
         </SelectInput>
       </FormItem>
       </Col>
