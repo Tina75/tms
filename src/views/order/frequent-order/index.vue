@@ -274,7 +274,7 @@ export default {
           }
         },
         {
-          title: '其他',
+          title: '其他费用',
           key: 'otherFee',
           minWidth: 120,
           render: (h, params) => {

@@ -196,7 +196,7 @@
                 <span style="font-weight:bold;">{{detail.insuranceFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
-                <span class="fee-style">其他：</span>
+                <span class="fee-style">其他费用：</span>
                 <span style="font-weight:bold;">{{detail.otherFee | toPoint('元')}}</span>
               </i-col>
             </Row>
