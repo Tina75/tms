@@ -1,6 +1,6 @@
 <template>
   <div is="i-col" :span="12" class="i-mt-15 page-home__card-item">
-    <blank-card :to="linkto" title="今日应收款项 / 应付款项" page-title="营业额汇总表">
+    <blank-card :to="linkto" title="今日应收款项 / 应付款项" page-title="营业额汇总表" tab="today">
       <div class="chart">
         <ECharts :options="options" :auto-resize="true"></ECharts>
         <div class="chart__attach">
@@ -38,7 +38,7 @@ export default {
     return {
       pay: 0,
       receive: 0,
-      linkto: url.TOTAL_REPORT
+      linkto: url.PROFIT_REPORT
     }
   },
 
