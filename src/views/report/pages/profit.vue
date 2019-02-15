@@ -273,6 +273,11 @@ export default {
       return getPreMonth()
     }
   },
+  mounted () {
+    if (this.$route.query.tab === '1') { // 首页跳转，展示今日公司利润
+      this.showTodayDate()
+    }
+  },
   methods: {
     ...mapActions([
       'getClients'
@@ -348,6 +353,15 @@ export default {
           }
           break
       }
+    },
+    // 展示今日数据
+    showTodayDate () {
+      this.tabStatus = 1
+      let today = new Date().Format('yyyy-MM-dd')
+      this.keywords.startTime = today + ' 00:00:00'
+      this.keywords.endTime = today + ' 23:59:59'
+      this.times = [today, today]
+      this.search(true)
     },
     // 清空时间
     clearTimes () {
