@@ -159,7 +159,7 @@ export default {
           tooltip: true
         },
         {
-          title: '联系电话',
+          title: '联系号码',
           key: 'phone'
         },
         {

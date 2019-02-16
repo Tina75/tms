@@ -20,7 +20,7 @@
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="到货城市：">
+        <FormItem label="收货城市：">
           {{detail.endName | empty}}
         </FormItem>
         </Col>
@@ -69,7 +69,7 @@
           <FormItem label="联系人：">
             {{detail.consignerContact}}
           </FormItem>
-          <FormItem label="联系方式：">
+          <FormItem label="联系号码：">
             {{detail.consignerPhone}}
           </FormItem>
           <FormItem label="发货地址：">
@@ -135,7 +135,7 @@
       </Row>
       <Row :gutter="16">
         <Col span="6">
-        <FormItem label="卸货费用：">
+        <FormItem label="卸货费：">
           <span class="blod-font">{{detail.unloadFee | toPoint('元') }}</span>
         </FormItem>
         </Col>

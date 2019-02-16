@@ -29,7 +29,7 @@
       <div class="separate-action">
         <Form ref="formInline" :model="formInline" :rules="ruleInline" inline>
           <FormItem label="批量拆成：" prop="separateNum">
-            <InputNumber :min="1" v-model="formInline.separateNum" :parser="handleParser"></InputNumber>
+            <InputNumber :min="1" :max="20" v-model="formInline.separateNum" :parser="handleParser"></InputNumber>
             &nbsp;单
           </FormItem>
           <FormItem>
@@ -231,6 +231,7 @@ export default {
           // vm.separateAverage()
         }
       })
+      vm.$refs.formInline.resetFields()
     },
     /**
      * 基于包装数量，平均拆分货物数量

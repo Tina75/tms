@@ -67,7 +67,7 @@
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="卸货费用:" prop="unloadFee">
+        <FormItem label="卸货费:" prop="unloadFee">
           <Row>
             <Col span="19">
             <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">

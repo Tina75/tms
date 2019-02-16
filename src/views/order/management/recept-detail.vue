@@ -75,7 +75,7 @@
             <span>{{detail.consignerContact}}</span>
           </i-col>
           <i-col span="7">
-            <span>联系方式：</span>
+            <span>联系号码：</span>
             <span>{{detail.consignerPhone}}</span>
           </i-col>
           <i-col span="10">

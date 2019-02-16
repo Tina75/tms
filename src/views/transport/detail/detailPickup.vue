@@ -533,7 +533,7 @@ export default {
           }
         },
         {
-          title: '联系电话',
+          title: '联系号码',
           key: 'consignerPhone',
           width: 120,
           render: (h, p) => {

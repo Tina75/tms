@@ -213,6 +213,21 @@ export default {
         } else if (val < min) {
           val = min
         }
+
+        /**
+       * 文本长度是否大于限制的长度
+       * 可能包含小数点
+       */
+        let vals = val.toString().split('.')
+        if (vals[0].length > this.length) {
+          if (vals[1]) {
+            // let vals = _val.split('.')
+            let integerValue = vals[0]
+            val = Number(integerValue.substring(0, this.length) + '.' + vals[1])
+          } else {
+            val = Number(vals[0].substring(0, this.length))
+          }
+        }
       }
 
       this.$nextTick(() => {
@@ -245,19 +260,6 @@ export default {
       let val = event.target.value.trim().substring(0, 20)
       if (this.parser) {
         val = this.parser(val)
-      }
-      /**
-       * 文本长度是否大于限制的长度
-       * 可能包含小数点
-       */
-      if (val.length > this.length) {
-        if (val.indexOf('.') !== -1) {
-          let vals = val.split('.')
-          let integerValue = vals[0]
-          val = integerValue.substring(0, this.length) + '.' + vals[1]
-        } else {
-          val = val.substring(0, this.length)
-        }
       }
 
       const isEmptyString = (val === null || val === '') ? true : val.length === 0

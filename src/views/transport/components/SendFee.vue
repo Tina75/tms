@@ -139,7 +139,7 @@
         <i-col span="24">
           <span class="detail-field-title-sm" style="vertical-align: unset;margin-left: 10px;">费用合计：</span>
           <span style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:#00A4BD;margin-right: 10px;">{{ paymentTotal }}</span>元
-          <Tooltip v-if="source !== 'abnormal'" placement="right" transfer content="费用合计为负值时，结算方式不能选择按单结,默认为月结" max-width="500">
+          <Tooltip v-if="source !== 'abnormal'" placement="right" transfer content="费用合计为负值时，结算方式不能选择按单结，默认为月结" max-width="500">
             <Icon type="ios-alert" size="20" color="#FFBB44" style="margin-left: 14px;vertical-align: sub"/>
           </Tooltip>
         </i-col>

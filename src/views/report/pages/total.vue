@@ -180,7 +180,7 @@ export default {
     }
   },
   mounted () {
-    if (this.$route.query.tab) { // 首页跳转来的
+    if (this.$route.query.tab === '7') { // 首页跳转来的,展示7天数据
       this.showSevenDate()
     }
   },

@@ -49,7 +49,7 @@ export const CHECK_NAME_COMPANY = function (rule, value, callback) {
 export const CHECK_PHONE = function (rule, value, callback) {
   if (value) {
     if (!(/^1\d{10}$/.test(value) || /^0\d{2,3}-?\d{7,8}$/.test(value))) {
-      return callback(new Error('联系方式格式不正确'))
+      return callback(new Error('联系号码格式不正确'))
     }
     callback()
   } else {

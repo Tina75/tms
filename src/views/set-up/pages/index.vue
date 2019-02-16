@@ -159,9 +159,9 @@ export default {
   margin-top: -20px
   margin-bottom: -10px
 .set-up-container
-  overflow auto
+  // overflow auto
 .temAll
-  margin: -20px -15px;
+  margin -20px -15px 0;
   .title
     margin-top -20px
   .setConf

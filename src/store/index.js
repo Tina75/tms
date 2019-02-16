@@ -97,6 +97,10 @@ const state = {
     waybillStrategy: 2
   },
   orderSet: {
+    commonTemplateOption: 1,
+    formTemplateOption: 2,
+    normalShipmentOption: 1,
+    oneToBottomShipmentOption: 2,
     // 客户订单号
     customerOrderNoOption: 1,
     // 客户运单号
@@ -105,7 +109,7 @@ const state = {
     salesmanIdOption: 1,
     // 发货城市
     startCityOption: 1,
-    // 到货城市
+    // 收货城市
     endCityOption: 1,
     // 发货时间
     deliveryTimeOption: 1,

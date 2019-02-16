@@ -86,7 +86,7 @@
                   <span class="colorGrey">{{data.beforeFeeInfo.insuranceFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
-                  <label class="feeLabel">其他：</label>
+                  <label class="feeLabel">其他费用：</label>
                   <span class="colorGrey">{{data.beforeFeeInfo.otherFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col v-if="billType === 3" span="8">
@@ -138,7 +138,7 @@
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.insuranceFee, data.afterFeeInfo.insuranceFee)}" class="colorGrey">{{data.afterFeeInfo.insuranceFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col span="8">
-                  <label class="feeLabel">其他：</label>
+                  <label class="feeLabel">其他费用：</label>
                   <span :class="{'red-col': compareFee(data.beforeFeeInfo.otherFee, data.afterFeeInfo.otherFee)}" class="colorGrey">{{data.afterFeeInfo.otherFee | toPoint('元')}}</span>
                 </i-col>
                 <i-col v-if="billType === 3" span="8">
