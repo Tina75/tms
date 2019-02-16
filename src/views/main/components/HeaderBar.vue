@@ -408,6 +408,32 @@ export default {
       })
     },
 
+    inspectionTip () {
+      this.$Toast.confirm({
+        title: '年检提醒',
+        showIcon: false,
+        content: '年检提醒sdasfasdfsadf',
+        okText: '去查看',
+        cancelText: '我知道了',
+        onOk: () => {
+          window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
+        }
+      })
+    },
+
+    insuranceTip () {
+      this.$Toast.confirm({
+        title: '保险提醒',
+        showIcon: false,
+        content: '保险提醒sssssssss',
+        okText: '去查看',
+        cancelText: '我知道了',
+        onOk: () => {
+          window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
+        }
+      })
+    },
+
     /**
      * @description 关闭tab标签时调用
      * @param {*} list 关闭后的tab页list
