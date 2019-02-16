@@ -25,7 +25,7 @@ const ORDER_ITEM = [
     type: 'moneny'
   },
   {
-    name: '卸货费用',
+    name: '卸货费',
     value: 'unloadFee',
     type: 'moneny'
   },

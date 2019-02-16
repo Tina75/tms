@@ -135,7 +135,7 @@
       </Row>
       <Row :gutter="16">
         <Col span="6">
-        <FormItem label="卸货费用：">
+        <FormItem label="卸货费：">
           <span class="blod-font">{{detail.unloadFee | toPoint('元') }}</span>
         </FormItem>
         </Col>

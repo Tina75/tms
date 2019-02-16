@@ -224,7 +224,7 @@
     </Row>
     <Row :gutter="16">
       <Col v-if="OrderSet.loadFeeOption == 1" span="6">
-      <FormItem label="装货费用:" prop="loadFee">
+      <FormItem label="装货费:" prop="loadFee">
         <Row>
           <Col span="19">
           <TagNumberInput :min="0" v-model="orderForm.loadFee" clearable></TagNumberInput>
@@ -234,7 +234,7 @@
       </FormItem>
       </Col>
       <Col v-if="OrderSet.unloadFeeOption == 1" span="6">
-      <FormItem label="卸货费用:" prop="unloadFee">
+      <FormItem label="卸货费:" prop="unloadFee">
         <Row>
           <Col span="19">
           <TagNumberInput :min="0" v-model="orderForm.unloadFee" clearable></TagNumberInput>

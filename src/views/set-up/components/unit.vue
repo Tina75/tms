@@ -1,5 +1,23 @@
 <template>
   <div class="order-set">
+    <p class="order-set-title">开单模板</p>
+    <Row :gutter="16" class="order-set-row">
+      <Col span="4">
+      <Radio v-model="form.commonTemplateOption" @on-change="templateChange('common')">普通模板</Radio>
+      </Col>
+      <Col span="4">
+      <Radio v-model="form.formTemplateOption" @on-change="templateChange('form')">表单模板</Radio>
+      </Col>
+    </Row>
+    <p class="order-set-title">发运模式</p>
+    <Row :gutter="16" class="order-set-row">
+      <Col span="4">
+      <Radio v-model="form.normalShipmentOption" @on-change="shipmentChange('normal')">正常发运</Radio>
+      </Col>
+      <Col span="4">
+      <Radio v-model="form.oneToBottomShipmentOption" @on-change="shipmentChange('oneToBottom')">一单到底</Radio>
+      </Col>
+    </Row>
     <p class="order-set-title">客户信息</p>
     <Row :gutter="16" class="order-set-row">
       <Col span="4">
@@ -82,7 +100,7 @@
       <Checkbox v-model="form.loadFeeOption">装货费用</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.unloadFeeOption">卸货费用</Checkbox>
+      <Checkbox v-model="form.unloadFeeOption">卸货费</Checkbox>
       </Col>
       <Col span="4">
       <Checkbox v-model="form.insuranceFeeOption">保险费用</Checkbox>
@@ -122,6 +140,12 @@
 import Server from '@/libs/js/server'
 import { mapGetters, mapMutations } from 'vuex'
 const ORDER_SET = {
+  commonTemplateOption: true,
+  // 表单模式
+  formTemplateOption: false,
+  normalShipmentOption: true,
+  // 一单到底
+  oneToBottomShipmentOption: false,
   // 客户订单号
   customerOrderNoOption: true,
   // 客户运单号
@@ -227,6 +251,24 @@ export default {
     reset () {
       this.form = {
         ...ORDER_SET
+      }
+    },
+    templateChange (key) {
+      if (key === 'common') {
+        this.form.commonTemplateOption = true
+        this.form.formTemplateOption = false
+      } else if (key === 'form') {
+        this.form.commonTemplateOption = false
+        this.form.formTemplateOption = true
+      }
+    },
+    shipmentChange (key) {
+      if (key === 'normal') {
+        this.form.normalShipmentOption = true
+        this.form.oneToBottomShipmentOption = false
+      } else if (key === 'oneToBottom') {
+        this.form.normalShipmentOption = false
+        this.form.oneToBottomShipmentOption = true
       }
     },
     save () {

@@ -97,6 +97,10 @@ const state = {
     waybillStrategy: 2
   },
   orderSet: {
+    commonTemplateOption: 1,
+    formTemplateOption: 2,
+    normalShipmentOption: 1,
+    oneToBottomShipmentOption: 2,
     // 客户订单号
     customerOrderNoOption: 1,
     // 客户运单号
