@@ -15,7 +15,7 @@
       <FormItem label="联系人：" prop="contact">
         <Input v-model="validate.contact" :maxlength="15" placeholder="请输入"/>
       </FormItem>
-      <FormItem label="联系电话：" prop="phone">
+      <FormItem label="联系号码：" prop="phone">
         <Input v-model="validate.phone" :maxlength="11" placeholder="请输入"/>
       </FormItem>
       <FormItem label="公司地址：" prop="companyAddress">

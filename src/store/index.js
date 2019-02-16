@@ -109,7 +109,7 @@ const state = {
     salesmanIdOption: 1,
     // 发货城市
     startCityOption: 1,
-    // 到货城市
+    // 收货城市
     endCityOption: 1,
     // 发货时间
     deliveryTimeOption: 1,

@@ -124,7 +124,7 @@ export default {
           minWidth: 180
         },
         {
-          title: '到货城市',
+          title: '收货城市',
           key: 'endName',
           minWidth: 180
         },

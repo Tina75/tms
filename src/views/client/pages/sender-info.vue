@@ -337,7 +337,7 @@ export default {
           key: 'contact'
         },
         {
-          title: '联系方式',
+          title: '联系号码',
           key: 'phone'
         },
         {

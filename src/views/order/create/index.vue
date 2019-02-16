@@ -43,7 +43,7 @@
       </FormItem>
       </Col>
       <Col v-if="OrderSet.endCityOption == 1" span="6">
-      <FormItem label="到货城市:" prop="end">
+      <FormItem label="收货城市:" prop="end">
         <CitySelect v-model="orderForm.end" clearable></CitySelect>
       </FormItem>
       </Col>

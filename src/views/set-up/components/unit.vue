@@ -33,7 +33,7 @@
       <Checkbox v-model="form.startCityOption">发货城市</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.endCityOption">到货城市</Checkbox>
+      <Checkbox v-model="form.endCityOption">收货城市</Checkbox>
       </Col>
       <Col span="4">
       <Checkbox v-model="form.deliveryTimeOption">发货时间</Checkbox>
@@ -154,7 +154,7 @@ const ORDER_SET = {
   salesmanIdOption: true,
   // 发货城市
   startCityOption: true,
-  // 到货城市
+  // 收货城市
   endCityOption: true,
   // 发货时间
   deliveryTimeOption: true,

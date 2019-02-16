@@ -57,7 +57,7 @@
           </FormItem>
           </Col>
           <Col :span="10">
-          <FormItem label="联系方式：" prop="contactPhone">
+          <FormItem label="联系号码：" prop="contactPhone">
             <SelectInput v-if="isEdit" v-model="formCompany.contactPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(formCompany.contactPhone)" placeholder="请输入手机号或座机号"></SelectInput>
             <!-- <Input v-if="isEdit" v-model="formCompany.contactPhone" :maxlength="40" placeholder="请输入手机号或座机号"></Input> -->
             <span v-else class="formConten-p">{{formCompany.contactPhone}}</span>
