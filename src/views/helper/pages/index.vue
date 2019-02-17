@@ -2,12 +2,16 @@
   <div id="help-info" class="helper-info temAll">
     <Row>
       <Col :style="{'min-height':DocumentHeight +'px'}" span="4">
-      <Menu ref="menuHelp" :active-name="descover ? descover : picContent.title" :open-names="['1']" style="width: 100%;" class="menuSty" accordion>
-        <MenuItem name="0" style="height:50px;line-height:50px" @click.native="clickLeftMenuExplore">
+      <Menu ref="menuHelp" :active-name="descover ? descover : picContent.title" :open-names="['2']" style="width: 100%;" class="menuSty" accordion>
+        <MenuItem name="0" style="height:50px;line-height:50px" @click.native="type='descover'">
         <i class="icon font_family icon-ico-discovery"></i>
         <div class="title" style="margin-top: -4px">探索运掌柜</div>
         </MenuItem>
-        <Submenu name="1">
+        <MenuItem name="1" style="height:50px;line-height:50px" @click.native="type='opinion'">
+        <i class="icon font_family icon-yijianjianyi"></i>
+        <div class="title" style="margin-top: -4px">意见建议</div>
+        </MenuItem>
+        <Submenu name="2">
           <template slot="title">
             <i class="icon font_family icon-tupian"></i>
             <span class="title">图文介绍</span>
@@ -51,6 +55,10 @@
           <p slot="title" class="rightDivTitle">探索运掌柜</p>
           <Explore></Explore>
         </div>
+        <div v-show="'opinion' === this.type">
+          <p slot="title" class="rightDivTitle">意见建议</p>
+          <Opinion></Opinion>
+        </div>
       </Card>
       </Col>
     </Row>
@@ -62,13 +70,15 @@ import BasePage from '@/basic/BasePage'
 import Server from '@/libs/js/server'
 import FontIcon from '@/components/FontIcon'
 import Explore from './explore'
+import Opinion from './opinion'
 import { mapGetters } from 'vuex'
 
 export default {
   name: 'help-center',
   components: {
     FontIcon,
-    Explore
+    Explore,
+    Opinion
   },
   mixins: [BasePage],
   metaInfo: {
@@ -136,15 +146,11 @@ export default {
     clickLeftMenuPic (menu) {
       this.picContent = Object.assign({}, menu)
       this.type = 'pic'
-    },
+    }
     // clickLeftMenuVideo (menu) {
     //   this.videoContent = Object.assign({}, menu)
     //   this.type = 'video'
     // },
-    // 探索运掌柜
-    clickLeftMenuExplore () {
-      this.type = 'descover'
-    }
   }
 }
 
@@ -173,9 +179,9 @@ export default {
   .temAll
     width: 100%
     height: 100%;
-    background: rgba(243, 245, 249, 1);
+    background: #F3F5F9
     overflow: auto;
-    margin: -20px -15px;
+    margin: -20px -16px;
     .title
       font-size: 16px;
       font-weight: bold;
@@ -215,11 +221,17 @@ export default {
     font-size: 19px;
 
   .icon-ico-discovery
+  .icon-yijianjianyi
     color #00A4BD
     overflow hidden;
     width 20px;
     font-size 19px;
     margin-top: -8px
+
+  .icon-ico-discovery
+    color #00A4BD
+  .icon-yijianjianyi
+    color #418DF9
 
   .icon-shipin
     color: #418DF9;

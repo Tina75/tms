@@ -10,6 +10,8 @@
           <p class="bold">{{msg.title}}</p>
           <p v-if="msg.messageTitle">{{msg.messageTitle}}<span style="margin-left:12px;">{{msg.message}}</span></p>
           <p v-if="msg.messageReturn">{{msg.messageReturn}}</p>
+          <p v-if="msg.message2">{{msg.message2}}</p>
+          <p v-if="msg.message3">{{msg.message3}}</p>
           <p>接收人：
             <Checkbox
               v-for="checkBtn in msg.checkBox"
@@ -86,6 +88,17 @@ export default {
           label: '司机',
           model: '5',
           key: '5'
+        }]
+      }, {
+        title: '年检到期提醒',
+        messageTitle: '文案：',
+        message: '如果当天只有一辆车需要到期提醒：【运掌柜TMS】您的车辆xxx（车牌号），还剩xx天即将年检，请提前安排车辆年检；',
+        message2: '如果当天有小于等于3俩车需要到期提醒：【运掌柜TMS】您的车辆：xxx（车牌号），还剩xx天即将年检；xxx（车牌号），还剩xx天即将年检；xxx（车牌号），还剩xx天即将年检；请提前安排车辆年检；',
+        message3: '如果当天有大于3辆车需要到期提醒：【运掌柜TMS】您有xx俩车即将年检，请提前安排车辆年检；',
+        checkBox: [{
+          label: '拥有车辆年检中新增年检权限的员工',
+          model: '6',
+          key: '6'
         }]
       }]
     }
