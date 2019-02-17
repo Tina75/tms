@@ -174,8 +174,10 @@ export default {
               window.EMA.fire('Dialogs.push', {
                 name: 'home/dialogs/upgrade',
                 data: {
+                  id: upgradeMessage.id,
                   title: upgradeMessage.title,
-                  content: upgradeMessage.content
+                  content: upgradeMessage.content,
+                  isShow: upgradeMessage.isShow || 0
                 },
                 methods: {
                   ok () {

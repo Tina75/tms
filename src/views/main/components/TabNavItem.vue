@@ -61,15 +61,15 @@ export default {
     },
     refresh () {
       // this.$emit('on-refresh')
-      let tab = this.tab
+      // let tab = this.tab
       this.tab.refresh(() => {
         this.$router.push({ path: '/loading' })
       })
-      setTimeout(() => {
-        this.$nextTick(() => {
-          this.$router.push(tab)
-        })
-      }, 120)
+      // setTimeout(() => {
+      //   this.$nextTick(() => {
+      //     this.$router.push(tab)
+      //   })
+      // }, 120)
     },
     linkto () {
       this.$router.push(this.path)

@@ -22,6 +22,11 @@ export default {
         height: this.DocumentHeight + 'px'
       }
     }
+  },
+  mounted () {
+    this.$nextTick(() => {
+      this.$router.back()
+    })
   }
 }
 </script>
