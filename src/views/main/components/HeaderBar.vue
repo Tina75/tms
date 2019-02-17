@@ -7,12 +7,24 @@
       <div class="info">
         <div class="company">
           <Avatar v-imgFormat="UserInfo.logoUrl" v-if="UserInfo.logoUrl" :style="'background-image: url(' + UserInfo.logoUrl +')'" class="avatar"></Avatar>
-          <!--<Avatar v-else class="avatar"></Avatar>-->
           <!--公司简称-->
           <span v-if="UserInfo.shortName" class="title">{{UserInfo.shortName}}</span>
           <span v-else class="title">{{UserInfo.companyName}}</span>
         </div>
         <div class="header-bar-avator-dropdown">
+          <!--全局搜索框-->
+          <span class="header-bar-avator-dropdown-notify">
+            <Input v-model="order_global" placeholder="订单号/客户订单号" class="search-global" style="width: auto">
+            <Icon slot="suffix" type="ios-search" @click="search_global"/>
+            </Input>
+          </span>
+          <span class="header-bar-avator-dropdown-notify">
+            <Tooltip transfer content="手工开单">
+              <router-link to="/order/create">
+                <FontIcon  type="liucheng" size="25" color="#fff" ></FontIcon>
+              </router-link>
+            </Tooltip>
+          </span>
           <span class="header-bar-avator-dropdown-notify">
             <Tooltip v-if="processVisible" :value="processVisible" transfer  placement="bottom" content=" 业务流程" always>
               <router-link to="/help/process">
@@ -45,7 +57,7 @@
 import BaseComponent from '@/basic/BaseComponent'
 import TabNav from './TabNav'
 import FontIcon from '@/components/FontIcon'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import TMSUrl from '@/libs/constant/url.js'
 import Server from '@/libs/js/server'
 import UserInfo from './UserInfo.vue'
@@ -62,7 +74,8 @@ export default {
     return {
       processVisible: false,
       messageTimer: null,
-      popupQueue: []
+      popupQueue: [],
+      order_global: ''
     }
   },
   computed: {
@@ -86,6 +99,7 @@ export default {
   },
   methods: {
     ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'getConfiguration']),
+    ...mapMutations(['setOrderGlobal', 'setIsOrderGlobal']),
     async newUserTip () {
       try {
         // await this.getUserInfo()
@@ -175,8 +189,10 @@ export default {
               window.EMA.fire('Dialogs.push', {
                 name: 'home/dialogs/upgrade',
                 data: {
+                  id: upgradeMessage.id,
                   title: upgradeMessage.title,
-                  content: upgradeMessage.content
+                  content: upgradeMessage.content,
+                  isShow: upgradeMessage.isShow || 0
                 },
                 methods: {
                   ok () {
@@ -533,6 +549,17 @@ export default {
         })
         localStorage.setItem('first_time_login', true)
       }, 1000)
+    },
+    /**
+     * 订单搜索
+    * */
+    search_global () {
+      if (this.order_global) {
+        this.setOrderGlobal(this.order_global)
+        /* 订单全局搜索开关打开 */
+        this.setIsOrderGlobal(true)
+        this.$router.push({ path: TMSUrl.ORDER_MANAGEMENT })
+      }
     }
   }
 }
@@ -635,4 +662,7 @@ export default {
         margin-left 15px
         line-height 44px
         font-size 16px
+  .search-global
+    /deep/ .ivu-input
+      border-radius 22px
 </style>

@@ -97,10 +97,8 @@ const state = {
     waybillStrategy: 2
   },
   orderSet: {
-    commonTemplateOption: 1,
-    formTemplateOption: 2,
-    normalShipmentOption: 1,
-    oneToBottomShipmentOption: 2,
+    orderTemplateOption: 1,
+    shipmentOption: 1,
     // 客户订单号
     customerOrderNoOption: 1,
     // 客户运单号
@@ -182,7 +180,10 @@ const state = {
   // 导入订单批次号
   importId: null,
   // 公司信息
-  companyInfo: {}
+  companyInfo: {},
+  // 订单全局搜索
+  orderGlobal: '',
+  isOrderGlobal: false
 }
 
 export default new Vuex.Store({

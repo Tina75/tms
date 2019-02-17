@@ -201,7 +201,7 @@ export default {
           return '周五'
         case 6:
           return '周六'
-        case 7:
+        default:
           return '周日'
       }
     },

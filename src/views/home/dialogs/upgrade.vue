@@ -16,6 +16,7 @@
     </div>
     <div slot="footer">
       <Button type="primary" class="system-upgrade__button" @click="save">我知道了</Button>
+      <Button v-if="isShow === 1" type="default" class="system-upgrade__button" @click="toDetail">查看详情</Button>
     </div>
   </Modal>
 </template>
@@ -24,6 +25,7 @@
 // import Server from '@/libs/js/server'
 import BaseDialog from '@/basic/BaseDialog'
 import FontIcon from '@/components/FontIcon'
+import TMSUrl from '@/libs/constant/url'
 export default {
   name: 'system-message-preiview',
   components: {
@@ -32,8 +34,10 @@ export default {
   mixins: [BaseDialog],
   data () {
     return {
+      id: '', // 消息id
       title: '',
       content: '',
+      isShow: 1, //  1: 显示详情，0：否不显示查看详情
       width: 660,
       visible: true
     }
@@ -43,6 +47,14 @@ export default {
       this.visible = false
       this.ok()
       this.close()
+    },
+    toDetail () {
+      this.openTab({
+        path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
+        query: {
+          id: this.id
+        }
+      })
     },
     handleClose () {
       this.ok()
