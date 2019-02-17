@@ -113,5 +113,18 @@ export default {
         orderIds
       }
     })
+  },
+  // 一单到底
+  immediShipFinal (param) {
+    return new Promise((resolve, reject) => {
+      const data = Object.assign({}, param)
+      server({
+        method: 'post',
+        url: '/order/shipImmediatelyFinal',
+        data
+      }).then((response) => {
+        resolve(response.data.data)
+      }).catch(err => reject(err))
+    })
   }
 }

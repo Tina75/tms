@@ -3,19 +3,19 @@
     <p class="order-set-title">开单模板</p>
     <Row :gutter="16" class="order-set-row">
       <Col span="4">
-      <Radio v-model="form.commonTemplateOption" @on-change="templateChange('common')">普通模板</Radio>
+      <Radio v-model="commonTemp">普通模板</Radio>
       </Col>
       <Col span="4">
-      <Radio v-model="form.formTemplateOption" @on-change="templateChange('form')">表单模板</Radio>
+      <Radio v-model="formTemp">表单模板</Radio>
       </Col>
     </Row>
     <p class="order-set-title">发运模式</p>
     <Row :gutter="16" class="order-set-row">
       <Col span="4">
-      <Radio v-model="form.normalShipmentOption" @on-change="shipmentChange('normal')">正常发运</Radio>
+      <Radio v-model="commonShip">正常发运</Radio>
       </Col>
       <Col span="4">
-      <Radio v-model="form.oneToBottomShipmentOption" @on-change="shipmentChange('oneToBottom')">一单到底</Radio>
+      <Radio v-model="oneTobottomShip">一单到底</Radio>
       </Col>
     </Row>
     <p class="order-set-title">客户信息</p>
@@ -140,12 +140,10 @@
 import Server from '@/libs/js/server'
 import { mapGetters, mapMutations } from 'vuex'
 const ORDER_SET = {
-  commonTemplateOption: true,
-  // 表单模式
-  formTemplateOption: false,
-  normalShipmentOption: true,
-  // 一单到底
-  oneToBottomShipmentOption: false,
+  // 普通模板 表单模式
+  orderTemplateOption: true,
+  // 正常发运 一单到底
+  shipmentOption: true,
   // 客户订单号
   customerOrderNoOption: true,
   // 客户运单号
@@ -237,6 +235,38 @@ export default {
         if (value) {
           this.form.weightTonOption = !value
         }
+      }
+    },
+    commonTemp: {
+      get () {
+        return this.form.orderTemplateOption
+      },
+      set (value) {
+        this.form.orderTemplateOption = true
+      }
+    },
+    formTemp: {
+      get () {
+        return !this.form.orderTemplateOption
+      },
+      set (value) {
+        this.form.orderTemplateOption = false
+      }
+    },
+    commonShip: {
+      get () {
+        return this.form.shipmentOption
+      },
+      set (value) {
+        this.form.shipmentOption = true
+      }
+    },
+    oneTobottomShip: {
+      get () {
+        return !this.form.shipmentOption
+      },
+      set (value) {
+        this.form.shipmentOption = false
       }
     }
   },
