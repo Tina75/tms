@@ -1102,36 +1102,68 @@ export default {
             // 小车上门 提货权限
             api.validPermit(form).then(({ permit }) => {
               if (permit) {
-                this.openDialog({
-                  name: 'transport/dialog/action',
-                  data: {
-                    type: 'pickUp',
-                    actionOrigin: 'orderCreate',
-                    orderCreate: {
-                      distance: form.mileage,
-                      weight: statics.weight,
-                      volume: statics.volume,
-                      cargoInfos: statics.cargoInfos,
-                      start: form.start,
-                      end: form.end
-                    }
-                  },
-                  methods: {
-                    complete (data) {
-                      const param = {
-                        createOrder: form,
-                        createLoadbill: {},
-                        loadbillPickup: data
+                // 一单到底
+                if (this.OrderSet.oneToBottomShipmentOption === 1) {
+                  this.openDialog({
+                    name: 'transport/dialog/DispatchAction',
+                    data: {
+                      type: 'pickUp',
+                      orderCreate: {
+                        distance: form.mileage,
+                        weight: statics.weight,
+                        volume: statics.volume,
+                        cargoInfos: statics.cargoInfos,
+                        start: form.start,
+                        end: form.end
                       }
-                      api.immediShip(param).then(res => {
-                        this.$Message.success('提货成功')
-                        self.resetForm()
-                        // 重新获取客户列表
-                        self.getClients()
-                      })
+                    },
+                    methods: {
+                      complete (data) {
+                        const param = {
+                          createOrder: form,
+                          loadbill: data.loadbill,
+                          waybill: data.waybill
+                        }
+                        api.immediShip(param).then(res => {
+                          self.resetForm()
+                          // 重新获取客户列表
+                          self.getClients()
+                        })
+                      }
                     }
-                  }
-                })
+                  })
+                } else {
+                  this.openDialog({
+                    name: 'transport/dialog/action',
+                    data: {
+                      type: 'pickUp',
+                      actionOrigin: 'orderCreate',
+                      orderCreate: {
+                        distance: form.mileage,
+                        weight: statics.weight,
+                        volume: statics.volume,
+                        cargoInfos: statics.cargoInfos,
+                        start: form.start,
+                        end: form.end
+                      }
+                    },
+                    methods: {
+                      complete (data) {
+                        const param = {
+                          createOrder: form,
+                          createLoadbill: {},
+                          loadbillPickup: data
+                        }
+                        api.immediShip(param).then(res => {
+                          this.$Message.success('提货成功')
+                          self.resetForm()
+                          // 重新获取客户列表
+                          self.getClients()
+                        })
+                      }
+                    }
+                  })
+                }
               } else {
                 this.openDialog({
                   name: 'order/create/components/OrderTip',
@@ -1145,37 +1177,67 @@ export default {
             // 大车直送 派车权限
             api.validPermit(form).then(({ permit }) => {
               if (permit) {
-                this.openDialog({
-                  name: 'transport/dialog/action',
-                  data: {
-                    type: 'sendCar',
-                    actionOrigin: 'orderCreate',
-                    orderCreate: {
-                      distance: form.mileage,
-                      weight: statics.weight,
-                      volume: statics.volume,
-                      cargoInfos: statics.cargoInfos,
-                      start: form.start,
-                      end: form.end
-                    }
-                  },
-                  methods: {
-                    complete (data) {
-                      const param = {
-                        createOrder: form,
-                        createWaybill: {},
-                        waybillAssignVehicle: data
+                if (this.OrderSet.oneToBottomShipmentOption === 1) {
+                  this.openDialog({
+                    name: 'transport/dialog/DispatchAction',
+                    data: {
+                      type: 'sendCar',
+                      orderCreate: {
+                        distance: form.mileage,
+                        weight: statics.weight,
+                        volume: statics.volume,
+                        cargoInfos: statics.cargoInfos,
+                        start: form.start,
+                        end: form.end
                       }
-                      param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
-                      api.immediShip(param).then(res => {
-                        this.$Message.success('发运成功')
-                        self.resetForm()
-                        // 重新获取客户列表
-                        self.getClients()
-                      })
+                    },
+                    methods: {
+                      complete (data) {
+                        const param = {
+                          createOrder: form,
+                          waybill: data
+                        }
+                        api.immediShipFinal(param).then(res => {
+                          self.resetForm()
+                          // 重新获取客户列表
+                          self.getClients()
+                        })
+                      }
                     }
-                  }
-                })
+                  })
+                } else {
+                  this.openDialog({
+                    name: 'transport/dialog/action',
+                    data: {
+                      type: 'sendCar',
+                      actionOrigin: 'orderCreate',
+                      orderCreate: {
+                        distance: form.mileage,
+                        weight: statics.weight,
+                        volume: statics.volume,
+                        cargoInfos: statics.cargoInfos,
+                        start: form.start,
+                        end: form.end
+                      }
+                    },
+                    methods: {
+                      complete (data) {
+                        const param = {
+                          createOrder: form,
+                          createWaybill: {},
+                          waybillAssignVehicle: data
+                        }
+                        param.waybillAssignVehicle.cashBack = param.waybillAssignVehicle.cashBack || null
+                        api.immediShip(param).then(res => {
+                          this.$Message.success('发运成功')
+                          self.resetForm()
+                          // 重新获取客户列表
+                          self.getClients()
+                        })
+                      }
+                    }
+                  })
+                }
               } else {
                 this.openDialog({
                   name: 'order/create/components/OrderTip',
