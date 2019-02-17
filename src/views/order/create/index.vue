@@ -1103,7 +1103,7 @@ export default {
             api.validPermit(form).then(({ permit }) => {
               if (permit) {
                 // 一单到底
-                if (this.OrderSet.oneToBottomShipmentOption === 1) {
+                if (this.OrderSet.shipmentOption === 2) {
                   this.openDialog({
                     name: 'transport/dialog/DispatchAction',
                     data: {
@@ -1177,7 +1177,7 @@ export default {
             // 大车直送 派车权限
             api.validPermit(form).then(({ permit }) => {
               if (permit) {
-                if (this.OrderSet.oneToBottomShipmentOption === 1) {
+                if (this.OrderSet.shipmentOption === 2) {
                   this.openDialog({
                     name: 'transport/dialog/DispatchAction',
                     data: {
