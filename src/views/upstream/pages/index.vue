@@ -72,8 +72,8 @@
                  placeholder="请输入客户订单号"
                  class="search-input-senior"
           />
-          <SelectInputForCity v-model="seniorSearchFields.departureCity"  placeholder="请输入始发地" class="search-input-senior" />
-          <SelectInputForCity v-model="seniorSearchFields.destinationCity"  placeholder="请输入目的地" class="search-input-senior" />
+          <SelectInputForCity v-model="seniorSearchFields.departureCity"  placeholder="请输入发货城市" class="search-input-senior" />
+          <SelectInputForCity v-model="seniorSearchFields.destinationCity"  placeholder="请输入收货城市" class="search-input-senior" />
         </div>
 
         <div class="complex-query">
@@ -83,7 +83,7 @@
               :options="timeOption" :start-date="perMonth"
               type="daterange"
               transfer
-              split-panels placeholder="请选择下单的开始和结束日期" class="search-input-senior"></DatePicker>
+              split-panels placeholder="开始日期-结束日期" class="search-input-senior"></DatePicker>
           </div>
           <div>
             <Button type="primary"

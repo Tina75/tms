@@ -179,10 +179,18 @@ export default {
       return getPreMonth()
     }
   },
-  mounted () {
-    if (this.$route.query.tab === '7') { // 首页跳转来的,展示7天数据
-      this.showSevenDate()
-    }
+  // mounted () {
+  //   if (this.$route.query.tab === '7') { // 首页跳转来的,展示7天数据
+  //     this.showSevenDate()
+  //   }
+  // },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // 首页调到利润汇总表，默认展示近七天数据
+      if (from.name === 'home' && vm.$route.query.tab === '7') {
+        vm.showSevenDate()
+      }
+    })
   },
   methods: {
     search () {

@@ -2,6 +2,7 @@
   <div>
     <tab-header :name="curStatusName" :tabs="status" @tab-change="handleTabChange"></tab-header>
     <tab-content
+      ref="tabContent"
       :tab-status="curStatusName"
       @refresh-tab="getOrderNum">
     </tab-content>
@@ -15,7 +16,7 @@ import Server from '@/libs/js/server'
 import TabContent from './components/TabContent'
 import SearchMixin from './searchMixin'
 // import jsCookie from 'js-cookie'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapMutations } from 'vuex'
 export default {
   name: 'order-management',
 
@@ -42,8 +43,19 @@ export default {
 
   computed: {
     ...mapGetters([
-      'ImportId'
+      'ImportId',
+      'OrderGlobal',
+      'IsOrderGlobal'
     ])
+  },
+  watch: {
+    /* 订单管理页面不是新打开时 */
+    IsOrderGlobal (val) {
+      // console.log('订单管理页面不是新打开时')
+      if (val) {
+        this.searchGlobal()
+      }
+    }
   },
 
   created () {
@@ -63,13 +75,38 @@ export default {
 
   mounted () {
     this.getOrderNum()
+    /* 判断是否为全局搜索 */
+    if (this.IsOrderGlobal) {
+      // console.log('新打开时调用')
+      this.searchGlobal()
+    }
   },
-
   destroyed () {
     this.$store.commit('setImported', null) // 将当前导入批次号置空
   },
 
   methods: {
+    ...mapMutations([
+      'setIsOrderGlobal'
+    ]),
+    /**
+     * 订单全局搜索
+     * */
+    searchGlobal () {
+      if (this.IsOrderGlobal) {
+        this.$refs.tabContent.keyword = {
+          status: null,
+          keyword: this.OrderGlobal
+        }
+        /* 页签回到全部 */
+        this.curStatusName = '全部'
+        sessionStorage.setItem('ORDER_TAB_NAME', '全部')
+        /* 清除搜索条件 */
+        this.$refs.tabContent.clearKeywords()
+        /* 全局搜索开关关闭 */
+        this.setIsOrderGlobal(false)
+      }
+    },
     // 获取各状态订单数目
     getOrderNum () {
       Server({

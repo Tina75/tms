@@ -137,6 +137,19 @@ export default{
    */
   setCompanyInfo (state, company) {
     state.companyInfo = company
+  },
+  /**
+   * 订单全局搜索
+   * @param {*} orderGlobal
+   * */
+  setOrderGlobal (state, orderGlobal) {
+    state.orderGlobal = orderGlobal
+  },
+  /**
+  * 订单全局搜搜开关
+  * */
+  setIsOrderGlobal (state, flag) {
+    state.isOrderGlobal = flag
   }
 }
 

@@ -182,7 +182,10 @@ const state = {
   // 导入订单批次号
   importId: null,
   // 公司信息
-  companyInfo: {}
+  companyInfo: {},
+  // 订单全局搜索
+  orderGlobal: '',
+  isOrderGlobal: false
 }
 
 export default new Vuex.Store({
