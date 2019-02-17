@@ -10,8 +10,6 @@
           <p class="bold">{{msg.title}}</p>
           <p v-if="msg.messageTitle">{{msg.messageTitle}}<span style="margin-left:12px;">{{msg.message}}</span></p>
           <p v-if="msg.messageReturn">{{msg.messageReturn}}</p>
-          <p v-if="msg.message2">{{msg.message2}}</p>
-          <p v-if="msg.message3">{{msg.message3}}</p>
           <p>接收人：
             <Checkbox
               v-for="checkBtn in msg.checkBox"
@@ -55,7 +53,6 @@ export default {
         title: '发运提醒',
         messageTitle: '运单：',
         message: '【运掌柜TMS】您的货物已由xx公司安排送货，由车牌号XXXX司机姓名XXXX司机电话XXXX派送；',
-        // messageReturn: '外转单：【运掌柜TMS】您的xxx货物已由xx公司安排送货。',
         checkBox: [{
           label: '发货人',
           model: '1',
@@ -69,7 +66,6 @@ export default {
         title: '到货提醒',
         messageTitle: '运单：',
         message: '【运掌柜TMS】您的货物已签收，由车牌号XXX司机姓名XXX司机电话XXXX完成配送；',
-        // messageReturn: '外转单：【运掌柜TMS】您的xxx货物已签收。',
         checkBox: [{
           label: '发货人',
           model: '3',
@@ -83,7 +79,7 @@ export default {
         title: '指派司机提醒',
         messageTitle: '运单：',
         message: '【运掌柜TMS】XX公司给您指派了新的运单，请尽快装货；',
-        messageReturn: '提货单：【运掌柜TMS】XX公司给您指派了新的提货单，请尽快提货。',
+        messageReturn: '提货单：【运掌柜TMS】XX公司给您指派了新的提货单，请尽快提货；',
         checkBox: [{
           label: '司机',
           model: '5',
@@ -91,14 +87,21 @@ export default {
         }]
       }, {
         title: '年检到期提醒',
-        messageTitle: '文案：',
-        message: '如果当天只有一辆车需要到期提醒：【运掌柜TMS】您的车辆xxx（车牌号），还剩xx天即将年检，请提前安排车辆年检；',
-        message2: '如果当天有小于等于3俩车需要到期提醒：【运掌柜TMS】您的车辆：xxx（车牌号），还剩xx天即将年检；xxx（车牌号），还剩xx天即将年检；xxx（车牌号），还剩xx天即将年检；请提前安排车辆年检；',
-        message3: '如果当天有大于3辆车需要到期提醒：【运掌柜TMS】您有xx俩车即将年检，请提前安排车辆年检；',
+        messageTitle: '提醒：',
+        message: '【运掌柜TMS】您的车辆xxx（车牌号），还剩xx天即将年检，请提前安排车辆年检；',
         checkBox: [{
           label: '拥有车辆年检中新增年检权限的员工',
           model: '6',
           key: '6'
+        }]
+      }, {
+        title: '保险到期提醒',
+        messageTitle: '提醒：',
+        message: '【运掌柜TMS】您的车辆xxx（车牌号），还剩xx天保险即将到期，请提前购买保险；',
+        checkBox: [{
+          label: '拥有车辆保险中新增保险权限的员工',
+          model: '7',
+          key: '7'
         }]
       }]
     }

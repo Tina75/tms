@@ -11,6 +11,7 @@
       <FormItem label="建议内容：" prop="content">
         <TextAreaNumber
           v-model="opinionForm.content"
+          :rows="5"
           :maxlength="500"
           class="textArea"
           placeholder="请输入您的宝贵意见">
@@ -71,9 +72,17 @@ export default {
     opinionSubmit (name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
+          this.$refs.upLoadsOpinion.uploadImgList.forEach(element => {
+            this.opinionForm.pictureUrl.push(element.url)
+          })
           let params = this.opinionForm
           this.saveOpinion(params).then(({ data }) => {
             this.$Message.success('提交成功，感谢您的宝贵意见!')
+            this.opinionForm = {
+              type: '1',
+              source: '3',
+              pictureUrl: []
+            }
           })
         }
       })
@@ -105,5 +114,5 @@ export default {
   text-align: center
   margin-top 40px
   .buttonSty
-    width 90px
+    width 86px
 </style>

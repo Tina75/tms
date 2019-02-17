@@ -103,10 +103,11 @@ export default {
           // 短信是否超过次数
           // this.messageBeyondLimit()
           this.popupQueue.push(this.systemUpgradeNotice, this.clearTrialData, this.receiveInvitingCooperation, this.messageBeyondLimit)
-          this.$nextTick(() => {
-            this.orderedInvoke()
-          })
         }
+        this.popupQueue.push(this.inspectionTip, this.insuranceTip)
+        this.$nextTick(() => {
+          this.orderedInvoke()
+        })
         this.getTableColumns()
         // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
@@ -409,28 +410,54 @@ export default {
     },
 
     inspectionTip () {
-      this.$Toast.confirm({
-        title: '年检提醒',
-        showIcon: false,
-        content: '年检提醒sdasfasdfsadf',
-        okText: '去查看',
-        cancelText: '我知道了',
-        onOk: () => {
-          window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
-        }
+      return new Promise((resolve, reject) => {
+        // Server({
+        //   url: 'message/beyondLimt',
+        //   method: 'get'
+        // })
+        // .then(({ data }) => {
+        // if (data.data) {
+        this.$Toast.confirm({
+          title: '年检提醒',
+          showIcon: false,
+          content: '年检提醒111111111111111111111111',
+          okText: '去查看',
+          cancelText: '我知道了',
+          onOk: () => {
+            window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
+            resolve()
+          },
+          onCancel: () => {
+            resolve()
+          }
+        })
+        // }
+        // })
+        // .catch((error) => {
+        //   reject(error)
+        // })
       })
     },
 
     insuranceTip () {
-      this.$Toast.confirm({
-        title: '保险提醒',
-        showIcon: false,
-        content: '保险提醒sssssssss',
-        okText: '去查看',
-        cancelText: '我知道了',
-        onOk: () => {
-          window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
-        }
+      return new Promise((resolve, reject) => {
+        this.$Toast.confirm({
+          title: '保险提醒',
+          showIcon: false,
+          content: '保险提醒2222222222222222222222222',
+          okText: '去查看',
+          cancelText: '我知道了',
+          onOk: () => {
+            window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
+            resolve()
+          },
+          onCancel: () => {
+            resolve()
+          }
+        })
+        // .catch((error) => {
+        //   reject(error)
+        // })
       })
     },
 
