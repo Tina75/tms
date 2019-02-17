@@ -500,13 +500,17 @@ export default {
           jsCookie.remove('imported_id')
         }
       }
+      // 首页调到运营报表，默认展示七天数据
+      if (from.name === 'home' && vm.$route.query.tab === '7') {
+        vm.showSevenDate()
+      }
     })
   },
-  mounted () {
-    if (this.$route.query.tab) { // 首页跳转来的
-      this.showSevenDate()
-    }
-  },
+  // mounted () {
+  //   if (this.$route.query.tab) { // 首页跳转来的
+  //     this.showSevenDate()
+  //   }
+  // },
   methods: {
     ...mapActions([
       'getClients',

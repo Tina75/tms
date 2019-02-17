@@ -999,7 +999,6 @@ export default {
       this.$parent.getOrderNum() // 重新获取订单数量
     }
   },
-
   created () {
     // 订单列表里删除操作栏
     if (this.source === 'order') {
@@ -1052,7 +1051,6 @@ export default {
     //   }
     // }
   },
-
   methods: {
     ...mapActions([
       'getClients'

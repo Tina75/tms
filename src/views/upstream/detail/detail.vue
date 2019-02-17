@@ -4,7 +4,7 @@
       <ul>
         <li>订单号：{{detail.orderNo}}</li>
         <li>客户订单号：{{detail.customerOrderNo || '-' }}</li>
-        <li>运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
+        <li>客户运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
         </li>
         <li>订单状态：<span :class="themeStatusColor(orderStatus)" style="font-weight: bold;">{{ statusToName(orderStatus)}}</span></li>
       </ul>
@@ -462,13 +462,13 @@ export default {
       let r = this.detail
       let renderBtn = []
       if (r.status === 0) { // 待调度状态
-        // 接受按钮
-        renderBtn.push(
-          { name: '接受', value: 1, code: 110101 }
-        )
         // 拒绝按钮
         renderBtn.push(
           { name: '拒绝', value: 2, code: 110102 }
+        )
+        // 接受按钮
+        renderBtn.push(
+          { name: '接受', value: 1, code: 110101 }
         )
       }
       this.btnGroup = renderBtn

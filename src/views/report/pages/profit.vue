@@ -273,10 +273,18 @@ export default {
       return getPreMonth()
     }
   },
-  mounted () {
-    if (this.$route.query.tab === '1') { // 首页跳转，展示今日公司利润
-      this.showTodayDate()
-    }
+  // mounted () {
+  //   if (this.$route.query.tab === '1') { // 首页跳转，展示今日公司利润
+  //     this.showTodayDate()
+  //   }
+  // },
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // 首页调到利润报表，默认展示当天数据
+      if (from.name === 'home' && vm.$route.query.tab === '1') {
+        vm.showTodayDate()
+      }
+    })
   },
   methods: {
     ...mapActions([
