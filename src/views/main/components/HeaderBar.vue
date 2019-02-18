@@ -176,8 +176,8 @@ export default {
                 data: {
                   id: upgradeMessage.id,
                   title: upgradeMessage.title,
-                  content: upgradeMessage.content,
-                  isShow: upgradeMessage.isShow || 0
+                  content: upgradeMessage.popContent,
+                  isShow: upgradeMessage.isShowPop || 0
                 },
                 methods: {
                   ok () {
