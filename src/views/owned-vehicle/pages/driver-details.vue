@@ -93,14 +93,16 @@ export default {
       imageItems: []
     }
   },
+  created () {
+    this.driverId = this.$route.query.rowDataId
+  },
   mounted () {
-    this.infoData = this.$route.query.rowData
     this.queryById()
   },
   methods: {
     queryById () {
       let vm = this
-      queryDriverById({ driverId: vm.infoData.id }).then(res => {
+      queryDriverById({ driverId: vm.driverId }).then(res => {
         vm.infoData = res.data.data
         vm.initData()
         // 大图预览

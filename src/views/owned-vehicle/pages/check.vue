@@ -109,7 +109,7 @@ export default {
               },
               on: {
                 click: () => {
-                  this.$router.push({ name: 'check-details', query: { rowData: params.row } })
+                  this.$router.push({ name: 'check-details', query: { rowDataId: params.row.id } })
                 }
               }
             }, '查看'))

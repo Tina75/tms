@@ -238,7 +238,10 @@ export default {
                     path: TMSUrl.CARRIER_MANAGEMENT_CAEDETAILS,
                     query: {
                       id: '车辆详情',
-                      rowData: params.row
+                      rowData: params.row,
+                      rowDataId: params.row.id,
+                      carrierId: params.row.carrierId,
+                      carId: params.row.carId
                     }
                   })
                 }
@@ -415,6 +418,10 @@ export default {
     tabPaneLabe3 () {
       return '计费规则 ' + (Number(this.totalCount3) === 0 ? '' : this.totalCount3)
     }
+  },
+  created () {
+    this.carrierId = Number(this.$route.query.id) // carrierId 承运商id
+    this.carrierType = Number(this.$route.query.carrierType)
   },
   mounted () {
     if (this.carrierType === 2) { // 类型为运输公司

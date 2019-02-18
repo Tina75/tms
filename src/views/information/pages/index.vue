@@ -384,8 +384,8 @@ export default {
           this.openTab({
             path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
             query: {
-              id: msg.title,
-              message: msg
+              title: msg.title,
+              messageId: msg.id + ''
             }
           })
           break

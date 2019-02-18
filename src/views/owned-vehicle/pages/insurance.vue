@@ -116,7 +116,7 @@ export default {
               },
               on: {
                 click: () => {
-                  this.$router.push({ name: 'insurance-details', query: { rowData: params.row } })
+                  this.$router.push({ name: 'insurance-details', query: { rowDataId: params.row.id } })
                 }
               }
             }, '查看'))

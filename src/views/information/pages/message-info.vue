@@ -40,8 +40,8 @@ export default {
       messageInfo: {}
     }
   },
-  mounted: function () {
-    this.messageInfo = this.$route.query.message
+  mounted () {
+    this.messageDetail()
     if (navigator.userAgent.toLowerCase().indexOf('msie 10') >= 0) {
       document.getElementById('message-detail-container').style.maxHeight = (document.body.clientHeight - 80) + 'px'
     }
@@ -69,6 +69,16 @@ export default {
           this.visibaleRemove = false
           this.ema.fire('closeTab', this.$route)
         }
+      })
+    },
+    messageDetail () {
+      let params = { id: this.$route.query.messageId }
+      Server({
+        url: '/message/detail',
+        method: 'post',
+        data: params
+      }).then(({ data }) => {
+        this.messageInfo = data.data
       })
     }
   }

@@ -7,12 +7,48 @@
       <div class="info">
         <div class="company">
           <Avatar v-imgFormat="UserInfo.logoUrl" v-if="UserInfo.logoUrl" :style="'background-image: url(' + UserInfo.logoUrl +')'" class="avatar"></Avatar>
-          <!--<Avatar v-else class="avatar"></Avatar>-->
           <!--公司简称-->
           <span v-if="UserInfo.shortName" class="title">{{UserInfo.shortName}}</span>
           <span v-else class="title">{{UserInfo.companyName}}</span>
         </div>
         <div class="header-bar-avator-dropdown">
+          <!--下载App-->
+          <span class="header-bar-avator-dropdown-notify">
+            <Poptip trigger="hover" popper-class="appContent" transfer placement="bottom" class="appTip">
+              <FontIcon  type="app" size="24" ></FontIcon>
+              <span class="appText">下载App</span>
+              <div slot="content">
+                <div class="hide-info">
+                  <div class="driver-app">
+                    <img width="106" src="../../../assets/carCode.png" alt="承运商APP">
+                    <div>承运商APP</div>
+                  </div>
+                  <div class="driver-app">
+                    <img width="106" src="../../../assets/driveCode.png" alt="司机端app">
+                    <div>司机端APP</div>
+                  </div>
+                  <div class="driver-app">
+                    <img width="106" src="../../../assets/image_qrcode.jpg" alt="微信公众号">
+                    <div>微信公众号</div>
+                  </div>
+                </div>
+              </div>
+            </Poptip>
+          </span>
+          <!--全局搜索框-->
+          <span class="header-bar-avator-dropdown-notify">
+            <Input v-model="order_global" placeholder="订单号/客户订单号" class="search-global" >
+            <!--<FontIcon  slot="suffix"  type="sousuo" size="16"  class="sousuo" @click="search_global"></FontIcon>-->
+            <Icon slot="suffix" type="ios-search" @click="search_global"/>
+            </Input>
+          </span>
+          <span class="header-bar-avator-dropdown-notify">
+            <Tooltip transfer content="手工开单">
+              <router-link to="/order/create">
+                <FontIcon  type="kuaisukaidan" size="25" color="#fff" ></FontIcon>
+              </router-link>
+            </Tooltip>
+          </span>
           <span class="header-bar-avator-dropdown-notify">
             <Tooltip v-if="processVisible" :value="processVisible" transfer  placement="bottom" content=" 业务流程" always>
               <router-link to="/help/process">
@@ -45,7 +81,7 @@
 import BaseComponent from '@/basic/BaseComponent'
 import TabNav from './TabNav'
 import FontIcon from '@/components/FontIcon'
-import { mapGetters, mapActions } from 'vuex'
+import { mapGetters, mapActions, mapMutations } from 'vuex'
 import TMSUrl from '@/libs/constant/url.js'
 import Server from '@/libs/js/server'
 import UserInfo from './UserInfo.vue'
@@ -62,7 +98,8 @@ export default {
     return {
       processVisible: false,
       messageTimer: null,
-      popupQueue: []
+      popupQueue: [],
+      order_global: ''
     }
   },
   computed: {
@@ -86,6 +123,7 @@ export default {
   },
   methods: {
     ...mapActions(['getMessageCount', 'getUserInfo', 'getTableColumns', 'getOwnDrivers', 'getOwnCars', 'getConfiguration']),
+    ...mapMutations(['setOrderGlobal', 'setIsOrderGlobal']),
     async newUserTip () {
       try {
         // await this.getUserInfo()
@@ -103,10 +141,11 @@ export default {
           // 短信是否超过次数
           // this.messageBeyondLimit()
           this.popupQueue.push(this.systemUpgradeNotice, this.clearTrialData, this.receiveInvitingCooperation, this.messageBeyondLimit)
-          this.$nextTick(() => {
-            this.orderedInvoke()
-          })
         }
+        // this.popupQueue.push(this.inspectionTip, this.insuranceTip)
+        this.$nextTick(() => {
+          this.orderedInvoke()
+        })
         this.getTableColumns()
         // 查询所有的自有车辆和未绑定的司机
         this.getOwnDrivers()
@@ -411,28 +450,54 @@ export default {
     },
 
     inspectionTip () {
-      this.$Toast.confirm({
-        title: '年检提醒',
-        showIcon: false,
-        content: '年检提醒sdasfasdfsadf',
-        okText: '去查看',
-        cancelText: '我知道了',
-        onOk: () => {
-          window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
-        }
+      return new Promise((resolve, reject) => {
+        // Server({
+        //   url: 'message/beyondLimt',
+        //   method: 'get'
+        // })
+        // .then(({ data }) => {
+        // if (data.data) {
+        this.$Toast.confirm({
+          title: '年检提醒',
+          showIcon: false,
+          content: '年检提醒111111111111111111111111',
+          okText: '去查看',
+          cancelText: '我知道了',
+          onOk: () => {
+            window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
+            resolve()
+          },
+          onCancel: () => {
+            resolve()
+          }
+        })
+        // }
+        // })
+        // .catch((error) => {
+        //   reject(error)
+        // })
       })
     },
 
     insuranceTip () {
-      this.$Toast.confirm({
-        title: '保险提醒',
-        showIcon: false,
-        content: '保险提醒sssssssss',
-        okText: '去查看',
-        cancelText: '我知道了',
-        onOk: () => {
-          window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
-        }
+      return new Promise((resolve, reject) => {
+        this.$Toast.confirm({
+          title: '保险提醒',
+          showIcon: false,
+          content: '保险提醒2222222222222222222222222',
+          okText: '去查看',
+          cancelText: '我知道了',
+          onOk: () => {
+            window.EMA.fire('openTab', { path: '/information/index', query: { title: '消息' } })
+            resolve()
+          },
+          onCancel: () => {
+            resolve()
+          }
+        })
+        // .catch((error) => {
+        //   reject(error)
+        // })
       })
     },
 
@@ -508,6 +573,17 @@ export default {
         })
         localStorage.setItem('first_time_login', true)
       }, 1000)
+    },
+    /**
+     * 订单搜索
+    * */
+    search_global () {
+      // if (this.order_global) {
+      this.setOrderGlobal(this.order_global)
+      /* 订单全局搜索开关打开 */
+      this.setIsOrderGlobal(true)
+      this.$router.push({ path: TMSUrl.ORDER_MANAGEMENT })
+      // }
     }
   }
 }
@@ -609,5 +685,32 @@ export default {
       .title
         margin-left 15px
         line-height 44px
-        font-size 16px
+  .search-global
+    width 180px
+    /deep/ .ivu-input
+      border-radius 22px
+      height 30px
+      padding 4px 12px
+    /deep/ .ivu-input-icon
+      height 30px
+      line-height 30px
+    /deep/ .ivu-input-prefix i, .ivu-input-suffix i
+      line-height 30px
+      font-size 19px
+  .appTip
+    .appText
+      margin-left 6px
+.appContent
+  width 410px
+  .ivu-poptip-body
+    padding 30px 25px 17px
+  .hide-info
+    overflow hidden
+    .driver-app
+      text-align center
+      float left
+      /*width 106px*/
+      margin-right 21px
+      &:last-child
+        margin-right 0
 </style>

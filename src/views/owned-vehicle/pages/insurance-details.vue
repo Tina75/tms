@@ -136,18 +136,21 @@ export default {
     return {
       infoData: {},
       imageItems: [],
-      dataLog: []
+      dataLog: [],
+      id: ''
     }
   },
+  created () {
+    this.id = this.$route.query.rowDataId
+  },
   mounted () {
-    this.infoData = this.$route.query.rowData
     this.queryById()
   },
   methods: {
     ...mapActions(['insuranceQueryById', 'insuranceDeleteById']),
     queryById () {
       let vm = this
-      this.insuranceQueryById({ id: vm.infoData.id }).then(res => {
+      this.insuranceQueryById({ id: vm.id }).then(res => {
         vm.infoData = res.data.data.info
         vm.dataLog = res.data.data.logs
         vm.initData()

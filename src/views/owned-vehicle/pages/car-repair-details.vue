@@ -125,18 +125,20 @@ export default {
   data () {
     return {
       infoData: {},
-      searchLogData: {}
+      searchLogData: {},
+      id: ''
     }
   },
   computed: {
   },
   created () {
+    this.id = this.$route.query.rowDataId
     this.searchLogData.carrierId = this.$route.query.carrierId
-    this.searchLogData.id = this.$route.query.rowData.id
+    this.searchLogData.id = this.$route.query.rowDataId
     this.searchLogData.logType = 'repair'
   },
   mounted () {
-    this.infoData = this.$route.query.rowData
+    // this.infoData = this.$route.query.rowData
     this.queryById()
   },
   methods: {
@@ -145,7 +147,7 @@ export default {
     },
     queryById () {
       let vm = this
-      queryRepairById({ repairId: vm.infoData.id }).then(res => {
+      queryRepairById({ repairId: vm.id }).then(res => {
         vm.infoData = res.data.data
       }).catch(() => {
         this.$Toast.warning({

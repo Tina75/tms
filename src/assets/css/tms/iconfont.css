@@ -579,3 +579,11 @@
   content: "\e611";
 }
 
+.icon-kuaisukaidan:before {
+  content: "\e67d";
+}
+
+.icon-app:before {
+  content: "\e67e";
+}
+

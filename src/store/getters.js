@@ -34,3 +34,7 @@ export const AbnormalAddCargoInfos = (state) => state.abnormalAddCargoInfos
 export const ImportId = (state) => state.importId
 /** 公司设置 */
 export const CompanyInfo = (state) => state.companyInfo
+/** 订单全局搜索 */
+export const OrderGlobal = (state) => state.orderGlobal
+/** 全局搜索开关 */
+export const IsOrderGlobal = (state) => state.isOrderGlobal
