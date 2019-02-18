@@ -239,6 +239,8 @@ export default {
       insuranceFormInit: {},
       checkFormInit: {},
       tyreFormInit: {},
+      infoDataId: '',
+      carNo: '',
       menuColumns: [
         {
           title: '操作',
@@ -785,8 +787,11 @@ export default {
       ]
     }
   },
+  created () {
+    this.infoDataId = this.$route.query.rowDataId
+    this.carNo = this.$route.query.carNo
+  },
   mounted () {
-    this.infoData = this.$route.query.rowData
     this.queryById()
     this.searchRepairByCar()
   },
@@ -798,10 +803,10 @@ export default {
     },
     queryById () {
       let vm = this
-      vm.insuranceFormInit = { carNo: vm.infoData.carNo }
-      vm.checkFormInit = { carNo: vm.infoData.carNo }
-      vm.tyreFormInit = { carNo: vm.infoData.carNo }
-      queryCarById({ carId: vm.infoData.id }).then(res => {
+      vm.insuranceFormInit = { carNo: vm.carNo }
+      vm.checkFormInit = { carNo: vm.carNo }
+      vm.tyreFormInit = { carNo: vm.carNo }
+      queryCarById({ carId: vm.infoDataId }).then(res => {
         if (res.data.code === CODE) {
           vm.infoData = res.data.data
           vm.initData()

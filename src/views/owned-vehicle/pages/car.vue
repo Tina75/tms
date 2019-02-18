@@ -113,7 +113,8 @@ export default {
                     path: TMSUrl.OWNEDVEHICLE_CAEDETAILS,
                     query: {
                       id: '车辆详情',
-                      rowData: params.row
+                      rowDataId: params.row.id,
+                      carNo: params.row.carNo
                     }
                   })
                 }

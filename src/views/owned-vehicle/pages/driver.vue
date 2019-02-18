@@ -111,7 +111,7 @@ export default {
                     path: TMSUrl.OWNEDVEHICLE_DRIVERINFO,
                     query: {
                       id: '司机详情',
-                      rowData: params.row
+                      rowDataId: params.row.id
                     }
                   })
                 }

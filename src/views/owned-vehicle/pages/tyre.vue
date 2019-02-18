@@ -103,7 +103,7 @@ export default {
               },
               on: {
                 click: () => {
-                  this.$router.push({ name: 'tyre-details', query: { rowData: params.row } })
+                  this.$router.push({ name: 'tyre-details', query: { rowDataId: params.row.id } })
                 }
               }
             }, '查看'))

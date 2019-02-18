@@ -115,7 +115,7 @@ export default {
                     path: TMSUrl.OWNEDVEHICLE_REPAIRDETAILS,
                     query: {
                       id: '维修详情',
-                      rowData: params.row,
+                      rowDataId: params.row.id,
                       carrierId: this.carrierId
                     }
                   })

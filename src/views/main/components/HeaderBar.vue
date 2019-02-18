@@ -118,7 +118,7 @@ export default {
           // this.messageBeyondLimit()
           this.popupQueue.push(this.systemUpgradeNotice, this.clearTrialData, this.receiveInvitingCooperation, this.messageBeyondLimit)
         }
-        this.popupQueue.push(this.inspectionTip, this.insuranceTip)
+        // this.popupQueue.push(this.inspectionTip, this.insuranceTip)
         this.$nextTick(() => {
           this.orderedInvoke()
         })

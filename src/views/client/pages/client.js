@@ -10,6 +10,14 @@ export function formatterCarNo (value) {
   }
   return value
 }
+// 根据ID查询车辆
+export function queryCarById (params) {
+  return server({
+    url: '/ownerCar/queryCarDetail',
+    method: 'get',
+    data: params
+  })
+}
 // 发货方列表
 export function consignerList (data) {
   return server({

@@ -21,7 +21,7 @@
           <Col span="6">
           <div>
             <span class="label">车牌号：</span>
-            {{infoData.carNO}}
+            {{infoData.carNO || infoData.carNo }}
           </div>
             </Col>
           <Col span="6">
@@ -128,7 +128,7 @@
 </template>
 <script>
 import BasePage from '@/basic/BasePage'
-import { CODE, carrierDeleteDriver, queryByIdCarrier } from './client'
+import { CODE, carrierDeleteDriver, queryByIdCarrier, queryCarById } from './client'
 import RecordList from '@/components/RecordList'
 import prepareOpenSwipe from '@/components/swipe/index'
 import DivImage from '@/components/DivImage.vue'
@@ -153,19 +153,14 @@ export default {
     }
   },
   created () {
-    this.searchLogData.carrierId = this.$route.query.rowData.carrierId
-    this.searchLogData.id = this.$route.query.rowData.id
+    this.searchLogData.carrierId = this.$route.query.carrierId
+    this.searchLogData.id = this.$route.query.rowDataId + ''
     this.searchLogData.logType = 'vehicle'
   },
   mounted () {
-    // 数据备份，防止在详情页面对数据进行二次编辑
-    this.infoDataInit = Object.assign({}, this.$route.query.rowData)
-    this.id = this.infoDataInit.id
-    this.carrierId = this.infoDataInit.carrierId
-    this.carId = this.infoDataInit.carId
-    this.infoData = this.$route.query.rowData
-    this.initData()
-    this.openSwipe = prepareOpenSwipe(this.imageItems)
+    this.queryById()
+    // this.initData()
+    // this.openSwipe = prepareOpenSwipe(this.imageItems)
   },
   methods: {
     // 日期格式化
@@ -174,6 +169,33 @@ export default {
     },
     formatDateTime (value, format) {
       if (value) { return (new Date(value)).Format(format || 'yyyy-MM-dd hh:mm') } else { return '' }
+    },
+    queryById () {
+      // 数据备份，防止在详情页面对数据进行二次编辑
+      this.id = this.$route.query.rowDataId
+      this.carrierId = this.$route.query.carrierId
+      this.carId = this.$route.query.carId
+      let vm = this
+      queryCarById({ carId: vm.id }).then(res => {
+        if (res.data.code === CODE) {
+          this.infoDataInit = Object.assign({}, res.data.data)
+          vm.infoData = res.data.data
+          vm.initData()
+          // 大图预览
+          vm.openSwipe = prepareOpenSwipe(vm.imageItems)
+        }
+      }).catch(() => {
+        this.$Toast.warning({
+          title: '提示',
+          content: '车辆信息不存在，请刷新列表',
+          onOk () {
+            vm.ema.fire('closeTab', vm.$route)
+          },
+          onCancel () {
+            vm.ema.fire('closeTab', vm.$route)
+          }
+        })
+      })
     },
     // 初始化数据格式
     initData () {
@@ -235,7 +257,7 @@ export default {
           flag: 2,
           carrierId: _this.carrierId,
           carId: _this.carId,
-          validate: { ..._this.infoDataInit, purchDate: new Date(_this.infoDataInit.purchDate) }
+          validate: { ..._this.infoDataInit, purchDate: new Date(_this.infoDataInit.purchDate), carNO: this.infoData.carNO || this.infoData.carNo }
         },
         methods: {
           ok () {
