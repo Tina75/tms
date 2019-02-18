@@ -8,7 +8,7 @@
         </FormItem>
 
         <FormItem label="号，提前" prop="moveDay">
-          <TagNumberInput :min="1" :show-chinese="false" v-model="reminderForm.moveDay" placeholder="最大值为10" class="input-number"></TagNumberInput>
+          <TagNumberInput :min="0" :show-chinese="false" v-model="reminderForm.moveDay" placeholder="最大值为10" class="input-number"></TagNumberInput>
         </FormItem>
         <FormItem class="i-mr-0">
           <label class="form-item-label">个自然日消息提醒</label>
@@ -39,20 +39,22 @@ export default {
   },
   mixins: [BaseDialog],
   data () {
+    // 1-28
     const dateValidate = (rule, value, callback) => {
       if (value && value > 28) {
-        callback(new Error('提醒日期不能超过28号'))
+        callback(new Error('账期日不能超过28号'))
       } else if (!value) {
-        callback(new Error('请输入提醒日期'))
+        callback(new Error('请输入账期日'))
       } else {
         callback()
       }
     }
+    // 0-10
     const aheadValidate = (rule, value, callback) => {
       if (value && value > 10) {
-        callback(new Error('天数不能超过10天'))
-      } else if (!value) {
-        callback(new Error('请输入提前提醒天数'))
+        callback(new Error('天数不能超过10天，请重新设置'))
+      } else if (!value && value !== 0) {
+        callback(new Error('请输入提醒天数'))
       } else {
         callback()
       }
@@ -85,7 +87,7 @@ export default {
     Server({
       url: 'period/query',
       method: 'POST',
-      params: {
+      data: {
         partnerName: this.partnerName,
         partnerType: this.partnerType
       }
