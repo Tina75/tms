@@ -101,16 +101,16 @@
     </div>
     <div class="list-info">
       <Row class="row">
-        <Col v-for="img in imageItems" :key="img.count" span="5">
-        <div :v-if="img.src">
-          <div-image
-            :src="img.src"
-            class="imageDiv"
-            @click.native="handleView(img.count)">
-          </div-image>
-          <p class="uploadLabel">{{img.title}}</p>
+        <div v-for="img in imageItems" :key="img.count" class="infoImage">
+          <div :v-if="img.src">
+            <div-image
+              :src="img.src"
+              class="fileImage"
+              @click.native="handleView(img.count)">
+            </div-image>
+            <p>{{img.title}}</p>
+          </div>
         </div>
-        </Col>
       </Row>
     </div>
     <div class="title" style="margin-top: 40px;">

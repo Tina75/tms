@@ -109,9 +109,10 @@
           <div :v-if="img">
             <div-image
               :src="img.src"
+              class="fileImage"
               @click.native="handleView(img.count)">
             </div-image>
-            <p class="titleInput">{{ img.title }}</p>
+            <p>{{ img.title }}</p>
           </div>
         </div>
       </Row>
