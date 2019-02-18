@@ -381,6 +381,7 @@ export default {
       switch (msg.type) {
         // 0系统消息4订单消息5回单消息6运单消息7提货单消息8外转单消息
         case 0:
+        case 9: // 系统更新消息
           this.openTab({
             path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
             query: {

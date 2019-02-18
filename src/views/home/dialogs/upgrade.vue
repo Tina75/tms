@@ -49,11 +49,16 @@ export default {
       this.close()
     },
     toDetail () {
-      this.openTab({
-        path: TMSUrl.MESSAGE_DETAIL, // '/information/message-info',
-        query: {
-          id: this.id
-        }
+      this.handleClose()
+      this.$nextTick(() => {
+        this.openTab({
+          path: TMSUrl.MESSAGE_DETAIL,
+          title: '消息',
+          query: {
+            title: this.title,
+            messageId: this.id + ''
+          }
+        })
       })
     },
     handleClose () {
