@@ -52,10 +52,6 @@ export default {
       type: String,
       default: 'bottom'
     },
-    disabled: {
-      type: Boolean,
-      default: true
-    },
     transfer: '',
     type: '', // type 默认【车型/车厂/包装方式】，如有自定义传入listMapData集合
     listMapData: Array, // 外部传入的Array格式，必须为{ value: '纸箱', label: '纸箱' }格式
@@ -136,7 +132,6 @@ export default {
       }
     },
     clickInput (event) {
-      if (this.disabled) return
       this.showSelect = !this.showSelect
       this.visible = !this.visible
     },
