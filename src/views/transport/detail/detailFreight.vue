@@ -738,7 +738,7 @@ export default {
         cargoList: []
       }
       z.$nextTick(() => {
-        data.cargoList = z.$refs.changeCargo.getCargoList()
+        data.cargoList = z.$refs.changeCargo.cloneCargoList
         if (z.sendWay === '1') {
           data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
             settlementType: z.$refs.sendFee.getSettlementType(),
