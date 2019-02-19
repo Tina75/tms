@@ -3,341 +3,663 @@
     <Spin v-if="loading" fix>
       <img src="../../../assets/loading.gif" width="24" height="24" alt="加载中">
     </Spin>
-    <Row :gutter="16">
-      <Col span="6">
-      <FormItem label="客户名称:" prop="consignerName">
-        <SelectInput
-          v-model="orderForm.consignerName"
-          :auto-focus="autoFocus"
-          :maxlength="$fieldLength.company"
-          :remote="false"
-          :clearable="true"
-          :local-options="clients"
-          @on-focus.once="getClients"
-          @on-select="handleSelectConsigner">
-        </SelectInput>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.customerOrderNoOption == 1" span="6">
-      <FormItem label="客户订单号:" prop="customerOrderNo">
-        <Input v-model="orderForm.customerOrderNo" :maxlength="$fieldLength.orderNo" clearable></Input>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.customerWaybillNoOption == 1" span="6">
-      <FormItem label="客户运单号:" prop="customerWaybillNo">
-        <Input v-model="orderForm.customerWaybillNo" :maxlength="$fieldLength.billNo" clearable></Input>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.salesmanIdOption == 1" span="6">
-      <FormItem label="对接业务员:" prop="salesmanId">
-        <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
-          <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
-        </Select>
-      </FormItem>
-      </Col>
-    </Row>
-    <Row :gutter="16">
-      <Col v-if="OrderSet.startCityOption == 1" span="6">
-      <FormItem label="发货城市:" prop="start">
-        <CitySelect v-model="orderForm.start" clearable></CitySelect>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.endCityOption == 1" span="6">
-      <FormItem label="收货城市:" prop="end">
-        <CitySelect v-model="orderForm.end" clearable></CitySelect>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.deliveryTimeOption == 1" span="6">
-      <FormItem label="发货时间:">
-        <Row>
-          <Col span="13">
-          <FormItem prop="deliveryTime">
-            <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
-          </FormItem>
-          </Col>
-          <Col span="11" style="padding-left: 5px">
-          <FormItem prop="deliveryTimes">
-            <TimeInput ref="stTimeInput" v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
-          </FormItem>
-          </Col>
-        </Row>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.arriveTimeOption == 1" span="6">
-      <FormItem label="到货时间:">
-        <Row>
-          <Col span="13">
-          <FormItem prop="arriveTime">
-            <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
-          </FormItem>
-          </Col>
-          <Col span="11" style="padding-left: 5px">
-          <FormItem prop="arriveTimes">
-            <TimeInput ref="edTimeInput" v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
-          </FormItem>
-          </Col>
-        </Row>
-      </FormItem>
-      </Col>
-    </Row>
-    <Row :gutter="16" class="i-mb-15">
-      <Col span="12"><Title>发货人</Title></Col>
-      <Col span="12"><Title>收货人</Title></Col>
-    </Row>
-    <Row :gutter="16">
-      <Col span="6">
-      <FormItem label="发货人:" prop="consignerContact">
-        <Input v-model="orderForm.consignerContact" :maxlength="$fieldLength.name" clearable></Input>
-      </FormItem>
-      </Col>
-      <Col span="6">
-      <FormItem label="联系号码:" prop="consignerPhone">
-        <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号" clearable></SelectInput>
-      </FormItem>
-      </Col>
-      <Col span="6">
-      <FormItem label="收货人:" prop="consigneeContact">
-        <SelectInput v-model="orderForm.consigneeContact" :maxlength="$fieldLength.name" :local-options="consigneeContacts" :remote="false" option-key="id" clearable @on-select="handleSelectConsignee">
-        </SelectInput>
-      </FormItem>
-      </Col>
-      <Col span="6">
-      <FormItem label="联系号码:" prop="consigneePhone">
-        <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号" clearable></SelectInput>
-      </FormItem>
-      </Col>
-    </Row>
-    <Row :gutter="16">
-      <Col span="8">
-      <FormItem label="发货地址:" class="consig-address" prop="consignerAddress">
-        <AreaInput
-          v-model="orderForm.consignerAddress"
-          :local-options="consignerAddresses"
-          :show-icon="!!orderForm.consignerAddressLongitude && !!orderForm.consignerAddressLatitude"
-          placeholder="详细地址（省市区+地址）"
-          @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
-      </FormItem>
-      </Col>
-      <Col span="3">
-      <FormItem :label-width="0" prop="consignerHourseNumber">
-        <Input v-model="orderForm.consignerHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）" clearable></Input>
-      </FormItem>
-      </Col>
-      <Col span="1">
-      <FormItem :label-width="0">
-        <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
-          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
-        </Tooltip>
-      </FormItem>
-      </Col>
-      <Col span="8">
-      <FormItem label="收货地址:" class="consig-address" prop="consigneeAddress">
-        <AreaInput
-          v-model="orderForm.consigneeAddress"
-          :local-options="consigneeAddresses"
-          :show-icon="!!orderForm.consigneeAddressLongitude && !!orderForm.consigneeAddressLatitude"
-          placeholder="详细地址（省市区+地址）"
-          @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
-      </FormItem>
-      </Col>
-      <Col span="3">
-      <FormItem :label-width="0" prop="consigneeHourseNumber">
-        <Input v-model="orderForm.consigneeHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）" clearable></Input>
-      </FormItem>
-      </Col>
-      <Col span="1">
-      <FormItem :label-width="0">
-        <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
-          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
-        </Tooltip>
-      </FormItem>
-      </Col>
-    </Row>
-    <Row v-if="OrderSet.consigneeCompanyNameOption == 1" :gutter="16" >
-      <Col span="12" offset="12">
-      <!-- 收货人公司设置 -->
-      <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyName">
-        <Input v-model="orderForm.consigneeCompanyName" :maxlength="$fieldLength.extraAddress" clearable></Input>
-      </FormItem>
-      </Col>
-    </Row>
-    <Title>货物信息</Title>
-    <CargoTable
-      ref="cargoTable"
-      :order-set="OrderSet"
-      :cargoes="cargoes"
-      :data-source="consignerCargoes"
-      :on-append="appendCargo"
-      :on-remove="removeCargo"
-      :on-select="selectCargo">
-    </CargoTable>
+    <div v-if="OrderSet.orderTemplateOption === 2" class="order-create-form" >
+      <h1>货物托运单</h1>
+      <div class="order-create-title">
+        开单日期：<span>{{new Date() | datetime}}</span>
+        <div style="float: right">订单号：<span>{{orderNo}}</span></div>
+      </div>
 
-    <Title class="i-mb-15 i-mt-15">应收费用</Title>
-    <Row :gutter="16" style="margin-bottom: 10px">
-      <Col span="6">
-      <FormItem label="结算方式:" prop="settlementType">
-        <Row>
-          <Col span="19">
-          <Select ref="settlementSelector" v-model="orderForm.settlementType" transfer>
-            <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+      <Row>
+        <Col v-if="OrderSet.startCityOption == 1" span="6" class="blue-border">
+        <i-form-item label="发货城市:" prop="start">
+          <CitySelect v-model="orderForm.start" clearable></CitySelect>
+        </i-form-item>
+        </Col>
+        <Col v-if="OrderSet.endCityOption == 1" span="6" class="blue-border">
+        <i-form-item label="收货城市:" prop="end">
+          <CitySelect v-model="orderForm.end" clearable></CitySelect>
+        </i-form-item>
+        </Col>
+        <Col v-if="OrderSet.deliveryTimeOption == 1" span="6" class="blue-border">
+        <i-form-item label="发货时间:">
+          <Row>
+            <Col span="13">
+            <i-form-item prop="deliveryTime" style="margin-bottom: 0">
+              <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
+            </i-form-item>
+            </Col>
+            <Col span="11" style="padding-left: 5px">
+            <i-form-item prop="deliveryTimes" style="margin-bottom: 0">
+              <TimeInput ref="stTimeInput" v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
+            </i-form-item>
+            </Col>
+          </Row>
+        </i-form-item>
+        </Col>
+        <Col v-if="OrderSet.arriveTimeOption == 1" span="6" class="blue-border right-border">
+        <i-form-item label="到货时间:">
+          <Row>
+            <Col span="13">
+            <i-form-item prop="arriveTime" style="margin-bottom: 0">
+              <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
+            </i-form-item>
+            </Col>
+            <Col span="11" style="padding-left: 5px">
+            <i-form-item prop="arriveTimes" style="margin-bottom: 0">
+              <TimeInput ref="edTimeInput" v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
+            </i-form-item>
+            </Col>
+          </Row>
+        </i-form-item>
+        </Col>
+      </Row>
+      <!-- 发货结束 -->
+      <Row>
+        <Col v-if="OrderSet.customerOrderNoOption == 1" span="6" class="blue-border">
+        <i-form-item label="客户订单号:" prop="customerOrderNo">
+          <Input v-model="orderForm.customerOrderNo" :maxlength="$fieldLength.orderNo" clearable></Input>
+        </i-form-item>
+        </Col>
+        <Col v-if="OrderSet.customerWaybillNoOption == 1" span="6" class="blue-border">
+        <i-form-item label="客户运单号:" prop="customerWaybillNo">
+          <Input v-model="orderForm.customerWaybillNo" :maxlength="$fieldLength.billNo" clearable></Input>
+        </i-form-item>
+        </Col>
+        <Col v-if="OrderSet.salesmanIdOption == 1" span="6" class="blue-border">
+        <i-form-item label="对接业务员:" prop="salesmanId">
+          <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
+            <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
           </Select>
-          </Col>
-        </Row>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.mileageOption == 1" span="6">
-      <FormItem label="计费里程:" prop="mileage">
+        </i-form-item>
+        </Col>
+        <Col span="6" class="blue-border right-border">
+        <i-form-item label="提货方式:">
+          <RadioGroup v-model="orderForm.pickup">
+            <Radio label="1">小车提货</Radio>
+            <Radio label="2">大车送货</Radio>
+          </RadioGroup>
+        </i-form-item>
+        </Col>
+      </Row>
+      <!-- 客户结束 -->
+      <Row>
+        <Col span="12" style="display: flex" class="blue-border">
+        <Title :orderForm="true" class="verticle-title">发<br>货<br>方</Title>
+        <div style="flex: 1">
+          <Row>
+            <Col span="24">
+            <i-form-item label="客户名称:" prop="consignerName">
+              <SelectInput
+                v-model="orderForm.consignerName"
+                :auto-focus="autoFocus"
+                :maxlength="$fieldLength.company"
+                :remote="false"
+                :clearable="true"
+                :local-options="clients"
+                @on-focus.once="getClients"
+                @on-select="handleSelectConsigner">
+              </SelectInput>
+            </i-form-item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+            <i-form-item label="发货人:" prop="consignerContact">
+              <Input v-model="orderForm.consignerContact" :maxlength="$fieldLength.name" clearable></Input>
+            </i-form-item>
+            </Col>
+            <Col span="12">
+            <i-form-item label="联系号码:" prop="consignerPhone">
+              <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号" clearable></SelectInput>
+            </i-form-item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="16">
+            <i-form-item label="发货地址:" class="consig-address" prop="consignerAddress">
+              <AreaInput
+                v-model="orderForm.consignerAddress"
+                :local-options="consignerAddresses"
+                :show-icon="!!orderForm.consignerAddressLongitude && !!orderForm.consignerAddressLatitude"
+                placeholder="详细地址（省市区+地址）"
+                @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
+            </i-form-item>
+            </Col>
+            <Col span="8">
+            <div class="ivu-form-item-content" style="margin-right: 6px">
+              <Input v-model="orderForm.consignerHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）" clearable></Input>
+              <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer style="position: absolute; right: 0px; top: 0; z-index: 10">
+                <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+              </Tooltip>
+            </div>
+            </Col>
+          </Row>
+        </div>
+        </Col>
+        <Col span="12" style="display: flex" class="blue-border right-border">
+        <Title :orderForm="true" class="verticle-title">收<br>货<br>方</Title>
+        <div style="flex: 1">
+          <Row>
+            <Col v-if="OrderSet.consigneeCompanyNameOption == 1" span="24">
+            <i-form-item :maxlength="50" label="收货人单位：" prop="consigneeCompanyName">
+              <Input v-model="orderForm.consigneeCompanyName" :maxlength="$fieldLength.extraAddress" clearable></Input>
+            </i-form-item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="12">
+            <i-form-item label="收货人:" prop="consigneeContact">
+              <SelectInput v-model="orderForm.consigneeContact" :maxlength="$fieldLength.name" :local-options="consigneeContacts" :remote="false" option-key="id" clearable @on-select="handleSelectConsignee">
+              </SelectInput>
+            </i-form-item>
+            </Col>
+            <Col span="12">
+            <i-form-item label="联系号码:" prop="consigneePhone">
+              <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号" clearable></SelectInput>
+            </i-form-item>
+            </Col>
+          </Row>
+          <Row>
+            <Col span="16">
+            <i-form-item label="收货地址:" class="consig-address" prop="consigneeAddress">
+              <AreaInput
+                v-model="orderForm.consigneeAddress"
+                :local-options="consigneeAddresses"
+                :show-icon="!!orderForm.consigneeAddressLongitude && !!orderForm.consigneeAddressLatitude"
+                placeholder="详细地址（省市区+地址）"
+                @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
+            </i-form-item>
+            </Col>
+            <Col span="8">
+            <div class="ivu-form-item-content" style="margin-right: 6px">
+              <Input v-model="orderForm.consigneeHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）" clearable></Input>
+              <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer style="position: absolute; right: 0px; top: 0; z-index: 10">
+                <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+              </Tooltip>
+            </div>
+            </Col>
+          </Row>
+        </div>
+        </Col>
+      </Row>
+      <!-- 收发货人结束 -->
+      <CargoTable
+        ref="cargoTable"
+        :order-set="OrderSet"
+        :cargoes="cargoes"
+        :data-source="consignerCargoes"
+        :on-append="appendCargo"
+        :on-remove="removeCargo"
+        :on-select="selectCargo"
+        class="blue-border right-border">
+      </CargoTable>
+      <!-- 货物结束 -->
+      <Row>
+        <Col span="12" class="blue-border">
+        <Title :orderForm="true" class="align-title">应收费用</Title>
         <Row>
-          <Col span="19">
-          <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1" clearable>
-          </TagNumberInput>
+          <Col v-if="OrderSet.freightFeeOption == 1" span="8">
+          <i-form-item :label-width="105" label="运输费(元):" prop="freightFee">
+            <Row>
+              <Col span="19">
+              <TagNumberInput :min="0" v-model="orderForm.freightFee" :show-chinese="false" clearable></TagNumberInput>
+              </Col>
+              <Col span="5" class="order-create__input-unit">
+              <span @click="showCounter">
+                <FontIcon type="jisuanqi" size="20" color="#00a4bd" style="vertical-align:middle"></FontIcon>
+              </span>
+              </Col>
+            </Row>
+          </i-form-item>
           </Col>
           <Col span="5" class="order-create__input-unit">公里</Col>
         </Row>
       </FormItem>
       </Col>
-      <Col v-if="OrderSet.freightFeeOption == 1" span="6">
-      <FormItem label="运输费:" prop="freightFee">
-        <Row>
-          <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.freightFee" clearable></TagNumberInput>
+        <Col v-if="OrderSet.freightFeeOption == 1" span="6">
+        <FormItem label="运输费:" prop="freightFee">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :min="0" v-model="orderForm.freightFee" clearable></TagNumberInput>
           </Col>
-          <Col span="5" class="order-create__input-unit">
-          <span style="vertical-align:middle">元</span>
-          <span @click="showCounter">
-            <FontIcon type="jisuanqi" size="20" color="#00a4bd" style="vertical-align:middle"></FontIcon>
-          </span>
+            <Col v-if="OrderSet.loadFeeOption == 1" span="8">
+            <i-form-item :label-width="105" label="装货费(元):" prop="loadFee">
+              <TagNumberInput :min="0" v-model="orderForm.loadFee" :show-chinese="false" clearable></TagNumberInput>
+            </i-form-item>
           </Col>
-        </Row>
-      </FormItem>
+          </Row>
+        </FormItem>
       </Col>
-      <Col v-if="OrderSet.pickupFeeOption == 1" span="6">
-      <FormItem label="提货费:" prop="pickupFee">
-        <Row>
-          <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.pickupFee" clearable></TagNumberInput>
+        <Col v-if="OrderSet.pickupFeeOption == 1" span="6">
+        <FormItem label="提货费:" prop="pickupFee">
+          <Row>
+            <Col v-if="OrderSet.unloadFeeOption == 1" span="8">
+            <i-form-item :label-width="105" label="卸货费(元):" prop="unloadFee">
+              <TagNumberInput :min="0" v-model="orderForm.unloadFee" :show-chinese="false" clearable></TagNumberInput>
+            </i-form-item>
           </Col>
-          <Col span="5" class="order-create__input-unit">元</Col>
-        </Row>
-      </FormItem>
-      </Col>
-    </Row>
-    <Row :gutter="16">
-      <Col v-if="OrderSet.loadFeeOption == 1" span="6">
-      <FormItem label="装货费:" prop="loadFee">
-        <Row>
-          <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.loadFee" clearable></TagNumberInput>
+            <Col v-if="OrderSet.insuranceFeeOption == 1" span="8">
+            <i-form-item :label-width="105" label="保险费(元):" prop="insuranceFee">
+              <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :show-chinese="false" clearable></TagNumberInput>
+            </i-form-item>
           </Col>
-          <Col span="5" class="order-create__input-unit">元</Col>
-        </Row>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.unloadFeeOption == 1" span="6">
-      <FormItem label="卸货费:" prop="unloadFee">
-        <Row>
-          <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.unloadFee" clearable></TagNumberInput>
+            <Col v-if="OrderSet.otherFeeOption == 1" span="8">
+            <i-form-item :label-width="105" label="其他费用(元):" prop="otherFee">
+              <TagNumberInput :min="0" v-model="orderForm.otherFee" :show-chinese="false" clearable></TagNumberInput>
+            </i-form-item>
           </Col>
-          <Col span="5" class="order-create__input-unit">元</Col>
-        </Row>
-      </FormItem>
+          </Row>
+        </FormItem>
       </Col>
-      <Col v-if="OrderSet.insuranceFeeOption == 1" span="6">
-      <FormItem label="保险费:" prop="insuranceFee">
-        <Row>
-          <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.insuranceFee" clearable></TagNumberInput>
+        <Col v-if="OrderSet.insuranceFeeOption == 1" span="6">
+        <FormItem label="保险费:" prop="insuranceFee">
+          <Row>
+            <Col span="24">
+            <i-form-item :label-width="105" label="费用合计(元):">
+              <span class="order-create__font-total">{{totalFee}}</span>
+            </i-form-item>
           </Col>
-          <Col span="5" class="order-create__input-unit">元</Col>
-        </Row>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.otherFeeOption == 1" span="6">
-      <FormItem label="其他费用:" prop="otherFee">
-        <Row>
-          <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.otherFee" clearable></TagNumberInput>
+          </Row>
+        </Col>
+          <Col span="12" class="blue-border right-border">
+          <Title :orderForm="true" class="align-title">付款方式</Title>
+          <Row>
+            <Col span="8">
+            <i-form-item :label-width="105" label="结算方式:" prop="settlementType">
+              <Select ref="settlementSelector" v-model="orderForm.settlementType" transfer>
+                <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+              </Select>
+            </i-form-item>
           </Col>
-          <Col span="5" class="order-create__input-unit">元</Col>
-        </Row>
-      </FormItem>
-      </Col>
-    </Row>
-    <Row :gutter="16">
-      <Col span="10">
-      <FormItem label="费用合计:">
-        <span class="order-create__font-total">{{totalFee}}</span>元
-      </FormItem>
-      </Col>
-    </Row>
-    <Title>其他</Title>
-    <Row :gutter="16" class="i-mt-15">
-      <Col v-if="OrderSet.pickupOption == 1" span="6">
-      <FormItem :class="{'ivu-form-item-error': highLight}" label="提货方式:" prop="pickup">
-        <Row>
-          <Col span="19">
-          <Select ref="pickupSelector" v-model="orderForm.pickup" :disabled="orderForm.disabledPickUp" transfer>
-            <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            <Col v-if="OrderSet.receiptCountOption == 1" span="8">
+            <i-form-item :label-width="105" label="回单数量(份):" prop="receiptCount">
+              <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :precision="0" clearable>
+              </TagNumberInput>
+            </i-form-item>
+          </Col>
+            <Col v-if="OrderSet.collectionMoneyOption == 1" span="8">
+            <i-form-item :label-width="105" label="代收货款(元):" prop="collectionMoney">
+              <TagNumberInput :min="0" v-model="orderForm.collectionMoney" :show-chinese="false" clearable></TagNumberInput>
+            </i-form-item>
+          </Col>
+          </Row>
+          <Row>
+            <Col v-if="OrderSet.isInvoiceOption == 1" span="8">
+            <i-form-item :label-width="105" label="是否开票:" prop="isInvoice">
+              <Select v-model="orderForm.isInvoice" transfer>
+                <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+              </Select>
+            </i-form-item>
+          </Col>
+            <Col span="8">
+            <i-form-item v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" :label-width="105" label="开票税率(%):" prop="invoiceRate">
+              <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="2" :min="0" :max="100" clearable>
+              </TagNumberInput>
+            </i-form-item>
+          </Col>
+            <Col span="8">
+            <div v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" class="ivu-form-item-content" style="padding-left: 7px">
+              ( {{invoiceFee}} 元 )
+            </div>
+          </Col>
+          </Row>
+          <Row>
+            <Col v-if="OrderSet.mileageOption == 1" span="8">
+            <i-form-item :label-width="105" label="计费里程(公里):" prop="mileage">
+              <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1" clearable>
+              </TagNumberInput>
+            </i-form-item>
+          </Col>
+          </Row>
+        </Col>
+      </formitem></Row>
+      <!-- 应收费用结束 -->
+      <Row>
+        <Col v-if="OrderSet.orderRemarkOption == 1" span="24" class="blue-border right-border bottom-border">
+        <i-form-item :label-width="105" label="备注:" prop="remark">
+          <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" clearable></Input>
+        </i-form-item>
+        </Col>
+      </Row>
+    </div>
+    <div v-else class="order-create-common">
+      <Row :gutter="16">
+        <Col span="6">
+        <FormItem label="客户名称:" prop="consignerName">
+          <SelectInput
+            v-model="orderForm.consignerName"
+            :auto-focus="autoFocus"
+            :maxlength="$fieldLength.company"
+            :remote="false"
+            :clearable="true"
+            :local-options="clients"
+            @on-focus.once="getClients"
+            @on-select="handleSelectConsigner">
+          </SelectInput>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.customerOrderNoOption == 1" span="6">
+        <FormItem label="客户订单号:" prop="customerOrderNo">
+          <Input v-model="orderForm.customerOrderNo" :maxlength="$fieldLength.orderNo" clearable></Input>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.customerWaybillNoOption == 1" span="6">
+        <FormItem label="客户运单号:" prop="customerWaybillNo">
+          <Input v-model="orderForm.customerWaybillNo" :maxlength="$fieldLength.billNo" clearable></Input>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.salesmanIdOption == 1" span="6">
+        <FormItem label="对接业务员:" prop="salesmanId">
+          <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
+            <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
           </Select>
-          </Col>
-        </Row>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.receiptCountOption == 1" span="6">
-      <FormItem label="回单数量:" prop="receiptCount">
-        <Row>
-          <Col span="19">
-          <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :precision="0" clearable>
-          </TagNumberInput>
-          </Col>
-          <Col span="5" class="order-create__input-unit">份</Col>
-        </Row>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.isInvoiceOption == 1" span="6">
-      <FormItem label="是否开票:" prop="isInvoice">
-        <Row>
-          <Col span="19">
-          <Select v-model="orderForm.isInvoice" transfer>
-            <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
-          </Select>
-          </Col>
-        </Row>
-      </FormItem>
-      </Col>
-      <Col span="6">
-      <FormItem v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" label="开票税率:" prop="invoiceRate">
-        <Row>
-          <Col span="6">
-          <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="2" :min="0" :max="100" clearable>
-          </TagNumberInput>
-          </Col>
-          <Col span="18" class="order-create__input-unit">
-          <span style="float: left">%</span>
-          <span>({{ invoiceFee }}元)</span>
-          </Col>
-        </Row>
-      </FormItem>
-      </Col>
-    </Row>
-    <Row :gutter="16" class="i-mt-15">
-      <Col v-if="OrderSet.collectionMoneyOption == 1" span="6">
-      <FormItem label="代收货款:" prop="collectionMoney">
-        <Row>
-          <Col span="19">
-          <TagNumberInput :min="0" v-model="orderForm.collectionMoney" clearable></TagNumberInput>
-          </Col>
-          <Col span="5" class="order-create__input-unit">元</Col>
-        </Row>
-      </FormItem>
-      </Col>
-      <Col v-if="OrderSet.orderRemarkOption == 1" span="18">
-      <FormItem label="备注:" prop="remark">
-        <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" clearable></Input>
-      </FormItem>
-      </Col>
-    </Row>
+        </FormItem>
+        </Col>
+      </Row>
+      <Row :gutter="16">
+        <Col v-if="OrderSet.startCityOption == 1" span="6">
+        <FormItem label="发货城市:" prop="start">
+          <CitySelect v-model="orderForm.start" clearable></CitySelect>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.endCityOption == 1" span="6">
+        <FormItem label="收货城市:" prop="end">
+          <CitySelect v-model="orderForm.end" clearable></CitySelect>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.deliveryTimeOption == 1" span="6">
+        <FormItem label="发货时间:">
+          <Row>
+            <Col span="13">
+            <FormItem prop="deliveryTime">
+              <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
+            </FormItem>
+            </Col>
+            <Col span="11" style="padding-left: 5px">
+            <FormItem prop="deliveryTimes">
+              <TimeInput ref="stTimeInput" v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
+            </FormItem>
+            </Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.arriveTimeOption == 1" span="6">
+        <FormItem label="到货时间:">
+          <Row>
+            <Col span="13">
+            <FormItem prop="arriveTime">
+              <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
+            </FormItem>
+            </Col>
+            <Col span="11" style="padding-left: 5px">
+            <FormItem prop="arriveTimes">
+              <TimeInput ref="edTimeInput" v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
+            </FormItem>
+            </Col>
+          </Row>
+        </FormItem>
+        </Col>
+      </Row>
+      <Row :gutter="16" class="i-mb-15">
+        <Col span="12"><Title>发货人</Title></Col>
+        <Col span="12"><Title>收货人</Title></Col>
+      </Row>
+      <Row :gutter="16">
+        <Col span="6">
+        <FormItem label="发货人:" prop="consignerContact">
+          <Input v-model="orderForm.consignerContact" :maxlength="$fieldLength.name" clearable></Input>
+        </FormItem>
+        </Col>
+        <Col span="6">
+        <FormItem label="联系号码:" prop="consignerPhone">
+          <SelectInput v-model="orderForm.consignerPhone" :formatter="formatePhoneNum" :maxlength="phoneLength(orderForm.consignerPhone)" placeholder="请输入手机号或座机号" clearable></SelectInput>
+        </FormItem>
+        </Col>
+        <Col span="6">
+        <FormItem label="收货人:" prop="consigneeContact">
+          <SelectInput v-model="orderForm.consigneeContact" :maxlength="$fieldLength.name" :local-options="consigneeContacts" :remote="false" option-key="id" clearable @on-select="handleSelectConsignee">
+          </SelectInput>
+        </FormItem>
+        </Col>
+        <Col span="6">
+        <FormItem label="联系号码:" prop="consigneePhone">
+          <SelectInput v-model="orderForm.consigneePhone" :formatter="formatePhoneNum" :local-options="consigneePhones" :maxlength="phoneLength(orderForm.consigneePhone)" :remote="false" placeholder="请输入手机号或座机号" clearable></SelectInput>
+        </FormItem>
+        </Col>
+      </Row>
+      <Row :gutter="16">
+        <Col span="8">
+        <FormItem label="发货地址:" class="consig-address" prop="consignerAddress">
+          <AreaInput
+            v-model="orderForm.consignerAddress"
+            :local-options="consignerAddresses"
+            :show-icon="!!orderForm.consignerAddressLongitude && !!orderForm.consignerAddressLatitude"
+            placeholder="详细地址（省市区+地址）"
+            @city-select="({lat, lng, cityCode}) => citySelect(1, lat, lng, cityCode)"/>
+        </FormItem>
+        </Col>
+        <Col span="3">
+        <FormItem :label-width="0" prop="consignerHourseNumber">
+          <Input v-model="orderForm.consignerHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）" clearable></Input>
+        </FormItem>
+        </Col>
+        <Col span="1">
+        <FormItem :label-width="0">
+          <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
+            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+          </Tooltip>
+        </FormItem>
+        </Col>
+        <Col span="8">
+        <FormItem label="收货地址:" class="consig-address" prop="consigneeAddress">
+          <AreaInput
+            v-model="orderForm.consigneeAddress"
+            :local-options="consigneeAddresses"
+            :show-icon="!!orderForm.consigneeAddressLongitude && !!orderForm.consigneeAddressLatitude"
+            placeholder="详细地址（省市区+地址）"
+            @city-select="({lat, lng, cityCode}) => citySelect(2, lat, lng, cityCode)"/>
+        </FormItem>
+        </Col>
+        <Col span="3">
+        <FormItem :label-width="0" prop="consigneeHourseNumber">
+          <Input v-model="orderForm.consigneeHourseNumber" :maxlength="$fieldLength.extraAddress" placeholder="补充地址（楼号-门牌等）" clearable></Input>
+        </FormItem>
+        </Col>
+        <Col span="1">
+        <FormItem :label-width="0">
+          <Tooltip :max-width="200" content="详细地址从下拉推荐地址中选择，可获取到经纬度，自动计算运输里程" transfer>
+            <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+          </Tooltip>
+        </FormItem>
+        </Col>
+      </Row>
+      <Row v-if="OrderSet.consigneeCompanyNameOption == 1" :gutter="16" >
+        <Col span="12" offset="12">
+        <!-- 收货人公司设置 -->
+        <FormItem :maxlength="50" label="收货人单位：" prop="consigneeCompanyName">
+          <Input v-model="orderForm.consigneeCompanyName" :maxlength="$fieldLength.extraAddress" clearable></Input>
+        </FormItem>
+        </Col>
+      </Row>
+      <Title>货物信息</Title>
+      <CargoTable
+        ref="cargoTable"
+        :order-set="OrderSet"
+        :cargoes="cargoes"
+        :data-source="consignerCargoes"
+        :on-append="appendCargo"
+        :on-remove="removeCargo"
+        :on-select="selectCargo">
+      </CargoTable>
+
+      <Title class="i-mb-15 i-mt-15">应收费用</Title>
+      <Row :gutter="16" style="margin-bottom: 10px">
+        <Col span="6">
+        <FormItem label="结算方式:" prop="settlementType">
+          <Row>
+            <Col span="19">
+            <Select ref="settlementSelector" v-model="orderForm.settlementType" transfer>
+              <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            </Select>
+            </Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.mileageOption == 1" span="6">
+        <FormItem label="计费里程:" prop="mileage">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1" clearable>
+            </TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">公里</Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.freightFeeOption == 1" span="6">
+        <FormItem label="运输费:" prop="freightFee">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :min="0" v-model="orderForm.freightFee" clearable></TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">
+            <span style="vertical-align:middle">元</span>
+            <span @click="showCounter">
+              <FontIcon type="jisuanqi" size="20" color="#00a4bd" style="vertical-align:middle"></FontIcon>
+            </span>
+            </Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.pickupFeeOption == 1" span="6">
+        <FormItem label="提货费:" prop="pickupFee">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :min="0" v-model="orderForm.pickupFee" clearable></TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">元</Col>
+          </Row>
+        </FormItem>
+        </Col>
+      </Row>
+      <Row :gutter="16">
+        <Col v-if="OrderSet.loadFeeOption == 1" span="6">
+        <FormItem label="装货费:" prop="loadFee">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :min="0" v-model="orderForm.loadFee" clearable></TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">元</Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.unloadFeeOption == 1" span="6">
+        <FormItem label="卸货费:" prop="unloadFee">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :min="0" v-model="orderForm.unloadFee" clearable></TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">元</Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.insuranceFeeOption == 1" span="6">
+        <FormItem label="保险费:" prop="insuranceFee">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :min="0" v-model="orderForm.insuranceFee" clearable></TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">元</Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.otherFeeOption == 1" span="6">
+        <FormItem label="其他费用:" prop="otherFee">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :min="0" v-model="orderForm.otherFee" clearable></TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">元</Col>
+          </Row>
+        </FormItem>
+        </Col>
+      </Row>
+      <Row :gutter="16">
+        <Col span="10">
+        <FormItem label="费用合计:">
+          <span class="order-create__font-total">{{totalFee}}</span>元
+        </FormItem>
+        </Col>
+      </Row>
+      <Title>其他</Title>
+      <Row :gutter="16" class="i-mt-15">
+        <Col v-if="OrderSet.pickupOption == 1" span="6">
+        <FormItem :class="{'ivu-form-item-error': highLight}" label="提货方式:" prop="pickup">
+          <Row>
+            <Col span="19">
+            <Select ref="pickupSelector" v-model="orderForm.pickup" :disabled="orderForm.disabledPickUp" transfer>
+              <Option v-for="opt in pickups" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            </Select>
+            </Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.receiptCountOption == 1" span="6">
+        <FormItem label="回单数量:" prop="receiptCount">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :precision="0" clearable>
+            </TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">份</Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.isInvoiceOption == 1" span="6">
+        <FormItem label="是否开票:" prop="isInvoice">
+          <Row>
+            <Col span="19">
+            <Select v-model="orderForm.isInvoice" transfer>
+              <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            </Select>
+            </Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col span="6">
+        <FormItem v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" label="开票税率:" prop="invoiceRate">
+          <Row>
+            <Col span="6">
+            <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="2" :min="0" :max="100" clearable>
+            </TagNumberInput>
+            </Col>
+            <Col span="18" class="order-create__input-unit">
+            <span style="float: left">%</span>
+            <span>({{ invoiceFee }}元)</span>
+            </Col>
+          </Row>
+        </FormItem>
+        </Col>
+      </Row>
+      <Row :gutter="16" class="i-mt-15">
+        <Col v-if="OrderSet.collectionMoneyOption == 1" span="6">
+        <FormItem label="代收货款:" prop="collectionMoney">
+          <Row>
+            <Col span="19">
+            <TagNumberInput :min="0" v-model="orderForm.collectionMoney" clearable></TagNumberInput>
+            </Col>
+            <Col span="5" class="order-create__input-unit">元</Col>
+          </Row>
+        </FormItem>
+        </Col>
+        <Col v-if="OrderSet.orderRemarkOption == 1" span="18">
+        <FormItem label="备注:" prop="remark">
+          <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" clearable></Input>
+        </FormItem>
+        </Col>
+      </Row>
+    </div>
     <div class="van-center i-mt-20 i-mb-20">
       <span v-if="!orderId" style="float: left; vertical-align:middle;">
         <Checkbox v-model="isSaveOrderTemplate">保存为常发订单</Checkbox>
@@ -378,6 +700,7 @@ import CitySelect from '@/components/SelectInputForCity'
 import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
 import { formatePhone } from '@/libs/js/formate'
+import IFormItem from './components/FormItem.vue'
 import { roundFee, multiplyFeeOrNull, divideFeeOrNull, multiplyMileageOrNull, divideMileage } from '@/libs/js/config'
 const rate = {
   set (value) {
@@ -402,7 +725,8 @@ export default {
     CargoTable,
     TimeInput,
     CitySelect,
-    AreaInput
+    AreaInput,
+    IFormItem
   },
   mixins: [BaseComponent, BasePage],
   data () {
@@ -636,7 +960,8 @@ export default {
       },
       salesmanList: [],
       highLight: false,
-      disabledPickUp: false
+      disabledPickUp: false,
+      orderNo: '' // 订单号
     }
   },
   computed: {
@@ -690,6 +1015,11 @@ export default {
       return res
     }
   },
+  watch: {
+    'OrderSet.orderTemplateOption' (val) {
+      this.checkOrderNo(val)
+    }
+  },
   created () {
     if (!this.orderId || !this.createId) {
       this.autoFocus = true
@@ -723,6 +1053,7 @@ export default {
       }
     })
     this.initBusineList()
+    this.checkOrderNo()
   },
   beforeDestroy () {
     this.resetForm()
@@ -1350,6 +1681,17 @@ export default {
     // 是否包含省市
     hasCity (val, cityName) {
       return val.indexOf(cityName) === 0 || val.indexOf('省') > -1 || val.indexOf('市') > -1
+    },
+    // 获取订单号
+    checkOrderNo (val) {
+      const option = val || this.OrderSet.orderTemplateOption
+      if (option === 2) {
+        if (!this.orderNo) {
+          api.getOrderNo().then(res => {
+            this.orderNo = res.orderNo
+          })
+        }
+      }
     }
   },
   beforeRouteEnter (to, from, next) {
@@ -1363,19 +1705,61 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.order-create
-  &__input-unit
-    text-align center
-  &__input-w100
-    width 100%
-  &__cell-no-padding
-    padding-left 0
-    padding-right 0
-  &__font-total
+.order-create-common
+  .order-create
+    &__input-unit
+      text-align center
+    &__input-w100
+      width 100%
+    &__font-total
+      font-size 20px
+      color #00A4BD
+      font-weight bold
+      padding-right 13px
+
+.order-create-form
+  h1
+    margin auto
+    width 224px
     font-size 20px
-    color #00A4BD
-    font-weight bold
-    padding-right 13px
+    line-height 28px
+    font-weight 600
+    color rgba(51,51,51,1)
+    letter-spacing 20px
+    text-indent 20px
+  h1:after
+    content ""
+    display block
+    height 4px
+    margin-top 6px
+    border-top 1px solid #333
+    border-bottom 1px solid #333
+  .order-create-title
+    margin-bottom 10px
+    span
+      display inline-block
+      vertical-align middle
+      width 150px
+      font-size 14px
+      font-weight 500
+      color rgba(0,164,189,1)
+      line-height 30px
+      border-bottom 1px solid rgba(220,222,226,1)
+  .verticle-title
+    width 30px
+    display flex
+    align-items center
+    justify-content center
+  .align-title
+    line-height 30px
+    padding-left 7px
+  .blue-border
+    border-top 1px solid #00A4BD
+    border-left 1px solid #00A4BD
+  .right-border
+    border-right 1px solid #00A4BD
+  .bottom-border
+    border-bottom 1px solid #00A4BD
 </style>
 <style lang="stylus">
 .consig-address
@@ -1387,8 +1771,18 @@ export default {
     font-family SimSun
     font-size 12px
     color #ed4014
-.foramte-num
-  font-size 12px
-  line-height 14px
-  color #999
+
+.order-create-form
+  .ivu-input
+  .ivu-select-selection
+  .ivu-input-number
+    border-top none
+    border-left none
+    border-right none
+    :focus
+      box-shadow none
+  .ivu-row
+    .ivu-col
+      padding-left 0 !important
+      padding-right 0 !important
 </style>
