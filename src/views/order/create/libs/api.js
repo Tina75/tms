@@ -126,5 +126,16 @@ export default {
         resolve(response.data.data)
       }).catch(err => reject(err))
     })
+  },
+  // 获取订单号
+  getOrderNo () {
+    return new Promise((resolve, reject) => {
+      server({
+        method: 'post',
+        url: 'order/generateOrderNo'
+      }).then((response) => {
+        resolve(response.data.data)
+      }).catch(err => reject(err))
+    })
   }
 }
