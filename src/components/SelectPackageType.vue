@@ -1,6 +1,6 @@
 <template>
   <div class="selectCustomSty">
-    <Poptip v-model="visible" :width="width" :placement="placement" transfer popper-class="package-poptip">
+    <Poptip v-model="visible" :width="width" :placement="placement" :popper-class="disabled ? 'package-poptip-hide' : 'package-poptip'" transfer>
       <Input
         v-show="false"
         :value="formatterValue">
@@ -11,6 +11,7 @@
         :placeholder="placeholder"
         :transfer="transfer"
         :maxlength="maxlength"
+        :disabled="disabled"
         @click.native="clickInput"
         @on-blur="showSelect = true; visible = false"
         @input.native="change"
@@ -50,6 +51,10 @@ export default {
     placement: {
       type: String,
       default: 'bottom'
+    },
+    disabled: {
+      type: Boolean,
+      default: true
     },
     transfer: '',
     type: '', // type 默认【车型/车厂/包装方式】，如有自定义传入listMapData集合
@@ -209,4 +214,6 @@ export default {
       padding 15px 0px 23px
     .ivu-poptip-body-content
       overflow hidden
+.package-poptip-hide
+  display none
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div class="selectCustomSty">
-    <Poptip v-model="visible" :width="width" :placement="placement" transfer popper-class="package-poptip">
+    <Poptip v-model="visible" :width="width" :placement="placement" :popper-class="disabled ? 'package-poptip-hide' : 'package-poptip'" transfer>
       <Input
         v-show="false"
         :value="formatterValue">
@@ -10,6 +10,7 @@
         v-model="showValue"
         :placeholder="placeholder"
         :transfer="transfer"
+        :disabled="disabled"
         readonly unselectable="on"
         class="customSelectText"
         @click.native="showSelect = !showSelect"
@@ -48,6 +49,10 @@ export default {
     placement: {
       type: String,
       default: 'bottom'
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     maxlength: '',
     transfer: '',
@@ -203,4 +208,6 @@ export default {
       padding 15px 0px 23px
     .ivu-poptip-body-content
       overflow hidden
+.package-poptip-hide
+  display none
 </style>
