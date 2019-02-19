@@ -919,7 +919,8 @@ export default {
         z.openDialog({
           name: 'transport/dialog/addCargo',
           data: {
-            orders: list
+            orders: list,
+            source: 'abnormal'
           },
           methods: {
             complete () {

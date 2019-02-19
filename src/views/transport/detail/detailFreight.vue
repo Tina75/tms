@@ -331,13 +331,22 @@
         </div>
         <Button v-if="status === '待发运'" class="detail-field-button" type="primary"
                 @click="addOrder('freight')">添加订单</Button>
-        <Table ref="cargoEditTable" :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading"> </Table>
-        <div class="table-footer">
-          <span class="table-footer-title">总计</span>
-          <span>总货值：{{ orderTotal.cargoCost }}元</span>
-          <span>总数量：{{ orderTotal.quantity }}</span>
-          <span>总体积：{{ orderTotal.volume }}方</span>
-          <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
+        <!-- <Button v-if="inEditing === 'change'" class="detail-field-button" type="primary"
+                @click="openCargoAddDialog()">添加货物</Button>
+        <Button v-if="inEditing === 'change'" class="detail-field-button" type="primary" style="margin-left: 20px;"
+                @click="openCargoSeparateDialog()">删除货物</Button> -->
+        <!-- 修改货物信息table -->
+        <change-cargo-table v-if="inEditing === 'change'" ref="changeCargo" :init-cargo-list="detail"></change-cargo-table>
+
+        <div v-else>
+          <Table ref="cargoEditTable" :columns="tableColumns" :data="cargoGroupByOrderNo" :loading="loading"> </Table>
+          <div class="table-footer">
+            <span class="table-footer-title">总计</span>
+            <span>总货值：{{ orderTotal.cargoCost }}元</span>
+            <span>总数量：{{ orderTotal.quantity }}</span>
+            <span>总体积：{{ orderTotal.volume }}方</span>
+            <span>总重量：{{ WeightOption === 1 ? orderTotal.weight + '吨' : orderTotal.weightKg + '公斤' }}</span>
+          </div>
         </div>
       </div>
       <!-- 费用明细 -->
@@ -403,10 +412,11 @@ import allocationStrategy from '../constant/allocation.js'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import CarPhoto from './components/car-photo.vue'
 import { divideMileage, isNumber, getFeeText } from '@/libs/js/config'
+import changeCargoTable from './components/change-cargo-table.vue'
 export default {
   name: 'detailFeright',
   metaInfo: { title: '运单详情' },
-  components: { SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee, CarPhoto },
+  components: { SelectInput, CitySelect, PrintFreight, PayInfo, Exception, change, OwnSendInfo, SendCarrierInfo, SendFee, CarPhoto, changeCargoTable },
   mixins: [ BasePage, TransportBase, SelectInputMixin, DetailMixin, tableWeightColumnMixin ],
 
   data () {
@@ -725,9 +735,10 @@ export default {
       const z = this
       let data = {
         waybill: {},
-        cargoList: _.uniq(z.detail.map(item => item.orderId))
+        cargoList: []
       }
       z.$nextTick(() => {
+        data.cargoList = z.$refs.changeCargo.getCargoList()
         if (z.sendWay === '1') {
           data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
             settlementType: z.$refs.sendFee.getSettlementType(),
@@ -744,7 +755,7 @@ export default {
           end: z.info.end,
           status: z.info.status,
           assignCarType: z.sendWay,
-          allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
+          allocationStrategy: z.orderList.length > 1 ? z.info.allocationStrategy : void 0
         })
       })
       return data
@@ -1060,7 +1071,7 @@ export default {
       const z = this
       let data = {
         waybill: {},
-        cargoList: _.uniq(z.detail.map(item => item.orderId))
+        cargoList: z.$refs.changeCargo.getCargoList()
       }
       if (z.sendWay === '1') {
         data.waybill = Object.assign(data.waybill, z.$refs.sendFee.formatMoney(), z.$refs.SendCarrierInfo.getCarrierInfo(), {
@@ -1081,7 +1092,11 @@ export default {
         allocationStrategy: z.orderList.length > 1 ? z.$refs.sendFee.getAllocationStrategy() : void 0
       })
       if (JSON.stringify(data) === JSON.stringify(z.changeStr)) {
-        z.$Message.error('您并未做修改')
+        z.$Message.warning('您并未做修改')
+        return
+      }
+      if (z.checkCargoName(data.cargoList)) {
+        z.$Message.warning('您还有货物名称未填写！')
         return
       }
       Server({
@@ -1094,6 +1109,10 @@ export default {
       }).catch()
     },
 
+    // 校验改单货物名称是否都不为空
+    checkCargoName (cargoList) {
+      return _.some(cargoList, ['cargoName', ''])
+    },
     // 保存编辑
     save () {
       const z = this
@@ -1404,6 +1423,44 @@ export default {
         methods: {
           ok (node) {
             _this.callSendInterface(data)
+          }
+        }
+      })
+    },
+    // 打开添加货物弹窗
+    openCargoAddDialog () {
+      const z = this
+      let list = z.detail.map((item) => {
+        return {
+          label: item.orderNo,
+          value: item.orderId
+        }
+      })
+      z.openDialog({
+        name: 'transport/dialog/addCargo',
+        data: {
+          orders: list,
+          source: 'change' // 改单入口
+        },
+        methods: {
+          complete (cargo) {
+          }
+        }
+      })
+    },
+
+    // 少货、货损弹窗
+    openCargoSeparateDialog () {
+      const z = this
+      z.openDialog({
+        name: 'transport/dialog/cargoSeparate',
+        data: {
+          billId: z.id,
+          billType: 3
+        },
+        methods: {
+          complete () {
+            // self.clearSelectedAndFetch()
           }
         }
       })

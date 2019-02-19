@@ -35,6 +35,12 @@ export default {
 
   computed: {},
 
+  watch: {
+    name (val) {
+      this.tabName = val
+    }
+  },
+
   mounted () {
     this.tabName = this.name
   },

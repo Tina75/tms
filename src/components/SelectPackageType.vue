@@ -11,6 +11,7 @@
         :placeholder="placeholder"
         :transfer="transfer"
         :maxlength="maxlength"
+        :disabled="disabled"
         @click.native="clickInput"
         @on-blur="showSelect = true; visible = false"
         @input.native="change"
@@ -53,7 +54,11 @@ export default {
     },
     transfer: '',
     type: '', // type 默认【车型/车厂/包装方式】，如有自定义传入listMapData集合
-    listMapData: Array // 外部传入的Array格式，必须为{ value: '纸箱', label: '纸箱' }格式
+    listMapData: Array, // 外部传入的Array格式，必须为{ value: '纸箱', label: '纸箱' }格式
+    disabled: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -127,6 +132,7 @@ export default {
       }
     },
     clickInput (event) {
+      if (this.disabled) return
       this.showSelect = !this.showSelect
       this.visible = !this.visible
     },
@@ -140,6 +146,7 @@ export default {
       this.$nextTick(() => {
         this.currentValue = val
         this.$emit('input', val)
+        this.$emit('on-change', val)
         this.dispatch.call(this.$parent, 'FormItem', 'on-form-change', val)
       })
     },
