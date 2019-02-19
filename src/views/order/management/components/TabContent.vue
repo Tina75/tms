@@ -996,6 +996,8 @@ export default {
     ImportId () {
       this.keywords.importId = this.ImportId
       this.handleTabChange('全部')
+      sessionStorage.setItem('ORDER_TAB_NAME', '全部')
+      this.$parent.curStatusName = '全部'
       this.$parent.getOrderNum() // 重新获取订单数量
     }
   },
