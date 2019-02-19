@@ -71,6 +71,10 @@
           </Col>
         </Row>
       </div>
+      <!-- 货物明细, 为空时不显示 -->
+      <div v-if="data.old.cargoList.length && data.new.cargoList.length">
+        <cargo-change-compare :old-cargo-list="data.old.cargoList" :new-cargo-list="data.new.cargoList"></cargo-change-compare>
+      </div>
     </div>
   </div>
 </template>
@@ -82,6 +86,7 @@ import { getCarType, getCarLength } from '@/libs/constant/carInfo'
 import allocationStrategy from '../constant/allocation.js'
 import _ from 'lodash'
 import { divideMileage, divideFee } from '@/libs/js/config'
+import CargoChangeCompare from './CargoChangeCompare'
 
 const moneyFormate = (fee) => {
   if (typeof fee !== 'number') return '-'
@@ -93,7 +98,7 @@ const mileageFormate = (mileage) => {
 }
 export default {
   name: 'except-record',
-  components: { PayInfo },
+  components: { PayInfo, CargoChangeCompare },
   filters: {
     timeFormatter (timestamp) {
       if (!timestamp) return '-'
@@ -556,14 +561,13 @@ export default {
   .colorGrey
     color #333
   .change-list
-    padding 28px 17px 0 17px
+    padding 28px 17px
     font-size 14px
     .info
       border-bottom 1px dashed #d4d5dc
       padding-bottom 20px
     .fee
       padding-top 20px
-      padding-bottom 20px
     .title
       color #333
       font-weight 500
