@@ -60,7 +60,7 @@
                 装货费：{{data.loadFee || 0}} 元 &nbsp;&nbsp;
                 卸货费：{{data.unloadFee || 0}} 元 &nbsp;&nbsp;
                 保险费：{{data.insuranceFee || 0}} 元 &nbsp;&nbsp;
-                其他：{{data.otherFee || 0}} 元 &nbsp;&nbsp;
+                其他费用：{{data.otherFee || 0}} 元 &nbsp;&nbsp;
                 合计运费: {{data.totalFee || 0}} 元
                 结算方式：{{settlement(data) || 0}}
               </td>

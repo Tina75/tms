@@ -50,7 +50,7 @@
           </FormItem>
         </li>
         <li v-if="DispatchSet.deliverOutOtherFeeOption === 1">
-          <FormItem label="其他：" prop="otherFee">
+          <FormItem label="其他费用：" prop="otherFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>
@@ -114,7 +114,7 @@
           </FormItem>
         </li>
         <li v-if="DispatchSet.deliverSelfOtherFeeOption === 1">
-          <FormItem label="其他：" prop="otherFee">
+          <FormItem label="其他费用：" prop="otherFee">
             <Tooltip :content="feeStatusTip" :disabled="!feeStatusTip? true: false">
               <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input-send"></TagNumberInput>
             </Tooltip>

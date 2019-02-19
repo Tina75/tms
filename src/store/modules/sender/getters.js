@@ -1,6 +1,7 @@
 // 客户公司名称列表
-export const clients = (state) => state.senders.map((user) => ({ name: user.name, value: user.name, id: user.id }))
-
+export const clients = (state) => state.senders.map((user) => ({ name: user.name, value: user.name, id: user.id, inviteCompanyId: user.inviteCompanyId }))
+// 建立合作关系的客户，上游来单使用
+export const cooperationClients = (state, getters) => getters.clients.filter((user) => user.inviteCompanyId !== '')
 // 发货联系人
 export const consigners = (state) => state.contacts
 // 发货地址
@@ -9,7 +10,7 @@ export const consignerAddresses = (state) => state.addresses.map(item => ({ name
 export const consignees = (state) => state.consignees
 // 收货方联系人列表
 export const consigneeContacts = (state, getters) => getters.consignees.map((user) => ({
-  name: user.contact + ',' + user.phone,
+  name: user.contact + ',' + user.phone + ',' + user.address,
   value: user.contact,
   phone: user.phone,
   id: user.id,

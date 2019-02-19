@@ -118,17 +118,17 @@
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="运输费用：">
+        <FormItem label="运输费：">
           <span class="blod-font">{{detail.freightFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="提货费用：">
+        <FormItem label="提货费：">
           <span class="blod-font">{{detail.pickupFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="装货费用：">
+        <FormItem label="装货费：">
           <span class="blod-font">{{detail.loadFee | toPoint('元') }}</span>
         </FormItem>
         </Col>
@@ -140,7 +140,7 @@
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="保险费用：">
+        <FormItem label="保险费：">
           <span class="blod-font">{{detail.insuranceFee | toPoint('元') }}</span>
         </FormItem>
         </Col>

@@ -27,7 +27,7 @@
             :maxlength="20"
             :remote="false"
             :clearable="true"
-            :local-options="clients"
+            :local-options="cooperationClients"
             placeholder="请选择或输入客户名称"
             style="width:200px"
             @on-focus.once="getClients"
@@ -61,7 +61,7 @@
             v-model="seniorSearchFields.shipperCompanyName"
             :maxlength="20"
             :remote="false"
-            :local-options="clients"
+            :local-options="cooperationClients"
             placeholder="请选择或输入客户名称"
             class="search-input-senior"
             @on-focus.once="getClients"
@@ -171,7 +171,7 @@ export default {
   },
   computed: {
     ...mapGetters([
-      'clients'
+      'cooperationClients'
     ]),
     perMonth () {
       return getPreMonth()
