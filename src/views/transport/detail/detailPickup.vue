@@ -130,7 +130,7 @@
                 <span v-else>-</span>
               </li>
               <li v-if="DispatchSet.pickOutOtherFeeOption === 1">
-                <span class="detail-field-title-sm">其他：</span>
+                <span class="detail-field-title-sm">其他费用：</span>
                 <span v-if="payment.otherFee !== ''" class="detail-field-fee">{{ payment.otherFee }}元</span>
                 <span v-else>-</span>
               </li>
@@ -157,7 +157,7 @@
                 <span v-else>-</span>
               </li>
               <li v-if="DispatchSet.pickSelfOtherFeeOption === 1">
-                <span class="detail-field-title-sm">其他：</span>
+                <span class="detail-field-title-sm">其他费用：</span>
                 <span v-if="payment.otherFee !== ''" class="detail-field-fee">{{ payment.otherFee }}元</span>
                 <span v-else>-</span>
               </li>

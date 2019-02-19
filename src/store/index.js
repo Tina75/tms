@@ -13,6 +13,7 @@ import driver from './modules/driver/store'
 import rule from './modules/rule/store'
 import main from '@/views/main/store'
 import upstream from './modules/upstream/store'
+import helper from '@/views/helper/store'
 
 Vue.use(Vuex)
 
@@ -197,6 +198,7 @@ export default new Vuex.Store({
     transport,
     driver,
     // transfer,
+    helper,
     carrier,
     sender,
     rule,

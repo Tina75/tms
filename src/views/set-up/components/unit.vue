@@ -94,16 +94,16 @@
       <Checkbox v-model="form.freightFeeOption">运输费</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.pickupFeeOption">提货费用</Checkbox>
+      <Checkbox v-model="form.pickupFeeOption">提货费</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.loadFeeOption">装货费用</Checkbox>
+      <Checkbox v-model="form.loadFeeOption">装货费</Checkbox>
       </Col>
       <Col span="4">
       <Checkbox v-model="form.unloadFeeOption">卸货费</Checkbox>
       </Col>
       <Col span="4">
-      <Checkbox v-model="form.insuranceFeeOption">保险费用</Checkbox>
+      <Checkbox v-model="form.insuranceFeeOption">保险费</Checkbox>
       </Col>
     </Row>
     <Row :gutter="16" class="order-set-row">

@@ -197,7 +197,7 @@
       </FormItem>
       </Col>
       <Col v-if="OrderSet.freightFeeOption == 1" span="6">
-      <FormItem label="运输费用:" prop="freightFee">
+      <FormItem label="运输费:" prop="freightFee">
         <Row>
           <Col span="19">
           <TagNumberInput :min="0" v-model="orderForm.freightFee" clearable></TagNumberInput>
@@ -212,7 +212,7 @@
       </FormItem>
       </Col>
       <Col v-if="OrderSet.pickupFeeOption == 1" span="6">
-      <FormItem label="提货费用:" prop="pickupFee">
+      <FormItem label="提货费:" prop="pickupFee">
         <Row>
           <Col span="19">
           <TagNumberInput :min="0" v-model="orderForm.pickupFee" clearable></TagNumberInput>
@@ -244,7 +244,7 @@
       </FormItem>
       </Col>
       <Col v-if="OrderSet.insuranceFeeOption == 1" span="6">
-      <FormItem label="保险费用:" prop="insuranceFee">
+      <FormItem label="保险费:" prop="insuranceFee">
         <Row>
           <Col span="19">
           <TagNumberInput :min="0" v-model="orderForm.insuranceFee" clearable></TagNumberInput>

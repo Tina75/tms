@@ -105,7 +105,6 @@ export default {
   },
 
   mounted () {
-    console.log(this.AllocationStrategy)
     if (this.passAllocation) {
       this.$nextTick(() => {
         this.allocation = this.passAllocation
@@ -118,12 +117,6 @@ export default {
         this.handleChange(this.allocation) // 初始化传值给父组件
         this.$refs.allocationForm.validate()
       })
-      // this.getAllocationStrategy().then((res) => {
-      //   let data = res.data.data
-      //   this.allocation = this.source === 'order' ? data.orderStrategy : data.waybillStrategy
-      //   this.handleChange(this.allocation) // 初始化传值给父组件
-      //   this.$refs.allocationForm.validate()
-      // })
     }
   },
 

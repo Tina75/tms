@@ -1,6 +1,6 @@
 <template>
   <Modal v-model="visiable" :mask-closable="false" transfer width="1200" @on-visible-change="close">
-    <p slot="header" style="text-align:center">添加异常货物信息</p>
+    <p slot="header" style="text-align:center">{{ source ==='change' ? '添加货物信息' : '添加异常货物信息'}}</p>
     <CargoTable
       ref="cargoTable"
       :type="`exception`"
@@ -130,19 +130,23 @@ export default {
     ok () {
       const z = this
       z.validate().then(data => {
-        // 将data中orderId与orders中value对应的订单号塞入data
-        let obj = {}
-        z.orders.map((order) => {
-          obj[order['value']] = order['label']
-        })
-        for (let i = 0; i < data.length; i++) {
-          for (let key in obj) {
-            if (data[i].orderId === Number(key)) {
-              data[i].orderNo = obj[key]
+        if (z.source === 'abnormal') {
+          // 将data中orderId与orders中value对应的订单号塞入data
+          let obj = {}
+          z.orders.map((order) => {
+            obj[order['value']] = order['label']
+          })
+          for (let i = 0; i < data.length; i++) {
+            for (let key in obj) {
+              if (data[i].orderId === Number(key)) {
+                data[i].orderNo = obj[key]
+              }
             }
           }
+          z.$store.commit('setAbnormalAddCargoInfos', data)
+        } else {
+          z.complete(data)
         }
-        z.$store.commit('setAbnormalAddCargoInfos', data)
         z.close()
       })
     }

@@ -10,17 +10,17 @@ const ORDER_ITEM = [
     type: 'mile'
   },
   {
-    name: '运输费用',
+    name: '运输费',
     value: 'freightFee',
     type: 'moneny'
   },
   {
-    name: '提货费用',
+    name: '提货费',
     value: 'pickupFee',
     type: 'moneny'
   },
   {
-    name: '装货费用',
+    name: '装货费',
     value: 'loadFee',
     type: 'moneny'
   },
@@ -30,7 +30,7 @@ const ORDER_ITEM = [
     type: 'moneny'
   },
   {
-    name: '保险费用',
+    name: '保险费',
     value: 'insuranceFee',
     type: 'moneny'
   },

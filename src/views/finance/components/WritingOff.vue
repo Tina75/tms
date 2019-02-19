@@ -81,7 +81,7 @@
             <div class="text">
               <p class="desc_title">{{orderData[0].title}}</p>
               <p class="desc_money">
-                <span style="margin-right: 30px">{{payType}} {{orderData[0].calcTotalFeeText}}</span>
+                <span class="i-mr-30">{{payType}} {{orderData[0].calcTotalFeeText}}</span>
                 <span>已结 {{orderData[0].verifiedFeeText}}</span>
               </p>
             </div>
@@ -89,6 +89,10 @@
             <Tooltip v-if="hasPower(170207) && scene === 2" placement="top" content="按单结的单据才可以批量核销" class="btn" style="margin-right: 11px">
               <Button  @click="batchCheckOrder">批量核销</Button>
             </Tooltip>
+            <a type="text" class="text-button btn" @click="openReminder">
+              <FontIcon type="zhangdan" size="15" class="i-mr-5"></FontIcon>
+              <span>账期提醒设置</span>
+            </a>
           </div>
           <Table :columns="orderColumn" :data="orderData" class="tableList"  @on-selection-change="setOrderIds"></Table>
         </div>
@@ -383,6 +387,20 @@ export default {
     this.height = document.body.clientHeight - 50 - 15 * 2 - 20 * 2 + 15 - 65 - 72 - 50
   },
   methods: {
+    openReminder () {
+      this.openDialog({
+        name: 'finance/dialogs/financeReminder',
+        data: {
+          partnerName: this.orderData[0].title, // 公司名称/承运商名称
+          partnerType: this.scene // 1-发货方 2-承运商
+        },
+        methods: {
+          ok () {
+          // console.log('ok!')
+          }
+        }
+      })
+    },
     setOrderIds (data) {
       this.selectedIds = data.map(item => item.id)
       this.selectedList = data
@@ -869,6 +887,18 @@ export default {
               color: #999
           .btn
             float right
+          .text-button
+            margin-right 25px
+            display inline-block
+            color #A0B2B8
+            font-size 13px
+            width 110px
+            line-height 1.5
+            padding 6px 0
+            &:hover
+              color #000
+            >>> .font_family
+                  vertical-align middle
       .data-empty
         .data-empty-img
           display: block

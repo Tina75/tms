@@ -200,7 +200,7 @@ export default {
         },
         'freightFee': {
           'type': 'fee',
-          'description': '运输费用',
+          'description': '运输费',
           'ways': 1,
           'order': 90,
           'span': 12
@@ -242,7 +242,7 @@ export default {
         },
         'insuranceFee': {
           'type': 'fee',
-          'description': '保险费用',
+          'description': '保险费',
           'ways': 1,
           'order': 140,
           'span': 12
@@ -256,7 +256,7 @@ export default {
         },
         'cashBack': {
           'type': 'fee',
-          'description': '返现费用',
+          'description': '返现费',
           'ways': 1,
           'order': 142,
           'span': 12

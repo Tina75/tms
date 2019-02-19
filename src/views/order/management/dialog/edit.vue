@@ -41,7 +41,7 @@
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="提货费用:" prop="pickupFee">
+        <FormItem label="提货费:" prop="pickupFee">
           <Row>
             <Col span="19">
             <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">
@@ -55,7 +55,7 @@
       </Row>
       <Row :gutter="16">
         <Col span="6">
-        <FormItem label="装货费用:" prop="loadFee">
+        <FormItem label="装货费:" prop="loadFee">
           <Row>
             <Col span="19">
             <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">
@@ -79,7 +79,7 @@
         </FormItem>
         </Col>
         <Col span="6">
-        <FormItem label="保险费用:" prop="insuranceFee">
+        <FormItem label="保险费:" prop="insuranceFee">
           <Row>
             <Col span="19">
             <Tooltip :disabled="isCanChangeFee === 1" :content="feeTips" transfer placement="top">

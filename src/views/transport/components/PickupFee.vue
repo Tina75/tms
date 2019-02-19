@@ -27,7 +27,7 @@
           </FormItem>
         </li>
         <li v-if="DispatchSet.pickOutOtherFeeOption === 1">
-          <FormItem label="其他：" prop="otherFee" class="other-fee-fix">
+          <FormItem label="其他费用：" prop="otherFee" class="other-fee-fix">
             <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
@@ -59,7 +59,7 @@
           </FormItem>
         </li>
         <li v-if="DispatchSet.pickSelfOtherFeeOption === 1">
-          <FormItem label="其他：" prop="otherFee" class="other-fee-fix">
+          <FormItem label="其他费用：" prop="otherFee" class="other-fee-fix">
             <TagNumberInput v-model="payment.otherFee" :disabled="isDisabled" class="detail-payment-input"></TagNumberInput>
             <span class="unit-yuan">元</span>
           </FormItem>
@@ -359,7 +359,7 @@ export default {
 
    .other-fee-fix
     .ivu-form-item-label
-      width 52px !important
+      width 72px !important
     .ivu-form-item-content
       margin-left 52px !important
 

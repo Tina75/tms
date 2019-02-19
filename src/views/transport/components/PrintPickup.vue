@@ -51,7 +51,7 @@
                 <span class="table-footer-item">装货费：{{item.loadbill.loadFee | toPoint('元')}}</span>
                 <span class="table-footer-item">卸货费：{{item.loadbill.unloadFee | toPoint('元')}}</span>
                 <span class="table-footer-item">保险费：{{item.loadbill.insuranceFee | toPoint('元')}}</span>
-                <span class="table-footer-item">其他：{{item.loadbill.otherFee | toPoint('元')}}</span>
+                <span class="table-footer-item">其他费用：{{item.loadbill.otherFee | toPoint('元')}}</span>
                 <span class="table-footer-item">合计运费: {{item.loadbill.totalFee | toPoint('元')}}</span>
                 <span class="table-footer-item">结算方式：{{settlement(item.loadbill.settlementType) || '-'}}</span>
               </td>
