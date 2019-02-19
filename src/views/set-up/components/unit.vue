@@ -15,7 +15,11 @@
       <Radio v-model="commonShip">正常发运</Radio>
       </Col>
       <Col span="4">
-      <Radio v-model="oneTobottomShip">一单到底</Radio>
+      <Radio v-model="oneTobottomShip">一单到底
+        <Tooltip content="发运后，下单、提货、送货过程即全部完成" transfer>
+          <Icon class="vermiddle" type="ios-information-circle" size="16" color="#FFBB44"></Icon>
+        </Tooltip>
+      </Radio>
       </Col>
     </Row>
     <p class="order-set-title">客户信息</p>

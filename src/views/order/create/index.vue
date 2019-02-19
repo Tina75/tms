@@ -244,7 +244,7 @@
         <Row>
           <Col span="24">
           <i-form-item :label-width="105" label="费用合计(元):">
-            <span class="order-create__font-total">{{totalFee}}</span>
+            <span class="order-create__font-total" style="font-size:14px;color:rgba(251,130,0,1);">{{totalFee}} {{totalFee | moneyTochinese | zncnToznhant}}</span>
           </i-form-item>
           </Col>
         </Row>
@@ -688,6 +688,7 @@ import AreaInput from '@/components/AreaInput.vue'
 import TMSURL from '@/libs/constant/url'
 import { formatePhone } from '@/libs/js/formate'
 import IFormItem from './components/FormItem.vue'
+import { money2chinese, zncn2znhant } from '@/libs/js/util'
 import { roundFee, multiplyFeeOrNull, divideFeeOrNull, multiplyMileageOrNull, divideMileage } from '@/libs/js/config'
 const rate = {
   set (value) {
@@ -702,6 +703,10 @@ export default {
   name: 'order-create',
   metaInfo: {
     title: '手动开单'
+  },
+  filters: {
+    moneyTochinese: money2chinese,
+    zncnToznhant: zncn2znhant
   },
   components: {
     Title,
@@ -1692,17 +1697,16 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.order-create-common
-  .order-create
-    &__input-unit
-      text-align center
-    &__input-w100
-      width 100%
-    &__font-total
-      font-size 20px
-      color #00A4BD
-      font-weight bold
-      padding-right 13px
+.order-create
+  &__input-unit
+    text-align center
+  &__input-w100
+    width 100%
+  &__font-total
+    font-size 20px
+    color #00A4BD
+    font-weight bold
+    padding-right 13px
 
 .order-create-form
   h1
