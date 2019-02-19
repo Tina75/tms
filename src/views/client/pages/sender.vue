@@ -46,6 +46,7 @@ import { consignerDelete, CODE } from './client'
 import BasePage from '@/basic/BasePage'
 import float from '@/libs/js/float'
 import { settlementsFindName } from '@/libs/constant/settlement.js'
+import TagStatus from '../../owned-vehicle/components/TagStatus.vue'
 const rate = {
   get (value) {
     return value ? float.floor(float.round(value * 100), 2) : value === 0 ? value : null
@@ -54,7 +55,7 @@ const rate = {
 export default {
   name: 'sender',
   components: {
-    PageTable
+    PageTable, TagStatus
   },
   mixins: [ BasePage ],
   metaInfo: {
@@ -191,11 +192,15 @@ export default {
                       }
                     }, params.row.name)
                   ]),
-                  h('span', {
-                    style: {
-                      marginLeft: '20px'
-                    }
-                  }, '已合作')
+                  h(TagStatus,
+                    {
+                      style: {
+                        marginLeft: '20px'
+                      },
+                      props: {
+                        type: 'info'
+                      }
+                    }, '已合作')
                 ])
               } else {
                 return h('div', [
@@ -223,11 +228,15 @@ export default {
                     h('span', {
                       title: params.row.name
                     }, params.row.name),
-                    h('span', {
-                      style: {
-                        marginLeft: '20px'
-                      }
-                    }, '已合作')
+                    h(TagStatus,
+                      {
+                        style: {
+                          marginLeft: '20px'
+                        },
+                        props: {
+                          type: 'info'
+                        }
+                      }, '已合作')
                   ])
                 ])
               } else {

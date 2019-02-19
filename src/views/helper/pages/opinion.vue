@@ -8,9 +8,9 @@
           </span>
         </RadioGroup>
       </FormItem>
-      <FormItem label="建议内容：" prop="content">
+      <FormItem label="建议内容：" prop="suggestContext">
         <TextAreaNumber
-          v-model="opinionForm.content"
+          v-model="opinionForm.suggestContext"
           :rows="5"
           :maxlength="500"
           class="textArea"
@@ -32,10 +32,10 @@
 /**
  * 意见建议
  */
+import Server from '@/libs/js/server'
 import BasePage from '@/basic/BasePage'
 import TextAreaNumber from '@/components/TextAreaNumber'
 import UpLoad from '@/components/upLoad/index.vue'
-import { mapActions } from 'vuex'
 export default {
   components: {
     TextAreaNumber,
@@ -54,34 +54,38 @@ export default {
       ],
       opinionForm: {
         type: '1',
-        source: '3',
-        pictureUrl: []
+        appId: '1',
+        suggestPhotos: []
       },
       ruleOpinion: {
         type: [
           { required: true, message: '请选择建议类型' }
         ],
-        content: [
+        suggestContext: [
           { required: true, message: '请填写建议内容' }
         ]
       }
     }
   },
   methods: {
-    ...mapActions(['saveOpinion']),
     opinionSubmit (name) {
+      let vm = this
       this.$refs[name].validate((valid) => {
         if (valid) {
-          this.$refs.upLoadsOpinion.uploadImgList.forEach(element => {
-            this.opinionForm.pictureUrl.push(element.url)
+          vm.$refs.upLoadsOpinion.uploadImgList.forEach(element => {
+            vm.opinionForm.pictureUrl.push(element.url)
           })
-          let params = this.opinionForm
-          this.saveOpinion(params).then(({ data }) => {
-            this.$Message.success('提交成功，感谢您的宝贵意见!')
-            this.opinionForm = {
+          let params = vm.opinionForm
+          Server({
+            url: 'suggestion/add',
+            method: 'post',
+            data: params
+          }).then(({ data }) => {
+            vm.$Message.success('提交成功，感谢您的宝贵意见!')
+            vm.opinionForm = {
               type: '1',
-              source: '3',
-              pictureUrl: []
+              appId: '1',
+              suggestPhotos: []
             }
           })
         }
