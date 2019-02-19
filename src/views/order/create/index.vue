@@ -213,107 +213,94 @@
             </Row>
           </i-form-item>
           </Col>
-          <Col span="5" class="order-create__input-unit">公里</Col>
+          <Col v-if="OrderSet.pickupFeeOption == 1" span="8">
+          <i-form-item :label-width="105" label="提货费(元):" prop="pickupFee">
+            <TagNumberInput :min="0" v-model="orderForm.pickupFee" :show-chinese="false" clearable></TagNumberInput>
+          </i-form-item>
+          </Col>
+          <Col v-if="OrderSet.loadFeeOption == 1" span="8">
+          <i-form-item :label-width="105" label="装货费(元):" prop="loadFee">
+            <TagNumberInput :min="0" v-model="orderForm.loadFee" :show-chinese="false" clearable></TagNumberInput>
+          </i-form-item>
+          </Col>
         </Row>
-      </FormItem>
-      </Col>
-        <Col v-if="OrderSet.freightFeeOption == 1" span="6">
-        <FormItem label="运输费:" prop="freightFee">
-          <Row>
-            <Col span="19">
-            <TagNumberInput :min="0" v-model="orderForm.freightFee" clearable></TagNumberInput>
+        <Row>
+          <Col v-if="OrderSet.unloadFeeOption == 1" span="8">
+          <i-form-item :label-width="105" label="卸货费(元):" prop="unloadFee">
+            <TagNumberInput :min="0" v-model="orderForm.unloadFee" :show-chinese="false" clearable></TagNumberInput>
+          </i-form-item>
           </Col>
-            <Col v-if="OrderSet.loadFeeOption == 1" span="8">
-            <i-form-item :label-width="105" label="装货费(元):" prop="loadFee">
-              <TagNumberInput :min="0" v-model="orderForm.loadFee" :show-chinese="false" clearable></TagNumberInput>
-            </i-form-item>
+          <Col v-if="OrderSet.insuranceFeeOption == 1" span="8">
+          <i-form-item :label-width="105" label="保险费(元):" prop="insuranceFee">
+            <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :show-chinese="false" clearable></TagNumberInput>
+          </i-form-item>
           </Col>
-          </Row>
-        </FormItem>
-      </Col>
-        <Col v-if="OrderSet.pickupFeeOption == 1" span="6">
-        <FormItem label="提货费:" prop="pickupFee">
-          <Row>
-            <Col v-if="OrderSet.unloadFeeOption == 1" span="8">
-            <i-form-item :label-width="105" label="卸货费(元):" prop="unloadFee">
-              <TagNumberInput :min="0" v-model="orderForm.unloadFee" :show-chinese="false" clearable></TagNumberInput>
-            </i-form-item>
+          <Col v-if="OrderSet.otherFeeOption == 1" span="8">
+          <i-form-item :label-width="105" label="其他费用(元):" prop="otherFee">
+            <TagNumberInput :min="0" v-model="orderForm.otherFee" :show-chinese="false" clearable></TagNumberInput>
+          </i-form-item>
           </Col>
-            <Col v-if="OrderSet.insuranceFeeOption == 1" span="8">
-            <i-form-item :label-width="105" label="保险费(元):" prop="insuranceFee">
-              <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :show-chinese="false" clearable></TagNumberInput>
-            </i-form-item>
+        </Row>
+        <Row>
+          <Col span="24">
+          <i-form-item :label-width="105" label="费用合计(元):">
+            <span class="order-create__font-total">{{totalFee}}</span>
+          </i-form-item>
           </Col>
-            <Col v-if="OrderSet.otherFeeOption == 1" span="8">
-            <i-form-item :label-width="105" label="其他费用(元):" prop="otherFee">
-              <TagNumberInput :min="0" v-model="orderForm.otherFee" :show-chinese="false" clearable></TagNumberInput>
-            </i-form-item>
-          </Col>
-          </Row>
-        </FormItem>
-      </Col>
-        <Col v-if="OrderSet.insuranceFeeOption == 1" span="6">
-        <FormItem label="保险费:" prop="insuranceFee">
-          <Row>
-            <Col span="24">
-            <i-form-item :label-width="105" label="费用合计(元):">
-              <span class="order-create__font-total">{{totalFee}}</span>
-            </i-form-item>
-          </Col>
-          </Row>
+        </Row>
         </Col>
-          <Col span="12" class="blue-border right-border">
-          <Title :orderForm="true" class="align-title">付款方式</Title>
-          <Row>
-            <Col span="8">
-            <i-form-item :label-width="105" label="结算方式:" prop="settlementType">
-              <Select ref="settlementSelector" v-model="orderForm.settlementType" transfer>
-                <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
-              </Select>
-            </i-form-item>
+        <Col span="12" class="blue-border right-border">
+        <Title :orderForm="true" class="align-title">付款方式</Title>
+        <Row>
+          <Col span="8">
+          <i-form-item :label-width="105" label="结算方式:" prop="settlementType">
+            <Select ref="settlementSelector" v-model="orderForm.settlementType" transfer>
+              <Option v-for="opt in settlements" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            </Select>
+          </i-form-item>
           </Col>
-            <Col v-if="OrderSet.receiptCountOption == 1" span="8">
-            <i-form-item :label-width="105" label="回单数量(份):" prop="receiptCount">
-              <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :precision="0" clearable>
-              </TagNumberInput>
-            </i-form-item>
+          <Col v-if="OrderSet.receiptCountOption == 1" span="8">
+          <i-form-item :label-width="105" label="回单数量(份):" prop="receiptCount">
+            <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :precision="0" clearable>
+            </TagNumberInput>
+          </i-form-item>
           </Col>
-            <Col v-if="OrderSet.collectionMoneyOption == 1" span="8">
-            <i-form-item :label-width="105" label="代收货款(元):" prop="collectionMoney">
-              <TagNumberInput :min="0" v-model="orderForm.collectionMoney" :show-chinese="false" clearable></TagNumberInput>
-            </i-form-item>
+          <Col v-if="OrderSet.collectionMoneyOption == 1" span="8">
+          <i-form-item :label-width="105" label="代收货款(元):" prop="collectionMoney">
+            <TagNumberInput :min="0" v-model="orderForm.collectionMoney" :show-chinese="false" clearable></TagNumberInput>
+          </i-form-item>
           </Col>
-          </Row>
-          <Row>
-            <Col v-if="OrderSet.isInvoiceOption == 1" span="8">
-            <i-form-item :label-width="105" label="是否开票:" prop="isInvoice">
-              <Select v-model="orderForm.isInvoice" transfer>
-                <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
-              </Select>
-            </i-form-item>
+        </Row>
+        <Row>
+          <Col v-if="OrderSet.isInvoiceOption == 1" span="8">
+          <i-form-item :label-width="105" label="是否开票:" prop="isInvoice">
+            <Select v-model="orderForm.isInvoice" transfer>
+              <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
+            </Select>
+          </i-form-item>
           </Col>
-            <Col span="8">
-            <i-form-item v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" :label-width="105" label="开票税率(%):" prop="invoiceRate">
-              <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="2" :min="0" :max="100" clearable>
-              </TagNumberInput>
-            </i-form-item>
+          <Col span="8">
+          <i-form-item v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" :label-width="105" label="开票税率(%):" prop="invoiceRate">
+            <TagNumberInput v-model="orderForm.invoiceRate" :show-chinese="false" :precision="2" :min="0" :max="100" clearable>
+            </TagNumberInput>
+          </i-form-item>
           </Col>
-            <Col span="8">
-            <div v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" class="ivu-form-item-content" style="padding-left: 7px">
-              ( {{invoiceFee}} 元 )
-            </div>
+          <Col span="8">
+          <div v-if="orderForm.isInvoice === 1 && OrderSet.isInvoiceOption == 1" class="ivu-form-item-content" style="padding-left: 7px">
+            ( {{invoiceFee}} 元 )
+          </div>
           </Col>
-          </Row>
-          <Row>
-            <Col v-if="OrderSet.mileageOption == 1" span="8">
-            <i-form-item :label-width="105" label="计费里程(公里):" prop="mileage">
-              <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1" clearable>
-              </TagNumberInput>
-            </i-form-item>
+        </Row>
+        <Row>
+          <Col v-if="OrderSet.mileageOption == 1" span="8">
+          <i-form-item :label-width="105" label="计费里程(公里):" prop="mileage">
+            <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1" clearable>
+            </TagNumberInput>
+          </i-form-item>
           </Col>
-          </Row>
+        </Row>
         </Col>
-      </formitem></Row>
+      </Row>
       <!-- 应收费用结束 -->
       <Row>
         <Col v-if="OrderSet.orderRemarkOption == 1" span="24" class="blue-border right-border bottom-border">
