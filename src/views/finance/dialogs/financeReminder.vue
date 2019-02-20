@@ -15,7 +15,10 @@
         </FormItem>
       </div>
       <div class="i-warning">
-        注：消息提醒在设置的天数中，每天都将在早上10点提醒一次
+        <span class="i-status-warning">
+          注：
+        </span>
+        消息提醒在设置的天数中，每天都将在早上10点提醒一次
       </div>
     </Form>
     <div slot="footer" style="text-align:center">
@@ -93,10 +96,12 @@ export default {
       }
     }).then((resp) => {
       const { data } = resp.data
-      vm.reminderForm = {
-        periodDay: data.periodDay,
-        moveDay: data.moveDay,
-        id: data.id
+      if (data !== '') {
+        vm.reminderForm = {
+          periodDay: data.periodDay,
+          moveDay: data.moveDay,
+          id: data.id
+        }
       }
     })
   },
@@ -108,8 +113,7 @@ export default {
       const vm = this
       this.$refs.$reminderForm.validate((valid) => {
         if (valid) {
-          vm.save()
-          vm.close()
+          vm.save(vm.close)
         }
       })
     },
@@ -117,7 +121,7 @@ export default {
      * 保存配置
      * 1. 第一次保存配置，id为空，后端会根据id是否空来判断是新增或修改
      */
-    async save () {
+    async save (callback) {
       const vm = this
       try {
         vm.loading = true
@@ -132,6 +136,8 @@ export default {
           }
         })
         vm.loading = false
+        vm.$Message.success('保存成功')
+        callback.call(vm)
       } catch (error) {
         vm.loading = false
         throw error
@@ -148,7 +154,7 @@ export default {
     vertical-align middle
     float left
     font-size 12px
-    color #515a6e
+    color #333333
     line-height 1
     padding 10px 0px
     box-sizing border-box
@@ -158,8 +164,10 @@ export default {
     >>> input
           text-align center
   .i-warning
-    color #EC4E4E
+    color #757C7E
     margin-left 16px
+  >>> .ivu-form-item-label
+        color #333333
   >>> .ivu-form-item-content
         display inline-block
         .ivu-form-item-error-tip
