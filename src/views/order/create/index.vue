@@ -11,43 +11,43 @@
       </div>
 
       <Row>
-        <Col v-if="OrderSet.startCityOption == 1" span="6" class="blue-border">
+        <Col span="6" class="blue-border">
         <i-form-item label="发货城市:" prop="start">
-          <CitySelect v-model="orderForm.start" clearable></CitySelect>
+          <CitySelect v-model="orderForm.start" :disabled="OrderSet.startCityOption != 1" clearable></CitySelect>
         </i-form-item>
         </Col>
-        <Col v-if="OrderSet.endCityOption == 1" span="6" class="blue-border">
+        <Col span="6" class="blue-border">
         <i-form-item label="收货城市:" prop="end">
-          <CitySelect v-model="orderForm.end" clearable></CitySelect>
+          <CitySelect v-model="orderForm.end" :disabled="OrderSet.endCityOption != 1" clearable></CitySelect>
         </i-form-item>
         </Col>
-        <Col v-if="OrderSet.deliveryTimeOption == 1" span="6" class="blue-border">
+        <Col span="6" class="blue-border">
         <i-form-item label="发货时间:">
           <Row>
             <Col span="13">
             <i-form-item prop="deliveryTime" style="margin-bottom: 0">
-              <DatePicker v-model="orderForm.deliveryTime" :options="startDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
+              <DatePicker v-model="orderForm.deliveryTime" :disabled="OrderSet.deliveryTimeOption != 1" :options="startDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期" @on-change="(date) => { dateChange('START_DATE', date)}"></DatePicker>
             </i-form-item>
             </Col>
             <Col span="11" style="padding-left: 5px">
             <i-form-item prop="deliveryTimes" style="margin-bottom: 0">
-              <TimeInput ref="stTimeInput" v-model="orderForm.deliveryTimes" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
+              <TimeInput ref="stTimeInput" v-model="orderForm.deliveryTimes" :disabled="OrderSet.deliveryTimeOption != 1" :options="startTimeOptions" :time-date="formateDate(orderForm.deliveryTime)" type="START_DATE"/>
             </i-form-item>
             </Col>
           </Row>
         </i-form-item>
         </Col>
-        <Col v-if="OrderSet.arriveTimeOption == 1" span="6" class="blue-border right-border">
+        <Col span="6" class="blue-border right-border">
         <i-form-item label="到货时间:">
           <Row>
             <Col span="13">
             <i-form-item prop="arriveTime" style="margin-bottom: 0">
-              <DatePicker v-model="orderForm.arriveTime" :options="endDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
+              <DatePicker v-model="orderForm.arriveTime" :disabled="OrderSet.arriveTimeOption != 1" :options="endDateOptions" transfer style="width: 100%" format="yyyy-MM-dd" type="date" placeholder="请选择日期"  @on-change="(date) => { dateChange('END_DATE', date)}"></DatePicker>
             </i-form-item>
             </Col>
             <Col span="11" style="padding-left: 5px">
             <i-form-item prop="arriveTimes" style="margin-bottom: 0">
-              <TimeInput ref="edTimeInput" v-model="orderForm.arriveTimes" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
+              <TimeInput ref="edTimeInput" v-model="orderForm.arriveTimes" :disabled="OrderSet.arriveTimeOption != 1" :options="endTimeOptions" :time-date="formateDate(orderForm.arriveTime)" type="END_DATE"/>
             </i-form-item>
             </Col>
           </Row>
@@ -56,26 +56,26 @@
       </Row>
       <!-- 发货结束 -->
       <Row>
-        <Col v-if="OrderSet.customerOrderNoOption == 1" span="6" class="blue-border">
+        <Col span="6" class="blue-border">
         <i-form-item label="客户订单号:" prop="customerOrderNo">
-          <Input v-model="orderForm.customerOrderNo" :maxlength="$fieldLength.orderNo" clearable></Input>
+          <Input v-model="orderForm.customerOrderNo" :disabled="OrderSet.customerOrderNoOption != 1" :maxlength="$fieldLength.orderNo" clearable></Input>
         </i-form-item>
         </Col>
-        <Col v-if="OrderSet.customerWaybillNoOption == 1" span="6" class="blue-border">
+        <Col span="6" class="blue-border">
         <i-form-item label="客户运单号:" prop="customerWaybillNo">
-          <Input v-model="orderForm.customerWaybillNo" :maxlength="$fieldLength.billNo" clearable></Input>
+          <Input v-model="orderForm.customerWaybillNo" :disabled="OrderSet.customerWaybillNoOption != 1" :maxlength="$fieldLength.billNo" clearable></Input>
         </i-form-item>
         </Col>
-        <Col v-if="OrderSet.salesmanIdOption == 1" span="6" class="blue-border">
+        <Col span="6" class="blue-border">
         <i-form-item label="对接业务员:" prop="salesmanId">
-          <Select v-model="orderForm.salesmanId" transfer clearable placeholder="全部">
+          <Select v-model="orderForm.salesmanId" :disabled="OrderSet.salesmanIdOption != 1" transfer clearable placeholder="全部">
             <Option v-for="(opt, index) in salesmanList" :key="index" :value="opt.id">{{opt.name}}</Option>
           </Select>
         </i-form-item>
         </Col>
         <Col span="6" class="blue-border right-border">
         <i-form-item label="提货方式:">
-          <RadioGroup v-model="orderForm.pickup">
+          <RadioGroup v-model="orderForm.pickup" :disabled="OrderSet.pickupOption != 1">
             <Radio label="1">小车提货</Radio>
             <Radio label="2">大车送货</Radio>
           </RadioGroup>
@@ -141,9 +141,9 @@
         <Title :orderForm="true" class="verticle-title">收<br>货<br>方</Title>
         <div style="flex: 1">
           <Row>
-            <Col v-if="OrderSet.consigneeCompanyNameOption == 1" span="24">
+            <Col span="24">
             <i-form-item :maxlength="50" label="收货人单位：" prop="consigneeCompanyName">
-              <Input v-model="orderForm.consigneeCompanyName" :maxlength="$fieldLength.extraAddress" clearable></Input>
+              <Input v-model="orderForm.consigneeCompanyName" :disabled="OrderSet.consigneeCompanyNameOption != 1" :maxlength="$fieldLength.extraAddress" clearable></Input>
             </i-form-item>
             </Col>
           </Row>
@@ -199,11 +199,11 @@
         <Col span="12" class="blue-border">
         <Title :orderForm="true" class="align-title">应收费用</Title>
         <Row>
-          <Col v-if="OrderSet.freightFeeOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="运输费(元):" prop="freightFee">
             <Row>
               <Col span="19">
-              <TagNumberInput :min="0" v-model="orderForm.freightFee" :show-chinese="false" clearable></TagNumberInput>
+              <TagNumberInput :min="0" v-model="orderForm.freightFee" :disabled="OrderSet.freightFeeOption != 1" :show-chinese="false" clearable></TagNumberInput>
               </Col>
               <Col span="5" class="order-create__input-unit">
               <span @click="showCounter">
@@ -213,31 +213,31 @@
             </Row>
           </i-form-item>
           </Col>
-          <Col v-if="OrderSet.pickupFeeOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="提货费(元):" prop="pickupFee">
-            <TagNumberInput :min="0" v-model="orderForm.pickupFee" :show-chinese="false" clearable></TagNumberInput>
+            <TagNumberInput :min="0" v-model="orderForm.pickupFee" :disabled="OrderSet.pickupFeeOption != 1" :show-chinese="false" clearable></TagNumberInput>
           </i-form-item>
           </Col>
-          <Col v-if="OrderSet.loadFeeOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="装货费(元):" prop="loadFee">
-            <TagNumberInput :min="0" v-model="orderForm.loadFee" :show-chinese="false" clearable></TagNumberInput>
+            <TagNumberInput :min="0" v-model="orderForm.loadFee" :disabled="OrderSet.loadFeeOption != 1" :show-chinese="false" clearable></TagNumberInput>
           </i-form-item>
           </Col>
         </Row>
         <Row>
-          <Col v-if="OrderSet.unloadFeeOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="卸货费(元):" prop="unloadFee">
-            <TagNumberInput :min="0" v-model="orderForm.unloadFee" :show-chinese="false" clearable></TagNumberInput>
+            <TagNumberInput :min="0" v-model="orderForm.unloadFee" :disabled="OrderSet.unloadFeeOption != 1" :show-chinese="false" clearable></TagNumberInput>
           </i-form-item>
           </Col>
-          <Col v-if="OrderSet.insuranceFeeOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="保险费(元):" prop="insuranceFee">
-            <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :show-chinese="false" clearable></TagNumberInput>
+            <TagNumberInput :min="0" v-model="orderForm.insuranceFee" :disabled="OrderSet.insuranceFeeOption != 1" :show-chinese="false" clearable></TagNumberInput>
           </i-form-item>
           </Col>
-          <Col v-if="OrderSet.otherFeeOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="其他费用(元):" prop="otherFee">
-            <TagNumberInput :min="0" v-model="orderForm.otherFee" :show-chinese="false" clearable></TagNumberInput>
+            <TagNumberInput :min="0" v-model="orderForm.otherFee" :disabled="OrderSet.otherFeeOption != 1" :show-chinese="false" clearable></TagNumberInput>
           </i-form-item>
           </Col>
         </Row>
@@ -259,22 +259,22 @@
             </Select>
           </i-form-item>
           </Col>
-          <Col v-if="OrderSet.receiptCountOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="回单数量(份):" prop="receiptCount">
-            <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :precision="0" clearable>
+            <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.receiptCount" :disabled="OrderSet.receiptCountOption != 1" :precision="0" clearable>
             </TagNumberInput>
           </i-form-item>
           </Col>
-          <Col v-if="OrderSet.collectionMoneyOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="代收货款(元):" prop="collectionMoney">
-            <TagNumberInput :min="0" v-model="orderForm.collectionMoney" :show-chinese="false" clearable></TagNumberInput>
+            <TagNumberInput :min="0" v-model="orderForm.collectionMoney" :disabled="OrderSet.collectionMoneyOption != 1" :show-chinese="false" clearable></TagNumberInput>
           </i-form-item>
           </Col>
         </Row>
         <Row>
-          <Col v-if="OrderSet.isInvoiceOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="是否开票:" prop="isInvoice">
-            <Select v-model="orderForm.isInvoice" transfer>
+            <Select v-model="orderForm.isInvoice" :disabled="OrderSet.isInvoiceOption != 1" transfer>
               <Option v-for="opt in invoiceList" :key="opt.value" :value="opt.value">{{opt.name}}</Option>
             </Select>
           </i-form-item>
@@ -292,9 +292,9 @@
           </Col>
         </Row>
         <Row>
-          <Col v-if="OrderSet.mileageOption == 1" span="8">
+          <Col span="8">
           <i-form-item :label-width="105" label="计费里程(公里):" prop="mileage">
-            <TagNumberInput :show-chinese="false" :min="0" v-model="orderForm.mileage" :precision="1" clearable>
+            <TagNumberInput :show-chinese="false" :disabled="OrderSet.mileageOption != 1" :min="0" v-model="orderForm.mileage" :precision="1" clearable>
             </TagNumberInput>
           </i-form-item>
           </Col>
@@ -303,9 +303,9 @@
       </Row>
       <!-- 应收费用结束 -->
       <Row>
-        <Col v-if="OrderSet.orderRemarkOption == 1" span="24" class="blue-border right-border bottom-border">
+        <Col span="24" class="blue-border right-border bottom-border">
         <i-form-item :label-width="105" label="备注:" prop="remark">
-          <Input v-model="orderForm.remark" :maxlength="$fieldLength.remark" clearable></Input>
+          <Input v-model="orderForm.remark" :disabled="OrderSet.orderRemarkOption != 1" :maxlength="$fieldLength.remark" clearable></Input>
         </i-form-item>
         </Col>
       </Row>

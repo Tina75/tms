@@ -280,7 +280,13 @@ export default {
 </script>
 <style lang="stylus" scoped>
 .ivu-form-item
-  margin-bottom 4px
+  margin-bottom 3px
+.ivu-tooltip-inner
+  color #FF3C46
+  background-color rgba(255,241,240,1)
+.ivu-tooltip-popper[x-placement^=bottom]
+  .ivu-tooltip-arrow
+    border-bottom-color rgba(255,241,240,1)
 </style>
 <style lang="stylus">
 .errTip
@@ -288,10 +294,5 @@ export default {
   right 0px
   top 0
   z-index 10
-  .ivu-tooltip-inner
-    color #FF3C46
-    background-color rgba(255,241,240,1)
-  .ivu-tooltip-popper[x-placement^=bottom]
-    .ivu-tooltip-arrow
-      border-bottom-color rgba(255,241,240,1)
+
 </style>
