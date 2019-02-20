@@ -1,11 +1,12 @@
 <template>
+  <!-- TODO: 运输过程tab -->
   <div class="order-detail">
     <header :class="themeBarColor(orderStatus)" class="detail-header">
       <ul>
         <li>订单号：{{detail.orderNo}}</li>
         <li>客户订单号：{{detail.customerOrderNo || '-' }}</li>
         <li>客户运单号：{{detail.customerWaybillNo || '-' }}</li>
-        <li>运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
+        <!-- <li>运单号：{{detail.waybillNo || '-'}} &nbsp;&nbsp;&nbsp;
           <Poptip v-if="waybillNums.length > 0" placement="bottom" transfer @on-popper-show="showPoptip" @on-popper-hide="hidePoptip">
             <a>{{ show ? '收起全部' : '展开全部' }}</a>
             <div slot="title" style="color:rgba(51,51,51,1);text-align: center;">全部运单号</div>
@@ -15,7 +16,7 @@
               </li>
             </ul>
           </Poptip>
-        </li>
+        </li> -->
         <li>订单状态：<span :class="themeStatusColor(orderStatus)" style="font-weight: bold;">{{ statusToName(orderStatus) }}</span></li>
       </ul>
     </header>
@@ -46,32 +47,32 @@
                 <span v-if="detail.deliveryTime">{{detail.deliveryTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
                 <span v-else>-</span>
               </i-col>
-              <i-col span="6">
+              <i-col span="10">
                 <span>到货时间：</span>
                 <span v-if="detail.arriveTime">{{detail.arriveTime | datetime('yyyy-MM-dd hh:mm:ss')}}</span>
                 <span v-else>-</span>
               </i-col>
-              <i-col span="4">
-                <span>代收货款：</span>
-                <span v-if="detail.collectionMoney !== ''">{{ getDivideFee(detail.collectionMoney) }}元</span>
-                <span v-else>-</span>
-              </i-col>
             </Row>
             <Row>
-              <i-col span="7">
+              <!-- <i-col span="7">
                 <span>始发地：</span>
                 <span>{{detail.startName | empty}}</span>
               </i-col>
               <i-col span="7">
                 <span>目的地：</span>
                 <span>{{detail.endName | empty}}</span>
-              </i-col>
-              <i-col span="6">
+              </i-col> -->
+              <i-col span="7">
                 <span>提货方式：</span>
                 <span v-if="detail.pickup">{{pickupToName(detail.pickup)}}</span>
                 <span v-else>-</span>
               </i-col>
-              <i-col span="4">
+              <i-col span="7">
+                <span>代收货款：</span>
+                <span v-if="detail.collectionMoney !== ''">{{ getDivideFee(detail.collectionMoney) }}元</span>
+                <span v-else>-</span>
+              </i-col>
+              <i-col span="10">
                 <span>回单数：</span>
                 <span>{{detail.receiptCount}}</span>
               </i-col>
@@ -84,18 +85,18 @@
               </i-col>
               <i-col span="7">
                 <span>是否开票：</span>
-                <span>{{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%）` : '否'}}</span>
+                <span>{{detail.isInvoice === 1 ? `是（${rate(detail.invoiceRate)}%，${detail.parentId ? getInvoiceAmount(detail.allocationInvoiceAmount) : getInvoiceAmount(detail.invoiceAmount)}元）` : '否'}}</span>
               </i-col>
-              <i-col v-if="!detail.parentId" span="7">
+              <!-- <i-col v-if="!detail.parentId" span="7">
                 <span>开票税额：</span>
                 <span>{{ detail.invoiceAmount | toPoint('元') }}</span>
               </i-col>
               <i-col v-else span="7">
                 <span>开票税额：</span>
                 <span>{{ detail.allocationInvoiceAmount | toPoint('元') }}</span>
-              </i-col>
+              </i-col> -->
             </Row>
-            <Row style="margin-top:18px">
+            <!-- <Row style="margin-top:18px">
               <i-col span="7">
                 <span>发货联系人：</span>
                 <span>{{detail.consignerContact}}</span>
@@ -143,7 +144,7 @@
                 <span v-if="detail.consigneeCompanyName">{{detail.consigneeCompanyName}}</span>
                 <span v-else>-</span>
               </i-col>
-            </Row>
+            </Row> -->
             <Row style="margin-top: 18px;">
               <i-col span="24">
                 <span>备注：</span>
@@ -151,6 +152,47 @@
                 <span v-else>-</span>
               </i-col>
             </Row>
+          </div>
+          <div>
+            <div class="title">
+              <span>收发货信息</span>
+            </div>
+            <Form :label-width="97" label-position="left" style="margin-top: 30px;">
+              <Row :gutter="16">
+                <Col span="12">
+                <Card>
+                  <p slot="title" class="card-title">发货人</p>
+                  <FormItem label="联系人：">
+                    {{detail.consignerContact}}
+                  </FormItem>
+                  <FormItem label="联系号码：">
+                    {{detail.consignerPhone}}
+                  </FormItem>
+                  <FormItem label="发货地址：">
+                    {{detail.consignerAddress + detail.consignerHourseNumber}}
+                  </FormItem>
+                  <FormItem label="收货人单位：" style="visibility: hidden"></FormItem>
+                </Card>
+                </Col>
+                <Col span="12">
+                <Card>
+                  <p slot="title" class="card-title">收货人</p>
+                  <FormItem label="联系人：">
+                    {{detail.consigneeContact}}
+                  </FormItem>
+                  <FormItem label="联系方式：">
+                    {{detail.consigneePhone}}
+                  </FormItem>
+                  <FormItem label="收货地址：">
+                    {{detail.consigneeAddress + detail.consigneeHourseNumber}}
+                  </FormItem>
+                  <FormItem label="收货人单位：">
+                    {{detail.consigneeCompanyName | empty}}
+                  </FormItem>
+                </Card>
+                </Col>
+              </Row>
+            </Form>
           </div>
           <div class="cargo-details">
             <div class="title" style="margin-top: 35px;">
@@ -178,6 +220,7 @@
               <i-col span="4">
                 <span class="fee-style">运输费：</span>
                 <span style="font-weight:bold;">{{detail.freightFee | toPoint('元')}}</span>
+                <span v-if="detail.chargeRule">（{{ detail.chargeRule }}）</span>
               </i-col>
               <i-col span="4">
                 <span class="fee-style">提货费：</span>
@@ -196,7 +239,7 @@
                 <span style="font-weight:bold;">{{detail.insuranceFee | toPoint('元')}}</span>
               </i-col>
               <i-col span="4">
-                <span class="fee-style">其他费用：</span>
+                <span style="width: 72px;">其他费用：</span>
                 <span style="font-weight:bold;">{{detail.otherFee | toPoint('元')}}</span>
               </i-col>
             </Row>
@@ -205,14 +248,16 @@
                 <span style="width: 72px;">费用合计：</span>
                 <span v-if="!detail.parentId" style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.totalFee | toPoint('元')}}</span>
                 <span v-else style="font-size:18px;font-family:'DINAlternate-Bold';font-weight:bold;color:rgba(0,164,189,1);margin-right: 10px;">{{detail.allocationFee | toPoint('元')}}</span>
+                <span>（{{settlementToName(detail.settlementType)}}）</span>
+                <span :style="'background: ' + (detail.verifyStatus ? '#00C185' : '#FE4F2B')" class="verify-status">{{ detail.verifyStatus ? '已核销' : '待核销' }}</span>
               </i-col>
             </Row>
-            <Row>
+            <!-- <Row>
               <i-col span="24">
                 <span style="width: 72px;">结算方式：</span>
                 <span>{{settlementToName(detail.settlementType)}}</span>
               </i-col>
-            </Row>
+            </Row> -->
           </div>
           <div class="order-log">
             <div class="title">
@@ -236,6 +281,8 @@
       <TabPane :label="cngLabel" :disabled="changeOrderCnt == 0" name="change">
         <OrderChange ref="orderChange"/>
       </TabPane>
+      <TabPane label="运输过程" name="process">
+      </TabPane>
     </Tabs>
     <OrderPrint ref="printer" :list="orderPrint"></OrderPrint>
   </div>
@@ -251,7 +298,7 @@ import _ from 'lodash'
 import { mapGetters } from 'vuex'
 import tableWeightColumnMixin from '@/views/transport/mixin/tableWeightColumnMixin.js'
 import OrderChange from './components/OrderChange'
-import { roundFee, divideFee, roundVolume, roundWeight, roundWeightKg, multiplyRate } from '@/libs/js/config'
+import { roundFee, divideFee, roundVolume, roundWeight, roundWeightKg, multiplyRate, getFeeText } from '@/libs/js/config'
 import * as CargoInfo from '@/libs/constant/cargoInfoTable'
 import NP from 'number-precision'
 import { ORDER_STATUS_CODE, ORDER_STATUS } from '@/libs/constant/order'
@@ -810,6 +857,9 @@ export default {
     },
     rate (value) {
       return multiplyRate(value)
+    },
+    getInvoiceAmount (amount) {
+      return getFeeText(amount)
     }
   },
   /**
@@ -934,6 +984,16 @@ export default {
     width 160px
     height 90px
     margin-right 16px
+  .card-title
+    padding-left 16px
+    font-size 14px
+    color #333
+    line-height 44px
+    height 44px
+    font-weight 500
+    background #f8f8f9
+    font-family 'PingFangSC-Medium'
+    border-bottom 1px solid #e8eaec
 </style>
 <style lang='stylus'>
   .detail-header
@@ -956,8 +1016,28 @@ export default {
       font-weight 600
     .ivu-tabs-bar
       margin-bottom 26px
+  .verify-status
+    border-radius 2px
+    color #fff !important
+    text-align center
+    margin-right 5px
+    font-size 12px
+    padding 0 5px
 </style>
 <style lang="stylus">
+.ivu-card
+  font-size 14px
+  .ivu-form-item
+    margin-bottom 8px
+  .ivu-card-head
+    padding 0
+    border-bottom none
+  .ivu-form-item-label
+    color #777
+    font-size 14px
+  .ivu-form-item-content
+    color #333
+    font-size 14px
 .ivu-tooltip-inner-with-width
-    word-break break-all
+  word-break break-all
 </style>

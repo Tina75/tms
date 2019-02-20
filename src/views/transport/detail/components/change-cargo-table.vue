@@ -163,8 +163,8 @@ export default {
               on: {
                 'on-change': (val) => {
                   z.cargoList[p.index].quantity = val
-                  // 有货物id记录的需要按货物数量百分比修改,且已经有值的字段不允许清空或修改为0
-                  if (p.row.cargoId) {
+                  // 有货物id记录并且数量值有意义时需要按货物数量百分比修改,且已经有值的字段不允许清空或修改为0
+                  if (p.row.cargoId && p.row.quantity) {
                     // 获取数量修改后的百分比
                     let percent = val / p.row.quantity
                     // 货值同比
@@ -182,7 +182,7 @@ export default {
                     }
 
                     // 已经有值的字段不允许清空或修改为0
-                    if (!val && p.row.quantity) {
+                    if (!val) {
                       z.$Message.warning('已经有值的字段不允许清空或修改为0')
                       // 重置回之前的原始数据
                       z.$nextTick(() => {

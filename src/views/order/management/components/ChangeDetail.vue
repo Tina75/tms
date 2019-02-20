@@ -29,6 +29,10 @@
         </Row>
         </Col>
       </Row>
+      <!-- 货物明细, 为空时不显示 -->
+      <div>
+        <cargo-change-compare :old-cargo-list="data.map.old.cargoList" :new-cargo-list="data.map.new.cargoList"></cargo-change-compare>
+      </div>
     </div>
   </div>
 </template>
@@ -37,8 +41,10 @@ import BasePage from '@/basic/BasePage'
 import settlement from '@/libs/constant/settlement'
 import ORDER_ITEM from '../constant/orderItem'
 import { divideFeeOrNull, multiplyRateOrNull, divideMileage } from '@/libs/js/config'
+import CargoChangeCompare from '@/views/transport/components/CargoChangeCompare'
 export default {
   name: 'order-record',
+  components: { CargoChangeCompare },
   filters: {
     timeFormatter (timestamp) {
       if (!timestamp) return '-'
@@ -159,7 +165,7 @@ export default {
     font-weight 600
     color #333
   .change-list
-    padding 28px 17px 0 17px
+    padding 28px 17px
     font-size 14px
     .info
       border-bottom 1px dashed #d4d5dc
